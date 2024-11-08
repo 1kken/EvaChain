@@ -1,10 +1,14 @@
 <script lang="ts">
-	import Button from '$lib/components/ui/button/button.svelte';
-	let state = $state(0);
-
-	function increment() {
-		state++;
-	}
+	let { data } = $props();
+	let { countries, supabase, user } = $derived(data);
 </script>
 
-<Button onclick={increment}>Hello World! {state}</Button>
+{#each countries as country (country.id)}
+	<h1>{country.name}</h1>
+{/each}
+
+{#await data.supabase.auth.getUser()}
+	<h1>Fetching!!</h1>
+{:then id}
+	<h1>{id.data.user?.email}</h1>
+{/await}
