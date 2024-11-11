@@ -15,6 +15,9 @@ const config: Config = {
 			}
 		},
 		extend: {
+			 backgroundImage: {
+			'auth-bg':"url(/authbg.svg)"
+      		},
 			colors: {
 				border: "hsl(var(--border) / <alpha-value>)",
 				input: "hsl(var(--input) / <alpha-value>)",
