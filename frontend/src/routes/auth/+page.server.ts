@@ -23,7 +23,7 @@ export const actions: Actions = {
       console.error(error)
       redirect(303, '/auth/error')
     } else {
-      redirect(303, '/')
+      redirect(303, '/auth')
     }
   },
   login: async ({ request, locals: { supabase } }) => {

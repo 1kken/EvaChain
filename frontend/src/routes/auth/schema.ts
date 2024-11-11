@@ -6,10 +6,14 @@ export const logInSchema = z.object({
 })
 
 export const signupSchema = z.object({
-  firstName:z.string().min(6),
-  lastName:z.string().min(6),
+  firstName:z.string().min(3),
+  lastName:z.string().min(3),
   email: z.string().email(),
-  password:z.string().min(6) 
+  password:z.string().min(6),
+  passwordRepeat:z.string().min(6), 
+}).refine((data)=> data.password === data.passwordRepeat,{
+  message:"Passwords don't match",
+  path:["passwordRepeat"]
 })
 
 export type LogInSchema = typeof logInSchema;
