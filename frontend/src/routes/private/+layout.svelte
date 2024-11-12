@@ -1,21 +1,19 @@
-<script>
-	export let data;
-	$: ({ supabase } = data);
+<script lang="ts">
+	import { goto } from '$app/navigation';
 
-	$: logout = async () => {
-		const { error } = await supabase.auth.signOut();
-		if (error) {
-			console.error(error);
-		}
-	};
+	let { data, children } = $props();
+	async function logOut() {
+		data.supabase.auth.signOut();
+		goto('/');
+	}
 </script>
 
 <header>
 	<nav>
 		<a href="/">Home</a>
 	</nav>
-	<button on:click={logout}>Logout</button>
+	<button onclick={logOut}>Logout</button>
 </header>
 <main>
-	<slot />
+	{@render children()}
 </main>

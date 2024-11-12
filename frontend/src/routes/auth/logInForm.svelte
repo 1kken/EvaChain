@@ -53,8 +53,7 @@
 				<h3>or</h3>
 				<hr />
 			</div>
-			<Button>Continue with Google</Button>
-			<h2>Dont have an account? Signup here.</h2>
+			<Button href="/auth/google">Continue with Google</Button>
 		</div>
 	</Card.Content>
 </Card.Root>

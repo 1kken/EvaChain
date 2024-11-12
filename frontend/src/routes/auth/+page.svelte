@@ -7,7 +7,7 @@
 	let { data }: { data: PageData } = $props();
 </script>
 
-<div class="grid h-full border lg:w-96">
+<div class="  mt-10 grid h-full w-96">
 	<Tabs.Root value="login">
 		<Tabs.List class="grid grid-cols-2 items-center">
 			<Tabs.Trigger value="login">Log in</Tabs.Trigger>
