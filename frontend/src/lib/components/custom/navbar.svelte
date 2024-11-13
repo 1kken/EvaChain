@@ -1,3 +1,8 @@
+<script lang="ts">
+	import { page } from '$app/stores';
+	console.log($page.url.pathname);
+</script>
+
 <nav class="border-gray-200 bg-transparent dark:bg-gray-900">
 	<div class="mx-auto flex max-w-screen-xl flex-wrap items-center justify-between p-4">
 		<a href="/auth" class="flex items-center space-x-3 rtl:space-x-reverse">

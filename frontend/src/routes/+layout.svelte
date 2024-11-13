@@ -2,6 +2,8 @@
 	import { onMount } from 'svelte';
 	import '../app.css';
 	import { invalidate } from '$app/navigation';
+	import Navbar from '$lib/components/custom/navbar.svelte';
+	import Footer from '$lib/components/custom/footer.svelte';
 	let { children, data } = $props();
 
 	let { session, supabase } = $derived(data);
@@ -17,4 +19,6 @@
 	});
 </script>
 
+<Navbar />
 {@render children()}
+<Footer />
