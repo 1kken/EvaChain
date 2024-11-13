@@ -42,9 +42,7 @@
 				</Form.Control>
 				<Form.FieldErrors />
 			</Form.Field>
-			<div class="flex justify-end">
-				<a href="#"><p class="text-sm text-gray-600">forgot password?</p></a>
-			</div>
+			<div class="flex justify-end"></div>
 			<Form.Button class="mt-2 w-full">Log In</Form.Button>
 		</form>
 		<div class="grid w-full grid-cols-1 place-items-center gap-3">
