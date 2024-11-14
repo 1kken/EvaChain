@@ -2,14 +2,19 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { Button } from '$lib/components/ui/button';
-	import type { PageParentData } from '../../../routes/$types';
+	import { isAuth } from '$lib/utils/userstore';
 	let currPathName: String = $state($page.url.pathname);
-	let isAuth: Boolean = $state(false);
+
 	$effect(() => {
 		currPathName = $page.url.pathname;
 	});
+
 	function goToAuthPage() {
 		goto('/auth');
+	}
+
+	function goToDashBoard() {
+		goto('/private');
 	}
 </script>
 
@@ -23,7 +28,12 @@
 			>
 		</a>
 		<div>
-			{#if currPathName === '/'}<Button onclick={goToAuthPage}>Log-in/Sign-up</Button>{/if}
+			{#if currPathName === '/' && !$isAuth}
+				<Button onclick={goToAuthPage}>Log-in/Sign-up</Button>
+			{/if}
+			{#if currPathName === '/' && $isAuth}
+				<Button onclick={goToDashBoard}>Go to dashboard</Button>
+			{/if}
 		</div>
 	</div>
 </nav>
