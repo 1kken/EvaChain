@@ -3,10 +3,14 @@
 	import { Input } from '$lib/components/ui/input/index.js';
 	import * as Card from '$lib/components/ui/card';
 	import { Button } from '$lib/components/ui/button';
+	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';
+	import { page } from '$app/stores';
+	import { goto } from '$app/navigation';
 
 	import { signupSchema, type SignupSchema } from './schema';
 	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
+
 	type Props = {
 		data: SuperValidated<Infer<SignupSchema>>;
 	};
@@ -17,6 +21,14 @@
 	});
 
 	const { form: formData, enhance: logInEnhance } = form;
+	$effect(() => {
+		if ($page.form?.success) {
+			showSuccessToast($page.form.message);
+			goto('/auth');
+		} else if ($page.form?.message) {
+			showErrorToast($page.form.message);
+		}
+	});
 </script>
 
 <Card.Root>

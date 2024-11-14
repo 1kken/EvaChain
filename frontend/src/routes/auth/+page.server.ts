@@ -1,4 +1,4 @@
-import { redirect } from '@sveltejs/kit';
+import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
@@ -17,29 +17,67 @@ export const load: PageServerLoad = async () => {
 //form Actions from +page.svelte
 export const actions: Actions = {
 	signup: async ({ request, locals: { supabase } }) => {
-		const formData = await request.formData();
-		const email = formData.get('email') as string;
-		const password = formData.get('password') as string;
+		// Server side validation
+		const form = await superValidate(request, zod(signupSchema));
+		// If not valid return the form with errors
+		if (!form.valid) {
+			return fail(400, {
+				form
+			});
+		}
 
+		// If form valid, use the validated data from superValidate
+		const { email, password } = form.data;
+
+		// Attempt signup with Supabase
 		const { error } = await supabase.auth.signUp({ email, password });
+		// If Supabase returns an error
 		if (error) {
 			console.error(error);
-			redirect(303, '/auth/error');
-		} else {
-			redirect(303, '/auth');
+			// Return both the form and the error message
+			return fail(400, {
+				form,
+				message: error.message
+			});
 		}
+
+		// If success, return both form and success message
+		return {
+			form,
+			success: true,
+			message: 'Account created successfully! Please check your email.'
+		};
 	},
 	login: async ({ request, locals: { supabase } }) => {
-		const formData = await request.formData();
-		const email = formData.get('email') as string;
-		const password = formData.get('password') as string;
+		// Server side validation
+		const form = await superValidate(request, zod(logInSchema));
+		// If not valid return the form with errors
+		if (!form.valid) {
+			console.log(form);
+			return fail(400, {
+				form
+			});
+		}
 
+		// If form valid, use the validated data from superValidate
+		const { email, password } = form.data;
+		// Attempt signup with Supabase
 		const { error } = await supabase.auth.signInWithPassword({ email, password });
+		// If Supabase returns an error
 		if (error) {
 			console.error(error);
-			redirect(303, '/auth/error');
-		} else {
-			redirect(303, '/private');
+			// Return both the form and the error message
+			return fail(400, {
+				form,
+				message: error.message
+			});
 		}
+
+		// If success, return both form and success message
+		return {
+			form,
+			success: true,
+			message: 'Log successful!'
+		};
 	}
 };

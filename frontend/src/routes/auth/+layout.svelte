@@ -3,8 +3,6 @@
 	import Footer from '$lib/components/custom/footer.svelte';
 </script>
 
-<Navbar />
 <div class="relative flex h-screen w-screen items-center justify-center">
 	<slot />
 </div>
-<Footer />

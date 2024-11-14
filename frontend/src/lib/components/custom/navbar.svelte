@@ -1,16 +1,29 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	console.log($page.url.pathname);
+	import { Button } from '$lib/components/ui/button';
+	import type { PageParentData } from '../../../routes/$types';
+	let currPathName: String = $state($page.url.pathname);
+	let isAuth: Boolean = $state(false);
+	$effect(() => {
+		currPathName = $page.url.pathname;
+	});
+	function goToAuthPage() {
+		goto('/auth');
+	}
 </script>
 
-<nav class="border-gray-200 bg-transparent dark:bg-gray-900">
+<nav class="border-gray-200 bg-transparent shadow-lg dark:bg-gray-900">
 	<div class="mx-auto flex max-w-screen-xl flex-wrap items-center justify-between p-4">
-		<a href="/auth" class="flex items-center space-x-3 rtl:space-x-reverse">
+		<a href="/" class="flex items-center space-x-3 rtl:space-x-reverse">
 			<img src="https://flowbite.com/docs/images/logo.svg" class="h-8" alt="Flowbite Logo" />
 			<span
 				class="text-foreground self-center whitespace-nowrap text-2xl font-semibold dark:text-white"
 				>EvaChain</span
 			>
 		</a>
+		<div>
+			{#if currPathName === '/'}<Button onclick={goToAuthPage}>Log-in/Sign-up</Button>{/if}
+		</div>
 	</div>
 </nav>

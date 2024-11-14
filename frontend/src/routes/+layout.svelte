@@ -4,6 +4,7 @@
 	import { invalidate } from '$app/navigation';
 	import Navbar from '$lib/components/custom/navbar.svelte';
 	import Footer from '$lib/components/custom/footer.svelte';
+	import { Toaster } from 'svelte-sonner';
 	let { children, data } = $props();
 
 	let { session, supabase } = $derived(data);
@@ -19,6 +20,7 @@
 	});
 </script>
 
+<Toaster richColors position="top-center" />
 <Navbar />
 {@render children()}
 <Footer />
