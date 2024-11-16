@@ -1,7 +1,15 @@
+import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
+export const load: PageServerLoad = async ({ depends, locals: { supabase, user } }) => {
+	if (!user) {
+		throw error(401, 'Unauthorized');
+	}
+	depends('supabase:db:profiles');
+	const profile = await supabase
+		.from('profiles')
+		.select('id, first_name,updated_at,last_name')
+		.eq('id', user.id) //cannot use user?.id
+		.single();
 
-export const load: PageServerLoad = async ({ depends, locals: { supabase } }) => {
-	depends('supabase:db:notes');
-	const { data: notes } = await supabase.from('notes').select('id,note').order('id');
-	return { notes: notes ?? [] };
+	return { profile: profile ?? null };
 };

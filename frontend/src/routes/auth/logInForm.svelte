@@ -3,7 +3,6 @@
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card';
-	import { Boxes } from 'lucide-svelte';
 	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
@@ -25,6 +24,7 @@
 	$effect(() => {
 		if ($page.form?.success) {
 			showSuccessToast($page.form.message);
+			goto('/private');
 		} else if ($page.form?.message) {
 			showErrorToast($page.form.message);
 		}
@@ -37,9 +37,6 @@
 	<Card.Content>
 		<Card.CardHeader class="flex items-center">
 			<Card.Title>Welcome Back to EvaChain!</Card.Title>
-			<Card.Description>
-				<Boxes class=" h-24 w-24" />
-			</Card.Description>
 		</Card.CardHeader>
 		<form method="POST" action="?/login" use:logInEnhance>
 			<Form.Field {form} name="email">

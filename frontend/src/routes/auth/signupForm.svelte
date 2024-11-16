@@ -83,13 +83,5 @@
 			</Form.Field>
 			<Form.Button class="mt-2 w-full">Sign Up</Form.Button>
 		</form>
-		<div class="grid w-full grid-cols-1 place-items-center gap-3">
-			<div class="grid w-max grid-cols-3 items-center text-gray-600">
-				<hr />
-				<h3>or</h3>
-				<hr />
-			</div>
-			<Button href="/auth/google">Continue with Google</Button>
-		</div>
 	</Card.Content>
 </Card.Root>

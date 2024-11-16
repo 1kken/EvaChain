@@ -1,6 +1,5 @@
 <script lang="ts">
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
-	import { Box, Rocket } from 'lucide-svelte';
 	import type { PageData } from './$types';
 	import LogInForm from './logInForm.svelte';
 	import SignupForm from './signupForm.svelte';

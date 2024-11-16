@@ -3,6 +3,7 @@ import type { Actions, PageServerLoad } from './$types';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { logInSchema, signupSchema } from './schema';
+import { handle } from '../../hooks.server';
 
 //PROPS passed down to +page.svelte
 export const load: PageServerLoad = async () => {
@@ -27,10 +28,24 @@ export const actions: Actions = {
 		}
 
 		// If form valid, use the validated data from superValidate
-		const { email, password } = form.data;
+		const { email, password, firstName, lastName } = form.data;
+
+		function handleName(name: string): string {
+			//remove all extra spaces then join with one space
+			return name.toLowerCase().split(/\s+/).join(' ');
+		}
 
 		// Attempt signup with Supabase
-		const { error } = await supabase.auth.signUp({ email, password });
+		const { error } = await supabase.auth.signUp({
+			email,
+			password,
+			options: {
+				data: {
+					first_name: handleName(firstName),
+					last_name: handleName(lastName)
+				}
+			}
+		});
 		// If Supabase returns an error
 		if (error) {
 			console.error(error);
