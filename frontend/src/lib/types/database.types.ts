@@ -34,33 +34,275 @@ export type Database = {
   }
   public: {
     Tables: {
+      employee_status: {
+        Row: {
+          created_at: string
+          id: number
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      nature_of_work: {
+        Row: {
+          created_at: string
+          id: number
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      office: {
+        Row: {
+          code: string
+          created_at: string
+          id: number
+          name: string
+          unit_id: number
+          updated_at: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          id?: number
+          name: string
+          unit_id: number
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          id?: number
+          name?: string
+          unit_id?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "office_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "unit"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      position: {
+        Row: {
+          created_at: string
+          id: number
+          name: string
+          nature_of_work_id: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          name: string
+          nature_of_work_id: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          name?: string
+          nature_of_work_id?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "position_nature_of_work_id_fkey"
+            columns: ["nature_of_work_id"]
+            isOneToOne: false
+            referencedRelation: "nature_of_work"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
+          created_at: string | null
+          email: string | null
+          employee_id: string | null
+          employee_status_id: number | null
           first_name: string | null
-          full_name: string | null
           id: string
           last_name: string | null
-          school_id: string | null
+          middle_name: string | null
+          nature_of_work_id: number | null
+          office_id: number | null
+          position_id: number | null
+          programme_id: number | null
+          unit_id: number | null
           updated_at: string | null
         }
         Insert: {
           avatar_url?: string | null
+          created_at?: string | null
+          email?: string | null
+          employee_id?: string | null
+          employee_status_id?: number | null
           first_name?: string | null
-          full_name?: string | null
           id: string
           last_name?: string | null
-          school_id?: string | null
+          middle_name?: string | null
+          nature_of_work_id?: number | null
+          office_id?: number | null
+          position_id?: number | null
+          programme_id?: number | null
+          unit_id?: number | null
           updated_at?: string | null
         }
         Update: {
           avatar_url?: string | null
+          created_at?: string | null
+          email?: string | null
+          employee_id?: string | null
+          employee_status_id?: number | null
           first_name?: string | null
-          full_name?: string | null
           id?: string
           last_name?: string | null
-          school_id?: string | null
+          middle_name?: string | null
+          nature_of_work_id?: number | null
+          office_id?: number | null
+          position_id?: number | null
+          programme_id?: number | null
+          unit_id?: number | null
           updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_employee_status_id_fkey"
+            columns: ["employee_status_id"]
+            isOneToOne: false
+            referencedRelation: "employee_status"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profiles_nature_of_work_id_fkey"
+            columns: ["nature_of_work_id"]
+            isOneToOne: false
+            referencedRelation: "nature_of_work"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profiles_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "office"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profiles_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "position"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profiles_programme_id_fkey"
+            columns: ["programme_id"]
+            isOneToOne: false
+            referencedRelation: "programme"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profiles_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "unit"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      programme: {
+        Row: {
+          created_at: string
+          id: number
+          name: string
+          office_id: number
+          unit_id: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          name: string
+          office_id: number
+          unit_id: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          name?: string
+          office_id?: number
+          unit_id?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "programme_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "office"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "programme_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "unit"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      unit: {
+        Row: {
+          code: string
+          created_at: string
+          id: number
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          id?: number
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          id?: number
+          name?: string
+          updated_at?: string
         }
         Relationships: []
       }

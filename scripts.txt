@@ -1,9 +1,15 @@
 source ./supabase/.env &&
 
-npx supabase db diff --use-migra -f initial_schema
+npx supabase db diff --use-migra -f name_of_schema
 
 //crea
 npx supabase migration new name_of_the_action
 
 //resets the remote database
 npx supabase db reset --linked
+
+//generate types
+npx supabase gen types --lang=typescript --local > frontend/src/lib/types/database.types.ts
+
+//generate summary
+npx ai-digest -i EvaChain/ -o EvaChain/project_summary.md
