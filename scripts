@@ -1,5 +1,0 @@
-source ./supabase/.env &&
-
-npx supabase db diff --use-migra intial_schema -f initial_schema
-
-npx supabase migration new 

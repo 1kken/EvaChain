@@ -1,0 +1,1 @@
+create type positions as enum('instructor','assistant_professor','associate_professor','professor','non_teaching');
