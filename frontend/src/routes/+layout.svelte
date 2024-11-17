@@ -4,14 +4,16 @@
 	import Navbar from '$lib/components/custom/navbar.svelte';
 	import Footer from '$lib/components/custom/footer.svelte';
 	import { Toaster } from 'svelte-sonner';
-	import { setIsAuth } from '$lib/utils/userstore';
+	import { authStore } from '$lib/utils/authStore';
 	let { children, data } = $props();
 
 	let { session, supabase } = $derived(data);
 
 	$effect(() => {
-		setIsAuth.set(session !== null);
-		const { data } = supabase.auth.onAuthStateChange((_, newSession) => {
+		const { data } = supabase.auth.onAuthStateChange((event, newSession) => {
+			if (event === 'SIGNED_OUT') {
+				authStore.clearProfile();
+			}
 			if (newSession?.expires_at !== session?.expires_at) {
 				invalidate('supabase:auth');
 			}

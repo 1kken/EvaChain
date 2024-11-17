@@ -8,7 +8,7 @@ export const GET: RequestHandler = async (event) => {
 	const { data, error } = await supabase.auth.signInWithOAuth({
 		provider: 'google',
 		options: {
-			redirectTo: url.origin + 'auth/callback'
+			redirectTo: new URL('/auth/callback', url.origin).toString() + '?next=/dashboard'
 		}
 	});
 

@@ -1,9 +1,9 @@
 <script lang="ts">
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
-	import type { PageData } from './$types';
+	import type { PageServerData } from './$types';
 	import LogInForm from './logInForm.svelte';
 	import SignupForm from './signupForm.svelte';
-	let { data }: { data: PageData } = $props();
+	let { data }: { data: PageServerData } = $props();
 </script>
 
 <div class="  mt-10 grid h-full w-96">

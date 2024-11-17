@@ -2,11 +2,14 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { Button } from '$lib/components/ui/button';
-	import { isAuth } from '$lib/utils/userstore';
+
+	import { isAuthenticated, currentProfile } from '$lib/utils/authStore';
+	import SheetNav from './sheet_nav.svelte';
 	let currPathName: String = $state($page.url.pathname);
 
 	$effect(() => {
 		currPathName = $page.url.pathname;
+		console.log(currPathName);
 	});
 
 	function goToAuthPage() {
@@ -14,7 +17,7 @@
 	}
 
 	function goToDashBoard() {
-		goto('/private');
+		goto('/dashboard');
 	}
 </script>
 
@@ -28,11 +31,16 @@
 			>
 		</a>
 		<div>
-			{#if currPathName === '/' && !$isAuth}
+			{#if currPathName === '/' && !$isAuthenticated}
 				<Button onclick={goToAuthPage}>Log-in/Sign-up</Button>
 			{/if}
-			{#if currPathName === '/' && $isAuth}
+			{#if currPathName === '/' && $isAuthenticated}
 				<Button onclick={goToDashBoard}>Go to dashboard</Button>
+			{/if}
+			{#if currPathName !== '/' && $isAuthenticated}
+				{#if $currentProfile}
+					<SheetNav profile={$currentProfile} />
+				{/if}
 			{/if}
 		</div>
 	</div>
