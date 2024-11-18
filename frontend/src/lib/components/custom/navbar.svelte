@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
+	import { goto, preloadData } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { Button } from '$lib/components/ui/button';
 
@@ -9,14 +9,15 @@
 
 	$effect(() => {
 		currPathName = $page.url.pathname;
-		console.log(currPathName);
 	});
 
 	function goToAuthPage() {
+		preloadData('/auth');
 		goto('/auth');
 	}
 
 	function goToDashBoard() {
+		preloadData('/dashboard');
 		goto('/dashboard');
 	}
 </script>

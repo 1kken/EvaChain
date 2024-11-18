@@ -3,7 +3,6 @@ import type { Actions, PageServerLoad } from './$types';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { logInSchema, signupSchema } from './schema';
-import { handle } from '../../hooks.server';
 
 //PROPS passed down to +page.svelte
 export const load: PageServerLoad = async () => {
@@ -22,6 +21,7 @@ export const actions: Actions = {
 		const form = await superValidate(request, zod(signupSchema));
 		// If not valid return the form with errors
 		if (!form.valid) {
+			console.log(form);
 			return fail(400, {
 				form
 			});

@@ -60,7 +60,7 @@
 			<div class="flex flex-col gap-4">
 				<div class="flex flex-col gap-1.5">
 					<h1 class=" text-gray-500">Account</h1>
-					<a href="dashboard/profile/{profile?.id}" class="hover:text-green-900">
+					<a href="/dashboard/profile/{profile?.id}" class="hover:text-green-900">
 						<div class="flex w-fit gap-1.5">
 							<UserRoundPen />
 							<h3>Profile</h3>

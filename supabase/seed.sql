@@ -1,10 +1,10 @@
 -- 1. Unit Seeder
 INSERT INTO public.unit (code, name) VALUES
     ('OUS', 'Office of the University Secretary'),
-    ('SLUC', 'School of Law UP Cebu'),
-    ('MLUC', 'Management Learning Unit of Cebu'),
-    ('NLUC', 'Natural Sciences Learning Unit of Cebu'),
-    ('NARTDI', 'National Association of Research and Technological Development Institute')
+    ('SLUC', 'South La Union Campus'),
+    ('MLUC', 'Middle La Union campus'),
+    ('NLUC', 'North La Union Campus'),
+    ('NARTDI', 'National Apiculture Reasearch Training and Development Institute')
 ON CONFLICT (code) DO UPDATE 
     SET name = EXCLUDED.name,
         updated_at = timezone('utc'::text, now());
