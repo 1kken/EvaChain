@@ -11,7 +11,6 @@
 	import * as Form from '$lib/components/ui/form';
 	import { Avatar, AvatarFallback, AvatarImage } from '$lib/components/ui/avatar';
 	import { Button } from '$lib/components/ui/button';
-	import { blur } from 'svelte/transition';
 	//zod
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
@@ -26,6 +25,7 @@
 	import { onMount } from 'svelte';
 	let { data }: { data: PageData } = $props();
 	const { form: profileForm } = data;
+	const { profile } = data;
 	const { supabase } = data;
 	const { units } = data;
 	const { natureOfWork } = data;
@@ -84,8 +84,8 @@
 			<form method="POST" action="?/updateprofile" class="space-y-4" use:enhance>
 				<div class="mb-4 flex justify-center">
 					<Avatar class="h-24 w-24">
-						<AvatarImage src={$formData.avatar_url} alt={$formData.first_name} />
-						<AvatarFallback>{$formData.first_name?.[0]}{$formData.last_name?.[0]}</AvatarFallback>
+						<AvatarImage src={profile.avatar_url} alt={profile.first_name} />
+						<AvatarFallback>{profile.first_name?.[0]}{profile.last_name?.[0]}</AvatarFallback>
 					</Avatar>
 				</div>
 				<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -222,11 +222,7 @@
 					</div>
 				</div>
 				<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-					<div
-						class="space-y-2"
-						class:sm:col-span-2={!showProgramme}
-						transition:blur={{ delay: 500 }}
-					>
+					<div class="space-y-2" class:sm:col-span-2={!showProgramme}>
 						<Form.Field {form} name="office_id">
 							<Form.Control>
 								{#snippet children({ props })}
@@ -248,7 +244,7 @@
 									>
 										<Select.Trigger
 											{...props}
-											class={`block truncate ${!showProgramme ? 'w-full' : 'max-w-[350px]'}`}
+											class={`truncate ${!showProgramme ? 'w-full' : 'max-w-[350px]'}`}
 										>
 											{#if !$formData.unit_id}
 												Please select a unit first
@@ -360,7 +356,7 @@
 										}}
 										disabled={!$formData.nature_of_work_id || isLoadingPositions}
 									>
-										<Select.Trigger {...props} class="block max-w-[350px] truncate">
+										<Select.Trigger {...props} class=" max-w-[350px] truncate">
 											<div class="truncate">
 												{#if !$formData.nature_of_work_id}
 													Please select nature of work first

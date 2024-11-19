@@ -44,6 +44,7 @@ export const load: PageServerLoad = async ({ params, locals: { supabase } }) => 
 	}
 
 	return {
+		profile,
 		employeeStatus,
 		units,
 		natureOfWork,

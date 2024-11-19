@@ -9,28 +9,23 @@
 	import { page } from '$app/stores';
 
 	let loading = $state(false);
+	let open = $state(false);
 
 	async function handleLogOut() {
-		if (loading) return;
-		loading = true;
-
-		try {
-			const { error } = await $page.data.supabase.auth.signOut();
-			if (error) throw error;
-			await goto('/auth');
-		} catch (error) {
-			console.error('Logout error:', error);
-		} finally {
-			loading = false;
-		}
+		const { error } = await $page.data.supabase.auth.signOut();
+		if (error) throw error;
+		await goto('/auth');
 	}
 
+	function handleNavigate() {
+		open = false; // Close sheet before navigation
+	}
 	let { profile }: { profile: Tables<'profiles'> | null } = $props();
 </script>
 
 <div class="flex items-center gap-2">
-	<Sheet.Root>
-		<Sheet.Trigger class=" focus:outline-none">
+	<Sheet.Root bind:open>
+		<Sheet.Trigger class="focus:outline-none">
 			<Avatar.Root>
 				<Avatar.Image
 					src={profile?.avatar_url ?? undefined}
@@ -59,8 +54,12 @@
 			</Sheet.Header>
 			<div class="flex flex-col gap-4">
 				<div class="flex flex-col gap-1.5">
-					<h1 class=" text-gray-500">Account</h1>
-					<a href="/dashboard/profile/{profile?.id}" class="hover:text-green-900">
+					<h1 class="text-gray-500">Account</h1>
+					<a
+						href="/dashboard/profile/{profile?.id}"
+						class="hover:text-green-900"
+						onclick={handleNavigate}
+					>
 						<div class="flex w-fit gap-1.5">
 							<UserRoundPen />
 							<h3>Profile</h3>
@@ -70,7 +69,7 @@
 				<Separator />
 				<div>
 					<button
-						class=" flex w-fit cursor-pointer gap-1.5 border-none hover:text-green-900 focus:outline-none disabled:opacity-50"
+						class="flex w-fit cursor-pointer gap-1.5 border-none hover:text-green-900 focus:outline-none disabled:opacity-50"
 						onclick={handleLogOut}
 						disabled={loading}
 					>
