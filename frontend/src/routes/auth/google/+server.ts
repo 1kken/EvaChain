@@ -9,9 +9,13 @@ export const GET: RequestHandler = async (event) => {
 		provider: 'google',
 		options: {
 			redirectTo: new URL('/auth/callback', url.origin).toString() + '?next=/dashboard'
+			// queryParams: {
+			// 	hd: 'dmmmsu.edu.ph'
+			// }
 		}
 	});
 
+	console.log(data);
 	if (data.url) {
 		throw redirect(307, data.url); // use the redirect API for your server framework
 	}

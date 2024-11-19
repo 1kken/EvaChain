@@ -96,3 +96,9 @@ create policy "Avatar images are publicly accessible." on storage.objects
 
 create policy "Anyone can upload an avatar." on storage.objects
   for insert with check (bucket_id = 'avatars');
+
+-- Add updated_at trigger
+CREATE TRIGGER set_updated_at
+    BEFORE UPDATE ON profiles
+    FOR EACH ROW
+    EXECUTE FUNCTION fn_set_updated_at();

@@ -1,9 +1,3 @@
-# EvaChain/project_summary.md
-
-```md
-
-```
-
 # frontend/.gitignore
 
 ```
@@ -465,7 +459,7 @@ export const handle: Handle = sequence(supabase, authGuard);
 
 ```svelte
 <script lang="ts">
-	import { goto } from '$app/navigation';
+	import { goto, preloadData } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { Button } from '$lib/components/ui/button';
 
@@ -475,14 +469,15 @@ export const handle: Handle = sequence(supabase, authGuard);
 
 	$effect(() => {
 		currPathName = $page.url.pathname;
-		console.log(currPathName);
 	});
 
 	function goToAuthPage() {
+		preloadData('/auth');
 		goto('/auth');
 	}
 
 	function goToDashBoard() {
+		preloadData('/dashboard');
 		goto('/dashboard');
 	}
 </script>
@@ -528,28 +523,23 @@ export const handle: Handle = sequence(supabase, authGuard);
 	import { page } from '$app/stores';
 
 	let loading = $state(false);
+	let open = $state(false);
 
 	async function handleLogOut() {
-		if (loading) return;
-		loading = true;
-
-		try {
-			const { error } = await $page.data.supabase.auth.signOut();
-			if (error) throw error;
-			await goto('/auth');
-		} catch (error) {
-			console.error('Logout error:', error);
-		} finally {
-			loading = false;
-		}
+		const { error } = await $page.data.supabase.auth.signOut();
+		if (error) throw error;
+		await goto('/auth');
 	}
 
+	function handleNavigate() {
+		open = false; // Close sheet before navigation
+	}
 	let { profile }: { profile: Tables<'profiles'> | null } = $props();
 </script>
 
 <div class="flex items-center gap-2">
-	<Sheet.Root>
-		<Sheet.Trigger class=" focus:outline-none">
+	<Sheet.Root bind:open>
+		<Sheet.Trigger class="focus:outline-none">
 			<Avatar.Root>
 				<Avatar.Image
 					src={profile?.avatar_url ?? undefined}
@@ -578,8 +568,12 @@ export const handle: Handle = sequence(supabase, authGuard);
 			</Sheet.Header>
 			<div class="flex flex-col gap-4">
 				<div class="flex flex-col gap-1.5">
-					<h1 class=" text-gray-500">Account</h1>
-					<a href="dashboard/profile/{profile?.id}" class="hover:text-green-900">
+					<h1 class="text-gray-500">Account</h1>
+					<a
+						href="/dashboard/profile/{profile?.id}"
+						class="hover:text-green-900"
+						onclick={handleNavigate}
+					>
 						<div class="flex w-fit gap-1.5">
 							<UserRoundPen />
 							<h3>Profile</h3>
@@ -589,7 +583,7 @@ export const handle: Handle = sequence(supabase, authGuard);
 				<Separator />
 				<div>
 					<button
-						class=" flex w-fit cursor-pointer gap-1.5 border-none hover:text-green-900 focus:outline-none disabled:opacity-50"
+						class="flex w-fit cursor-pointer gap-1.5 border-none hover:text-green-900 focus:outline-none disabled:opacity-50"
 						onclick={handleLogOut}
 						disabled={loading}
 					>
@@ -2982,6 +2976,57 @@ export const authStore = {
 
 ```
 
+# frontend/src/lib/utils/profileHelper.ts
+
+```ts
+import type { Tables } from '$lib/types/database.types';
+import type { SupabaseClient } from '@supabase/supabase-js';
+import type { NavigationMenuLinkPropsWithoutHTML } from 'bits-ui';
+
+export const fetchOfficeByUnit = async (
+	unitId: number | null,
+	supabase: SupabaseClient
+): Promise<Tables<'office'>[]> => {
+	const { data, error } = await supabase.from('office').select('*').eq('unit_id', unitId);
+
+	if (error) {
+		throw error;
+	}
+
+	return data || [];
+};
+
+export const fetchProgrammeByOffice = async (
+	officeId: number | null,
+	supabase: SupabaseClient
+): Promise<Tables<'programme'>[]> => {
+	const { data, error } = await supabase.from('programme').select('*').eq('office_id', officeId);
+
+	if (error) {
+		throw error;
+	}
+
+	return data || [];
+};
+
+export const fetchPositionByNatureOfWork = async (
+	natureOfWorkId: number | null,
+	supabase: SupabaseClient
+): Promise<Tables<'position'>[]> => {
+	const { data, error } = await supabase
+		.from('position')
+		.select('*')
+		.eq('nature_of_work_id', natureOfWorkId);
+
+	if (error) {
+		throw error;
+	}
+
+	return data || [];
+};
+
+```
+
 # frontend/src/lib/utils/toast.ts
 
 ```ts
@@ -3103,36 +3148,7 @@ export const load: LayoutLoad = async ({ data, depends, fetch }) => {
 
 ```svelte
 <script lang="ts">
-	import * as Card from '$lib/components/ui/card/index.js';
-	import * as Carousel from '$lib/components/ui/carousel/index.js';
-	import Autoplay from 'embla-carousel-autoplay';
-	let text = ['Eva Chain', 'Block chain', 'Idol', 'MWAHAHAHAHA', 'I love you'];
 </script>
-
-<div class="flex h-screen w-screen items-center justify-center">
-	<Carousel.Root
-		class="w-full max-w-lg"
-		plugins={[
-			Autoplay({
-				delay: 2000
-			})
-		]}
-	>
-		<Carousel.Content>
-			{#each Array(5) as _, i (i)}
-				<Carousel.Item>
-					<div class="p-1">
-						<Card.Root>
-							<Card.Content class="flex aspect-square items-center justify-center p-6">
-								<span class="text-4xl font-semibold">{text[i]}</span>
-							</Card.Content>
-						</Card.Root>
-					</div>
-				</Carousel.Item>
-			{/each}
-		</Carousel.Content>
-	</Carousel.Root>
-</div>
 
 ```
 
@@ -3157,7 +3173,6 @@ import type { Actions, PageServerLoad } from './$types';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { logInSchema, signupSchema } from './schema';
-import { handle } from '../../hooks.server';
 
 //PROPS passed down to +page.svelte
 export const load: PageServerLoad = async () => {
@@ -3176,6 +3191,7 @@ export const actions: Actions = {
 		const form = await superValidate(request, zod(signupSchema));
 		// If not valid return the form with errors
 		if (!form.valid) {
+			console.log(form);
 			return fail(400, {
 				form
 			});
@@ -3283,7 +3299,6 @@ export const actions: Actions = {
 
 ```ts
 import { redirect, type RequestHandler } from '@sveltejs/kit';
-
 export const GET: RequestHandler = async (event) => {
 	const {
 		url,
@@ -3293,13 +3308,37 @@ export const GET: RequestHandler = async (event) => {
 	const next = url.searchParams.get('next') ?? '/';
 
 	if (code) {
-		const { error } = await supabase.auth.exchangeCodeForSession(code);
-		if (!error) {
+		const {
+			data: { session },
+			error
+		} = await supabase.auth.exchangeCodeForSession(code);
+
+		if (error) {
+			throw new Error('Google 0auth error!');
+		}
+
+		if (!error && session?.provider_token) {
+			// Fetch Google profile
+			const userResponse = await fetch(
+				`https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${session.provider_token}`
+			);
+			const userData = await userResponse.json();
+
+			// Update Supabase profile
+			const { error } = await supabase.from('profiles').upsert({
+				id: session.user.id,
+				first_name: userData.given_name,
+				last_name: userData.family_name
+			});
+
+			if (error) {
+				throw new Error('Setting user data google to db error');
+			}
+
 			throw redirect(303, `/${next.slice(1)}`);
 		}
 	}
 
-	// return the user to an error page with instructions
 	throw redirect(303, '/auth/auth-code-error');
 };
 
@@ -3362,9 +3401,13 @@ export const GET: RequestHandler = async (event) => {
 		provider: 'google',
 		options: {
 			redirectTo: new URL('/auth/callback', url.origin).toString() + '?next=/dashboard'
+			// queryParams: {
+			// 	hd: 'dmmmsu.edu.ph'
+			// }
 		}
 	});
 
+	console.log(data);
 	if (data.url) {
 		throw redirect(307, data.url); // use the redirect API for your server framework
 	}
@@ -3462,7 +3505,10 @@ export const GET: RequestHandler = async (event) => {
 ```ts
 import { z } from 'zod';
 export const logInSchema = z.object({
-	email: z.string().email(),
+	email: z
+		.string()
+		.email()
+		.regex(/'^[a-zA-Z0-9._%+-]+@dmmmsu\.edu\.ph$'/, 'Only dmmmsu.edu.ph email is allowed'),
 	password: z.string().min(6)
 });
 
@@ -3476,7 +3522,10 @@ export const signupSchema = z
 			.string()
 			.min(3)
 			.regex(/^[A-Za-z]+$/, 'Names cannot contain numbers'),
-		email: z.string().email(),
+		email: z
+			.string()
+			.email()
+			.regex(/'^[a-zA-Z0-9._%+-]+@dmmmsu\.edu\.ph$'/, 'Only dmmmsu.edu.ph email is allowed'),
 		password: z.string().min(6),
 		passwordRepeat: z.string().min(6)
 	})
@@ -3635,9 +3684,627 @@ export const load: PageServerLoad = async ({ depends, locals: { supabase, user }
 <script lang="ts">
 	import type { PageData } from './$types';
 	let { data }: { data: PageData } = $props();
-	const user = data.user;
-	const profile = data.profile;
 </script>
+
+```
+
+# frontend/src/routes/dashboard/profile/[profileid]/+page.server.ts
+
+```ts
+import { error, redirect } from '@sveltejs/kit';
+import type { PageServerLoad, Actions } from './$types';
+import { fail, superValidate } from 'sveltekit-superforms';
+import { zod } from 'sveltekit-superforms/adapters';
+import { profileSchema, profileSubmitSchema } from './schema';
+
+export const load: PageServerLoad = async ({ params, locals: { supabase } }) => {
+	if (!params.profileid) {
+		throw error(404, 'Profile ID not found');
+	}
+
+	const { data: profile, error: err } = await supabase
+		.from('profiles')
+		.select()
+		.eq('id', params.profileid)
+		.single();
+
+	if (err) {
+		throw error(500, 'Failed to load profile');
+	}
+
+	if (!profile) {
+		throw error(404, 'Profile not found');
+	}
+
+	const { data: units, error: unitErr } = await supabase.from('unit').select();
+
+	if (unitErr) {
+		throw error(500, 'Failed to load units');
+	}
+
+	const { data: natureOfWork, error: nowErr } = await supabase.from('nature_of_work').select();
+
+	if (nowErr) {
+		throw error(500, 'Failed to load nature of work');
+	}
+
+	const { data: employeeStatus, error: employeeStatusErr } = await supabase
+		.from('employee_status')
+		.select();
+
+	if (employeeStatusErr) {
+		throw error(500, 'Failed to load employee status');
+	}
+
+	return {
+		profile,
+		employeeStatus,
+		units,
+		natureOfWork,
+		form: await superValidate(profile, zod(profileSchema))
+	};
+};
+
+export const actions: Actions = {
+	updateprofile: async ({ request, locals: { supabase, session } }) => {
+		const test = await request.formData();
+		const form = await superValidate(test, zod(profileSubmitSchema));
+		console.log(form.data.unit_id);
+		// If not valid return the form with errors
+		if (!form.valid) {
+			console.log(form);
+			return fail(400, {
+				form
+			});
+		}
+		const {
+			first_name,
+			last_name,
+			middle_name,
+			employee_id,
+			unit_id,
+			nature_of_work_id,
+			office_id,
+			programme_id,
+			position_id,
+			employee_status_id
+		} = form.data;
+
+		if (!session?.user) {
+			redirect(401, 'Unauthorized');
+		}
+		//update
+		const { error } = await supabase
+			.from('profiles')
+			.update({
+				first_name,
+				last_name,
+				middle_name,
+				employee_id,
+				unit_id,
+				nature_of_work_id,
+				office_id,
+				programme_id,
+				position_id,
+				employee_status_id
+			})
+			.eq('id', session?.user.id);
+	}
+};
+
+```
+
+# frontend/src/routes/dashboard/profile/[profileid]/+page.svelte
+
+```svelte
+<script lang="ts">
+	import type { PageData } from './$types';
+	import { Input } from '$lib/components/ui/input';
+	import {
+		Card,
+		CardContent,
+		CardDescription,
+		CardHeader,
+		CardTitle
+	} from '$lib/components/ui/card';
+	import * as Form from '$lib/components/ui/form';
+	import { Avatar, AvatarFallback, AvatarImage } from '$lib/components/ui/avatar';
+	import { Button } from '$lib/components/ui/button';
+	//zod
+	import { superForm } from 'sveltekit-superforms';
+	import { zodClient } from 'sveltekit-superforms/adapters';
+	import { profileSubmitSchema } from './schema';
+	import * as Select from '$lib/components/ui/select';
+	import type { Tables } from '$lib/types/database.types';
+	import {
+		fetchOfficeByUnit,
+		fetchPositionByNatureOfWork,
+		fetchProgrammeByOffice
+	} from '$lib/utils/profileHelper';
+	import { onMount } from 'svelte';
+	let { data }: { data: PageData } = $props();
+	const { form: profileForm } = data;
+	const { profile } = data;
+	const { supabase } = data;
+	const { units } = data;
+	const { natureOfWork } = data;
+	const { employeeStatus } = data;
+	let offices = $state<Tables<'office'>[]>();
+	let programme = $state<Tables<'programme'>[]>();
+	let positions = $state<Tables<'position'>[]>();
+
+	const form = superForm(profileForm, {
+		validators: zodClient(profileSubmitSchema),
+		dataType: 'json'
+	});
+
+	const { form: formData, enhance } = form;
+	let showProgramme = $derived($formData.nature_of_work_id === 1);
+	let isLoadingOffices = $state(false);
+	let isProgrammeLoading = $state(false);
+	let isLoadingPositions = $state(false);
+	onMount(async () => {
+		const promises = [];
+
+		if ($formData.unit_id) {
+			promises.push(
+				fetchOfficeByUnit($formData.unit_id, supabase).then((result) => (offices = result))
+			);
+		}
+
+		if ($formData.nature_of_work_id) {
+			promises.push(
+				fetchPositionByNatureOfWork($formData.nature_of_work_id, supabase).then(
+					(result) => (positions = result)
+				)
+			);
+		}
+
+		if ($formData.office_id && $formData.nature_of_work_id === 1) {
+			promises.push(
+				fetchProgrammeByOffice($formData.office_id, supabase).then((result) => (programme = result))
+			);
+		}
+
+		await Promise.all(promises);
+	});
+	$effect(() => {
+		$inspect($formData);
+	});
+</script>
+
+<div class="container mx-auto p-4">
+	<Card class="mx-auto w-full max-w-2xl">
+		<CardHeader>
+			<CardTitle>Employee Profile</CardTitle>
+			<CardDescription>Update your employee information</CardDescription>
+		</CardHeader>
+		<CardContent>
+			<form method="POST" action="?/updateprofile" class="space-y-4" use:enhance>
+				<div class="mb-4 flex justify-center">
+					<Avatar class="h-24 w-24">
+						<AvatarImage src={profile.avatar_url} alt={profile.first_name} />
+						<AvatarFallback>{profile.first_name?.[0]}{profile.last_name?.[0]}</AvatarFallback>
+					</Avatar>
+				</div>
+				<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+					<Form.Field {form} name="employee_id">
+						<Form.Control>
+							{#snippet children({ props })}
+								<Form.Label>Employee ID</Form.Label>
+								<Input {...props} bind:value={$formData.employee_id} />
+							{/snippet}
+						</Form.Control>
+						<Form.Description>This is your dmmmsu employee id.</Form.Description>
+						<Form.FieldErrors />
+					</Form.Field>
+					<div class="space-y-2">
+						<Form.Field {form} name="email">
+							<Form.Control>
+								{#snippet children({ props })}
+									<Form.Label>Email</Form.Label>
+									<Input {...props} bind:value={$formData.email} />
+								{/snippet}
+							</Form.Control>
+							<Form.Description>This is your dmmmsu email id.</Form.Description>
+							<Form.FieldErrors />
+						</Form.Field>
+					</div>
+				</div>
+
+				<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+					<div class="space-y-2">
+						<Form.Field {form} name="first_name">
+							<Form.Control>
+								{#snippet children({ props })}
+									<Form.Label>First name</Form.Label>
+									<Input {...props} bind:value={$formData.first_name} />
+								{/snippet}
+							</Form.Control>
+							<Form.Description>This is your public display name.</Form.Description>
+							<Form.FieldErrors />
+						</Form.Field>
+					</div>
+					<div class="space-y-2">
+						<Form.Field {form} name="middle_name">
+							<Form.Control>
+								{#snippet children({ props })}
+									<Form.Label>Middle name</Form.Label>
+									<Input {...props} bind:value={$formData.middle_name} />
+								{/snippet}
+							</Form.Control>
+							<Form.Description>This is your public display name.</Form.Description>
+							<Form.FieldErrors />
+						</Form.Field>
+					</div>
+					<div class="space-y-2">
+						<Form.Field {form} name="last_name">
+							<Form.Control>
+								{#snippet children({ props })}
+									<Form.Label>last name</Form.Label>
+									<Input {...props} bind:value={$formData.last_name} />
+								{/snippet}
+							</Form.Control>
+							<Form.Description>This is your public display name.</Form.Description>
+							<Form.FieldErrors />
+						</Form.Field>
+					</div>
+				</div>
+				<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+					<div class="space-y-2">
+						<Form.Field {form} name="unit_id">
+							<Form.Control>
+								{#snippet children({ props })}
+									<Form.Label>Unit</Form.Label>
+									<Select.Root
+										type="single"
+										value={$formData.unit_id?.toString()}
+										onValueChange={async (value) => {
+											$formData.unit_id = value ? parseInt(value) : null;
+											offices = [];
+											$formData.office_id = null;
+											isLoadingOffices = true;
+											offices = await fetchOfficeByUnit(parseInt(value), supabase);
+											isLoadingOffices = false;
+										}}
+									>
+										<Select.Trigger {...props} class="truncate">
+											{$formData.unit_id
+												? units.find((u) => u.id === $formData.unit_id)?.name
+												: 'Select the unit you are on.'}
+										</Select.Trigger>
+										<Select.Content>
+											{#each units as unit (unit.id)}
+												<Select.Item value={unit.id.toString()} label={unit.name} />
+											{/each}
+										</Select.Content>
+									</Select.Root>
+								{/snippet}
+							</Form.Control>
+							<Form.Description>Select the unit you are on.</Form.Description>
+							<Form.FieldErrors />
+						</Form.Field>
+					</div>
+					<div class="space-y-2">
+						<Form.Field {form} name="nature_of_work_id">
+							<Form.Control>
+								{#snippet children({ props })}
+									<Form.Label>Nature of Work</Form.Label>
+									<Select.Root
+										type="single"
+										value={$formData.nature_of_work_id?.toString()}
+										onValueChange={async (value) => {
+											$formData.nature_of_work_id = value ? parseInt(value) : null;
+											positions = [];
+											$formData.position_id = null;
+											isLoadingPositions = true;
+											positions = await fetchPositionByNatureOfWork(parseInt(value), supabase);
+											isLoadingPositions = false;
+										}}
+									>
+										<Select.Trigger {...props} class="truncate">
+											{$formData.nature_of_work_id
+												? natureOfWork.find((n) => n.id === $formData.nature_of_work_id)?.type
+												: 'Select the unit you are on.'}
+										</Select.Trigger>
+										<Select.Content>
+											{#each natureOfWork as now (now.id)}
+												<Select.Item value={now.id.toString()} label={now.type} />
+											{/each}
+										</Select.Content>
+									</Select.Root>
+								{/snippet}
+							</Form.Control>
+							<Form.Description>Select your unit.</Form.Description>
+							<Form.FieldErrors />
+						</Form.Field>
+					</div>
+				</div>
+				<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+					<div class="space-y-2" class:sm:col-span-2={!showProgramme}>
+						<Form.Field {form} name="office_id">
+							<Form.Control>
+								{#snippet children({ props })}
+									<Form.Label>Office</Form.Label>
+									<Select.Root
+										type="single"
+										value={$formData.office_id?.toString()}
+										onValueChange={async (value) => {
+											$formData.office_id = value ? parseInt(value) : null;
+											if (showProgramme) {
+												programme = [];
+												$formData.programme_id = null;
+												isProgrammeLoading = true;
+												programme = await fetchProgrammeByOffice(parseInt(value), supabase);
+												isProgrammeLoading = false;
+											}
+										}}
+										disabled={!$formData.unit_id || isLoadingOffices}
+									>
+										<Select.Trigger
+											{...props}
+											class={`truncate ${!showProgramme ? 'w-full' : 'max-w-[350px]'}`}
+										>
+											{#if !$formData.unit_id}
+												Please select a unit first
+											{:else if isLoadingOffices}
+												Loading offices...
+											{:else if !offices || offices.length === 0}
+												No offices available for this unit
+											{:else if $formData.office_id}
+												{offices.find((o) => o.id === $formData.office_id)?.name ??
+													'Office not found'}
+											{:else}
+												Select an office
+											{/if}
+										</Select.Trigger>
+										<Select.Content class={!showProgramme ? 'w-full' : 'max-w-[350px]'}>
+											{#if !$formData.unit_id}
+												<Select.Item value="" disabled>Please select a unit first</Select.Item>
+											{:else if isLoadingOffices}
+												<Select.Item value="" disabled>Loading offices...</Select.Item>
+											{:else if !offices || offices.length === 0}
+												<Select.Item value="" disabled>
+													No offices available for this unit
+												</Select.Item>
+											{:else}
+												{#each offices as office (office.id)}
+													<Select.Item
+														value={String(office.id)}
+														label={office.name}
+														class="whitespace-normal break-words py-2 pr-2"
+													/>
+												{/each}
+											{/if}
+										</Select.Content>
+									</Select.Root>
+								{/snippet}
+							</Form.Control>
+							<Form.Description>Select your office you are on.</Form.Description>
+							<Form.FieldErrors />
+						</Form.Field>
+					</div>
+
+					{#if showProgramme}
+						<div class="space-y-2">
+							<Form.Field {form} name="programme_id">
+								<Form.Control>
+									{#snippet children({ props })}
+										<Form.Label>Programme</Form.Label>
+										<Select.Root
+											type="single"
+											value={$formData.programme_id?.toString()}
+											onValueChange={(value) => {
+												$formData.programme_id = value ? parseInt(value) : null;
+											}}
+											disabled={!$formData.office_id || isProgrammeLoading}
+										>
+											<Select.Trigger {...props} class="max-w-[350px] truncate">
+												{#if !$formData.office_id}
+													Please select an office first
+												{:else if isProgrammeLoading}
+													Loading programmes...
+												{:else if !programme || programme.length === 0}
+													No programmes available for this office
+												{:else if $formData.programme_id}
+													{programme.find((p) => p.id === $formData.programme_id)?.name ??
+														'Programme not found'}
+												{:else}
+													Select a programme
+												{/if}
+											</Select.Trigger>
+											<Select.Content class="max-w-[350px]">
+												{#if !$formData.office_id}
+													<Select.Item value="" disabled>Please select an office first</Select.Item>
+												{:else if isProgrammeLoading}
+													<Select.Item value="" disabled>Loading programmes...</Select.Item>
+												{:else if !programme || programme.length === 0}
+													<Select.Item value="" disabled>
+														No programmes available for this office
+													</Select.Item>
+												{:else}
+													{#each programme as prog (prog.id)}
+														<Select.Item
+															value={String(prog.id)}
+															label={prog.name}
+															class="whitespace-normal break-words py-2 pr-2"
+														/>
+													{/each}
+												{/if}
+											</Select.Content>
+										</Select.Root>
+									{/snippet}
+								</Form.Control>
+								<Form.Description>Select your programme.</Form.Description>
+								<Form.FieldErrors />
+							</Form.Field>
+						</div>
+					{/if}
+				</div>
+				<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+					<div class="space-y-2">
+						<Form.Field {form} name="position_id">
+							<Form.Control>
+								{#snippet children({ props })}
+									<Form.Label>Position</Form.Label>
+									<Select.Root
+										type="single"
+										value={$formData.position_id?.toString()}
+										onValueChange={(value) => {
+											$formData.position_id = value ? parseInt(value) : null;
+										}}
+										disabled={!$formData.nature_of_work_id || isLoadingPositions}
+									>
+										<Select.Trigger {...props} class=" max-w-[350px] truncate">
+											<div class="truncate">
+												{#if !$formData.nature_of_work_id}
+													Please select nature of work first
+												{:else if isLoadingPositions}
+													Loading positions...
+												{:else if !positions || positions.length === 0}
+													No positions available
+												{:else if $formData.position_id}
+													{positions.find((p) => p.id === $formData.position_id)?.name ??
+														'Position not found'}
+												{:else}
+													Select a position
+												{/if}
+											</div>
+										</Select.Trigger>
+										<Select.Content class="max-w-[350px]">
+											{#if !$formData.nature_of_work_id}
+												<Select.Item value="" disabled>
+													Please select nature of work first
+												</Select.Item>
+											{:else if isLoadingPositions}
+												<Select.Item value="" disabled>Loading positions...</Select.Item>
+											{:else if !positions || positions.length === 0}
+												<Select.Item value="" disabled>No positions available</Select.Item>
+											{:else}
+												{#each positions as pos (pos.id)}
+													<Select.Item
+														value={String(pos.id)}
+														label={pos.name}
+														class="whitespace-normal break-words py-2 pr-2"
+													/>
+												{/each}
+											{/if}
+										</Select.Content>
+									</Select.Root>
+								{/snippet}
+							</Form.Control>
+							<Form.Description>Select your position.</Form.Description>
+							<Form.FieldErrors />
+						</Form.Field>
+					</div>
+					<Form.Field {form} name="employee_status_id">
+						<Form.Control>
+							{#snippet children({ props })}
+								<Form.Label>Employee status</Form.Label>
+								<Select.Root
+									type="single"
+									value={$formData.employee_status_id?.toString()}
+									onValueChange={async (value) => {
+										$formData.employee_status_id = value ? parseInt(value) : null;
+										console.log($formData.employee_status_id);
+									}}
+								>
+									<Select.Trigger {...props} class="truncate">
+										{$formData.employee_status_id
+											? employeeStatus.find((n) => n.id === $formData.employee_status_id)?.type
+											: 'Select your employment status.'}
+									</Select.Trigger>
+									<Select.Content>
+										{#each employeeStatus as employeeStat (employeeStat.id)}
+											<Select.Item value={employeeStat.id.toString()} label={employeeStat.type} />
+										{/each}
+									</Select.Content>
+								</Select.Root>
+							{/snippet}
+						</Form.Control>
+						<Form.Description>Select your unit.</Form.Description>
+						<Form.FieldErrors />
+					</Form.Field>
+				</div>
+				<Button type="submit" class="w-full">Update Profile</Button>
+			</form>
+		</CardContent>
+	</Card>
+</div>
+
+```
+
+# frontend/src/routes/dashboard/profile/[profileid]/schema.ts
+
+```ts
+import { z } from 'zod';
+
+export const profileSchema = z.object({
+	avatar_url: z.string().nullable().optional(),
+	created_at: z.string().nullable().optional(),
+	email: z.string().email('Invalid email address').nullable(),
+	employee_id: z.string().min(1, 'Employee ID is required').nullable(),
+	employee_status_id: z
+		.number()
+		.int('Must be an integer')
+		.positive('Must be a positive number')
+		.nullable(),
+	first_name: z
+		.string()
+		.min(2, 'First name must be at least 2 characters')
+		.regex(/^[A-Za-z\s]+$/, 'First name can only contain letters and spaces')
+		.nullable(),
+	id: z.string().min(1, 'ID is required').optional(),
+	last_name: z
+		.string()
+		.min(2, 'Last name must be at least 2 characters')
+		.regex(/^[A-Za-z\s]+$/, 'Last name can only contain letters and spaces')
+		.nullable(),
+	middle_name: z
+		.string()
+		.regex(/^[A-Za-z\s]*$/, 'Middle name can only contain letters and spaces')
+		.nullable(),
+	nature_of_work_id: z
+		.number()
+		.int('Must be an integer')
+		.positive('Must be a positive number')
+		.nullable(),
+	office_id: z.number().int('Must be an integer').positive('Must be a positive number').nullable(),
+	position_id: z
+		.number()
+		.int('Must be an integer')
+		.positive('Must be a positive number')
+		.nullable(),
+	programme_id: z
+		.number()
+		.int('Must be an integer')
+		.positive('Must be a positive number')
+		.nullable(),
+	unit_id: z.number().int('Must be an integer').positive('Must be a positive number').nullable(),
+	updated_at: z.string().nullable().optional()
+});
+// Stricter schema for form submission
+export const profileSubmitSchema = profileSchema.extend({
+	employee_id: z.string().min(3, 'Employee ID is required'),
+	first_name: z
+		.string()
+		.refine(
+			(val) => val.length >= 2 && /^[A-Za-z\s]+$/.test(val),
+			'First name must be at least 2 characters and contain only letters and spaces'
+		),
+	last_name: z
+		.string()
+		.refine(
+			(val) => val.length >= 2 && /^[A-Za-z\s]+$/.test(val),
+			'Last name must be at least 2 characters and contain only letters'
+		),
+	unit_id: z.number().positive(),
+	office_id: z.number().positive()
+	// Add other required fields here
+});
+
+export type ProfileSubmitSchema = typeof profileSubmitSchema;
+export type ProfileSchema = typeof profileSchema;
 
 ```
 
@@ -3856,7 +4523,7 @@ main
 # supabase/.temp/cli-latest
 
 ```
-v1.219.2
+v1.223.10
 ```
 
 # supabase/.temp/gotrue-version
@@ -4409,6 +5076,11 @@ create policy "Avatar images are publicly accessible." on storage.objects
 create policy "Anyone can upload an avatar." on storage.objects
   for insert with check (bucket_id = 'avatars');
 
+-- Add updated_at trigger
+CREATE TRIGGER set_updated_at
+    BEFORE UPDATE ON profiles
+    FOR EACH ROW
+    EXECUTE FUNCTION fn_set_updated_at();
 ```
 
 # supabase/seed.sql
@@ -4417,10 +5089,10 @@ create policy "Anyone can upload an avatar." on storage.objects
 -- 1. Unit Seeder
 INSERT INTO public.unit (code, name) VALUES
     ('OUS', 'Office of the University Secretary'),
-    ('SLUC', 'School of Law UP Cebu'),
-    ('MLUC', 'Management Learning Unit of Cebu'),
-    ('NLUC', 'Natural Sciences Learning Unit of Cebu'),
-    ('NARTDI', 'National Association of Research and Technological Development Institute')
+    ('SLUC', 'South La Union Campus'),
+    ('MLUC', 'Middle La Union campus'),
+    ('NLUC', 'North La Union Campus'),
+    ('NARTDI', 'National Apiculture Reasearch Training and Development Institute')
 ON CONFLICT (code) DO UPDATE 
     SET name = EXCLUDED.name,
         updated_at = timezone('utc'::text, now());
