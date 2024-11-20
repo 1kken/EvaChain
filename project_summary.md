@@ -151,7 +151,7 @@ export default ts.config(
 		"@tailwindcss/typography": "^0.5.15",
 		"@types/eslint": "^9.6.0",
 		"autoprefixer": "^10.4.20",
-		"bits-ui": "^1.0.0-next.58",
+		"bits-ui": "^1.0.0-next.63",
 		"clsx": "^2.1.1",
 		"embla-carousel-svelte": "^8.3.1",
 		"eslint": "^9.7.0",
@@ -159,6 +159,7 @@ export default ts.config(
 		"eslint-plugin-svelte": "^2.36.0",
 		"formsnap": "^2.0.0-next.1",
 		"globals": "^15.0.0",
+		"lucide-svelte": "^0.460.1",
 		"mode-watcher": "^0.4.1",
 		"prettier": "^3.3.2",
 		"prettier-plugin-svelte": "^3.2.6",
@@ -180,8 +181,7 @@ export default ts.config(
 	"dependencies": {
 		"@supabase/ssr": "^0.5.1",
 		"@supabase/supabase-js": "^2.46.1",
-		"embla-carousel-autoplay": "^8.3.1",
-		"lucide-svelte": "^0.460.1"
+		"embla-carousel-autoplay": "^8.3.1"
 	}
 }
 
@@ -303,6 +303,30 @@ You can preview the production build with `npm run preview`.
 	}
 	body {
 		@apply bg-background text-foreground;
+	}
+}
+
+@layer base {
+	:root {
+		--sidebar-background: 150 30% 96%;
+		--sidebar-foreground: 150 30% 20%;
+		--sidebar-primary: 150 30% 15%;
+		--sidebar-primary-foreground: 150 30% 96%;
+		--sidebar-accent: 150 30% 92%;
+		--sidebar-accent-foreground: 150 30% 15%;
+		--sidebar-border: 150 30% 85%;
+		--sidebar-ring: 150 60% 40%;
+	}
+
+	.dark {
+		--sidebar-background: 150 30% 15%;
+		--sidebar-foreground: 150 30% 96%;
+		--sidebar-primary: 150 30% 96%;
+		--sidebar-primary-foreground: 150 30% 15%;
+		--sidebar-accent: 150 30% 20%;
+		--sidebar-accent-foreground: 150 30% 96%;
+		--sidebar-border: 150 30% 20%;
+		--sidebar-ring: 150 60% 40%;
 	}
 }
 
@@ -444,159 +468,9 @@ export const handle: Handle = sequence(supabase, authGuard);
 
 ```
 
-# frontend/src/lib/components/custom/footer.svelte
+# frontend/src/lib/assets/logo.svg
 
-```svelte
-<footer>
-	<span class="block text-center text-sm text-gray-500 sm:text-center dark:text-gray-400"
-		>© 2024 EvaChain. All Rights Reserved.</span
-	>
-</footer>
-
-```
-
-# frontend/src/lib/components/custom/navbar.svelte
-
-```svelte
-<script lang="ts">
-	import { goto, preloadData } from '$app/navigation';
-	import { page } from '$app/stores';
-	import { Button } from '$lib/components/ui/button';
-
-	import { isAuthenticated, currentProfile } from '$lib/utils/authStore';
-	import SheetNav from './sheet_nav.svelte';
-	let currPathName: String = $state($page.url.pathname);
-
-	$effect(() => {
-		currPathName = $page.url.pathname;
-	});
-
-	function goToAuthPage() {
-		preloadData('/auth');
-		goto('/auth');
-	}
-
-	function goToDashBoard() {
-		preloadData('/dashboard');
-		goto('/dashboard');
-	}
-</script>
-
-<nav class="border-gray-200 bg-transparent shadow-lg dark:bg-gray-900">
-	<div class="mx-auto flex max-w-screen-xl flex-wrap items-center justify-between p-4">
-		<a href="/" class="flex items-center space-x-3 rtl:space-x-reverse">
-			<img src="https://flowbite.com/docs/images/logo.svg" class="h-8" alt="Flowbite Logo" />
-			<span
-				class="text-foreground self-center whitespace-nowrap text-2xl font-semibold dark:text-white"
-				>EvaChain</span
-			>
-		</a>
-		<div>
-			{#if currPathName === '/' && !$isAuthenticated}
-				<Button onclick={goToAuthPage}>Log-in/Sign-up</Button>
-			{/if}
-			{#if currPathName === '/' && $isAuthenticated}
-				<Button onclick={goToDashBoard}>Go to dashboard</Button>
-			{/if}
-			{#if currPathName !== '/' && $isAuthenticated}
-				{#if $currentProfile}
-					<SheetNav profile={$currentProfile} />
-				{/if}
-			{/if}
-		</div>
-	</div>
-</nav>
-
-```
-
-# frontend/src/lib/components/custom/sheet_nav.svelte
-
-```svelte
-<script lang="ts">
-	import * as Sheet from '$lib/components/ui/sheet';
-	import * as Avatar from '$lib/components/ui/avatar';
-	import { Separator } from '$lib/components/ui/separator';
-	import type { Tables } from '$lib/types/database.types';
-	import { UserRoundPen } from 'lucide-svelte';
-	import { LogOut } from 'lucide-svelte';
-	import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
-
-	let loading = $state(false);
-	let open = $state(false);
-
-	async function handleLogOut() {
-		const { error } = await $page.data.supabase.auth.signOut();
-		if (error) throw error;
-		await goto('/auth');
-	}
-
-	function handleNavigate() {
-		open = false; // Close sheet before navigation
-	}
-	let { profile }: { profile: Tables<'profiles'> | null } = $props();
-</script>
-
-<div class="flex items-center gap-2">
-	<Sheet.Root bind:open>
-		<Sheet.Trigger class="focus:outline-none">
-			<Avatar.Root>
-				<Avatar.Image
-					src={profile?.avatar_url ?? undefined}
-					alt={profile?.first_name ?? 'User avatar'}
-				/>
-				<Avatar.Fallback>
-					{(profile?.first_name?.[0] ?? '') + (profile?.last_name?.[0] ?? '')}
-				</Avatar.Fallback>
-			</Avatar.Root>
-		</Sheet.Trigger>
-		<Sheet.Content side="right">
-			<Sheet.Header>
-				<div class="flex h-fit w-fit items-center gap-4">
-					<Avatar.Root>
-						<Avatar.Image
-							src={profile?.avatar_url ?? undefined}
-							alt={profile?.first_name ?? 'User avatar'}
-						/>
-						<Avatar.Fallback>
-							{(profile?.first_name?.[0] ?? '') + (profile?.last_name?.[0] ?? '')}
-						</Avatar.Fallback>
-					</Avatar.Root>
-					<h1>{profile?.first_name + ' ' + profile?.last_name}</h1>
-				</div>
-				<Separator />
-			</Sheet.Header>
-			<div class="flex flex-col gap-4">
-				<div class="flex flex-col gap-1.5">
-					<h1 class="text-gray-500">Account</h1>
-					<a
-						href="/dashboard/profile/{profile?.id}"
-						class="hover:text-green-900"
-						onclick={handleNavigate}
-					>
-						<div class="flex w-fit gap-1.5">
-							<UserRoundPen />
-							<h3>Profile</h3>
-						</div>
-					</a>
-				</div>
-				<Separator />
-				<div>
-					<button
-						class="flex w-fit cursor-pointer gap-1.5 border-none hover:text-green-900 focus:outline-none disabled:opacity-50"
-						onclick={handleLogOut}
-						disabled={loading}
-					>
-						<LogOut />
-						<h5>Log-out</h5>
-					</button>
-				</div>
-			</div>
-		</Sheet.Content>
-	</Sheet.Root>
-</div>
-
-```
+This is a file of the type: SVG Image
 
 # frontend/src/lib/components/ui/alert/alert-description.svelte
 
@@ -1481,6 +1355,388 @@ export {
 
 ```
 
+# frontend/src/lib/components/ui/collapsible/index.ts
+
+```ts
+import { Collapsible as CollapsiblePrimitive } from "bits-ui";
+
+const Root: typeof CollapsiblePrimitive.Root = CollapsiblePrimitive.Root;
+const Trigger: typeof CollapsiblePrimitive.Trigger = CollapsiblePrimitive.Trigger;
+const Content: typeof CollapsiblePrimitive.Content = CollapsiblePrimitive.Content;
+
+export {
+	Root,
+	Content,
+	Trigger,
+	//
+	Root as Collapsible,
+	Content as CollapsibleContent,
+	Trigger as CollapsibleTrigger,
+};
+
+```
+
+# frontend/src/lib/components/ui/dropdown-menu/dropdown-menu-checkbox-item.svelte
+
+```svelte
+<script lang="ts">
+	import { DropdownMenu as DropdownMenuPrimitive, type WithoutChildrenOrChild } from "bits-ui";
+	import Check from "lucide-svelte/icons/check";
+	import Minus from "lucide-svelte/icons/minus";
+	import { cn } from "$lib/utils.js";
+	import type { Snippet } from "svelte";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		children: childrenProp,
+		checked = $bindable(false),
+		indeterminate = $bindable(false),
+		...restProps
+	}: WithoutChildrenOrChild<DropdownMenuPrimitive.CheckboxItemProps> & {
+		children?: Snippet;
+	} = $props();
+</script>
+
+<DropdownMenuPrimitive.CheckboxItem
+	bind:ref
+	bind:checked
+	bind:indeterminate
+	class={cn(
+		"data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+		className
+	)}
+	{...restProps}
+>
+	{#snippet children({ checked, indeterminate })}
+		<span class="absolute left-2 flex size-3.5 items-center justify-center">
+			{#if indeterminate}
+				<Minus class="size-4" />
+			{:else}
+				<Check class={cn("size-4", !checked && "text-transparent")} />
+			{/if}
+		</span>
+		{@render childrenProp?.()}
+	{/snippet}
+</DropdownMenuPrimitive.CheckboxItem>
+
+```
+
+# frontend/src/lib/components/ui/dropdown-menu/dropdown-menu-content.svelte
+
+```svelte
+<script lang="ts">
+	import { cn } from "$lib/utils.js";
+	import { DropdownMenu as DropdownMenuPrimitive } from "bits-ui";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		sideOffset = 4,
+		portalProps,
+		...restProps
+	}: DropdownMenuPrimitive.ContentProps & {
+		portalProps?: DropdownMenuPrimitive.PortalProps;
+	} = $props();
+</script>
+
+<DropdownMenuPrimitive.Portal {...portalProps}>
+	<DropdownMenuPrimitive.Content
+		bind:ref
+		{sideOffset}
+		class={cn(
+			"bg-popover text-popover-foreground z-50 min-w-[8rem] overflow-hidden rounded-md border p-1 shadow-md",
+			"data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 outline-none",
+			className
+		)}
+		{...restProps}
+	/>
+</DropdownMenuPrimitive.Portal>
+
+```
+
+# frontend/src/lib/components/ui/dropdown-menu/dropdown-menu-group-heading.svelte
+
+```svelte
+<script lang="ts">
+	import { DropdownMenu as DropdownMenuPrimitive } from "bits-ui";
+	import { cn } from "$lib/utils.js";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		inset,
+		...restProps
+	}: DropdownMenuPrimitive.GroupHeadingProps & {
+		inset?: boolean;
+	} = $props();
+</script>
+
+<DropdownMenuPrimitive.GroupHeading
+	bind:ref
+	class={cn("px-2 py-1.5 text-sm font-semibold", inset && "pl-8", className)}
+	{...restProps}
+/>
+
+```
+
+# frontend/src/lib/components/ui/dropdown-menu/dropdown-menu-item.svelte
+
+```svelte
+<script lang="ts">
+	import { cn } from "$lib/utils.js";
+	import { DropdownMenu as DropdownMenuPrimitive } from "bits-ui";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		inset,
+		...restProps
+	}: DropdownMenuPrimitive.ItemProps & {
+		inset?: boolean;
+	} = $props();
+</script>
+
+<DropdownMenuPrimitive.Item
+	bind:ref
+	class={cn(
+		"data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none transition-colors data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&>svg]:size-4 [&>svg]:shrink-0",
+		inset && "pl-8",
+		className
+	)}
+	{...restProps}
+/>
+
+```
+
+# frontend/src/lib/components/ui/dropdown-menu/dropdown-menu-label.svelte
+
+```svelte
+<script lang="ts">
+	import { cn } from "$lib/utils.js";
+	import { type WithElementRef } from "bits-ui";
+	import type { HTMLAttributes } from "svelte/elements";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		inset,
+		children,
+		...restProps
+	}: WithElementRef<HTMLAttributes<HTMLDivElement>> & {
+		inset?: boolean;
+	} = $props();
+</script>
+
+<div
+	bind:this={ref}
+	class={cn("px-2 py-1.5 text-sm font-semibold", inset && "pl-8", className)}
+	{...restProps}
+>
+	{@render children?.()}
+</div>
+
+```
+
+# frontend/src/lib/components/ui/dropdown-menu/dropdown-menu-radio-item.svelte
+
+```svelte
+<script lang="ts">
+	import { DropdownMenu as DropdownMenuPrimitive, type WithoutChild } from "bits-ui";
+	import Circle from "lucide-svelte/icons/circle";
+	import { cn } from "$lib/utils.js";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		children: childrenProp,
+		...restProps
+	}: WithoutChild<DropdownMenuPrimitive.RadioItemProps> = $props();
+</script>
+
+<DropdownMenuPrimitive.RadioItem
+	bind:ref
+	class={cn(
+		"data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+		className
+	)}
+	{...restProps}
+>
+	{#snippet children({ checked })}
+		<span class="absolute left-2 flex size-3.5 items-center justify-center">
+			{#if checked}
+				<Circle class="size-2 fill-current" />
+			{/if}
+		</span>
+		{@render childrenProp?.({ checked })}
+	{/snippet}
+</DropdownMenuPrimitive.RadioItem>
+
+```
+
+# frontend/src/lib/components/ui/dropdown-menu/dropdown-menu-separator.svelte
+
+```svelte
+<script lang="ts">
+	import { DropdownMenu as DropdownMenuPrimitive } from "bits-ui";
+	import { cn } from "$lib/utils.js";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		...restProps
+	}: DropdownMenuPrimitive.SeparatorProps = $props();
+</script>
+
+<DropdownMenuPrimitive.Separator
+	bind:ref
+	class={cn("bg-muted -mx-1 my-1 h-px", className)}
+	{...restProps}
+/>
+
+```
+
+# frontend/src/lib/components/ui/dropdown-menu/dropdown-menu-shortcut.svelte
+
+```svelte
+<script lang="ts">
+	import type { HTMLAttributes } from "svelte/elements";
+	import { type WithElementRef } from "bits-ui";
+	import { cn } from "$lib/utils.js";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		children,
+		...restProps
+	}: WithElementRef<HTMLAttributes<HTMLSpanElement>> = $props();
+</script>
+
+<span
+	bind:this={ref}
+	class={cn("ml-auto text-xs tracking-widest opacity-60", className)}
+	{...restProps}
+>
+	{@render children?.()}
+</span>
+
+```
+
+# frontend/src/lib/components/ui/dropdown-menu/dropdown-menu-sub-content.svelte
+
+```svelte
+<script lang="ts">
+	import { DropdownMenu as DropdownMenuPrimitive } from "bits-ui";
+	import { cn } from "$lib/utils.js";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		...restProps
+	}: DropdownMenuPrimitive.SubContentProps = $props();
+</script>
+
+<DropdownMenuPrimitive.SubContent
+	bind:ref
+	class={cn(
+		"bg-popover text-popover-foreground z-50 min-w-[8rem] rounded-md border p-1 shadow-lg focus:outline-none",
+		className
+	)}
+	{...restProps}
+/>
+
+```
+
+# frontend/src/lib/components/ui/dropdown-menu/dropdown-menu-sub-trigger.svelte
+
+```svelte
+<script lang="ts">
+	import { DropdownMenu as DropdownMenuPrimitive, type WithoutChild } from "bits-ui";
+	import ChevronRight from "lucide-svelte/icons/chevron-right";
+	import { cn } from "$lib/utils.js";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		inset,
+		children,
+		...restProps
+	}: WithoutChild<DropdownMenuPrimitive.SubTriggerProps> & {
+		inset?: boolean;
+	} = $props();
+</script>
+
+<DropdownMenuPrimitive.SubTrigger
+	bind:ref
+	class={cn(
+		"data-[highlighted]:bg-accent data-[state=open]:bg-accent flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+		inset && "pl-8",
+		className
+	)}
+	{...restProps}
+>
+	{@render children?.()}
+	<ChevronRight class="ml-auto" />
+</DropdownMenuPrimitive.SubTrigger>
+
+```
+
+# frontend/src/lib/components/ui/dropdown-menu/index.ts
+
+```ts
+import { DropdownMenu as DropdownMenuPrimitive } from "bits-ui";
+import CheckboxItem from "./dropdown-menu-checkbox-item.svelte";
+import Content from "./dropdown-menu-content.svelte";
+import GroupHeading from "./dropdown-menu-group-heading.svelte";
+import Item from "./dropdown-menu-item.svelte";
+import Label from "./dropdown-menu-label.svelte";
+import RadioItem from "./dropdown-menu-radio-item.svelte";
+import Separator from "./dropdown-menu-separator.svelte";
+import Shortcut from "./dropdown-menu-shortcut.svelte";
+import SubContent from "./dropdown-menu-sub-content.svelte";
+import SubTrigger from "./dropdown-menu-sub-trigger.svelte";
+
+const Sub = DropdownMenuPrimitive.Sub;
+const Root = DropdownMenuPrimitive.Root;
+const Trigger = DropdownMenuPrimitive.Trigger;
+const Group = DropdownMenuPrimitive.Group;
+const RadioGroup = DropdownMenuPrimitive.RadioGroup;
+
+export {
+	CheckboxItem,
+	Content,
+	Root as DropdownMenu,
+	CheckboxItem as DropdownMenuCheckboxItem,
+	Content as DropdownMenuContent,
+	Group as DropdownMenuGroup,
+	GroupHeading as DropdownMenuGroupHeading,
+	Item as DropdownMenuItem,
+	Label as DropdownMenuLabel,
+	RadioGroup as DropdownMenuRadioGroup,
+	RadioItem as DropdownMenuRadioItem,
+	Separator as DropdownMenuSeparator,
+	Shortcut as DropdownMenuShortcut,
+	Sub as DropdownMenuSub,
+	SubContent as DropdownMenuSubContent,
+	SubTrigger as DropdownMenuSubTrigger,
+	Trigger as DropdownMenuTrigger,
+	Group,
+	GroupHeading,
+	Item,
+	Label,
+	RadioGroup,
+	RadioItem,
+	Root,
+	Separator,
+	Shortcut,
+	Sub,
+	SubContent,
+	SubTrigger,
+	Trigger,
+};
+
+```
+
 # frontend/src/lib/components/ui/form/form-button.svelte
 
 ```svelte
@@ -2194,7 +2450,7 @@ export {
 
 <script lang="ts">
 	import { Dialog as SheetPrimitive, type WithoutChildrenOrChild } from "bits-ui";
-	import Cross2 from "svelte-radix/Cross2.svelte";
+	import X from "lucide-svelte/icons/x";
 	import type { Snippet } from "svelte";
 	import SheetOverlay from "./sheet-overlay.svelte";
 	import { cn } from "$lib/utils.js";
@@ -2218,7 +2474,7 @@ export {
 		<SheetPrimitive.Close
 			class="ring-offset-background focus:ring-ring data-[state=open]:bg-secondary absolute right-4 top-4 rounded-sm opacity-70 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:pointer-events-none"
 		>
-			<Cross2 class="size-4" />
+			<X class="size-4" />
 			<span class="sr-only">Close</span>
 		</SheetPrimitive.Close>
 	</SheetPrimitive.Content>
@@ -2344,6 +2600,1159 @@ export {
 	class={cn("text-foreground text-lg font-semibold", className)}
 	{...restProps}
 />
+
+```
+
+# frontend/src/lib/components/ui/sidebar/constants.ts
+
+```ts
+export const SIDEBAR_COOKIE_NAME = "sidebar:state";
+export const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
+export const SIDEBAR_WIDTH = "16rem";
+export const SIDEBAR_WIDTH_MOBILE = "18rem";
+export const SIDEBAR_WIDTH_ICON = "3rem";
+export const SIDEBAR_KEYBOARD_SHORTCUT = "b";
+
+```
+
+# frontend/src/lib/components/ui/sidebar/context.svelte.ts
+
+```ts
+import { IsMobile } from "$lib/hooks/is-mobile.svelte.js";
+import { getContext, setContext } from "svelte";
+import { SIDEBAR_KEYBOARD_SHORTCUT } from "./constants.js";
+
+type Getter<T> = () => T;
+
+export type SidebarStateProps = {
+	/**
+	 * A getter function that returns the current open state of the sidebar.
+	 * We use a getter function here to support `bind:open` on the `Sidebar.Provider`
+	 * component.
+	 */
+	open: Getter<boolean>;
+
+	/**
+	 * A function that sets the open state of the sidebar. To support `bind:open`, we need
+	 * a source of truth for changing the open state to ensure it will be synced throughout
+	 * the sub-components and any `bind:` references.
+	 */
+	setOpen: (open: boolean) => void;
+};
+
+class SidebarState {
+	readonly props: SidebarStateProps;
+	open = $derived.by(() => this.props.open());
+	openMobile = $state(false);
+	setOpen: SidebarStateProps["setOpen"];
+	#isMobile: IsMobile;
+	state = $derived.by(() => (this.open ? "expanded" : "collapsed"));
+
+	constructor(props: SidebarStateProps) {
+		this.setOpen = props.setOpen;
+		this.#isMobile = new IsMobile();
+		this.props = props;
+	}
+
+	// Convenience getter for checking if the sidebar is mobile
+	// without this, we would need to use `sidebar.isMobile.current` everywhere
+	get isMobile() {
+		return this.#isMobile.current;
+	}
+
+	// Event handler to apply to the `<svelte:window>`
+	handleShortcutKeydown = (e: KeyboardEvent) => {
+		if (e.key === SIDEBAR_KEYBOARD_SHORTCUT && (e.metaKey || e.ctrlKey)) {
+			e.preventDefault();
+			this.toggle();
+		}
+	};
+
+	setOpenMobile = (value: boolean) => {
+		this.openMobile = value;
+	};
+
+	toggle = () => {
+		return this.#isMobile.current
+			? (this.openMobile = !this.openMobile)
+			: this.setOpen(!this.open);
+	};
+}
+
+const SYMBOL_KEY = "scn-sidebar";
+
+/**
+ * Instantiates a new `SidebarState` instance and sets it in the context.
+ *
+ * @param props The constructor props for the `SidebarState` class.
+ * @returns  The `SidebarState` instance.
+ */
+export function setSidebar(props: SidebarStateProps): SidebarState {
+	return setContext(Symbol.for(SYMBOL_KEY), new SidebarState(props));
+}
+
+/**
+ * Retrieves the `SidebarState` instance from the context. This is a class instance,
+ * so you cannot destructure it.
+ * @returns The `SidebarState` instance.
+ */
+export function useSidebar(): SidebarState {
+	return getContext(Symbol.for(SYMBOL_KEY));
+}
+
+```
+
+# frontend/src/lib/components/ui/sidebar/index.ts
+
+```ts
+import { useSidebar } from "./context.svelte.js";
+import Content from "./sidebar-content.svelte";
+import Footer from "./sidebar-footer.svelte";
+import GroupAction from "./sidebar-group-action.svelte";
+import GroupContent from "./sidebar-group-content.svelte";
+import GroupLabel from "./sidebar-group-label.svelte";
+import Group from "./sidebar-group.svelte";
+import Header from "./sidebar-header.svelte";
+import Input from "./sidebar-input.svelte";
+import Inset from "./sidebar-inset.svelte";
+import MenuAction from "./sidebar-menu-action.svelte";
+import MenuBadge from "./sidebar-menu-badge.svelte";
+import MenuButton from "./sidebar-menu-button.svelte";
+import MenuItem from "./sidebar-menu-item.svelte";
+import MenuSkeleton from "./sidebar-menu-skeleton.svelte";
+import MenuSubButton from "./sidebar-menu-sub-button.svelte";
+import MenuSubItem from "./sidebar-menu-sub-item.svelte";
+import MenuSub from "./sidebar-menu-sub.svelte";
+import Menu from "./sidebar-menu.svelte";
+import Provider from "./sidebar-provider.svelte";
+import Rail from "./sidebar-rail.svelte";
+import Separator from "./sidebar-separator.svelte";
+import Trigger from "./sidebar-trigger.svelte";
+import Root from "./sidebar.svelte";
+
+export {
+	Content,
+	Footer,
+	Group,
+	GroupAction,
+	GroupContent,
+	GroupLabel,
+	Header,
+	Input,
+	Inset,
+	Menu,
+	MenuAction,
+	MenuBadge,
+	MenuButton,
+	MenuItem,
+	MenuSkeleton,
+	MenuSub,
+	MenuSubButton,
+	MenuSubItem,
+	Provider,
+	Rail,
+	Root,
+	Separator,
+	//
+	Root as Sidebar,
+	Content as SidebarContent,
+	Footer as SidebarFooter,
+	Group as SidebarGroup,
+	GroupAction as SidebarGroupAction,
+	GroupContent as SidebarGroupContent,
+	GroupLabel as SidebarGroupLabel,
+	Header as SidebarHeader,
+	Input as SidebarInput,
+	Inset as SidebarInset,
+	Menu as SidebarMenu,
+	MenuAction as SidebarMenuAction,
+	MenuBadge as SidebarMenuBadge,
+	MenuButton as SidebarMenuButton,
+	MenuItem as SidebarMenuItem,
+	MenuSkeleton as SidebarMenuSkeleton,
+	MenuSub as SidebarMenuSub,
+	MenuSubButton as SidebarMenuSubButton,
+	MenuSubItem as SidebarMenuSubItem,
+	Provider as SidebarProvider,
+	Rail as SidebarRail,
+	Separator as SidebarSeparator,
+	Trigger as SidebarTrigger,
+	Trigger,
+	useSidebar,
+};
+
+```
+
+# frontend/src/lib/components/ui/sidebar/sidebar-content.svelte
+
+```svelte
+<script lang="ts">
+	import type { HTMLAttributes } from "svelte/elements";
+	import type { WithElementRef } from "bits-ui";
+	import { cn } from "$lib/utils.js";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		children,
+		...restProps
+	}: WithElementRef<HTMLAttributes<HTMLElement>> = $props();
+</script>
+
+<div
+	bind:this={ref}
+	data-sidebar="content"
+	class={cn(
+		"flex min-h-0 flex-1 flex-col gap-2 overflow-auto group-data-[collapsible=icon]:overflow-hidden",
+		className
+	)}
+	{...restProps}
+>
+	{@render children?.()}
+</div>
+
+```
+
+# frontend/src/lib/components/ui/sidebar/sidebar-footer.svelte
+
+```svelte
+<script lang="ts">
+	import type { HTMLAttributes } from "svelte/elements";
+	import type { WithElementRef } from "bits-ui";
+	import { cn } from "$lib/utils.js";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		children,
+		...restProps
+	}: WithElementRef<HTMLAttributes<HTMLElement>> = $props();
+</script>
+
+<div
+	bind:this={ref}
+	data-sidebar="footer"
+	class={cn("flex flex-col gap-2 p-2", className)}
+	{...restProps}
+>
+	{@render children?.()}
+</div>
+
+```
+
+# frontend/src/lib/components/ui/sidebar/sidebar-group-action.svelte
+
+```svelte
+<script lang="ts">
+	import { cn } from "$lib/utils.js";
+	import type { WithElementRef } from "bits-ui";
+	import type { Snippet } from "svelte";
+	import type { HTMLButtonAttributes } from "svelte/elements";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		children,
+		child,
+		...restProps
+	}: WithElementRef<HTMLButtonAttributes> & {
+		child?: Snippet<[{ props: Record<string, unknown> }]>;
+	} = $props();
+
+	const propObj = $derived({
+		class: cn(
+			"text-sidebar-foreground ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground absolute right-3 top-3.5 flex aspect-square w-5 items-center justify-center rounded-md p-0 outline-none transition-transform focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0",
+			// Increases the hit area of the button on mobile.
+			"after:absolute after:-inset-2 after:md:hidden",
+			"group-data-[collapsible=icon]:hidden",
+			className
+		),
+		"data-sidebar": "group-action",
+		...restProps,
+	});
+</script>
+
+{#if child}
+	{@render child({ props: propObj })}
+{:else}
+	<button bind:this={ref} {...propObj}>
+		{@render children?.()}
+	</button>
+{/if}
+
+```
+
+# frontend/src/lib/components/ui/sidebar/sidebar-group-content.svelte
+
+```svelte
+<script lang="ts">
+	import { cn } from "$lib/utils.js";
+	import type { WithElementRef } from "bits-ui";
+	import type { HTMLAttributes } from "svelte/elements";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		children,
+		...restProps
+	}: WithElementRef<HTMLAttributes<HTMLDivElement>> = $props();
+</script>
+
+<div
+	bind:this={ref}
+	data-sidebar="group-content"
+	class={cn("w-full text-sm", className)}
+	{...restProps}
+>
+	{@render children?.()}
+</div>
+
+```
+
+# frontend/src/lib/components/ui/sidebar/sidebar-group-label.svelte
+
+```svelte
+<script lang="ts">
+	import { cn } from "$lib/utils.js";
+	import type { WithElementRef } from "bits-ui";
+	import type { Snippet } from "svelte";
+	import type { HTMLAttributes } from "svelte/elements";
+
+	let {
+		ref = $bindable(null),
+		children,
+		child,
+		class: className,
+		...restProps
+	}: WithElementRef<HTMLAttributes<HTMLElement>> & {
+		child?: Snippet<[{ props: Record<string, unknown> }]>;
+	} = $props();
+
+	const mergedProps = $derived({
+		class: cn(
+			"text-sidebar-foreground/70 ring-sidebar-ring flex h-8 shrink-0 items-center rounded-md px-2 text-xs font-medium outline-none transition-[margin,opa] duration-200 ease-linear focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0",
+			"group-data-[collapsible=icon]:-mt-8 group-data-[collapsible=icon]:opacity-0",
+			className
+		),
+		"data-sidebar": "group-label",
+		...restProps,
+	});
+</script>
+
+{#if child}
+	{@render child({ props: mergedProps })}
+{:else}
+	<div bind:this={ref} {...mergedProps}>
+		{@render children?.()}
+	</div>
+{/if}
+
+```
+
+# frontend/src/lib/components/ui/sidebar/sidebar-group.svelte
+
+```svelte
+<script lang="ts">
+	import type { HTMLAttributes } from "svelte/elements";
+	import type { WithElementRef } from "bits-ui";
+	import { cn } from "$lib/utils.js";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		children,
+		...restProps
+	}: WithElementRef<HTMLAttributes<HTMLElement>> = $props();
+</script>
+
+<div
+	bind:this={ref}
+	data-sidebar="group"
+	class={cn("relative flex w-full min-w-0 flex-col p-2", className)}
+	{...restProps}
+>
+	{@render children?.()}
+</div>
+
+```
+
+# frontend/src/lib/components/ui/sidebar/sidebar-header.svelte
+
+```svelte
+<script lang="ts">
+	import type { HTMLAttributes } from "svelte/elements";
+	import type { WithElementRef } from "bits-ui";
+	import { cn } from "$lib/utils.js";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		children,
+		...restProps
+	}: WithElementRef<HTMLAttributes<HTMLElement>> = $props();
+</script>
+
+<div
+	bind:this={ref}
+	data-sidebar="header"
+	class={cn("flex flex-col gap-2 p-2", className)}
+	{...restProps}
+>
+	{@render children?.()}
+</div>
+
+```
+
+# frontend/src/lib/components/ui/sidebar/sidebar-input.svelte
+
+```svelte
+<script lang="ts">
+	import { Input } from "$lib/components/ui/input/index.js";
+	import { cn } from "$lib/utils.js";
+	import type { ComponentProps } from "svelte";
+
+	let {
+		ref = $bindable(null),
+		value = $bindable(""),
+		class: className,
+		...restProps
+	}: ComponentProps<typeof Input> = $props();
+</script>
+
+<Input
+	bind:ref
+	bind:value
+	data-sidebar="input"
+	class={cn(
+		"bg-background focus-visible:ring-sidebar-ring h-8 w-full shadow-none focus-visible:ring-2",
+		className
+	)}
+	{...restProps}
+/>
+
+```
+
+# frontend/src/lib/components/ui/sidebar/sidebar-inset.svelte
+
+```svelte
+<script lang="ts">
+	import { cn } from "$lib/utils.js";
+	import type { WithElementRef } from "bits-ui";
+	import type { HTMLAttributes } from "svelte/elements";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		children,
+		...restProps
+	}: WithElementRef<HTMLAttributes<HTMLElement>> = $props();
+</script>
+
+<main
+	bind:this={ref}
+	class={cn(
+		"bg-background relative flex min-h-svh flex-1 flex-col",
+		"peer-data-[variant=inset]:min-h-[calc(100svh-theme(spacing.4))] md:peer-data-[variant=inset]:m-2 md:peer-data-[state=collapsed]:peer-data-[variant=inset]:ml-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-xl md:peer-data-[variant=inset]:shadow",
+		className
+	)}
+	{...restProps}
+>
+	{@render children?.()}
+</main>
+
+```
+
+# frontend/src/lib/components/ui/sidebar/sidebar-menu-action.svelte
+
+```svelte
+<script lang="ts">
+	import { cn } from "$lib/utils.js";
+	import type { WithElementRef } from "bits-ui";
+	import type { Snippet } from "svelte";
+	import type { HTMLButtonAttributes } from "svelte/elements";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		showOnHover = false,
+		children,
+		child,
+		...restProps
+	}: WithElementRef<HTMLButtonAttributes> & {
+		child?: Snippet<[{ props: Record<string, unknown> }]>;
+		showOnHover?: boolean;
+	} = $props();
+
+	const mergedProps = $derived({
+		class: cn(
+			"text-sidebar-foreground ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground peer-hover/menu-button:text-sidebar-accent-foreground absolute right-1 top-1.5 flex aspect-square w-5 items-center justify-center rounded-md p-0 outline-none transition-transform focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0",
+			// Increases the hit area of the button on mobile.
+			"after:absolute after:-inset-2 after:md:hidden",
+			"peer-data-[size=sm]/menu-button:top-1",
+			"peer-data-[size=default]/menu-button:top-1.5",
+			"peer-data-[size=lg]/menu-button:top-2.5",
+			"group-data-[collapsible=icon]:hidden",
+			showOnHover &&
+				"peer-data-[active=true]/menu-button:text-sidebar-accent-foreground group-focus-within/menu-item:opacity-100 group-hover/menu-item:opacity-100 data-[state=open]:opacity-100 md:opacity-0",
+			className
+		),
+		"data-sidebar": "menu-action",
+		...restProps,
+	});
+</script>
+
+{#if child}
+	{@render child({ props: mergedProps })}
+{:else}
+	<button bind:this={ref} {...mergedProps}>
+		{@render children?.()}
+	</button>
+{/if}
+
+```
+
+# frontend/src/lib/components/ui/sidebar/sidebar-menu-badge.svelte
+
+```svelte
+<script lang="ts">
+	import { cn } from "$lib/utils.js";
+	import type { WithElementRef } from "bits-ui";
+	import type { HTMLAttributes } from "svelte/elements";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		children,
+		...restProps
+	}: WithElementRef<HTMLAttributes<HTMLElement>> = $props();
+</script>
+
+<div
+	bind:this={ref}
+	data-sidebar="menu-badge"
+	class={cn(
+		"text-sidebar-foreground pointer-events-none absolute right-1 flex h-5 min-w-5 select-none items-center justify-center rounded-md px-1 text-xs font-medium tabular-nums",
+		"peer-hover/menu-button:text-sidebar-accent-foreground peer-data-[active=true]/menu-button:text-sidebar-accent-foreground",
+		"peer-data-[size=sm]/menu-button:top-1",
+		"peer-data-[size=default]/menu-button:top-1.5",
+		"peer-data-[size=lg]/menu-button:top-2.5",
+		"group-data-[collapsible=icon]:hidden",
+		className
+	)}
+	{...restProps}
+>
+	{@render children?.()}
+</div>
+
+```
+
+# frontend/src/lib/components/ui/sidebar/sidebar-menu-button.svelte
+
+```svelte
+<script lang="ts" module>
+	import { tv, type VariantProps } from "tailwind-variants";
+
+	export const sidebarMenuButtonVariants = tv({
+		base: "peer/menu-button ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground active:bg-sidebar-accent active:text-sidebar-accent-foreground data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm outline-none transition-[width,height,padding] focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-50 group-has-[[data-sidebar=menu-action]]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:font-medium group-data-[collapsible=icon]:!size-8 group-data-[collapsible=icon]:!p-2 [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0",
+		variants: {
+			variant: {
+				default: "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+				outline:
+					"bg-background hover:bg-sidebar-accent hover:text-sidebar-accent-foreground shadow-[0_0_0_1px_hsl(var(--sidebar-border))] hover:shadow-[0_0_0_1px_hsl(var(--sidebar-accent))]",
+			},
+			size: {
+				default: "h-8 text-sm",
+				sm: "h-7 text-xs",
+				lg: "h-12 text-sm group-data-[collapsible=icon]:!p-0",
+			},
+		},
+		defaultVariants: {
+			variant: "default",
+			size: "default",
+		},
+	});
+
+	export type SidebarMenuButtonVariant = VariantProps<
+		typeof sidebarMenuButtonVariants
+	>["variant"];
+	export type SidebarMenuButtonSize = VariantProps<typeof sidebarMenuButtonVariants>["size"];
+</script>
+
+<script lang="ts">
+	import * as Tooltip from "$lib/components/ui/tooltip/index.js";
+	import { cn } from "$lib/utils.js";
+	import { mergeProps, type WithElementRef, type WithoutChildrenOrChild } from "bits-ui";
+	import type { ComponentProps, Snippet } from "svelte";
+	import type { HTMLAttributes } from "svelte/elements";
+	import { useSidebar } from "./context.svelte.js";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		children,
+		child,
+		variant = "default",
+		size = "default",
+		isActive = false,
+		tooltipContent,
+		tooltipContentProps,
+		...restProps
+	}: WithElementRef<HTMLAttributes<HTMLButtonElement>, HTMLButtonElement> & {
+		isActive?: boolean;
+		variant?: SidebarMenuButtonVariant;
+		size?: SidebarMenuButtonSize;
+		tooltipContent?: Snippet;
+		tooltipContentProps?: WithoutChildrenOrChild<ComponentProps<typeof Tooltip.Content>>;
+		child?: Snippet<[{ props: Record<string, unknown> }]>;
+	} = $props();
+
+	const sidebar = useSidebar();
+
+	const buttonProps = $derived({
+		class: cn(sidebarMenuButtonVariants({ variant, size }), className),
+		"data-sidebar": "menu-button",
+		"data-size": size,
+		"data-active": isActive,
+		...restProps,
+	});
+</script>
+
+{#snippet Button({ props }: { props?: Record<string, unknown> })}
+	{@const mergedProps = mergeProps(buttonProps, props)}
+	{#if child}
+		{@render child({ props: mergedProps })}
+	{:else}
+		<button bind:this={ref} {...mergedProps}>
+			{@render children?.()}
+		</button>
+	{/if}
+{/snippet}
+
+{#if !tooltipContent}
+	{@render Button({})}
+{:else}
+	<Tooltip.Root>
+		<Tooltip.Trigger>
+			{#snippet child({ props })}
+				{@render Button({ props })}
+			{/snippet}
+		</Tooltip.Trigger>
+		<Tooltip.Content
+			side="right"
+			align="center"
+			hidden={sidebar.state !== "collapsed" || sidebar.isMobile}
+			children={tooltipContent}
+			{...tooltipContentProps}
+		/>
+	</Tooltip.Root>
+{/if}
+
+```
+
+# frontend/src/lib/components/ui/sidebar/sidebar-menu-item.svelte
+
+```svelte
+<script lang="ts">
+	import { cn } from "$lib/utils.js";
+	import type { WithElementRef } from "bits-ui";
+	import type { HTMLAttributes } from "svelte/elements";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		children,
+		...restProps
+	}: WithElementRef<HTMLAttributes<HTMLLIElement>, HTMLLIElement> = $props();
+</script>
+
+<li
+	bind:this={ref}
+	data-sidebar="menu-item"
+	class={cn("group/menu-item relative", className)}
+	{...restProps}
+>
+	{@render children?.()}
+</li>
+
+```
+
+# frontend/src/lib/components/ui/sidebar/sidebar-menu-skeleton.svelte
+
+```svelte
+<script lang="ts">
+	import { Skeleton } from "$lib/components/ui/skeleton/index.js";
+	import { cn } from "$lib/utils.js";
+	import type { WithElementRef } from "bits-ui";
+	import type { HTMLAttributes } from "svelte/elements";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		showIcon = false,
+		children,
+		...restProps
+	}: WithElementRef<HTMLAttributes<HTMLElement>> & {
+		showIcon?: boolean;
+	} = $props();
+
+	// Random width between 50% and 90%
+	const width = `${Math.floor(Math.random() * 40) + 50}%`;
+</script>
+
+<div
+	bind:this={ref}
+	data-sidebar="menu-skeleton"
+	class={cn("flex h-8 items-center gap-2 rounded-md px-2", className)}
+	{...restProps}
+>
+	{#if showIcon}
+		<Skeleton class="size-4 rounded-md" data-sidebar="menu-skeleton-icon" />
+	{/if}
+	<Skeleton
+		class="h-4 max-w-[--skeleton-width] flex-1"
+		data-sidebar="menu-skeleton-text"
+		style="--skeleton-width: {width};"
+	/>
+	{@render children?.()}
+</div>
+
+```
+
+# frontend/src/lib/components/ui/sidebar/sidebar-menu-sub-button.svelte
+
+```svelte
+<script lang="ts">
+	import { cn } from "$lib/utils.js";
+	import type { WithElementRef } from "bits-ui";
+	import type { Snippet } from "svelte";
+	import type { HTMLAnchorAttributes } from "svelte/elements";
+
+	let {
+		ref = $bindable(null),
+		children,
+		child,
+		class: className,
+		size = "md",
+		isActive,
+		...restProps
+	}: WithElementRef<HTMLAnchorAttributes> & {
+		child?: Snippet<[{ props: Record<string, unknown> }]>;
+		size?: "sm" | "md";
+		isActive?: boolean;
+	} = $props();
+
+	const mergedProps = $derived({
+		class: cn(
+			"text-sidebar-foreground ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground active:bg-sidebar-accent active:text-sidebar-accent-foreground [&>svg]:text-sidebar-accent-foreground flex h-7 min-w-0 -translate-x-px items-center gap-2 overflow-hidden rounded-md px-2 outline-none focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0",
+			"data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-accent-foreground",
+			size === "sm" && "text-xs",
+			size === "md" && "text-sm",
+			"group-data-[collapsible=icon]:hidden",
+			className
+		),
+		"data-sidebar": "menu-sub-button",
+		"data-size": size,
+		"data-active": isActive,
+		...restProps,
+	});
+</script>
+
+{#if child}
+	{@render child({ props: mergedProps })}
+{:else}
+	<a bind:this={ref} {...mergedProps}>
+		{@render children?.()}
+	</a>
+{/if}
+
+```
+
+# frontend/src/lib/components/ui/sidebar/sidebar-menu-sub-item.svelte
+
+```svelte
+<script lang="ts">
+	import type { WithElementRef } from "bits-ui";
+	import type { HTMLAttributes } from "svelte/elements";
+
+	let {
+		ref = $bindable(null),
+		children,
+		...restProps
+	}: WithElementRef<HTMLAttributes<HTMLLIElement>> = $props();
+</script>
+
+<li bind:this={ref} data-sidebar="menu-sub-item" {...restProps}>
+	{@render children?.()}
+</li>
+
+```
+
+# frontend/src/lib/components/ui/sidebar/sidebar-menu-sub.svelte
+
+```svelte
+<script lang="ts">
+	import { cn } from "$lib/utils.js";
+	import type { WithElementRef } from "bits-ui";
+	import type { HTMLAttributes } from "svelte/elements";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		children,
+		...restProps
+	}: WithElementRef<HTMLAttributes<HTMLUListElement>> = $props();
+</script>
+
+<ul
+	bind:this={ref}
+	data-sidebar="menu-sub"
+	class={cn(
+		"border-sidebar-border mx-3.5 flex min-w-0 translate-x-px flex-col gap-1 border-l px-2.5 py-0.5",
+		"group-data-[collapsible=icon]:hidden",
+		className
+	)}
+	{...restProps}
+>
+	{@render children?.()}
+</ul>
+
+```
+
+# frontend/src/lib/components/ui/sidebar/sidebar-menu.svelte
+
+```svelte
+<script lang="ts">
+	import { cn } from "$lib/utils.js";
+	import type { WithElementRef } from "bits-ui";
+	import type { HTMLAttributes } from "svelte/elements";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		children,
+		...restProps
+	}: WithElementRef<HTMLAttributes<HTMLUListElement>, HTMLUListElement> = $props();
+</script>
+
+<ul
+	bind:this={ref}
+	data-sidebar="menu"
+	class={cn("flex w-full min-w-0 flex-col gap-1", className)}
+	{...restProps}
+>
+	{@render children?.()}
+</ul>
+
+```
+
+# frontend/src/lib/components/ui/sidebar/sidebar-provider.svelte
+
+```svelte
+<script lang="ts">
+	import * as Tooltip from "$lib/components/ui/tooltip/index.js";
+	import { cn } from "$lib/utils.js";
+	import type { WithElementRef } from "bits-ui";
+	import type { HTMLAttributes } from "svelte/elements";
+	import {
+		SIDEBAR_COOKIE_MAX_AGE,
+		SIDEBAR_COOKIE_NAME,
+		SIDEBAR_WIDTH,
+		SIDEBAR_WIDTH_ICON,
+	} from "./constants.js";
+	import { setSidebar } from "./context.svelte.js";
+
+	let {
+		ref = $bindable(null),
+		open = $bindable(true),
+		onOpenChange = () => {},
+		controlledOpen = false,
+		class: className,
+		style,
+		children,
+		...restProps
+	}: WithElementRef<HTMLAttributes<HTMLDivElement>> & {
+		open?: boolean;
+		onOpenChange?: (open: boolean) => void;
+		controlledOpen?: boolean;
+	} = $props();
+
+	const sidebar = setSidebar({
+		open: () => open,
+		setOpen: (value: boolean) => {
+			if (controlledOpen) {
+				onOpenChange(value);
+			} else {
+				open = value;
+				onOpenChange(value);
+			}
+
+			// This sets the cookie to keep the sidebar state.
+			document.cookie = `${SIDEBAR_COOKIE_NAME}=${open}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`;
+		},
+	});
+</script>
+
+<svelte:window onkeydown={sidebar.handleShortcutKeydown} />
+
+<Tooltip.Provider delayDuration={0}>
+	<div
+		style="--sidebar-width: {SIDEBAR_WIDTH}; --sidebar-width-icon: {SIDEBAR_WIDTH_ICON}; {style}"
+		class={cn(
+			"group/sidebar-wrapper has-[[data-variant=inset]]:bg-sidebar flex min-h-svh w-full",
+			className
+		)}
+		bind:this={ref}
+		{...restProps}
+	>
+		{@render children?.()}
+	</div>
+</Tooltip.Provider>
+
+```
+
+# frontend/src/lib/components/ui/sidebar/sidebar-rail.svelte
+
+```svelte
+<script lang="ts">
+	import { cn } from "$lib/utils.js";
+	import type { WithElementRef } from "bits-ui";
+	import type { HTMLAttributes } from "svelte/elements";
+	import { useSidebar } from "./context.svelte.js";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		children,
+		...restProps
+	}: WithElementRef<HTMLAttributes<HTMLButtonElement>, HTMLButtonElement> = $props();
+
+	const sidebar = useSidebar();
+</script>
+
+<button
+	bind:this={ref}
+	data-sidebar="rail"
+	aria-label="Toggle Sidebar"
+	tabIndex={-1}
+	onclick={() => sidebar.toggle()}
+	title="Toggle Sidebar"
+	class={cn(
+		"hover:after:bg-sidebar-border absolute inset-y-0 z-20 hidden w-4 -translate-x-1/2 transition-all ease-linear after:absolute after:inset-y-0 after:left-1/2 after:w-[2px] group-data-[side=left]:-right-4 group-data-[side=right]:left-0 sm:flex",
+		"[[data-side=left]_&]:cursor-w-resize [[data-side=right]_&]:cursor-e-resize",
+		"[[data-side=left][data-state=collapsed]_&]:cursor-e-resize [[data-side=right][data-state=collapsed]_&]:cursor-w-resize",
+		"group-data-[collapsible=offcanvas]:hover:bg-sidebar group-data-[collapsible=offcanvas]:translate-x-0 group-data-[collapsible=offcanvas]:after:left-full",
+		"[[data-side=left][data-collapsible=offcanvas]_&]:-right-2",
+		"[[data-side=right][data-collapsible=offcanvas]_&]:-left-2",
+		className
+	)}
+	{...restProps}
+>
+	{@render children?.()}
+</button>
+
+```
+
+# frontend/src/lib/components/ui/sidebar/sidebar-separator.svelte
+
+```svelte
+<script lang="ts">
+	import { Separator } from "$lib/components/ui/separator/index.js";
+	import { cn } from "$lib/utils.js";
+	import type { ComponentProps } from "svelte";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		...restProps
+	}: ComponentProps<typeof Separator> = $props();
+</script>
+
+<Separator
+	bind:ref
+	data-sidebar="separator"
+	class={cn("bg-sidebar-border mx-2 w-auto", className)}
+	{...restProps}
+/>
+
+```
+
+# frontend/src/lib/components/ui/sidebar/sidebar-trigger.svelte
+
+```svelte
+<script lang="ts">
+	import { Button } from "$lib/components/ui/button/index.js";
+	import { cn } from "$lib/utils.js";
+	import PanelLeft from "lucide-svelte/icons/panel-left";
+	import type { ComponentProps } from "svelte";
+	import { useSidebar } from "./context.svelte.js";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		onclick,
+		...restProps
+	}: ComponentProps<typeof Button> & {
+		onclick?: (e: MouseEvent) => void;
+	} = $props();
+
+	const sidebar = useSidebar();
+</script>
+
+<Button
+	type="button"
+	onclick={(e) => {
+		onclick?.(e);
+		sidebar.toggle();
+	}}
+	data-sidebar="trigger"
+	variant="ghost"
+	size="icon"
+	class={cn("h-7 w-7", className)}
+	{...restProps}
+>
+	<PanelLeft />
+	<span class="sr-only">Toggle Sidebar</span>
+</Button>
+
+```
+
+# frontend/src/lib/components/ui/sidebar/sidebar.svelte
+
+```svelte
+<script lang="ts">
+	import * as Sheet from "$lib/components/ui/sheet/index.js";
+	import { cn } from "$lib/utils.js";
+	import type { WithElementRef } from "bits-ui";
+	import type { HTMLAttributes } from "svelte/elements";
+	import { SIDEBAR_WIDTH_MOBILE } from "./constants.js";
+	import { useSidebar } from "./context.svelte.js";
+
+	let {
+		ref = $bindable(null),
+		side = "left",
+		variant = "sidebar",
+		collapsible = "offcanvas",
+		class: className,
+		children,
+		...restProps
+	}: WithElementRef<HTMLAttributes<HTMLDivElement>> & {
+		side?: "left" | "right";
+		variant?: "sidebar" | "floating" | "inset";
+		collapsible?: "offcanvas" | "icon" | "none";
+	} = $props();
+
+	const sidebar = useSidebar();
+</script>
+
+{#if collapsible === "none"}
+	<div
+		class={cn(
+			"bg-sidebar text-sidebar-foreground flex h-full w-[--sidebar-width] flex-col",
+			className
+		)}
+		bind:this={ref}
+		{...restProps}
+	>
+		{@render children?.()}
+	</div>
+{:else if sidebar.isMobile}
+	<Sheet.Root
+		controlledOpen
+		open={sidebar.openMobile}
+		onOpenChange={sidebar.setOpenMobile}
+		{...restProps}
+	>
+		<Sheet.Content
+			data-sidebar="sidebar"
+			data-mobile="true"
+			class="bg-sidebar text-sidebar-foreground w-[--sidebar-width] p-0 [&>button]:hidden"
+			style="--sidebar-width: {SIDEBAR_WIDTH_MOBILE};"
+			{side}
+		>
+			<div class="flex h-full w-full flex-col">
+				{@render children?.()}
+			</div>
+		</Sheet.Content>
+	</Sheet.Root>
+{:else}
+	<div
+		bind:this={ref}
+		class="text-sidebar-foreground group peer hidden md:block"
+		data-state={sidebar.state}
+		data-collapsible={sidebar.state === "collapsed" ? collapsible : ""}
+		data-variant={variant}
+		data-side={side}
+	>
+		<!-- This is what handles the sidebar gap on desktop -->
+		<div
+			class={cn(
+				"relative h-svh w-[--sidebar-width] bg-transparent transition-[width] duration-200 ease-linear",
+				"group-data-[collapsible=offcanvas]:w-0",
+				"group-data-[side=right]:rotate-180",
+				variant === "floating" || variant === "inset"
+					? "group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)_+_theme(spacing.4))]"
+					: "group-data-[collapsible=icon]:w-[--sidebar-width-icon]"
+			)}
+		></div>
+		<div
+			class={cn(
+				"fixed inset-y-0 z-10 hidden h-svh w-[--sidebar-width] transition-[left,right,width] duration-200 ease-linear md:flex",
+				side === "left"
+					? "left-0 group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)]"
+					: "right-0 group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)]",
+				// Adjust the padding for floating and inset variants.
+				variant === "floating" || variant === "inset"
+					? "p-2 group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)_+_theme(spacing.4)_+2px)]"
+					: "group-data-[collapsible=icon]:w-[--sidebar-width-icon] group-data-[side=left]:border-r group-data-[side=right]:border-l",
+				className
+			)}
+			{...restProps}
+		>
+			<div
+				data-sidebar="sidebar"
+				class="bg-sidebar group-data-[variant=floating]:border-sidebar-border flex h-full w-full flex-col group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:shadow"
+			>
+				{@render children?.()}
+			</div>
+		</div>
+	</div>
+{/if}
+
+```
+
+# frontend/src/lib/components/ui/skeleton/index.ts
+
+```ts
+import Root from "./skeleton.svelte";
+
+export {
+	Root,
+	//
+	Root as Skeleton,
+};
+
+```
+
+# frontend/src/lib/components/ui/skeleton/skeleton.svelte
+
+```svelte
+<script lang="ts">
+	import type { WithElementRef, WithoutChildren } from "bits-ui";
+	import type { HTMLAttributes } from "svelte/elements";
+	import { cn } from "$lib/utils.js";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		...restProps
+	}: WithoutChildren<WithElementRef<HTMLAttributes<HTMLDivElement>>> = $props();
+</script>
+
+<div
+	bind:this={ref}
+	class={cn("bg-primary/10 animate-pulse rounded-md", className)}
+	{...restProps}
+></div>
 
 ```
 
@@ -2483,10 +3892,735 @@ export {
 
 ```
 
-# frontend/src/lib/index.ts
+# frontend/src/lib/components/ui/tooltip/index.ts
 
 ```ts
-// place files you want to import through the `$lib` alias in this folder.
+import { Tooltip as TooltipPrimitive } from "bits-ui";
+import Content from "./tooltip-content.svelte";
+
+const Root = TooltipPrimitive.Root;
+const Trigger = TooltipPrimitive.Trigger;
+const Provider = TooltipPrimitive.Provider;
+
+export {
+	Root,
+	Trigger,
+	Content,
+	Provider,
+	//
+	Root as Tooltip,
+	Content as TooltipContent,
+	Trigger as TooltipTrigger,
+	Provider as TooltipProvider,
+};
+
+```
+
+# frontend/src/lib/components/ui/tooltip/tooltip-content.svelte
+
+```svelte
+<script lang="ts">
+	import { Tooltip as TooltipPrimitive } from "bits-ui";
+	import { cn } from "$lib/utils.js";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		sideOffset = 4,
+		...restProps
+	}: TooltipPrimitive.ContentProps = $props();
+</script>
+
+<TooltipPrimitive.Content
+	bind:ref
+	{sideOffset}
+	class={cn(
+		"bg-primary text-primary-foreground animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 overflow-hidden rounded-md px-3 py-1.5 text-xs",
+		className
+	)}
+	{...restProps}
+/>
+
+```
+
+# frontend/src/lib/custom_components/auth/logInForm.svelte
+
+```svelte
+<script lang="ts">
+	import * as Form from '$lib/components/ui/form/index.js';
+	import { Input } from '$lib/components/ui/input/index.js';
+	import { Button } from '$lib/components/ui/button';
+	import * as Card from '$lib/components/ui/card';
+	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';
+	import { page } from '$app/stores';
+	import { goto } from '$app/navigation';
+
+	import { logInSchema, type LogInSchema } from '$lib/schemas/auth/schema';
+	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
+	import { zodClient } from 'sveltekit-superforms/adapters';
+
+	type Props = {
+		data: SuperValidated<Infer<LogInSchema>>;
+	};
+	let { data }: Props = $props();
+
+	const form = superForm(data, {
+		validators: zodClient(logInSchema)
+	});
+
+	const { form: formData, enhance: logInEnhance } = form;
+	$effect(() => {
+		if ($page.form?.success) {
+			showSuccessToast($page.form.message);
+			goto('/private');
+		} else if ($page.form?.message) {
+			showErrorToast($page.form.message);
+		}
+	});
+</script>
+
+<div></div>
+
+<Card.Root>
+	<Card.Content>
+		<Card.CardHeader class="flex items-center">
+			<Card.Title>Welcome Back to EvaChain!</Card.Title>
+		</Card.CardHeader>
+		<form method="POST" action="?/login" use:logInEnhance>
+			<Form.Field {form} name="email">
+				<Form.Control>
+					{#snippet children({ props })}
+						<Form.Label>Email</Form.Label>
+						<Input placeholder="Enter Email" {...props} bind:value={$formData.email} />
+					{/snippet}
+				</Form.Control>
+				<Form.FieldErrors />
+			</Form.Field>
+			<Form.Field {form} name="password">
+				<Form.Control>
+					{#snippet children({ props })}
+						<Form.Label>Password</Form.Label>
+						<Input
+							placeholder="Enter Password"
+							{...props}
+							bind:value={$formData.password}
+							type="password"
+						/>
+					{/snippet}
+				</Form.Control>
+				<Form.FieldErrors />
+			</Form.Field>
+			<div class="flex justify-end"></div>
+			<Form.Button class="mt-2 w-full">Log In</Form.Button>
+		</form>
+		<div class="grid w-full grid-cols-1 place-items-center gap-3">
+			<div class="flex w-full items-center text-gray-900">
+				<hr class="flex-grow border-green-700" />
+				<h3 class="px-3">or</h3>
+				<hr class="flex-grow border-green-700" />
+			</div>
+			<Button href="/auth/google">Continue with Google</Button>
+		</div>
+	</Card.Content>
+</Card.Root>
+
+```
+
+# frontend/src/lib/custom_components/auth/signupForm.svelte
+
+```svelte
+<script lang="ts">
+	import * as Form from '$lib/components/ui/form/index.js';
+	import { Input } from '$lib/components/ui/input/index.js';
+	import * as Card from '$lib/components/ui/card';
+	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';
+	import { page } from '$app/stores';
+	import { goto } from '$app/navigation';
+
+	import { signupSchema, type SignupSchema } from '$lib/schemas/auth/schema';
+	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
+	import { zodClient } from 'sveltekit-superforms/adapters';
+
+	type Props = {
+		data: SuperValidated<Infer<SignupSchema>>;
+	};
+	let { data }: Props = $props();
+
+	const form = superForm(data, {
+		validators: zodClient(signupSchema)
+	});
+
+	const { form: formData, enhance: logInEnhance } = form;
+	$effect(() => {
+		if ($page.form?.success) {
+			showSuccessToast($page.form.message);
+			goto('/auth');
+		} else if ($page.form?.message) {
+			showErrorToast($page.form.message);
+		}
+	});
+</script>
+
+<Card.Root>
+	<Card.Content>
+		<form method="POST" action="?/signup" use:logInEnhance>
+			<div class="grid grid-cols-2 gap-2">
+				<Form.Field {form} name="firstName">
+					<Form.Control>
+						{#snippet children({ props })}
+							<Form.Label>First Name</Form.Label>
+							<Input {...props} bind:value={$formData.firstName} />
+						{/snippet}
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
+				<Form.Field {form} name="lastName">
+					<Form.Control>
+						{#snippet children({ props })}
+							<Form.Label>Last Name</Form.Label>
+							<Input {...props} bind:value={$formData.lastName} />
+						{/snippet}
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
+			</div>
+			<Form.Field {form} name="email">
+				<Form.Control>
+					{#snippet children({ props })}
+						<Form.Label>Email</Form.Label>
+						<Input {...props} bind:value={$formData.email} />
+					{/snippet}
+				</Form.Control>
+				<Form.FieldErrors />
+			</Form.Field>
+			<Form.Field {form} name="password">
+				<Form.Control>
+					{#snippet children({ props })}
+						<Form.Label>Password</Form.Label>
+						<Input {...props} bind:value={$formData.password} type="password" />
+					{/snippet}
+				</Form.Control>
+				<Form.FieldErrors />
+			</Form.Field>
+			<Form.Field {form} name="passwordRepeat">
+				<Form.Control>
+					{#snippet children({ props })}
+						<Form.Label>Confirm Password</Form.Label>
+						<Input {...props} bind:value={$formData.passwordRepeat} type="password" />
+					{/snippet}
+				</Form.Control>
+				<Form.FieldErrors />
+			</Form.Field>
+			<Form.Button class="mt-2 w-full">Sign Up</Form.Button>
+		</form>
+	</Card.Content>
+</Card.Root>
+
+```
+
+# frontend/src/lib/custom_components/footer.svelte
+
+```svelte
+<footer>
+	<span class="block text-center text-sm text-gray-500 sm:text-center dark:text-gray-400"
+		>© 2024 EvaChain. All Rights Reserved.</span
+	>
+</footer>
+
+```
+
+# frontend/src/lib/custom_components/navbar.svelte
+
+```svelte
+<script lang="ts">
+	import { goto, preloadData } from '$app/navigation';
+	import { page } from '$app/stores';
+	import { Button } from '$lib/components/ui/button';
+
+	import { isAuthenticated, currentProfile } from '$lib/utils/authStore';
+	import SheetNav from './sheet_nav.svelte';
+	let currPathName: String = $state($page.url.pathname);
+
+	$effect(() => {
+		currPathName = $page.url.pathname;
+	});
+
+	function goToAuthPage() {
+		preloadData('/auth');
+		goto('/auth');
+	}
+
+	function goToDashBoard() {
+		preloadData('/dashboard');
+		goto('/dashboard');
+	}
+</script>
+
+<nav class="border-gray-200 bg-transparent shadow-lg dark:bg-gray-900">
+	<div class="mx-auto flex max-w-screen-xl flex-wrap items-center justify-between p-4">
+		<a href="/" class="flex items-center space-x-3 rtl:space-x-reverse">
+			<img src="https://flowbite.com/docs/images/logo.svg" class="h-8" alt="Flowbite Logo" />
+			<span
+				class="text-foreground self-center whitespace-nowrap text-2xl font-semibold dark:text-white"
+				>EvaChain</span
+			>
+		</a>
+		<div>
+			{#if currPathName === '/' && !$isAuthenticated}
+				<Button onclick={goToAuthPage}>Log-in/Sign-up</Button>
+			{/if}
+			{#if currPathName === '/' && $isAuthenticated}
+				<Button onclick={goToDashBoard}>Go to dashboard</Button>
+			{/if}
+			{#if currPathName !== '/' && $isAuthenticated}
+				{#if $currentProfile}
+					<SheetNav profile={$currentProfile} />
+				{/if}
+			{/if}
+		</div>
+	</div>
+</nav>
+
+```
+
+# frontend/src/lib/custom_components/sheet_nav.svelte
+
+```svelte
+<script lang="ts">
+	import * as Sheet from '$lib/components/ui/sheet';
+	import * as Avatar from '$lib/components/ui/avatar';
+	import { Separator } from '$lib/components/ui/separator';
+	import type { Tables } from '$lib/types/database.types';
+	import { UserRoundPen } from 'lucide-svelte';
+	import { LogOut } from 'lucide-svelte';
+	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
+
+	let loading = $state(false);
+	let open = $state(false);
+
+	async function handleLogOut() {
+		const { error } = await $page.data.supabase.auth.signOut();
+		if (error) throw error;
+		await goto('/auth');
+	}
+
+	function handleNavigate() {
+		open = false; // Close sheet before navigation
+	}
+	let { profile }: { profile: Tables<'profiles'> | null } = $props();
+</script>
+
+<div class="flex items-center gap-2">
+	<Sheet.Root bind:open>
+		<Sheet.Trigger class="focus:outline-none">
+			<Avatar.Root>
+				<Avatar.Image
+					src={profile?.avatar_url ?? undefined}
+					alt={profile?.first_name ?? 'User avatar'}
+				/>
+				<Avatar.Fallback>
+					{(profile?.first_name?.[0] ?? '') + (profile?.last_name?.[0] ?? '')}
+				</Avatar.Fallback>
+			</Avatar.Root>
+		</Sheet.Trigger>
+		<Sheet.Content side="right">
+			<Sheet.Header>
+				<div class="flex h-fit w-fit items-center gap-4">
+					<Avatar.Root>
+						<Avatar.Image
+							src={profile?.avatar_url ?? undefined}
+							alt={profile?.first_name ?? 'User avatar'}
+						/>
+						<Avatar.Fallback>
+							{(profile?.first_name?.[0] ?? '') + (profile?.last_name?.[0] ?? '')}
+						</Avatar.Fallback>
+					</Avatar.Root>
+					<h1>{profile?.first_name + ' ' + profile?.last_name}</h1>
+				</div>
+				<Separator />
+			</Sheet.Header>
+			<div class="flex flex-col gap-4">
+				<div class="flex flex-col gap-1.5">
+					<h1 class="text-gray-500">Account</h1>
+					<a
+						href="/dashboard/profile/{profile?.id}"
+						class="hover:text-green-900"
+						onclick={handleNavigate}
+					>
+						<div class="flex w-fit gap-1.5">
+							<UserRoundPen />
+							<h3>Profile</h3>
+						</div>
+					</a>
+				</div>
+				<Separator />
+				<div>
+					<button
+						class="flex w-fit cursor-pointer gap-1.5 border-none hover:text-green-900 focus:outline-none disabled:opacity-50"
+						onclick={handleLogOut}
+						disabled={loading}
+					>
+						<LogOut />
+						<h5>Log-out</h5>
+					</button>
+				</div>
+			</div>
+		</Sheet.Content>
+	</Sheet.Root>
+</div>
+
+```
+
+# frontend/src/lib/custom_components/side-bars/admin/side-bar.svelte
+
+```svelte
+<script lang="ts">
+	import Calendar from 'lucide-svelte/icons/calendar';
+	import House from 'lucide-svelte/icons/house';
+	import Inbox from 'lucide-svelte/icons/inbox';
+	import Search from 'lucide-svelte/icons/search';
+	import Settings from 'lucide-svelte/icons/settings';
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
+	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
+	import * as Collapsible from '$lib/components/ui/collapsible';
+	import logo from '$lib/assets/logo.svg';
+	import { ChevronUp, Plus } from 'lucide-svelte';
+
+	let { sidebarOpen = $bindable() } = $props();
+
+	let isHover = $state(false);
+	let isDrawerOpen = $state(false);
+	function handleChange() {
+		const open = isHover || isDrawerOpen;
+		sidebarOpen = open;
+	}
+
+	// Menu items.
+	const items = [
+		{
+			title: 'Home',
+			url: '#',
+			icon: House
+		},
+		{
+			title: 'Inbox',
+			url: '#',
+			icon: Inbox
+		},
+		{
+			title: 'Calendar',
+			url: '#',
+			icon: Calendar
+		},
+		{
+			title: 'Search',
+			url: '#',
+			icon: Search
+		},
+		{
+			title: 'Settings',
+			url: '#',
+			icon: Settings
+		}
+	];
+</script>
+
+<Sidebar.Root
+	collapsible={'icon'}
+	onmouseover={() => {
+		isHover = true;
+		handleChange();
+	}}
+	onmouseleave={() => {
+		isHover = false;
+		handleChange();
+	}}
+>
+	<Sidebar.Header>
+		<Sidebar.Menu>
+			<Sidebar.MenuItem class=" flex min-h-16 items-center">
+				<Sidebar.MenuButton class="min-h-16">
+					{#snippet child({ props })}
+						<a href="/dashboard" {...props}>
+							<img class=" max-h-11" src={logo} alt="standuplogo" />
+							<span><h1 class="text-lg font-bold tracking-widest">EvaChain</h1></span>
+						</a>
+					{/snippet}
+				</Sidebar.MenuButton>
+			</Sidebar.MenuItem>
+		</Sidebar.Menu>
+	</Sidebar.Header>
+	<Sidebar.Content>
+		<Sidebar.Group>
+			<Sidebar.GroupLabel>Application</Sidebar.GroupLabel>
+			<Sidebar.GroupContent>
+				<Sidebar.Menu>
+					{#each items as item (item.title)}
+						<Sidebar.MenuItem>
+							<Sidebar.MenuButton>
+								{#snippet child({ props })}
+									<a href={item.url} {...props}>
+										<item.icon />
+										<span>{item.title}</span>
+									</a>
+								{/snippet}
+							</Sidebar.MenuButton>
+						</Sidebar.MenuItem>
+					{/each}
+				</Sidebar.Menu>
+			</Sidebar.GroupContent>
+		</Sidebar.Group>
+	</Sidebar.Content>
+	<Sidebar.Footer>
+		<Sidebar.Menu>
+			<Sidebar.MenuItem>
+				<DropdownMenu.Root
+					onOpenChange={(drawerState) => {
+						isDrawerOpen = drawerState;
+					}}
+				>
+					<DropdownMenu.Trigger>
+						{#snippet child({ props })}
+							<Sidebar.MenuButton
+								{...props}
+								class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+							>
+								Username
+								<ChevronUp class="ml-auto" />
+							</Sidebar.MenuButton>
+						{/snippet}
+					</DropdownMenu.Trigger>
+					<DropdownMenu.Content side="top" class="w-[--bits-dropdown-menu-anchor-width]">
+						<DropdownMenu.Item>
+							<span>Account</span>
+						</DropdownMenu.Item>
+						<DropdownMenu.Item>
+							<span>Billing</span>
+						</DropdownMenu.Item>
+						<DropdownMenu.Item>
+							<span>Sign out</span>
+						</DropdownMenu.Item>
+					</DropdownMenu.Content>
+				</DropdownMenu.Root>
+			</Sidebar.MenuItem>
+		</Sidebar.Menu>
+	</Sidebar.Footer>
+</Sidebar.Root>
+
+```
+
+# frontend/src/lib/custom_components/side-bars/dashboard/side-bar.svelte
+
+```svelte
+<script lang="ts">
+	import Calendar from 'lucide-svelte/icons/calendar';
+	import House from 'lucide-svelte/icons/house';
+	import Inbox from 'lucide-svelte/icons/inbox';
+	import Search from 'lucide-svelte/icons/search';
+	import Settings from 'lucide-svelte/icons/settings';
+	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
+
+	// Menu items.
+	const items = [
+		{
+			title: 'Home',
+			url: '#',
+			icon: House
+		},
+		{
+			title: 'Inbox',
+			url: '#',
+			icon: Inbox
+		},
+		{
+			title: 'Calendar',
+			url: '#',
+			icon: Calendar
+		},
+		{
+			title: 'Search',
+			url: '#',
+			icon: Search
+		},
+		{
+			title: 'Settings',
+			url: '#',
+			icon: Settings
+		}
+	];
+</script>
+
+<Sidebar.Root>
+	<Sidebar.Content>
+		<Sidebar.Group>
+			<Sidebar.GroupLabel>Application</Sidebar.GroupLabel>
+			<Sidebar.GroupContent>
+				<Sidebar.Menu>
+					{#each items as item (item.title)}
+						<Sidebar.MenuItem>
+							<Sidebar.MenuButton>
+								{#snippet child({ props })}
+									<a href={item.url} {...props}>
+										<item.icon />
+										<span>{item.title}</span>
+									</a>
+								{/snippet}
+							</Sidebar.MenuButton>
+						</Sidebar.MenuItem>
+					{/each}
+				</Sidebar.Menu>
+			</Sidebar.GroupContent>
+		</Sidebar.Group>
+	</Sidebar.Content>
+</Sidebar.Root>
+
+```
+
+# frontend/src/lib/hooks/is-mobile.svelte.ts
+
+```ts
+import { untrack } from "svelte";
+
+const MOBILE_BREAKPOINT = 768;
+
+export class IsMobile {
+	#current = $state<boolean>(false);
+
+	constructor() {
+		$effect(() => {
+			return untrack(() => {
+				const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`);
+				const onChange = () => {
+					this.#current = window.innerWidth < MOBILE_BREAKPOINT;
+				};
+				mql.addEventListener("change", onChange);
+				onChange();
+				return () => {
+					mql.removeEventListener("change", onChange);
+				};
+			});
+		});
+	}
+
+	get current() {
+		return this.#current;
+	}
+}
+
+```
+
+# frontend/src/lib/schemas/auth/schema.ts
+
+```ts
+import { z } from 'zod';
+export const logInSchema = z.object({
+	email: z
+		.string()
+		.email()
+		.regex(/'^[a-zA-Z0-9._%+-]+@dmmmsu\.edu\.ph$'/, 'Only dmmmsu.edu.ph email is allowed'),
+	password: z.string().min(6)
+});
+
+export const signupSchema = z
+	.object({
+		firstName: z
+			.string()
+			.min(3)
+			.regex(/^[A-Za-z]+$/, 'Names cannot contain numbers'),
+		lastName: z
+			.string()
+			.min(3)
+			.regex(/^[A-Za-z]+$/, 'Names cannot contain numbers'),
+		email: z
+			.string()
+			.email()
+			.regex(/'^[a-zA-Z0-9._%+-]+@dmmmsu\.edu\.ph$'/, 'Only dmmmsu.edu.ph email is allowed'),
+		password: z.string().min(6),
+		passwordRepeat: z.string().min(6)
+	})
+	.refine((data) => data.password === data.passwordRepeat, {
+		message: "Passwords don't match",
+		path: ['passwordRepeat']
+	});
+
+export type LogInSchema = typeof logInSchema;
+
+export type SignupSchema = typeof signupSchema;
+
+```
+
+# frontend/src/lib/schemas/profile/schema.ts
+
+```ts
+import { z } from 'zod';
+
+export const profileSchema = z.object({
+	avatar_url: z.string().nullable().optional(),
+	created_at: z.string().nullable().optional(),
+	email: z.string().email('Invalid email address').nullable(),
+	employee_id: z.string().min(1, 'Employee ID is required').nullable(),
+	employee_status_id: z
+		.number()
+		.int('Must be an integer')
+		.positive('Must be a positive number')
+		.nullable(),
+	first_name: z
+		.string()
+		.min(2, 'First name must be at least 2 characters')
+		.regex(/^[A-Za-z\s]+$/, 'First name can only contain letters and spaces')
+		.nullable(),
+	id: z.string().min(1, 'ID is required').optional(),
+	last_name: z
+		.string()
+		.min(2, 'Last name must be at least 2 characters')
+		.regex(/^[A-Za-z\s]+$/, 'Last name can only contain letters and spaces')
+		.nullable(),
+	middle_name: z
+		.string()
+		.regex(/^[A-Za-z\s]*$/, 'Middle name can only contain letters and spaces')
+		.nullable(),
+	nature_of_work_id: z
+		.number()
+		.int('Must be an integer')
+		.positive('Must be a positive number')
+		.nullable(),
+	office_id: z.number().int('Must be an integer').positive('Must be a positive number').nullable(),
+	position_id: z
+		.number()
+		.int('Must be an integer')
+		.positive('Must be a positive number')
+		.nullable(),
+	programme_id: z
+		.number()
+		.int('Must be an integer')
+		.positive('Must be a positive number')
+		.nullable(),
+	unit_id: z.number().int('Must be an integer').positive('Must be a positive number').nullable(),
+	updated_at: z.string().nullable().optional()
+});
+// Stricter schema for form submission
+export const profileSubmitSchema = profileSchema.extend({
+	employee_id: z.string().min(3, 'Employee ID is required'),
+	first_name: z
+		.string()
+		.refine(
+			(val) => val.length >= 2 && /^[A-Za-z\s]+$/.test(val),
+			'First name must be at least 2 characters and contain only letters and spaces'
+		),
+	last_name: z
+		.string()
+		.refine(
+			(val) => val.length >= 2 && /^[A-Za-z\s]+$/.test(val),
+			'Last name must be at least 2 characters and contain only letters'
+		),
+	unit_id: z.number().positive(),
+	office_id: z.number().positive()
+	// Add other required fields here
+});
+
+export type ProfileSubmitSchema = typeof profileSubmitSchema;
+export type ProfileSchema = typeof profileSchema;
 
 ```
 
@@ -3046,113 +5180,18 @@ export const showWarningToast = (message: string) => {
 
 ```
 
-# frontend/src/routes/+layout.server.ts
-
-```ts
-import type { LayoutServerLoad } from './$types';
-
-export const load: LayoutServerLoad = async ({ locals: { safeGetSession }, cookies }) => {
-	const { session } = await safeGetSession();
-	return {
-		session,
-		cookies: cookies.getAll()
-	};
-};
-
-```
-
-# frontend/src/routes/+layout.svelte
+# frontend/src/routes/(app)/+page.svelte
 
 ```svelte
-<script lang="ts">
-	import '../app.css';
-	import { invalidate } from '$app/navigation';
-	import Navbar from '$lib/components/custom/navbar.svelte';
-	import Footer from '$lib/components/custom/footer.svelte';
-	import { Toaster } from 'svelte-sonner';
-	import { authStore } from '$lib/utils/authStore';
-	let { children, data } = $props();
-
-	let { session, supabase } = $derived(data);
-
-	$effect(() => {
-		const { data } = supabase.auth.onAuthStateChange((event, newSession) => {
-			if (event === 'SIGNED_OUT') {
-				authStore.clearProfile();
-			}
-			if (newSession?.expires_at !== session?.expires_at) {
-				invalidate('supabase:auth');
-			}
-		});
-		return () => data.subscription.unsubscribe();
-	});
+<script>
+	import Navbar from '$lib/custom_components/navbar.svelte';
 </script>
 
-<Toaster richColors position="top-right" />
 <Navbar />
-{@render children()}
-<Footer />
 
 ```
 
-# frontend/src/routes/+layout.ts
-
-```ts
-import { createBrowserClient, createServerClient, isBrowser } from '@supabase/ssr';
-import { PUBLIC_SUPABASE_ANON_KEY, PUBLIC_SUPABASE_URL } from '$env/static/public';
-import type { LayoutLoad } from './$types';
-import type { Database } from '$lib/types/database.types';
-export const load: LayoutLoad = async ({ data, depends, fetch }) => {
-	/**
-	 * Declare a dependency so the layout can be invalidated, for example, on
-	 * session refresh.
-	 */
-	depends('supabase:auth');
-
-	const supabase = isBrowser()
-		? createBrowserClient<Database>(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, {
-				global: {
-					fetch
-				}
-			})
-		: createServerClient<Database>(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, {
-				global: {
-					fetch
-				},
-				cookies: {
-					getAll() {
-						return data.cookies;
-					}
-				}
-			});
-
-	/**
-	 * It's fine to use `getSession` here, because on the client, `getSession` is
-	 * safe, and on the server, it reads `session` from the `LayoutData`, which
-	 * safely checked the session using `safeGetSession`.
-	 */
-	const {
-		data: { session }
-	} = await supabase.auth.getSession();
-
-	const {
-		data: { user }
-	} = await supabase.auth.getUser();
-
-	return { session, supabase, user };
-};
-
-```
-
-# frontend/src/routes/+page.svelte
-
-```svelte
-<script lang="ts">
-</script>
-
-```
-
-# frontend/src/routes/auth/+layout.svelte
+# frontend/src/routes/(app)/auth/+layout.svelte
 
 ```svelte
 <script lang="ts">
@@ -3165,14 +5204,14 @@ export const load: LayoutLoad = async ({ data, depends, fetch }) => {
 
 ```
 
-# frontend/src/routes/auth/+page.server.ts
+# frontend/src/routes/(app)/auth/+page.server.ts
 
 ```ts
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import { logInSchema, signupSchema } from './schema';
+import { logInSchema, signupSchema } from '$lib/schemas/auth/schema';
 
 //PROPS passed down to +page.svelte
 export const load: PageServerLoad = async () => {
@@ -3269,14 +5308,14 @@ export const actions: Actions = {
 
 ```
 
-# frontend/src/routes/auth/+page.svelte
+# frontend/src/routes/(app)/auth/+page.svelte
 
 ```svelte
 <script lang="ts">
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
 	import type { PageServerData } from './$types';
-	import LogInForm from './logInForm.svelte';
-	import SignupForm from './signupForm.svelte';
+	import LogInForm from '$lib/custom_components/auth/logInForm.svelte';
+	import SignupForm from '$lib/custom_components/auth/signupForm.svelte';
 	let { data }: { data: PageServerData } = $props();
 </script>
 
@@ -3295,7 +5334,7 @@ export const actions: Actions = {
 
 ```
 
-# frontend/src/routes/auth/callback/+server.ts
+# frontend/src/routes/(app)/auth/callback/+server.ts
 
 ```ts
 import { redirect, type RequestHandler } from '@sveltejs/kit';
@@ -3344,7 +5383,7 @@ export const GET: RequestHandler = async (event) => {
 
 ```
 
-# frontend/src/routes/auth/confirm/+server.ts
+# frontend/src/routes/(app)/auth/confirm/+server.ts
 
 ```ts
 import type { EmailOtpType } from '@supabase/supabase-js'
@@ -3380,14 +5419,14 @@ export const GET: RequestHandler = async ({ url, locals: { supabase } }) => {
 }
 ```
 
-# frontend/src/routes/auth/error/+page.svelte
+# frontend/src/routes/(app)/auth/error/+page.svelte
 
 ```svelte
 <p>Login error</p>
 
 ```
 
-# frontend/src/routes/auth/google/+server.ts
+# frontend/src/routes/(app)/auth/google/+server.ts
 
 ```ts
 import { redirect, type RequestHandler } from '@sveltejs/kit';
@@ -3417,285 +5456,57 @@ export const GET: RequestHandler = async (event) => {
 
 ```
 
-# frontend/src/routes/auth/logInForm.svelte
+# frontend/src/routes/(dashboard)/dashboard/(admin)/+layout.svelte
 
 ```svelte
 <script lang="ts">
-	import * as Form from '$lib/components/ui/form/index.js';
-	import { Input } from '$lib/components/ui/input/index.js';
-	import { Button } from '$lib/components/ui/button';
-	import * as Card from '$lib/components/ui/card';
-	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';
-	import { page } from '$app/stores';
-	import { goto } from '$app/navigation';
-
-	import { logInSchema, type LogInSchema } from './schema';
-	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
-	import { zodClient } from 'sveltekit-superforms/adapters';
-
-	type Props = {
-		data: SuperValidated<Infer<LogInSchema>>;
-	};
-	let { data }: Props = $props();
-
-	const form = superForm(data, {
-		validators: zodClient(logInSchema)
-	});
-
-	const { form: formData, enhance: logInEnhance } = form;
-	$effect(() => {
-		if ($page.form?.success) {
-			showSuccessToast($page.form.message);
-			goto('/private');
-		} else if ($page.form?.message) {
-			showErrorToast($page.form.message);
-		}
-	});
+	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
+	import AppSidebar from '$lib/custom_components/side-bars/admin/side-bar.svelte';
+	let { children } = $props();
+	let sidebarOpen = $state(false);
 </script>
 
-<div></div>
-
-<Card.Root>
-	<Card.Content>
-		<Card.CardHeader class="flex items-center">
-			<Card.Title>Welcome Back to EvaChain!</Card.Title>
-		</Card.CardHeader>
-		<form method="POST" action="?/login" use:logInEnhance>
-			<Form.Field {form} name="email">
-				<Form.Control>
-					{#snippet children({ props })}
-						<Form.Label>Email</Form.Label>
-						<Input placeholder="Enter Email" {...props} bind:value={$formData.email} />
-					{/snippet}
-				</Form.Control>
-				<Form.FieldErrors />
-			</Form.Field>
-			<Form.Field {form} name="password">
-				<Form.Control>
-					{#snippet children({ props })}
-						<Form.Label>Password</Form.Label>
-						<Input
-							placeholder="Enter Password"
-							{...props}
-							bind:value={$formData.password}
-							type="password"
-						/>
-					{/snippet}
-				</Form.Control>
-				<Form.FieldErrors />
-			</Form.Field>
-			<div class="flex justify-end"></div>
-			<Form.Button class="mt-2 w-full">Log In</Form.Button>
-		</form>
-		<div class="grid w-full grid-cols-1 place-items-center gap-3">
-			<div class="flex w-full items-center text-gray-900">
-				<hr class="flex-grow border-green-700" />
-				<h3 class="px-3">or</h3>
-				<hr class="flex-grow border-green-700" />
-			</div>
-			<Button href="/auth/google">Continue with Google</Button>
-		</div>
-	</Card.Content>
-</Card.Root>
+<Sidebar.Provider controlledOpen bind:open={sidebarOpen}>
+	<AppSidebar bind:sidebarOpen />
+	<main>
+		{@render children?.()}
+	</main>
+</Sidebar.Provider>
 
 ```
 
-# frontend/src/routes/auth/schema.ts
+# frontend/src/routes/(dashboard)/dashboard/(admin)/admin/+page.server.ts
 
 ```ts
-import { z } from 'zod';
-export const logInSchema = z.object({
-	email: z
-		.string()
-		.email()
-		.regex(/'^[a-zA-Z0-9._%+-]+@dmmmsu\.edu\.ph$'/, 'Only dmmmsu.edu.ph email is allowed'),
-	password: z.string().min(6)
-});
-
-export const signupSchema = z
-	.object({
-		firstName: z
-			.string()
-			.min(3)
-			.regex(/^[A-Za-z]+$/, 'Names cannot contain numbers'),
-		lastName: z
-			.string()
-			.min(3)
-			.regex(/^[A-Za-z]+$/, 'Names cannot contain numbers'),
-		email: z
-			.string()
-			.email()
-			.regex(/'^[a-zA-Z0-9._%+-]+@dmmmsu\.edu\.ph$'/, 'Only dmmmsu.edu.ph email is allowed'),
-		password: z.string().min(6),
-		passwordRepeat: z.string().min(6)
-	})
-	.refine((data) => data.password === data.passwordRepeat, {
-		message: "Passwords don't match",
-		path: ['passwordRepeat']
-	});
-
-export type LogInSchema = typeof logInSchema;
-
-export type SignupSchema = typeof signupSchema;
-
-```
-
-# frontend/src/routes/auth/signupForm.svelte
-
-```svelte
-<script lang="ts">
-	import * as Form from '$lib/components/ui/form/index.js';
-	import { Input } from '$lib/components/ui/input/index.js';
-	import * as Card from '$lib/components/ui/card';
-	import { Button } from '$lib/components/ui/button';
-	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';
-	import { page } from '$app/stores';
-	import { goto } from '$app/navigation';
-
-	import { signupSchema, type SignupSchema } from './schema';
-	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
-	import { zodClient } from 'sveltekit-superforms/adapters';
-
-	type Props = {
-		data: SuperValidated<Infer<SignupSchema>>;
-	};
-	let { data }: Props = $props();
-
-	const form = superForm(data, {
-		validators: zodClient(signupSchema)
-	});
-
-	const { form: formData, enhance: logInEnhance } = form;
-	$effect(() => {
-		if ($page.form?.success) {
-			showSuccessToast($page.form.message);
-			goto('/auth');
-		} else if ($page.form?.message) {
-			showErrorToast($page.form.message);
-		}
-	});
-</script>
-
-<Card.Root>
-	<Card.Content>
-		<form method="POST" action="?/signup" use:logInEnhance>
-			<div class="grid grid-cols-2 gap-2">
-				<Form.Field {form} name="firstName">
-					<Form.Control>
-						{#snippet children({ props })}
-							<Form.Label>First Name</Form.Label>
-							<Input {...props} bind:value={$formData.firstName} />
-						{/snippet}
-					</Form.Control>
-					<Form.FieldErrors />
-				</Form.Field>
-				<Form.Field {form} name="lastName">
-					<Form.Control>
-						{#snippet children({ props })}
-							<Form.Label>Last Name</Form.Label>
-							<Input {...props} bind:value={$formData.lastName} />
-						{/snippet}
-					</Form.Control>
-					<Form.FieldErrors />
-				</Form.Field>
-			</div>
-			<Form.Field {form} name="email">
-				<Form.Control>
-					{#snippet children({ props })}
-						<Form.Label>Email</Form.Label>
-						<Input {...props} bind:value={$formData.email} />
-					{/snippet}
-				</Form.Control>
-				<Form.FieldErrors />
-			</Form.Field>
-			<Form.Field {form} name="password">
-				<Form.Control>
-					{#snippet children({ props })}
-						<Form.Label>Password</Form.Label>
-						<Input {...props} bind:value={$formData.password} type="password" />
-					{/snippet}
-				</Form.Control>
-				<Form.FieldErrors />
-			</Form.Field>
-			<Form.Field {form} name="passwordRepeat">
-				<Form.Control>
-					{#snippet children({ props })}
-						<Form.Label>Confirm Password</Form.Label>
-						<Input {...props} bind:value={$formData.passwordRepeat} type="password" />
-					{/snippet}
-				</Form.Control>
-				<Form.FieldErrors />
-			</Form.Field>
-			<Form.Button class="mt-2 w-full">Sign Up</Form.Button>
-		</form>
-	</Card.Content>
-</Card.Root>
-
-```
-
-# frontend/src/routes/dashboard/+layout.server.ts
-
-```ts
-/**
- * This file is necessary to ensure protection of all routes in the `private`
- * directory. It makes the routes in this directory _dynamic_ routes, which
- * send a server request, and thus trigger `hooks.server.ts`.
- **/
-
-```
-
-# frontend/src/routes/dashboard/+layout.svelte
-
-```svelte
-<script lang="ts">
-	import { goto } from '$app/navigation';
-	import type { Tables } from '$lib/types/database.types.js';
-	import { authStore } from '$lib/utils/authStore.js';
-	import { onMount, setContext } from 'svelte';
-
-	let { data, children } = $props();
-	onMount(() => {
-		authStore.fetchProfile(data.supabase);
-	});
-</script>
-
-<main>
-	{@render children()}
-</main>
-
-```
-
-# frontend/src/routes/dashboard/+page.server.ts
-
-```ts
-import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-export const load: PageServerLoad = async ({ depends, locals: { supabase, user } }) => {
-	if (!user) {
-		throw error(401, 'Unauthorized');
-	}
-};
+
+export const load = (async () => {
+	return {};
+}) satisfies PageServerLoad;
 
 ```
 
-# frontend/src/routes/dashboard/+page.svelte
+# frontend/src/routes/(dashboard)/dashboard/(admin)/admin/+page.svelte
 
 ```svelte
 <script lang="ts">
 	import type { PageData } from './$types';
+
 	let { data }: { data: PageData } = $props();
 </script>
 
+<h1>Hi im admin Page</h1>
+
 ```
 
-# frontend/src/routes/dashboard/profile/[profileid]/+page.server.ts
+# frontend/src/routes/(dashboard)/dashboard/(profile)/profile/view/[profileid]/+page.server.ts
 
 ```ts
 import { error, redirect } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
 import { fail, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import { profileSchema, profileSubmitSchema } from './schema';
+import { profileSchema, profileSubmitSchema } from '$lib/schemas/profile/schema';
 
 export const load: PageServerLoad = async ({ params, locals: { supabase } }) => {
 	if (!params.profileid) {
@@ -3794,7 +5605,7 @@ export const actions: Actions = {
 
 ```
 
-# frontend/src/routes/dashboard/profile/[profileid]/+page.svelte
+# frontend/src/routes/(dashboard)/dashboard/(profile)/profile/view/[profileid]/+page.svelte
 
 ```svelte
 <script lang="ts">
@@ -3813,7 +5624,7 @@ export const actions: Actions = {
 	//zod
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
-	import { profileSubmitSchema } from './schema';
+	import { profileSubmitSchema } from '$lib/schemas/profile/schema';
 	import * as Select from '$lib/components/ui/select';
 	import type { Tables } from '$lib/types/database.types';
 	import {
@@ -4234,77 +6045,155 @@ export const actions: Actions = {
 
 ```
 
-# frontend/src/routes/dashboard/profile/[profileid]/schema.ts
+# frontend/src/routes/(dashboard)/dashboard/+layout.server.ts
 
 ```ts
-import { z } from 'zod';
+/**
+ * This file is necessary to ensure protection of all routes in the `private`
+ * directory. It makes the routes in this directory _dynamic_ routes, which
+ * send a server request, and thus trigger `hooks.server.ts`.
+ **/
 
-export const profileSchema = z.object({
-	avatar_url: z.string().nullable().optional(),
-	created_at: z.string().nullable().optional(),
-	email: z.string().email('Invalid email address').nullable(),
-	employee_id: z.string().min(1, 'Employee ID is required').nullable(),
-	employee_status_id: z
-		.number()
-		.int('Must be an integer')
-		.positive('Must be a positive number')
-		.nullable(),
-	first_name: z
-		.string()
-		.min(2, 'First name must be at least 2 characters')
-		.regex(/^[A-Za-z\s]+$/, 'First name can only contain letters and spaces')
-		.nullable(),
-	id: z.string().min(1, 'ID is required').optional(),
-	last_name: z
-		.string()
-		.min(2, 'Last name must be at least 2 characters')
-		.regex(/^[A-Za-z\s]+$/, 'Last name can only contain letters and spaces')
-		.nullable(),
-	middle_name: z
-		.string()
-		.regex(/^[A-Za-z\s]*$/, 'Middle name can only contain letters and spaces')
-		.nullable(),
-	nature_of_work_id: z
-		.number()
-		.int('Must be an integer')
-		.positive('Must be a positive number')
-		.nullable(),
-	office_id: z.number().int('Must be an integer').positive('Must be a positive number').nullable(),
-	position_id: z
-		.number()
-		.int('Must be an integer')
-		.positive('Must be a positive number')
-		.nullable(),
-	programme_id: z
-		.number()
-		.int('Must be an integer')
-		.positive('Must be a positive number')
-		.nullable(),
-	unit_id: z.number().int('Must be an integer').positive('Must be a positive number').nullable(),
-	updated_at: z.string().nullable().optional()
-});
-// Stricter schema for form submission
-export const profileSubmitSchema = profileSchema.extend({
-	employee_id: z.string().min(3, 'Employee ID is required'),
-	first_name: z
-		.string()
-		.refine(
-			(val) => val.length >= 2 && /^[A-Za-z\s]+$/.test(val),
-			'First name must be at least 2 characters and contain only letters and spaces'
-		),
-	last_name: z
-		.string()
-		.refine(
-			(val) => val.length >= 2 && /^[A-Za-z\s]+$/.test(val),
-			'Last name must be at least 2 characters and contain only letters'
-		),
-	unit_id: z.number().positive(),
-	office_id: z.number().positive()
-	// Add other required fields here
-});
+```
 
-export type ProfileSubmitSchema = typeof profileSubmitSchema;
-export type ProfileSchema = typeof profileSchema;
+# frontend/src/routes/(dashboard)/dashboard/+layout.svelte
+
+```svelte
+<script lang="ts">
+	import { authStore } from '$lib/utils/authStore.js';
+	import { onMount } from 'svelte';
+
+	let { data, children } = $props();
+	onMount(() => {
+		authStore.fetchProfile(data.supabase);
+	});
+</script>
+
+<main>
+	{@render children?.()}
+</main>
+
+```
+
+# frontend/src/routes/(dashboard)/dashboard/+page.svelte
+
+```svelte
+<script lang="ts">
+	import type { PageData } from './$types';
+
+	let { data }: { data: PageData } = $props();
+</script>
+
+<h1>Hi im dashboard</h1>
+
+```
+
+# frontend/src/routes/+error.svelte
+
+```svelte
+<script lang="ts">
+	import { page } from '$app/stores';
+</script>
+
+<h1>{$page.status}: {$page.error?.message}</h1>
+
+```
+
+# frontend/src/routes/+layout.server.ts
+
+```ts
+import type { LayoutServerLoad } from './$types';
+
+export const load: LayoutServerLoad = async ({ locals: { safeGetSession }, cookies }) => {
+	const { session } = await safeGetSession();
+	return {
+		session,
+		cookies: cookies.getAll()
+	};
+};
+
+```
+
+# frontend/src/routes/+layout.svelte
+
+```svelte
+<script lang="ts">
+	import '../app.css';
+	import { invalidate } from '$app/navigation';
+	import Navbar from '$lib/custom_components/navbar.svelte';
+	import Footer from '$lib/custom_components/footer.svelte';
+	import { Toaster } from 'svelte-sonner';
+	import { authStore } from '$lib/utils/authStore';
+	let { children, data } = $props();
+
+	let { session, supabase } = $derived(data);
+
+	$effect(() => {
+		const { data } = supabase.auth.onAuthStateChange((event, newSession) => {
+			if (event === 'SIGNED_OUT') {
+				authStore.clearProfile();
+			}
+			if (newSession?.expires_at !== session?.expires_at) {
+				invalidate('supabase:auth');
+			}
+		});
+		return () => data.subscription.unsubscribe();
+	});
+</script>
+
+<Toaster richColors position="top-right" />
+<!-- <Navbar /> -->
+{@render children()}
+<Footer />
+
+```
+
+# frontend/src/routes/+layout.ts
+
+```ts
+import { createBrowserClient, createServerClient, isBrowser } from '@supabase/ssr';
+import { PUBLIC_SUPABASE_ANON_KEY, PUBLIC_SUPABASE_URL } from '$env/static/public';
+import type { LayoutLoad } from './$types';
+import type { Database } from '$lib/types/database.types';
+export const load: LayoutLoad = async ({ data, depends, fetch }) => {
+	/**
+	 * Declare a dependency so the layout can be invalidated, for example, on
+	 * session refresh.
+	 */
+	depends('supabase:auth');
+
+	const supabase = isBrowser()
+		? createBrowserClient<Database>(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, {
+				global: {
+					fetch
+				}
+			})
+		: createServerClient<Database>(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, {
+				global: {
+					fetch
+				},
+				cookies: {
+					getAll() {
+						return data.cookies;
+					}
+				}
+			});
+
+	/**
+	 * It's fine to use `getSession` here, because on the client, `getSession` is
+	 * safe, and on the server, it reads `session` from the `LayoutData`, which
+	 * safely checked the session using `safeGetSession`.
+	 */
+	const {
+		data: { session }
+	} = await supabase.auth.getSession();
+
+	const {
+		data: { user }
+	} = await supabase.auth.getUser();
+
+	return { session, supabase, user };
+};
 
 ```
 
@@ -4524,42 +6413,6 @@ main
 
 ```
 v1.223.10
-```
-
-# supabase/.temp/gotrue-version
-
-```
-v2.163.2
-```
-
-# supabase/.temp/pooler-url
-
-```
-postgresql://postgres.xixattpbfetzpwecbkde:[YOUR-PASSWORD]@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres
-```
-
-# supabase/.temp/postgres-version
-
-```
-15.6.1.135
-```
-
-# supabase/.temp/project-ref
-
-```
-xixattpbfetzpwecbkde
-```
-
-# supabase/.temp/rest-version
-
-```
-v12.2.3
-```
-
-# supabase/.temp/storage-version
-
-```
-v1.13.0
 ```
 
 # supabase/config.toml

@@ -1,0 +1,43 @@
+<script lang="ts">
+	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
+	import SideBarHeader from './side-bar-header.svelte';
+	import SideBarFooter from './side-bar-footer.svelte';
+	import SideBarEntities from './side-bar-entities.svelte';
+	import SideBarAttributes from './side-bar-attributes.svelte';
+
+	let { sidebarOpen = $bindable() } = $props();
+	const sidebar = Sidebar.useSidebar();
+
+	let isHover = $state(false);
+	let isDrawerOpen = $state(false);
+
+	function handleChange() {
+		const open = isHover || isDrawerOpen;
+		sidebarOpen = open;
+	}
+</script>
+
+<Sidebar.Root
+	collapsible={'icon'}
+	onmouseover={() => {
+		isHover = true;
+		handleChange();
+	}}
+	onmouseleave={() => {
+		isHover = false;
+		handleChange();
+	}}
+>
+	<SideBarHeader />
+	<Sidebar.Separator />
+	<Sidebar.Content>
+		<Sidebar.Group>
+			<Sidebar.GroupLabel>University Management</Sidebar.GroupLabel>
+			<Sidebar.GroupContent>
+				<SideBarEntities />
+				<SideBarAttributes />
+			</Sidebar.GroupContent>
+		</Sidebar.Group>
+	</Sidebar.Content>
+	<SideBarFooter bind:isDrawerOpen />
+</Sidebar.Root>

@@ -1,0 +1,100 @@
+import { error, redirect } from '@sveltejs/kit';
+import type { PageServerLoad, Actions } from './$types';
+import { fail, superValidate } from 'sveltekit-superforms';
+import { zod } from 'sveltekit-superforms/adapters';
+import { profileSchema, profileSubmitSchema } from '$lib/schemas/profile/schema';
+
+export const load: PageServerLoad = async ({ params, locals: { supabase } }) => {
+	if (!params.profileid) {
+		throw error(404, 'Profile ID not found');
+	}
+
+	const { data: profile, error: err } = await supabase
+		.from('profiles')
+		.select()
+		.eq('id', params.profileid)
+		.single();
+
+	if (err) {
+		throw error(500, 'Failed to load profile');
+	}
+
+	if (!profile) {
+		throw error(404, 'Profile not found');
+	}
+
+	const { data: units, error: unitErr } = await supabase.from('unit').select();
+
+	if (unitErr) {
+		throw error(500, 'Failed to load units');
+	}
+
+	const { data: natureOfWork, error: nowErr } = await supabase.from('nature_of_work').select();
+
+	if (nowErr) {
+		throw error(500, 'Failed to load nature of work');
+	}
+
+	const { data: employeeStatus, error: employeeStatusErr } = await supabase
+		.from('employee_status')
+		.select();
+
+	if (employeeStatusErr) {
+		throw error(500, 'Failed to load employee status');
+	}
+
+	return {
+		profile,
+		employeeStatus,
+		units,
+		natureOfWork,
+		form: await superValidate(profile, zod(profileSchema))
+	};
+};
+
+export const actions: Actions = {
+	updateprofile: async ({ request, locals: { supabase, session } }) => {
+		const test = await request.formData();
+		const form = await superValidate(test, zod(profileSubmitSchema));
+		console.log(form.data.unit_id);
+		// If not valid return the form with errors
+		if (!form.valid) {
+			console.log(form);
+			return fail(400, {
+				form
+			});
+		}
+		const {
+			first_name,
+			last_name,
+			middle_name,
+			employee_id,
+			unit_id,
+			nature_of_work_id,
+			office_id,
+			programme_id,
+			position_id,
+			employee_status_id
+		} = form.data;
+
+		if (!session?.user) {
+			redirect(401, 'Unauthorized');
+		}
+		//update
+		const { error } = await supabase
+			.from('profiles')
+			.update({
+				first_name,
+				last_name,
+				middle_name,
+				employee_id,
+				unit_id,
+				nature_of_work_id,
+				office_id,
+				programme_id,
+				position_id,
+				employee_status_id
+			})
+			.eq('id', session?.user.id);
+	}
+};

@@ -1,8 +1,8 @@
 <script lang="ts">
 	import '../app.css';
 	import { invalidate } from '$app/navigation';
-	import Navbar from '$lib/components/custom/navbar.svelte';
-	import Footer from '$lib/components/custom/footer.svelte';
+	import Navbar from '$lib/custom_components/navbar.svelte';
+	import Footer from '$lib/custom_components/footer.svelte';
 	import { Toaster } from 'svelte-sonner';
 	import { authStore } from '$lib/utils/authStore';
 	let { children, data } = $props();
@@ -23,6 +23,6 @@
 </script>
 
 <Toaster richColors position="top-right" />
-<Navbar />
+<!-- <Navbar /> -->
 {@render children()}
 <Footer />
