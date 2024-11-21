@@ -54,8 +54,7 @@ export const load: PageServerLoad = async ({ params, locals: { supabase } }) => 
 
 export const actions: Actions = {
 	updateprofile: async ({ request, locals: { supabase, session } }) => {
-		const test = await request.formData();
-		const form = await superValidate(test, zod(profileSubmitSchema));
+		const form = await superValidate(request, zod(profileSubmitSchema));
 		console.log(form.data.unit_id);
 		// If not valid return the form with errors
 		if (!form.valid) {

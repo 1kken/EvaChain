@@ -3,7 +3,7 @@ export const logInSchema = z.object({
 	email: z
 		.string()
 		.email()
-		.regex(/'^[a-zA-Z0-9._%+-]+@dmmmsu\.edu\.ph$'/, 'Only dmmmsu.edu.ph email is allowed'),
+		.regex(/^[a-zA-Z0-9._%+-]+@dmmmsu\.edu\.ph$/, 'Only dmmmsu.edu.ph email is allowed'),
 	password: z.string().min(6)
 });
 
@@ -20,7 +20,7 @@ export const signupSchema = z
 		email: z
 			.string()
 			.email()
-			.regex(/'^[a-zA-Z0-9._%+-]+@dmmmsu\.edu\.ph$'/, 'Only dmmmsu.edu.ph email is allowed'),
+			.regex(/^[a-zA-Z0-9._%+-]+@dmmmsu\.edu\.ph$/, 'Only dmmmsu.edu.ph email is allowed'),
 		password: z.string().min(6),
 		passwordRepeat: z.string().min(6)
 	})

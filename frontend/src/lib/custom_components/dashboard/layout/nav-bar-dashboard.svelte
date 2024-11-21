@@ -13,7 +13,7 @@
 	let { trigger } = $props();
 </script>
 
-<nav class="sticky top-0 z-10 min-h-14 w-full border-b shadow-md">
+<nav class="sticky top-0 z-10 min-h-14 w-full border-b shadow-md backdrop-blur-lg">
 	<div class="w-full px-4 sm:px-6 lg:px-8">
 		<div class="flex h-14 items-center justify-between">
 			<div class="flex items-center space-x-4">
