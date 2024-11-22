@@ -15,9 +15,29 @@ export const createUnitSchema = z.object({
 });
 
 // If you need a schema for updating units
-export const updateUnitSchema = createUnitSchema.partial();
+export const updateUnitSchema = z.object({
+	id: z.number().int(),
+	name: z.string().optional(),
+	code: z.string().optional()
+});
+
+// If need to delete
+export const deleteUnitSchema = z.object({
+	confirmation: z.string().refine((val) => val?.toLowerCase() === 'delete', {
+		message: 'Please type "delete" to confirm'
+	}),
+	id: z.number().int(),
+	name: z.string().optional()
+});
 
 // Type definitions if needed
 export type Unit = typeof unitSchema;
 export type CreateUnit = typeof createUnitSchema;
-export type UpdateUnit = typeof updateUnitSchema;
+
+export type UpdateUnitSchema = typeof updateUnitSchema;
+export type UpdateUnit = z.infer<typeof updateUnitSchema>;
+
+//recipe
+export type DeleteUnitSchema = typeof deleteUnitSchema;
+//product
+export type DeleteUnit = z.infer<typeof deleteUnitSchema>;

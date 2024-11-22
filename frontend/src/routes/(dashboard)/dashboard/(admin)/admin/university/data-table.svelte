@@ -16,7 +16,7 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import { createSvelteTable, FlexRender } from '$lib/components/ui/data-table/index.js';
 	import * as Table from '$lib/components/ui/table/index.js';
-	import { ChevronDown, Plus } from 'lucide-svelte';
+	import { ChevronDown } from 'lucide-svelte';
 	import CreateDialogUnit from '$lib/custom_components/university_management/create-dialog-unit.svelte';
 	import type { Infer, SuperValidated } from 'sveltekit-superforms';
 	import type { CreateUnit } from '$lib/schemas/unit/schema';
@@ -24,10 +24,10 @@
 	type DataTableProps<TData, TValue> = {
 		columns: ColumnDef<TData, TValue>[];
 		data: TData[];
-		form: SuperValidated<Infer<CreateUnit>, App.Superforms.Message>;
+		createUnitForm: SuperValidated<Infer<CreateUnit>, App.Superforms.Message>;
 	};
 
-	let { data, columns, form }: DataTableProps<TData, TValue> = $props();
+	let { data, columns, createUnitForm }: DataTableProps<TData, TValue> = $props();
 	let pagination = $state<PaginationState>({ pageIndex: 0, pageSize: 10 });
 	let sorting = $state<SortingState>([]);
 	let columnFilters = $state<ColumnFiltersState>([]);
@@ -109,7 +109,7 @@
 		oninput={(e) => table.getColumn('name')?.setFilterValue(e.currentTarget.value)}
 		class="max-w-sm"
 	/>
-	<CreateDialogUnit data={form} />
+	<CreateDialogUnit data={createUnitForm} />
 	<DropdownMenu.Root>
 		<DropdownMenu.Trigger>
 			{#snippet child({ props })}
