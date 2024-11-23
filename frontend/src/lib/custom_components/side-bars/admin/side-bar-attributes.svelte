@@ -10,6 +10,10 @@
 			url: '/dashboard/admin/university'
 		},
 		{
+			title: 'Nature of Work',
+			url: '#'
+		},
+		{
 			title: 'Position',
 			url: '#'
 		}

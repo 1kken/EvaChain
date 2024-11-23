@@ -1,9 +1,11 @@
 <script lang="ts">
-	import DataTable from './data-table.svelte';
+	import DataTable from '$lib/custom_components/university_management/data-table.svelte';
+
 	import { createColumns } from './columns';
 	import type { PageData } from './$types';
 	import { unit } from '$lib/states/admin_unit.svelte';
 	import { onDestroy, onMount } from 'svelte';
+	import CreateDialogUnit from '$lib/custom_components/university_management/units/create-dialog-unit.svelte';
 	let { data }: { data: PageData } = $props();
 
 	const {
@@ -25,4 +27,6 @@
 	});
 </script>
 
-<DataTable data={unit.units} {columns} {createUnitForm} />
+<DataTable data={unit.units} {columns}>
+	<CreateDialogUnit data={createUnitForm} />
+</DataTable>

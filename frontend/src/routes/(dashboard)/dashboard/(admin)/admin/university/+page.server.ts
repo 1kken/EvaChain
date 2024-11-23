@@ -10,6 +10,7 @@ import {
 	type UpdateUnitSchema
 } from '$lib/schemas/unit/schema';
 import { zod } from 'sveltekit-superforms/adapters';
+import { titleCase } from 'title-case';
 
 export const load = (async ({ locals: { supabase } }) => {
 	const { data: units, error: unitError } = await supabase.from('unit').select();
@@ -32,7 +33,7 @@ export const actions: Actions = {
 		);
 		let { code, name } = form.data;
 		code = code.toUpperCase();
-		name = name.toLowerCase();
+		name = titleCase(name);
 
 		const { error } = await supabase.from('unit').insert({ code, name });
 
@@ -51,7 +52,10 @@ export const actions: Actions = {
 			zod(deleteUnitSchema)
 		);
 
-		const { id, name } = form.data;
+		let { id, name } = form.data;
+		if (name) {
+			name = titleCase(name);
+		}
 		const { error } = await supabase.from('unit').delete().eq('id', id);
 
 		if (error) {
@@ -73,7 +77,11 @@ export const actions: Actions = {
 			zod(updateUnitSchema)
 		);
 
-		const { id, name, code } = form.data;
+		let { id, name, code } = form.data;
+		if (name) {
+			code = code?.toUpperCase();
+			name = titleCase(name);
+		}
 
 		const { error } = await supabase.from('unit').update({ name: name, code: code }).eq('id', id);
 

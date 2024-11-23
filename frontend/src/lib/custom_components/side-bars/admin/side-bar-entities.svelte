@@ -4,6 +4,7 @@
 	import { ChevronRight } from 'lucide-svelte';
 	import { University } from 'lucide-svelte';
 	import { fade } from 'svelte/transition';
+	import { page } from '$app/stores';
 	const items = [
 		{
 			title: 'Universities',
@@ -15,9 +16,13 @@
 		},
 		{
 			title: 'Programmes',
-			url: '#'
+			url: '/dashboard/admin/programme'
 		}
 	];
+	function isActive(itemUrl: string) {
+		console.log($page.url.pathname === itemUrl);
+		return $page.url.pathname === itemUrl;
+	}
 
 	let isOpen = $state(false);
 </script>
@@ -45,7 +50,7 @@
 							<Sidebar.MenuSub>
 								{#each items as item (item.title)}
 									<Sidebar.MenuSubItem>
-										<Sidebar.MenuSubButton>
+										<Sidebar.MenuSubButton class={isActive(item.url) ? 'font-bold' : ''}>
 											{#snippet child({ props })}
 												<a href={item.url} {...props}>
 													<span>{item.title}</span>

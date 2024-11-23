@@ -53,7 +53,7 @@
 	<Dialog.Trigger class=" focus-visible:outline-none">Edit Unit</Dialog.Trigger>
 	<Dialog.Content class="sm:max-w-auto">
 		<Dialog.Header>
-			<Dialog.Title>Create Unit</Dialog.Title>
+			<Dialog.Title>Update Unit</Dialog.Title>
 			<Dialog.Description>
 				An operating in DMMMSU is a distinct section that performs specific functions to achieve
 				university goals.
@@ -79,7 +79,7 @@
 						<Input {...props} bind:value={$formData.name} />
 					{/snippet}
 				</Form.Control>
-				<Form.Description>This is the acronym/code of the unit.</Form.Description>
+				<Form.Description>This is the full name of the unit.</Form.Description>
 				<Form.FieldErrors />
 			</Form.Field>
 			{#if $delayed}

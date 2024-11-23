@@ -44,7 +44,7 @@
 	$formData.id = id;
 	const curr_under_unit = unit.units;
 	const curr_office = office.offices.find((office) => office.id == $formData.id);
-	$formData.unit_id = curr_office?.id;
+	$formData.unit_id = curr_office?.unit?.id;
 	$formData.name = curr_office?.name;
 	$formData.code = curr_office?.code;
 </script>
