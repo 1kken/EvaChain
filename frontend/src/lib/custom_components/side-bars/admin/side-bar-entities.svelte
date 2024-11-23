@@ -11,7 +11,7 @@
 		},
 		{
 			title: 'Offices',
-			url: '#'
+			url: '/dashboard/admin/office'
 		},
 		{
 			title: 'Programmes',

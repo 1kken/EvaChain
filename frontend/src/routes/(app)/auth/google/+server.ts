@@ -15,7 +15,6 @@ export const GET: RequestHandler = async (event) => {
 		}
 	});
 
-	console.log(data);
 	if (data.url) {
 		throw redirect(307, data.url); // use the redirect API for your server framework
 	}

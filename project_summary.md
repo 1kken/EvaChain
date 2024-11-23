@@ -181,6 +181,7 @@ export default ts.config(
 	"dependencies": {
 		"@supabase/ssr": "^0.5.1",
 		"@supabase/supabase-js": "^2.46.1",
+		"@tanstack/table-core": "^8.20.5",
 		"embla-carousel-autoplay": "^8.3.1"
 	}
 }
@@ -250,51 +251,49 @@ You can preview the production build with `npm run preview`.
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-	:root {
-		--background: 162.9 100% 95%;
-		--foreground: 162.9 5% 10%;
-		--card: 162.9 50% 90%;
-		--card-foreground: 162.9 5% 15%;
-		--popover: 162.9 100% 95%;
-		--popover-foreground: 162.9 100% 10%;
-		--primary: 162.9 93.5% 24.3%;
-		--primary-foreground: 0 0% 100%;
-		--secondary: 162.9 30% 70%;
-		--secondary-foreground: 0 0% 0%;
-		--muted: 124.9 30% 85%;
-		--muted-foreground: 162.9 5% 35%;
-		--accent: 124.9 30% 80%;
-		--accent-foreground: 162.9 5% 15%;
-		--destructive: 0 100% 30%;
-		--destructive-foreground: 162.9 5% 90%;
-		--border: 162.9 30% 50%;
-		--input: 162.9 30% 26%;
-		--ring: 162.9 93.5% 24.3%;
-		--radius: 1rem;
-	}
-	.dark {
-		--background: 162.9 50% 10%;
-		--foreground: 162.9 5% 90%;
-		--card: 162.9 50% 10%;
-		--card-foreground: 162.9 5% 90%;
-		--popover: 162.9 50% 5%;
-		--popover-foreground: 162.9 5% 90%;
-		--primary: 162.9 93.5% 24.3%;
-		--primary-foreground: 0 0% 100%;
-		--secondary: 162.9 30% 20%;
-		--secondary-foreground: 0 0% 100%;
-		--muted: 124.9 30% 25%;
-		--muted-foreground: 162.9 5% 60%;
-		--accent: 124.9 30% 25%;
-		--accent-foreground: 162.9 5% 90%;
-		--destructive: 0 100% 30%;
-		--destructive-foreground: 162.9 5% 90%;
-		--border: 162.9 30% 26%;
-		--input: 162.9 30% 26%;
-		--ring: 162.9 93.5% 24.3%;
-		--radius: 1rem;
-	}
+:root {
+	--background: 143.8 27% 95%;
+	--foreground: 143.8 5% 10%;
+	--card: 143.8 27% 90%;
+	--card-foreground: 143.8 5% 15%;
+	--popover: 143.8 27% 95%;
+	--popover-foreground: 143.8 95% 10%;
+	--primary: 143.8 61.2% 20.2%;
+	--primary-foreground: 0 0% 100%;
+	--secondary: 143.8 27% 70%;
+	--secondary-foreground: 0 0% 0%;
+	--muted: 105.80000000000001 27% 85%;
+	--muted-foreground: 143.8 5% 35%;
+	--accent: 105.80000000000001 27% 80%;
+	--accent-foreground: 143.8 5% 15%;
+	--destructive: 0 50% 30%;
+	--destructive-foreground: 143.8 5% 90%;
+	--border: 143.8 27% 50%;
+	--input: 143.8 27% 26%;
+	--ring: 143.8 61.2% 20.2%;
+	--radius: 0.5rem;
+}
+.dark {
+	--background: 143.8 27% 10%;
+	--foreground: 143.8 5% 90%;
+	--card: 143.8 27% 10%;
+	--card-foreground: 143.8 5% 90%;
+	--popover: 143.8 27% 5%;
+	--popover-foreground: 143.8 5% 90%;
+	--primary: 143.8 61.2% 20.2%;
+	--primary-foreground: 0 0% 100%;
+	--secondary: 143.8 27% 20%;
+	--secondary-foreground: 0 0% 100%;
+	--muted: 105.80000000000001 27% 25%;
+	--muted-foreground: 143.8 5% 60%;
+	--accent: 105.80000000000001 27% 25%;
+	--accent-foreground: 143.8 5% 90%;
+	--destructive: 0 50% 30%;
+	--destructive-foreground: 143.8 5% 90%;
+	--border: 143.8 27% 26%;
+	--input: 143.8 27% 26%;
+	--ring: 143.8 61.2% 20.2%;
+	--radius: 0.5rem;
 }
 
 @layer base {
@@ -351,8 +350,12 @@ declare global {
 		interface PageData {
 			session: Session | null;
 		}
-		// interface PageState {}
-		// interface Platform {}
+		namespace Superforms {
+			type Message = {
+				status: 'error' | 'success' | 'warning';
+				text: string;
+			};
+		}
 	}
 }
 
@@ -471,6 +474,249 @@ export const handle: Handle = sequence(supabase, authGuard);
 # frontend/src/lib/assets/logo.svg
 
 This is a file of the type: SVG Image
+
+# frontend/src/lib/components/ui/alert-dialog/alert-dialog-action.svelte
+
+```svelte
+<script lang="ts">
+	import { AlertDialog as AlertDialogPrimitive } from "bits-ui";
+	import { buttonVariants } from "$lib/components/ui/button/index.js";
+	import { cn } from "$lib/utils.js";
+
+	let {
+		class: className,
+		ref = $bindable(null),
+		...restProps
+	}: AlertDialogPrimitive.ActionProps = $props();
+</script>
+
+<AlertDialogPrimitive.Action bind:ref class={cn(buttonVariants(), className)} {...restProps} />
+
+```
+
+# frontend/src/lib/components/ui/alert-dialog/alert-dialog-cancel.svelte
+
+```svelte
+<script lang="ts">
+	import { AlertDialog as AlertDialogPrimitive } from "bits-ui";
+	import { buttonVariants } from "$lib/components/ui/button/index.js";
+	import { cn } from "$lib/utils.js";
+
+	let {
+		class: className,
+		ref = $bindable(null),
+		...restProps
+	}: AlertDialogPrimitive.CancelProps = $props();
+</script>
+
+<AlertDialogPrimitive.Cancel
+	bind:ref
+	class={cn(buttonVariants({ variant: "outline" }), "mt-2 sm:mt-0", className)}
+	{...restProps}
+/>
+
+```
+
+# frontend/src/lib/components/ui/alert-dialog/alert-dialog-content.svelte
+
+```svelte
+<script lang="ts">
+	import { AlertDialog as AlertDialogPrimitive, type WithoutChild } from "bits-ui";
+	import AlertDialogOverlay from "./alert-dialog-overlay.svelte";
+	import { cn } from "$lib/utils.js";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		portalProps,
+		...restProps
+	}: WithoutChild<AlertDialogPrimitive.ContentProps> & {
+		portalProps?: AlertDialogPrimitive.PortalProps;
+	} = $props();
+</script>
+
+<AlertDialogPrimitive.Portal {...portalProps}>
+	<AlertDialogOverlay />
+	<AlertDialogPrimitive.Content
+		bind:ref
+		class={cn(
+			"bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border p-6 shadow-lg duration-200 sm:rounded-lg",
+			className
+		)}
+		{...restProps}
+	/>
+</AlertDialogPrimitive.Portal>
+
+```
+
+# frontend/src/lib/components/ui/alert-dialog/alert-dialog-description.svelte
+
+```svelte
+<script lang="ts">
+	import { AlertDialog as AlertDialogPrimitive } from "bits-ui";
+	import { cn } from "$lib/utils.js";
+
+	let {
+		class: className,
+		ref = $bindable(null),
+		...restProps
+	}: AlertDialogPrimitive.DescriptionProps = $props();
+</script>
+
+<AlertDialogPrimitive.Description
+	bind:ref
+	class={cn("text-muted-foreground text-sm", className)}
+	{...restProps}
+/>
+
+```
+
+# frontend/src/lib/components/ui/alert-dialog/alert-dialog-footer.svelte
+
+```svelte
+<script lang="ts">
+	import type { WithElementRef } from "bits-ui";
+	import type { HTMLAttributes } from "svelte/elements";
+	import { cn } from "$lib/utils.js";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		children,
+		...restProps
+	}: WithElementRef<HTMLAttributes<HTMLDivElement>> = $props();
+</script>
+
+<div
+	bind:this={ref}
+	class={cn("flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2", className)}
+	{...restProps}
+>
+	{@render children?.()}
+</div>
+
+```
+
+# frontend/src/lib/components/ui/alert-dialog/alert-dialog-header.svelte
+
+```svelte
+<script lang="ts">
+	import type { WithElementRef } from "bits-ui";
+	import type { HTMLAttributes } from "svelte/elements";
+	import { cn } from "$lib/utils.js";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		children,
+		...restProps
+	}: WithElementRef<HTMLAttributes<HTMLDivElement>> = $props();
+</script>
+
+<div
+	bind:this={ref}
+	class={cn("flex flex-col space-y-2 text-center sm:text-left", className)}
+	{...restProps}
+>
+	{@render children?.()}
+</div>
+
+```
+
+# frontend/src/lib/components/ui/alert-dialog/alert-dialog-overlay.svelte
+
+```svelte
+<script lang="ts">
+	import { AlertDialog as AlertDialogPrimitive } from "bits-ui";
+	import { cn } from "$lib/utils.js";
+
+	let {
+		class: className,
+		ref = $bindable(null),
+		...restProps
+	}: AlertDialogPrimitive.OverlayProps = $props();
+</script>
+
+<AlertDialogPrimitive.Overlay
+	bind:ref
+	class={cn(
+		"data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/80",
+		className
+	)}
+	{...restProps}
+/>
+
+```
+
+# frontend/src/lib/components/ui/alert-dialog/alert-dialog-title.svelte
+
+```svelte
+<script lang="ts">
+	import { AlertDialog as AlertDialogPrimitive } from "bits-ui";
+	import { cn } from "$lib/utils.js";
+
+	let {
+		class: className,
+		level = 3,
+		ref = $bindable(null),
+		...restProps
+	}: AlertDialogPrimitive.TitleProps = $props();
+</script>
+
+<AlertDialogPrimitive.Title
+	bind:ref
+	class={cn("text-lg font-semibold", className)}
+	{level}
+	{...restProps}
+/>
+
+```
+
+# frontend/src/lib/components/ui/alert-dialog/index.ts
+
+```ts
+import { AlertDialog as AlertDialogPrimitive } from "bits-ui";
+
+import Title from "./alert-dialog-title.svelte";
+import Action from "./alert-dialog-action.svelte";
+import Cancel from "./alert-dialog-cancel.svelte";
+import Footer from "./alert-dialog-footer.svelte";
+import Header from "./alert-dialog-header.svelte";
+import Overlay from "./alert-dialog-overlay.svelte";
+import Content from "./alert-dialog-content.svelte";
+import Description from "./alert-dialog-description.svelte";
+
+const Root = AlertDialogPrimitive.Root;
+const Trigger = AlertDialogPrimitive.Trigger;
+const Portal = AlertDialogPrimitive.Portal;
+
+export {
+	Root,
+	Title,
+	Action,
+	Cancel,
+	Portal,
+	Footer,
+	Header,
+	Trigger,
+	Overlay,
+	Content,
+	Description,
+	//
+	Root as AlertDialog,
+	Title as AlertDialogTitle,
+	Action as AlertDialogAction,
+	Cancel as AlertDialogCancel,
+	Portal as AlertDialogPortal,
+	Footer as AlertDialogFooter,
+	Header as AlertDialogHeader,
+	Trigger as AlertDialogTrigger,
+	Overlay as AlertDialogOverlay,
+	Content as AlertDialogContent,
+	Description as AlertDialogDescription,
+};
+
+```
 
 # frontend/src/lib/components/ui/alert/alert-description.svelte
 
@@ -1306,39 +1552,39 @@ export {
 
 ```svelte
 <script lang="ts">
-	import { Checkbox as CheckboxPrimitive } from "bits-ui";
-	import Check from "svelte-radix/Check.svelte";
-	import Minus from "svelte-radix/Minus.svelte";
+	import { Checkbox as CheckboxPrimitive, type WithoutChildrenOrChild } from "bits-ui";
+	import Check from "lucide-svelte/icons/check";
+	import Minus from "lucide-svelte/icons/minus";
 	import { cn } from "$lib/utils.js";
 
-	type $$Props = CheckboxPrimitive.Props;
-	type $$Events = CheckboxPrimitive.Events;
-
-	let className: $$Props["class"] = undefined;
-	export let checked: $$Props["checked"] = false;
-	export { className as class };
+	let {
+		ref = $bindable(null),
+		class: className,
+		checked = $bindable(false),
+		indeterminate = $bindable(false),
+		...restProps
+	}: WithoutChildrenOrChild<CheckboxPrimitive.RootProps> = $props();
 </script>
 
 <CheckboxPrimitive.Root
 	class={cn(
-		"border-primary focus-visible:ring-ring data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground peer box-content h-4 w-4 shrink-0 rounded-sm border shadow focus-visible:outline-none focus-visible:ring-1 disabled:cursor-not-allowed disabled:opacity-50 data-[disabled=true]:cursor-not-allowed data-[disabled=true]:opacity-50",
+		"border-primary focus-visible:ring-ring data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground peer box-content size-4 shrink-0 rounded-sm border shadow focus-visible:outline-none focus-visible:ring-1 disabled:cursor-not-allowed disabled:opacity-50 data-[disabled=true]:cursor-not-allowed data-[disabled=true]:opacity-50",
 		className
 	)}
 	bind:checked
-	on:click
-	{...$$restProps}
+	bind:ref
+	bind:indeterminate
+	{...restProps}
 >
-	<CheckboxPrimitive.Indicator
-		class={cn("flex h-4 w-4 items-center justify-center text-current")}
-		let:isChecked
-		let:isIndeterminate
-	>
-		{#if isIndeterminate}
-			<Minus class="h-3.5 w-3.5" />
-		{:else}
-			<Check class={cn("h-3.5 w-3.5", !isChecked && "text-transparent")} />
-		{/if}
-	</CheckboxPrimitive.Indicator>
+	{#snippet children({ checked, indeterminate })}
+		<span class="flex items-center justify-center text-current">
+			{#if indeterminate}
+				<Minus class="size-4" />
+			{:else}
+				<Check class={cn("size-4", !checked && "text-transparent")} />
+			{/if}
+		</span>
+	{/snippet}
 </CheckboxPrimitive.Root>
 
 ```
@@ -1372,6 +1618,512 @@ export {
 	Root as Collapsible,
 	Content as CollapsibleContent,
 	Trigger as CollapsibleTrigger,
+};
+
+```
+
+# frontend/src/lib/components/ui/data-table/data-table.svelte.ts
+
+```ts
+import {
+	type RowData,
+	type TableOptions,
+	type TableOptionsResolved,
+	type TableState,
+	createTable,
+} from "@tanstack/table-core";
+
+/**
+ * Creates a reactive TanStack table object for Svelte.
+ * @param options Table options to create the table with.
+ * @returns A reactive table object.
+ * @example
+ * \`\`\`svelte
+ * <script>
+ *   const table = createSvelteTable({ ... })
+ * </script>
+ *
+ * <table>
+ *   <thead>
+ *     {#each table.getHeaderGroups() as headerGroup}
+ *       <tr>
+ *         {#each headerGroup.headers as header}
+ *           <th colspan={header.colSpan}>
+ *         	   <FlexRender content={header.column.columnDef.header} context={header.getContext()} />
+ *         	 </th>
+ *         {/each}
+ *       </tr>
+ *     {/each}
+ *   </thead>
+ * 	 <!-- ... -->
+ * </table>
+ * \`\`\`
+ */
+export function createSvelteTable<TData extends RowData>(options: TableOptions<TData>) {
+	const resolvedOptions: TableOptionsResolved<TData> = mergeObjects(
+		{
+			state: {},
+			onStateChange() {},
+			renderFallbackValue: null,
+			mergeOptions: (
+				defaultOptions: TableOptions<TData>,
+				options: Partial<TableOptions<TData>>
+			) => {
+				return mergeObjects(defaultOptions, options);
+			},
+		},
+		options
+	);
+
+	const table = createTable(resolvedOptions);
+	let state = $state<Partial<TableState>>(table.initialState);
+
+	function updateOptions() {
+		table.setOptions((prev) => {
+			return mergeObjects(prev, options, {
+				state: mergeObjects(state, options.state || {}),
+
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				onStateChange: (updater: any) => {
+					if (updater instanceof Function) state = updater(state);
+					else state = mergeObjects(state, updater);
+
+					options.onStateChange?.(updater);
+				},
+			});
+		});
+	}
+
+	updateOptions();
+
+	$effect.pre(() => {
+		updateOptions();
+	});
+
+	return table;
+}
+
+/**
+ * Merges objects together while keeping their getters alive.
+ * Taken from SolidJS: {@link https://github.com/solidjs/solid/blob/24abc825c0996fd2bc8c1de1491efe9a7e743aff/packages/solid/src/server/rendering.ts#L82-L115}
+ */
+export function mergeObjects<T>(source: T): T;
+export function mergeObjects<T, U>(source: T, source1: U): T & U;
+export function mergeObjects<T, U, V>(source: T, source1: U, source2: V): T & U & V;
+export function mergeObjects<T, U, V, W>(
+	source: T,
+	source1: U,
+	source2: V,
+	source3: W
+): T & U & V & W;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function mergeObjects(...sources: any): any {
+	const target = {};
+	for (let i = 0; i < sources.length; i++) {
+		let source = sources[i];
+		if (typeof source === "function") source = source();
+		if (source) {
+			const descriptors = Object.getOwnPropertyDescriptors(source);
+			for (const key in descriptors) {
+				if (key in target) continue;
+				Object.defineProperty(target, key, {
+					enumerable: true,
+					get() {
+						for (let i = sources.length - 1; i >= 0; i--) {
+							let s = sources[i];
+							if (typeof s === "function") s = s();
+							const v = (s || {})[key];
+							if (v !== undefined) return v;
+						}
+					},
+				});
+			}
+		}
+	}
+	return target;
+}
+
+```
+
+# frontend/src/lib/components/ui/data-table/flex-render.svelte
+
+```svelte
+<script lang="ts" module>
+	import type { CellContext, ColumnDefTemplate, HeaderContext } from "@tanstack/table-core";
+	type TData = unknown;
+	type TValue = unknown;
+	type TContext = unknown;
+</script>
+
+<script
+	lang="ts"
+	generics="TData, TValue, TContext extends HeaderContext<TData, TValue> | CellContext<TData, TValue>"
+>
+	import { RenderComponentConfig, RenderSnippetConfig } from "./render-helpers.js";
+
+	type Props = {
+		/** The cell or header field of the current cell's column definition. */
+		content?: TContext extends HeaderContext<TData, TValue>
+			? ColumnDefTemplate<HeaderContext<TData, TValue>>
+			: TContext extends CellContext<TData, TValue>
+				? ColumnDefTemplate<CellContext<TData, TValue>>
+				: never;
+		/** The result of the `getContext()` function of the header or cell */
+		context: TContext;
+	};
+
+	let { content, context }: Props = $props();
+</script>
+
+{#if typeof content === "string"}
+	{content}
+{:else if content instanceof Function}
+	<!-- It's unlikely that a CellContext will be passed to a Header -->
+	<!-- eslint-disable-next-line @typescript-eslint/no-explicit-any -->
+	{@const result = content(context as any)}
+	{#if result instanceof RenderComponentConfig}
+		{@const { component: Component, props } = result}
+		<Component {...props} />
+	{:else if result instanceof RenderSnippetConfig}
+		{@const { snippet, params } = result}
+		{@render snippet(params)}
+	{:else}
+		{result}
+	{/if}
+{/if}
+
+```
+
+# frontend/src/lib/components/ui/data-table/index.ts
+
+```ts
+export { default as FlexRender } from "./flex-render.svelte";
+export { renderComponent, renderSnippet } from "./render-helpers.js";
+export { createSvelteTable } from "./data-table.svelte.js";
+
+```
+
+# frontend/src/lib/components/ui/data-table/render-helpers.ts
+
+```ts
+import type { Component, ComponentProps, Snippet } from "svelte";
+
+/**
+ * A helper class to make it easy to identify Svelte components in
+ * `columnDef.cell` and `columnDef.header` properties.
+ *
+ * > NOTE: This class should only be used internally by the adapter. If you're
+ * reading this and you don't know what this is for, you probably don't need it.
+ *
+ * @example
+ * \`\`\`svelte
+ * {@const result = content(context as any)}
+ * {#if result instanceof RenderComponentConfig}
+ *   {@const { component: Component, props } = result}
+ *   <Component {...props} />
+ * {/if}
+ * \`\`\`
+ */
+export class RenderComponentConfig<TComponent extends Component> {
+	component: TComponent;
+	props: ComponentProps<TComponent> | Record<string, never>;
+	constructor(
+		component: TComponent,
+		props: ComponentProps<TComponent> | Record<string, never> = {}
+	) {
+		this.component = component;
+		this.props = props;
+	}
+}
+
+/**
+ * A helper class to make it easy to identify Svelte Snippets in `columnDef.cell` and `columnDef.header` properties.
+ *
+ * > NOTE: This class should only be used internally by the adapter. If you're
+ * reading this and you don't know what this is for, you probably don't need it.
+ *
+ * @example
+ * \`\`\`svelte
+ * {@const result = content(context as any)}
+ * {#if result instanceof RenderSnippetConfig}
+ *   {@const { snippet, params } = result}
+ *   {@render snippet(params)}
+ * {/if}
+ * \`\`\`
+ */
+export class RenderSnippetConfig<TProps> {
+	snippet: Snippet<[TProps]>;
+	params: TProps;
+	constructor(snippet: Snippet<[TProps]>, params: TProps) {
+		this.snippet = snippet;
+		this.params = params;
+	}
+}
+
+/**
+ * A helper function to help create cells from Svelte components through ColumnDef's `cell` and `header` properties.
+ *
+ * This is only to be used with Svelte Components - use `renderSnippet` for Svelte Snippets.
+ *
+ * @param component A Svelte component
+ * @param props The props to pass to `component`
+ * @returns A `RenderComponentConfig` object that helps svelte-table know how to render the header/cell component.
+ * @example
+ * \`\`\`ts
+ * // +page.svelte
+ * const defaultColumns = [
+ *   columnHelper.accessor('name', {
+ *     header: header => renderComponent(SortHeader, { label: 'Name', header }),
+ *   }),
+ *   columnHelper.accessor('state', {
+ *     header: header => renderComponent(SortHeader, { label: 'State', header }),
+ *   }),
+ * ]
+ * \`\`\`
+ * @see {@link https://tanstack.com/table/latest/docs/guide/column-defs}
+ */
+export function renderComponent<
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	T extends Component<any>,
+	Props extends ComponentProps<T>,
+>(component: T, props: Props) {
+	return new RenderComponentConfig(component, props);
+}
+
+/**
+ * A helper function to help create cells from Svelte Snippets through ColumnDef's `cell` and `header` properties.
+ *
+ * The snippet must only take one parameter.
+ *
+ * This is only to be used with Snippets - use `renderComponent` for Svelte Components.
+ *
+ * @param snippet
+ * @param params
+ * @returns - A `RenderSnippetConfig` object that helps svelte-table know how to render the header/cell snippet.
+ * @example
+ * \`\`\`ts
+ * // +page.svelte
+ * const defaultColumns = [
+ *   columnHelper.accessor('name', {
+ *     cell: cell => renderSnippet(nameSnippet, { name: cell.row.name }),
+ *   }),
+ *   columnHelper.accessor('state', {
+ *     cell: cell => renderSnippet(stateSnippet, { state: cell.row.state }),
+ *   }),
+ * ]
+ * \`\`\`
+ * @see {@link https://tanstack.com/table/latest/docs/guide/column-defs}
+ */
+export function renderSnippet<TProps>(snippet: Snippet<[TProps]>, params: TProps) {
+	return new RenderSnippetConfig(snippet, params);
+}
+
+```
+
+# frontend/src/lib/components/ui/dialog/dialog-content.svelte
+
+```svelte
+<script lang="ts">
+	import { Dialog as DialogPrimitive, type WithoutChildrenOrChild } from "bits-ui";
+	import X from "lucide-svelte/icons/x";
+	import type { Snippet } from "svelte";
+	import * as Dialog from "./index.js";
+	import { cn } from "$lib/utils.js";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		portalProps,
+		children,
+		...restProps
+	}: WithoutChildrenOrChild<DialogPrimitive.ContentProps> & {
+		portalProps?: DialogPrimitive.PortalProps;
+		children: Snippet;
+	} = $props();
+</script>
+
+<Dialog.Portal {...portalProps}>
+	<Dialog.Overlay />
+	<DialogPrimitive.Content
+		bind:ref
+		class={cn(
+			"bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border p-6 shadow-lg duration-200 sm:rounded-lg",
+			className
+		)}
+		{...restProps}
+	>
+		{@render children?.()}
+		<DialogPrimitive.Close
+			class="ring-offset-background focus:ring-ring data-[state=open]:bg-accent data-[state=open]:text-muted-foreground absolute right-4 top-4 rounded-sm opacity-70 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:pointer-events-none"
+		>
+			<X class="size-4" />
+			<span class="sr-only">Close</span>
+		</DialogPrimitive.Close>
+	</DialogPrimitive.Content>
+</Dialog.Portal>
+
+```
+
+# frontend/src/lib/components/ui/dialog/dialog-description.svelte
+
+```svelte
+<script lang="ts">
+	import { Dialog as DialogPrimitive } from "bits-ui";
+	import { cn } from "$lib/utils.js";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		...restProps
+	}: DialogPrimitive.DescriptionProps = $props();
+</script>
+
+<DialogPrimitive.Description
+	bind:ref
+	class={cn("text-muted-foreground text-sm", className)}
+	{...restProps}
+/>
+
+```
+
+# frontend/src/lib/components/ui/dialog/dialog-footer.svelte
+
+```svelte
+<script lang="ts">
+	import type { WithElementRef } from "bits-ui";
+	import type { HTMLAttributes } from "svelte/elements";
+	import { cn } from "$lib/utils.js";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		children,
+		...restProps
+	}: WithElementRef<HTMLAttributes<HTMLDivElement>> = $props();
+</script>
+
+<div
+	bind:this={ref}
+	class={cn("flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2", className)}
+	{...restProps}
+>
+	{@render children?.()}
+</div>
+
+```
+
+# frontend/src/lib/components/ui/dialog/dialog-header.svelte
+
+```svelte
+<script lang="ts">
+	import type { HTMLAttributes } from "svelte/elements";
+	import type { WithElementRef } from "bits-ui";
+	import { cn } from "$lib/utils.js";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		children,
+		...restProps
+	}: WithElementRef<HTMLAttributes<HTMLDivElement>> = $props();
+</script>
+
+<div
+	bind:this={ref}
+	class={cn("flex flex-col space-y-1.5 text-center sm:text-left", className)}
+	{...restProps}
+>
+	{@render children?.()}
+</div>
+
+```
+
+# frontend/src/lib/components/ui/dialog/dialog-overlay.svelte
+
+```svelte
+<script lang="ts">
+	import { Dialog as DialogPrimitive } from "bits-ui";
+	import { cn } from "$lib/utils.js";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		...restProps
+	}: DialogPrimitive.OverlayProps = $props();
+</script>
+
+<DialogPrimitive.Overlay
+	bind:ref
+	class={cn(
+		"data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0  fixed inset-0 z-50 bg-black/80",
+		className
+	)}
+	{...restProps}
+/>
+
+```
+
+# frontend/src/lib/components/ui/dialog/dialog-title.svelte
+
+```svelte
+<script lang="ts">
+	import { Dialog as DialogPrimitive } from "bits-ui";
+	import { cn } from "$lib/utils.js";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		...restProps
+	}: DialogPrimitive.TitleProps = $props();
+</script>
+
+<DialogPrimitive.Title
+	bind:ref
+	class={cn("text-lg font-semibold leading-none tracking-tight", className)}
+	{...restProps}
+/>
+
+```
+
+# frontend/src/lib/components/ui/dialog/index.ts
+
+```ts
+import { Dialog as DialogPrimitive } from "bits-ui";
+
+import Title from "./dialog-title.svelte";
+import Footer from "./dialog-footer.svelte";
+import Header from "./dialog-header.svelte";
+import Overlay from "./dialog-overlay.svelte";
+import Content from "./dialog-content.svelte";
+import Description from "./dialog-description.svelte";
+
+const Root: typeof DialogPrimitive.Root = DialogPrimitive.Root;
+const Trigger: typeof DialogPrimitive.Trigger = DialogPrimitive.Trigger;
+const Close: typeof DialogPrimitive.Close = DialogPrimitive.Close;
+const Portal: typeof DialogPrimitive.Portal = DialogPrimitive.Portal;
+
+export {
+	Root,
+	Title,
+	Portal,
+	Footer,
+	Header,
+	Trigger,
+	Overlay,
+	Content,
+	Description,
+	Close,
+	//
+	Root as Dialog,
+	Title as DialogTitle,
+	Portal as DialogPortal,
+	Footer as DialogFooter,
+	Header as DialogHeader,
+	Trigger as DialogTrigger,
+	Overlay as DialogOverlay,
+	Content as DialogContent,
+	Description as DialogDescription,
+	Close as DialogClose,
 };
 
 ```
@@ -3789,6 +4541,239 @@ export { default as Toaster } from "./sonner.svelte";
 
 ```
 
+# frontend/src/lib/components/ui/table/index.ts
+
+```ts
+import Root from "./table.svelte";
+import Body from "./table-body.svelte";
+import Caption from "./table-caption.svelte";
+import Cell from "./table-cell.svelte";
+import Footer from "./table-footer.svelte";
+import Head from "./table-head.svelte";
+import Header from "./table-header.svelte";
+import Row from "./table-row.svelte";
+
+export {
+	Root,
+	Body,
+	Caption,
+	Cell,
+	Footer,
+	Head,
+	Header,
+	Row,
+	//
+	Root as Table,
+	Body as TableBody,
+	Caption as TableCaption,
+	Cell as TableCell,
+	Footer as TableFooter,
+	Head as TableHead,
+	Header as TableHeader,
+	Row as TableRow,
+};
+
+```
+
+# frontend/src/lib/components/ui/table/table-body.svelte
+
+```svelte
+<script lang="ts">
+	import type { HTMLAttributes } from "svelte/elements";
+	import type { WithElementRef } from "bits-ui";
+	import { cn } from "$lib/utils.js";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		children,
+		...restProps
+	}: WithElementRef<HTMLAttributes<HTMLTableSectionElement>> = $props();
+</script>
+
+<tbody bind:this={ref} class={cn("[&_tr:last-child]:border-0", className)} {...restProps}>
+	{@render children?.()}
+</tbody>
+
+```
+
+# frontend/src/lib/components/ui/table/table-caption.svelte
+
+```svelte
+<script lang="ts">
+	import type { HTMLAttributes } from "svelte/elements";
+	import type { WithElementRef } from "bits-ui";
+	import { cn } from "$lib/utils.js";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		children,
+		...restProps
+	}: WithElementRef<HTMLAttributes<HTMLElement>> = $props();
+</script>
+
+<caption bind:this={ref} class={cn("text-muted-foreground mt-4 text-sm", className)} {...restProps}>
+	{@render children?.()}
+</caption>
+
+```
+
+# frontend/src/lib/components/ui/table/table-cell.svelte
+
+```svelte
+<script lang="ts">
+	import type { HTMLTdAttributes } from "svelte/elements";
+	import type { WithElementRef } from "bits-ui";
+	import { cn } from "$lib/utils.js";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		children,
+		...restProps
+	}: WithElementRef<HTMLTdAttributes> = $props();
+</script>
+
+<td
+	bind:this={ref}
+	class={cn(
+		"p-2 align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+		className
+	)}
+	{...restProps}
+>
+	{@render children?.()}
+</td>
+
+```
+
+# frontend/src/lib/components/ui/table/table-footer.svelte
+
+```svelte
+<script lang="ts">
+	import type { HTMLAttributes } from "svelte/elements";
+	import type { WithElementRef } from "bits-ui";
+	import { cn } from "$lib/utils.js";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		children,
+		...restProps
+	}: WithElementRef<HTMLAttributes<HTMLTableSectionElement>> = $props();
+</script>
+
+<tfoot bind:this={ref} class={cn("bg-muted/50 font-medium", className)} {...restProps}>
+	{@render children?.()}
+</tfoot>
+
+```
+
+# frontend/src/lib/components/ui/table/table-head.svelte
+
+```svelte
+<script lang="ts">
+	import type { HTMLThAttributes } from "svelte/elements";
+	import type { WithElementRef } from "bits-ui";
+	import { cn } from "$lib/utils.js";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		children,
+		...restProps
+	}: WithElementRef<HTMLThAttributes> = $props();
+</script>
+
+<th
+	bind:this={ref}
+	class={cn(
+		"text-muted-foreground h-10 px-2 text-left align-middle font-medium [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+		className
+	)}
+	{...restProps}
+>
+	{@render children?.()}
+</th>
+
+```
+
+# frontend/src/lib/components/ui/table/table-header.svelte
+
+```svelte
+<script lang="ts">
+	import type { HTMLAttributes } from "svelte/elements";
+	import type { WithElementRef } from "bits-ui";
+	import { cn } from "$lib/utils.js";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		children,
+		...restProps
+	}: WithElementRef<HTMLAttributes<HTMLTableSectionElement>> = $props();
+</script>
+
+<thead bind:this={ref} class={cn("[&_tr]:border-b", className)} {...restProps}>
+	{@render children?.()}
+</thead>
+
+```
+
+# frontend/src/lib/components/ui/table/table-row.svelte
+
+```svelte
+<script lang="ts">
+	import type { HTMLAttributes } from "svelte/elements";
+	import type { WithElementRef } from "bits-ui";
+	import { cn } from "$lib/utils.js";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		children,
+		...restProps
+	}: WithElementRef<HTMLAttributes<HTMLTableRowElement>> = $props();
+</script>
+
+<tr
+	bind:this={ref}
+	class={cn(
+		"hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors",
+		className
+	)}
+	{...restProps}
+>
+	{@render children?.()}
+</tr>
+
+```
+
+# frontend/src/lib/components/ui/table/table.svelte
+
+```svelte
+<script lang="ts">
+	import type { HTMLTableAttributes } from "svelte/elements";
+	import type { WithElementRef } from "bits-ui";
+	import { cn } from "$lib/utils.js";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		children,
+		...restProps
+	}: WithElementRef<HTMLTableAttributes> = $props();
+</script>
+
+<div class="relative w-full overflow-auto">
+	<table bind:this={ref} class={cn("w-full caption-bottom text-sm", className)} {...restProps}>
+		{@render children?.()}
+	</table>
+</div>
+
+```
+
 # frontend/src/lib/components/ui/tabs/index.ts
 
 ```ts
@@ -4118,6 +5103,57 @@ export {
 
 ```
 
+# frontend/src/lib/custom_components/dashboard/layout/nav-bar-dashboard.svelte
+
+```svelte
+<!-- $lib/custom_components/dashboard/layout/nav-bar-dashboard.svelte -->
+<script>
+	import { Bell } from 'lucide-svelte';
+	import { Button } from '$lib/components/ui/button';
+	import { page } from '$app/stores';
+
+	let notificationCount = $state(3);
+	let currentPath = $state(['Dashboard']);
+
+	$effect(() => {
+		currentPath = $page.url.pathname.split('/').slice(1);
+	});
+	let { trigger } = $props();
+</script>
+
+<nav class="sticky top-0 z-10 min-h-14 w-full border-b shadow-md backdrop-blur-lg">
+	<div class="w-full px-4 sm:px-6 lg:px-8">
+		<div class="flex h-14 items-center justify-between">
+			<div class="flex items-center space-x-4">
+				<div class="lg:hidden">
+					{@render trigger()}
+				</div>
+				<span class=" text-md">
+					{#each currentPath as path, i (i)}
+						{#if i === 0}
+							<a href={'/' + currentPath.slice(0, i + 1).join('/')} class="capitalize">{path}</a>
+						{:else}
+							<a href={'/' + currentPath.slice(0, i + 1).join('/')} class="capitalize">/{path}</a>
+						{/if}
+					{/each}
+				</span>
+			</div>
+			<div class="flex items-center">
+				<Button variant="ghost" size="icon" class="relative">
+					<Bell class="h-5 w-5" />
+					{#if notificationCount > 0}
+						<span
+							class="absolute right-0 top-0 block h-2 w-2 rounded-full bg-red-400 ring-2 ring-white"
+						></span>
+					{/if}
+				</Button>
+			</div>
+		</div>
+	</div>
+</nav>
+
+```
+
 # frontend/src/lib/custom_components/footer.svelte
 
 ```svelte
@@ -4272,58 +5308,269 @@ export {
 
 ```
 
+# frontend/src/lib/custom_components/side-bars/admin/side-bar-attributes.svelte
+
+```svelte
+<script lang="ts">
+	import * as Sidebar from '$lib/components/ui/sidebar';
+	import * as Collapsible from '$lib/components/ui/collapsible';
+	import { ChevronRight } from 'lucide-svelte';
+	import { SquareUser } from 'lucide-svelte';
+	import { fade } from 'svelte/transition';
+	const items = [
+		{
+			title: 'Employee Status',
+			url: '/dashboard/admin/university'
+		},
+		{
+			title: 'Position',
+			url: '#'
+		}
+	];
+
+	let isOpen = $state(false);
+</script>
+
+<Sidebar.Menu>
+	<Collapsible.Root bind:open={isOpen} class="group/collapsible">
+		<Sidebar.MenuItem>
+			<Collapsible.Trigger>
+				{#snippet child({ props })}
+					<Sidebar.MenuButton {...props} isActive={isOpen} class="flex space-x-8 ">
+						<SquareUser />
+						<div class="flex w-full justify-between">
+							<span>Attributes</span>
+							<ChevronRight
+								class={`transition-transform duration-200 ${isOpen ? 'rotate-90' : ''}`}
+							/>
+						</div>
+					</Sidebar.MenuButton>
+				{/snippet}
+			</Collapsible.Trigger>
+			<Collapsible.Content forceMount>
+				{#snippet child({ props, open })}
+					{#if open}
+						<div {...props} transition:fade>
+							<Sidebar.MenuSub>
+								{#each items as item (item.title)}
+									<Sidebar.MenuSubItem>
+										<Sidebar.MenuSubButton>
+											{#snippet child({ props })}
+												<a href={item.url} {...props}>
+													<span>{item.title}</span>
+												</a>
+											{/snippet}
+										</Sidebar.MenuSubButton>
+									</Sidebar.MenuSubItem>
+								{/each}
+							</Sidebar.MenuSub>
+						</div>
+					{/if}
+				{/snippet}
+			</Collapsible.Content>
+		</Sidebar.MenuItem>
+	</Collapsible.Root>
+</Sidebar.Menu>
+
+```
+
+# frontend/src/lib/custom_components/side-bars/admin/side-bar-entities.svelte
+
+```svelte
+<script lang="ts">
+	import * as Sidebar from '$lib/components/ui/sidebar';
+	import * as Collapsible from '$lib/components/ui/collapsible';
+	import { ChevronRight } from 'lucide-svelte';
+	import { University } from 'lucide-svelte';
+	import { fade } from 'svelte/transition';
+	const items = [
+		{
+			title: 'Universities',
+			url: '/dashboard/admin/university'
+		},
+		{
+			title: 'Offices',
+			url: '#'
+		},
+		{
+			title: 'Programmes',
+			url: '#'
+		}
+	];
+
+	let isOpen = $state(false);
+</script>
+
+<Sidebar.Menu>
+	<Collapsible.Root bind:open={isOpen} class="group/collapsible">
+		<Sidebar.MenuItem>
+			<Collapsible.Trigger>
+				{#snippet child({ props })}
+					<Sidebar.MenuButton {...props} isActive={isOpen} class="flex space-x-8 ">
+						<University />
+						<div class="flex w-full justify-between">
+							<span>Entities</span>
+							<ChevronRight
+								class={`transition-transform duration-200 ${isOpen ? 'rotate-90' : ''}`}
+							/>
+						</div>
+					</Sidebar.MenuButton>
+				{/snippet}
+			</Collapsible.Trigger>
+			<Collapsible.Content forceMount>
+				{#snippet child({ props, open })}
+					{#if open}
+						<div {...props} transition:fade>
+							<Sidebar.MenuSub>
+								{#each items as item (item.title)}
+									<Sidebar.MenuSubItem>
+										<Sidebar.MenuSubButton>
+											{#snippet child({ props })}
+												<a href={item.url} {...props}>
+													<span>{item.title}</span>
+												</a>
+											{/snippet}
+										</Sidebar.MenuSubButton>
+									</Sidebar.MenuSubItem>
+								{/each}
+							</Sidebar.MenuSub>
+						</div>
+					{/if}
+				{/snippet}
+			</Collapsible.Content>
+		</Sidebar.MenuItem>
+	</Collapsible.Root>
+</Sidebar.Menu>
+
+```
+
+# frontend/src/lib/custom_components/side-bars/admin/side-bar-footer.svelte
+
+```svelte
+<script lang="ts">
+	let { isDrawerOpen = $bindable() } = $props();
+	import { ChevronUp } from 'lucide-svelte';
+	import { LogOut } from 'lucide-svelte';
+	import { UserRoundPen } from 'lucide-svelte';
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
+	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
+	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
+	import { currentProfile } from '$lib/utils/authStore';
+	import * as Avatar from '$lib/components/ui/avatar';
+	import type { Tables } from '$lib/types/database.types';
+
+	const profileId = $page.data.session?.user.id;
+	let profile: Tables<'profiles'> | null = $state(null);
+
+	$effect(() => {
+		profile = $currentProfile;
+	});
+	async function handleLogOut() {
+		const { error } = await $page.data.supabase.auth.signOut();
+		if (error) throw error;
+		await goto('/auth');
+	}
+
+	async function handleProfileNavigation() {
+		await goto(`/dashboard/profile/view/${profileId}`);
+	}
+</script>
+
+<Sidebar.Footer>
+	<Sidebar.Menu>
+		<Sidebar.MenuItem>
+			<DropdownMenu.Root
+				onOpenChange={(drawerState) => {
+					isDrawerOpen = drawerState;
+				}}
+			>
+				<DropdownMenu.Trigger>
+					{#snippet child({ props })}
+						<Sidebar.MenuButton
+							{...props}
+							class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-green-600"
+						>
+							<Avatar.Root class="ml-0">
+								<Avatar.Image
+									src={profile?.avatar_url ?? undefined}
+									alt={profile?.first_name ?? 'User avatar'}
+								/>
+								<Avatar.Fallback>
+									{(profile?.first_name?.[0] ?? '') + (profile?.last_name?.[0] ?? '')}
+								</Avatar.Fallback>
+							</Avatar.Root>
+							<span>{profile?.first_name} {profile?.last_name}</span>
+							<ChevronUp class="ml-auto" />
+						</Sidebar.MenuButton>
+					{/snippet}
+				</DropdownMenu.Trigger>
+				<DropdownMenu.Content side="top" class="w-[--bits-dropdown-menu-anchor-width]">
+					<DropdownMenu.Item onclick={handleProfileNavigation}>
+						<div class="flex w-fit gap-4">
+							<UserRoundPen />
+							<h3>Profile</h3>
+						</div>
+					</DropdownMenu.Item>
+					<DropdownMenu.Item onclick={handleLogOut}>
+						<div class="flex gap-4 text-sm">
+							<LogOut />
+							<span>Log-out</span>
+						</div>
+					</DropdownMenu.Item>
+				</DropdownMenu.Content>
+			</DropdownMenu.Root>
+		</Sidebar.MenuItem>
+	</Sidebar.Menu>
+</Sidebar.Footer>
+
+```
+
+# frontend/src/lib/custom_components/side-bars/admin/side-bar-header.svelte
+
+```svelte
+<script lang="ts">
+	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
+	import logo from '$lib/assets/logo.svg';
+</script>
+
+<Sidebar.Header>
+	<Sidebar.Menu>
+		<Sidebar.MenuItem class=" flex  min-h-14 items-center">
+			<Sidebar.MenuButton class="min-h-14 ">
+				{#snippet child({ props })}
+					<a href="/dashboard" {...props}>
+						<img class=" max-h-11" src={logo} alt="standuplogo" />
+						<span><h1 class="text-lg font-bold tracking-widest">EvaChain</h1></span>
+					</a>
+				{/snippet}
+			</Sidebar.MenuButton>
+		</Sidebar.MenuItem>
+	</Sidebar.Menu>
+</Sidebar.Header>
+
+```
+
 # frontend/src/lib/custom_components/side-bars/admin/side-bar.svelte
 
 ```svelte
 <script lang="ts">
-	import Calendar from 'lucide-svelte/icons/calendar';
-	import House from 'lucide-svelte/icons/house';
-	import Inbox from 'lucide-svelte/icons/inbox';
-	import Search from 'lucide-svelte/icons/search';
-	import Settings from 'lucide-svelte/icons/settings';
-	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
-	import * as Collapsible from '$lib/components/ui/collapsible';
-	import logo from '$lib/assets/logo.svg';
-	import { ChevronUp, Plus } from 'lucide-svelte';
+	import SideBarHeader from './side-bar-header.svelte';
+	import SideBarFooter from './side-bar-footer.svelte';
+	import SideBarEntities from './side-bar-entities.svelte';
+	import SideBarAttributes from './side-bar-attributes.svelte';
 
 	let { sidebarOpen = $bindable() } = $props();
+	const sidebar = Sidebar.useSidebar();
 
 	let isHover = $state(false);
 	let isDrawerOpen = $state(false);
+
 	function handleChange() {
 		const open = isHover || isDrawerOpen;
 		sidebarOpen = open;
 	}
-
-	// Menu items.
-	const items = [
-		{
-			title: 'Home',
-			url: '#',
-			icon: House
-		},
-		{
-			title: 'Inbox',
-			url: '#',
-			icon: Inbox
-		},
-		{
-			title: 'Calendar',
-			url: '#',
-			icon: Calendar
-		},
-		{
-			title: 'Search',
-			url: '#',
-			icon: Search
-		},
-		{
-			title: 'Settings',
-			url: '#',
-			icon: Settings
-		}
-	];
 </script>
 
 <Sidebar.Root
@@ -4337,75 +5584,18 @@ export {
 		handleChange();
 	}}
 >
-	<Sidebar.Header>
-		<Sidebar.Menu>
-			<Sidebar.MenuItem class=" flex min-h-16 items-center">
-				<Sidebar.MenuButton class="min-h-16">
-					{#snippet child({ props })}
-						<a href="/dashboard" {...props}>
-							<img class=" max-h-11" src={logo} alt="standuplogo" />
-							<span><h1 class="text-lg font-bold tracking-widest">EvaChain</h1></span>
-						</a>
-					{/snippet}
-				</Sidebar.MenuButton>
-			</Sidebar.MenuItem>
-		</Sidebar.Menu>
-	</Sidebar.Header>
+	<SideBarHeader />
+	<Sidebar.Separator />
 	<Sidebar.Content>
 		<Sidebar.Group>
-			<Sidebar.GroupLabel>Application</Sidebar.GroupLabel>
+			<Sidebar.GroupLabel>University Management</Sidebar.GroupLabel>
 			<Sidebar.GroupContent>
-				<Sidebar.Menu>
-					{#each items as item (item.title)}
-						<Sidebar.MenuItem>
-							<Sidebar.MenuButton>
-								{#snippet child({ props })}
-									<a href={item.url} {...props}>
-										<item.icon />
-										<span>{item.title}</span>
-									</a>
-								{/snippet}
-							</Sidebar.MenuButton>
-						</Sidebar.MenuItem>
-					{/each}
-				</Sidebar.Menu>
+				<SideBarEntities />
+				<SideBarAttributes />
 			</Sidebar.GroupContent>
 		</Sidebar.Group>
 	</Sidebar.Content>
-	<Sidebar.Footer>
-		<Sidebar.Menu>
-			<Sidebar.MenuItem>
-				<DropdownMenu.Root
-					onOpenChange={(drawerState) => {
-						isDrawerOpen = drawerState;
-					}}
-				>
-					<DropdownMenu.Trigger>
-						{#snippet child({ props })}
-							<Sidebar.MenuButton
-								{...props}
-								class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-							>
-								Username
-								<ChevronUp class="ml-auto" />
-							</Sidebar.MenuButton>
-						{/snippet}
-					</DropdownMenu.Trigger>
-					<DropdownMenu.Content side="top" class="w-[--bits-dropdown-menu-anchor-width]">
-						<DropdownMenu.Item>
-							<span>Account</span>
-						</DropdownMenu.Item>
-						<DropdownMenu.Item>
-							<span>Billing</span>
-						</DropdownMenu.Item>
-						<DropdownMenu.Item>
-							<span>Sign out</span>
-						</DropdownMenu.Item>
-					</DropdownMenu.Content>
-				</DropdownMenu.Root>
-			</Sidebar.MenuItem>
-		</Sidebar.Menu>
-	</Sidebar.Footer>
+	<SideBarFooter bind:isDrawerOpen />
 </Sidebar.Root>
 
 ```
@@ -4477,6 +5667,284 @@ export {
 
 ```
 
+# frontend/src/lib/custom_components/university_management/create-dialog-unit.svelte
+
+```svelte
+<script lang="ts">
+	import { buttonVariants } from '$lib/components/ui/button/index.js';
+	import * as Dialog from '$lib/components/ui/dialog/index.js';
+	import { Plus } from 'lucide-svelte';
+	import { LoaderCircle } from 'lucide-svelte';
+	import * as Form from '$lib/components/ui/form/index.js';
+	import { Input } from '$lib/components/ui/input/index.js';
+	import { createUnitSchema, type CreateUnit } from '$lib/schemas/unit/schema';
+	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
+	import { zodClient } from 'sveltekit-superforms/adapters';
+	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';
+
+	let { data }: { data: SuperValidated<Infer<CreateUnit>> } = $props();
+
+	let isOpen = $state(false);
+	const form = superForm(data, {
+		validators: zodClient(createUnitSchema),
+		multipleSubmits: 'prevent'
+	});
+
+	const { form: formData, enhance, message, delayed } = form;
+
+	$effect(() => {
+		if ($message?.status == 'success') {
+			showSuccessToast($message.text);
+			isOpen = false;
+		}
+
+		if ($message?.status == 'error') {
+			showErrorToast($message.text);
+		}
+	});
+</script>
+
+<Dialog.Root bind:open={isOpen}>
+	<Dialog.Trigger class={buttonVariants({ variant: 'default' })}
+		><Plus /> Create Unit</Dialog.Trigger
+	>
+	<Dialog.Content class="sm:max-w-auto">
+		<Dialog.Header>
+			<Dialog.Title>Create Unit</Dialog.Title>
+			<Dialog.Description>
+				An operating in DMMMSU is a distinct section that performs specific functions to achieve
+				university goals.
+			</Dialog.Description>
+		</Dialog.Header>
+		<form action="?/createunit" method="POST" use:enhance>
+			<Form.Field {form} name="code">
+				<Form.Control>
+					{#snippet children({ props })}
+						<Form.Label>Code</Form.Label>
+						<Input {...props} bind:value={$formData.code} />
+					{/snippet}
+				</Form.Control>
+				<Form.Description>This is the acronym/code of the unit.</Form.Description>
+				<Form.FieldErrors />
+			</Form.Field>
+			<Form.Field {form} name="name">
+				<Form.Control>
+					{#snippet children({ props })}
+						<Form.Label>Name of the unit</Form.Label>
+						<Input {...props} bind:value={$formData.name} />
+					{/snippet}
+				</Form.Control>
+				<Form.Description>This is the acronym/code of the unit.</Form.Description>
+				<Form.FieldErrors />
+			</Form.Field>
+			{#if $delayed}
+				<Form.Button disabled><LoaderCircle class="animate-spin" />Processing...</Form.Button>
+			{:else}
+				<Form.Button>Submit</Form.Button>
+			{/if}
+		</form>
+	</Dialog.Content>
+</Dialog.Root>
+
+```
+
+# frontend/src/lib/custom_components/university_management/delete-action-unit.svelte
+
+```svelte
+<script lang="ts">
+	import * as Form from '$lib/components/ui/form';
+	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
+	import { deleteUnitSchema, type DeleteUnit } from '$lib/schemas/unit/schema';
+	import { showErrorToast, showSuccessToast, showWarningToast } from '$lib/utils/toast';
+	import { superForm, type SuperValidated } from 'sveltekit-superforms';
+	import { zodClient } from 'sveltekit-superforms/adapters';
+	import { Input } from '$lib/components/ui/input';
+	import { unit } from '$lib/states/admin_unit.svelte';
+	import { LoaderCircle } from 'lucide-svelte';
+	import { TriangleAlert } from 'lucide-svelte';
+	import { Trash2 } from 'lucide-svelte';
+	interface Props {
+		deleteForm: SuperValidated<DeleteUnit>;
+		id: number;
+	}
+
+	let { deleteForm, id }: Props = $props();
+
+	const form = superForm(deleteForm, {
+		validators: zodClient(deleteUnitSchema),
+		multipleSubmits: 'prevent',
+		dataType: 'json'
+	});
+
+	const { form: formData, enhance, message, delayed } = form;
+
+	$effect(() => {
+		if ($message?.status == 'success') {
+			showSuccessToast($message.text);
+			isOpen = false;
+		}
+
+		if ($message?.status == 'error') {
+			showErrorToast($message.text);
+			isOpen = false;
+		}
+
+		if ($message?.status == 'warning') {
+			showWarningToast($message.text);
+			isOpen = false;
+		}
+	});
+
+	$formData.id = id;
+	const curr_unit = unit.units.find((unit) => unit.id === $formData.id);
+	$formData.name = curr_unit?.name;
+
+	let isOpen = $state(false);
+</script>
+
+<AlertDialog.Root bind:open={isOpen}>
+	<AlertDialog.Trigger class=" focus-visible:outline-none">Delete</AlertDialog.Trigger>
+	<AlertDialog.Content>
+		<AlertDialog.Header>
+			<AlertDialog.Title
+				><span class="flex items-center gap-4"><TriangleAlert /> Are you absolutely sure?</span
+				></AlertDialog.Title
+			>
+			<AlertDialog.Description>
+				This action cannot be undone. This will permanently {$formData.name}
+			</AlertDialog.Description>
+		</AlertDialog.Header>
+		<form method="POST" action="?/deleteunit" use:enhance>
+			<Input name="id" class="hidden" bind:value={$formData.id} />
+			<Input name="id" class="hidden" bind:value={$formData.name} />
+			<Form.Field {form} name="confirmation">
+				<Form.FieldErrors />
+				<Form.Control>
+					{#snippet children({ props })}
+						<Form.Label>Please Confirm</Form.Label>
+						<Input {...props} bind:value={$formData.confirmation} />
+					{/snippet}
+				</Form.Control>
+				<Form.Description>Please type "delete" to proceed.</Form.Description>
+			</Form.Field>
+			{#if $delayed}
+				<div class="flex justify-between">
+					<AlertDialog.Cancel disabled class="text-gray-500" type="button"
+						>Cancel</AlertDialog.Cancel
+					>
+					<Form.Button disabled><LoaderCircle class="animate-spin" />Deleting...</Form.Button>
+				</div>
+			{:else}
+				<div class="flex justify-between">
+					<AlertDialog.Cancel type="button">Cancel</AlertDialog.Cancel>
+					<AlertDialog.Action type="submit"><Trash2 />Delete</AlertDialog.Action>
+				</div>
+			{/if}
+		</form>
+		<AlertDialog.Footer></AlertDialog.Footer>
+	</AlertDialog.Content>
+</AlertDialog.Root>
+
+```
+
+# frontend/src/lib/custom_components/university_management/update-dialog-unit.svelte
+
+```svelte
+<script lang="ts">
+	import * as Dialog from '$lib/components/ui/dialog/index.js';
+	import { LoaderCircle } from 'lucide-svelte';
+	import * as Form from '$lib/components/ui/form/index.js';
+	import { Input } from '$lib/components/ui/input/index.js';
+	import { createUnitSchema, type CreateUnit, type UpdateUnit } from '$lib/schemas/unit/schema';
+	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
+	import { zodClient } from 'sveltekit-superforms/adapters';
+	import { showErrorToast, showSuccessToast, showWarningToast } from '$lib/utils/toast';
+	import { unit } from '$lib/states/admin_unit.svelte';
+
+	let {
+		updateForm,
+		id
+	}: {
+		updateForm: SuperValidated<UpdateUnit>;
+		id: number;
+	} = $props();
+
+	let isOpen = $state(false);
+	const form = superForm(updateForm, {
+		validators: zodClient(createUnitSchema),
+		multipleSubmits: 'prevent',
+		dataType: 'json'
+	});
+
+	const { form: formData, enhance, message, delayed } = form;
+
+	$formData.id = id;
+	const curr_unit = unit.units.find((unit) => unit.id === $formData.id);
+
+	//setting default values
+	$formData.code = curr_unit?.code;
+	$formData.name = curr_unit?.name;
+
+	$effect(() => {
+		if ($message?.status == 'success') {
+			showSuccessToast($message.text);
+			isOpen = false;
+		}
+
+		if ($message?.status == 'error') {
+			showErrorToast($message.text);
+		}
+
+		if ($message?.status == 'warning') {
+			showWarningToast($message.text);
+		}
+	});
+</script>
+
+<Dialog.Root bind:open={isOpen}>
+	<Dialog.Trigger class=" focus-visible:outline-none">Edit Unit</Dialog.Trigger>
+	<Dialog.Content class="sm:max-w-auto">
+		<Dialog.Header>
+			<Dialog.Title>Create Unit</Dialog.Title>
+			<Dialog.Description>
+				An operating in DMMMSU is a distinct section that performs specific functions to achieve
+				university goals.
+			</Dialog.Description>
+		</Dialog.Header>
+		<form action="?/updateunit" method="POST" use:enhance>
+			<Input name="id" class="hidden" bind:value={$formData.id} />
+			<Input name="id" class="hidden" bind:value={$formData.name} />
+			<Form.Field {form} name="code">
+				<Form.Control>
+					{#snippet children({ props })}
+						<Form.Label>Code</Form.Label>
+						<Input {...props} bind:value={$formData.code} />
+					{/snippet}
+				</Form.Control>
+				<Form.Description>This is the acronym/code of the unit.</Form.Description>
+				<Form.FieldErrors />
+			</Form.Field>
+			<Form.Field {form} name="name">
+				<Form.Control>
+					{#snippet children({ props })}
+						<Form.Label>Name of the unit</Form.Label>
+						<Input {...props} bind:value={$formData.name} />
+					{/snippet}
+				</Form.Control>
+				<Form.Description>This is the acronym/code of the unit.</Form.Description>
+				<Form.FieldErrors />
+			</Form.Field>
+			{#if $delayed}
+				<Form.Button disabled><LoaderCircle class="animate-spin" />Processing...</Form.Button>
+			{:else}
+				<Form.Button>Update</Form.Button>
+			{/if}
+		</form>
+	</Dialog.Content>
+</Dialog.Root>
+
+```
+
 # frontend/src/lib/hooks/is-mobile.svelte.ts
 
 ```ts
@@ -4518,7 +5986,7 @@ export const logInSchema = z.object({
 	email: z
 		.string()
 		.email()
-		.regex(/'^[a-zA-Z0-9._%+-]+@dmmmsu\.edu\.ph$'/, 'Only dmmmsu.edu.ph email is allowed'),
+		.regex(/^[a-zA-Z0-9._%+-]+@dmmmsu\.edu\.ph$/, 'Only dmmmsu.edu.ph email is allowed'),
 	password: z.string().min(6)
 });
 
@@ -4535,7 +6003,7 @@ export const signupSchema = z
 		email: z
 			.string()
 			.email()
-			.regex(/'^[a-zA-Z0-9._%+-]+@dmmmsu\.edu\.ph$'/, 'Only dmmmsu.edu.ph email is allowed'),
+			.regex(/^[a-zA-Z0-9._%+-]+@dmmmsu\.edu\.ph$/, 'Only dmmmsu.edu.ph email is allowed'),
 		password: z.string().min(6),
 		passwordRepeat: z.string().min(6)
 	})
@@ -4621,6 +6089,122 @@ export const profileSubmitSchema = profileSchema.extend({
 
 export type ProfileSubmitSchema = typeof profileSubmitSchema;
 export type ProfileSchema = typeof profileSchema;
+
+```
+
+# frontend/src/lib/schemas/unit/schema.ts
+
+```ts
+import { z } from 'zod';
+
+export const unitSchema = z.object({
+	id: z.number().int(),
+	code: z.string().max(50),
+	name: z.string(),
+	created_at: z.string().datetime(), // for ISO date strings
+	updated_at: z.string().datetime() // for ISO date strings
+});
+
+// If you need a schema for creating new units (without id and timestamps)
+export const createUnitSchema = z.object({
+	code: z.string().min(3).max(50),
+	name: z.string().min(3)
+});
+
+// If you need a schema for updating units
+export const updateUnitSchema = z.object({
+	id: z.number().int(),
+	name: z.string().optional(),
+	code: z.string().optional()
+});
+
+// If need to delete
+export const deleteUnitSchema = z.object({
+	confirmation: z.string().refine((val) => val?.toLowerCase() === 'delete', {
+		message: 'Please type "delete" to confirm'
+	}),
+	id: z.number().int(),
+	name: z.string().optional()
+});
+
+// Type definitions if needed
+export type Unit = typeof unitSchema;
+export type CreateUnit = typeof createUnitSchema;
+
+export type UpdateUnitSchema = typeof updateUnitSchema;
+export type UpdateUnit = z.infer<typeof updateUnitSchema>;
+
+//recipe
+export type DeleteUnitSchema = typeof deleteUnitSchema;
+//product
+export type DeleteUnit = z.infer<typeof deleteUnitSchema>;
+
+```
+
+# frontend/src/lib/states/admin_unit.svelte.ts
+
+```ts
+import type { RealtimeChannel, SupabaseClient } from '@supabase/supabase-js';
+import type { Tables } from '$lib/types/database.types';
+
+export const unit = $state<{
+	units: Tables<'unit'>[];
+	channel: RealtimeChannel | null;
+	handler: ((payload: any) => void) | null;
+	fetch: (supabase: SupabaseClient) => Promise<void>;
+	set: (units: Tables<'unit'>[]) => void;
+	subscribe: (supabase: SupabaseClient) => void;
+	unsubscribe: () => void;
+}>({
+	units: [],
+	channel: null,
+	handler: null,
+
+	async fetch(supabase: SupabaseClient) {
+		const { data, error } = await supabase.from('unit').select();
+		console.log(error);
+		this.units = data ?? [];
+	},
+
+	set(units: Tables<'unit'>[]) {
+		this.units = units;
+	},
+
+	subscribe(supabase: SupabaseClient) {
+		// Define the handler
+		this.handler = (payload) => {
+			if (payload.eventType === 'INSERT') {
+				this.units = [payload.new, ...this.units];
+			} else if (payload.eventType === 'DELETE') {
+				this.units = this.units.filter((unit) => unit.id !== payload.old.id);
+			} else if (payload.eventType === 'UPDATE') {
+				this.units = this.units.map((unit) => (unit.id === payload.new.id ? payload.new : unit));
+			}
+		};
+
+		// Create and subscribe to the channel
+		this.channel = supabase
+			.channel('units-changes')
+			.on(
+				'postgres_changes',
+				{
+					event: '*',
+					schema: 'public',
+					table: 'unit'
+				},
+				this.handler
+			)
+			.subscribe();
+	},
+
+	unsubscribe() {
+		if (this.channel) {
+			this.channel.unsubscribe();
+			this.channel = null;
+			this.handler = null;
+		}
+	}
+});
 
 ```
 
@@ -5462,15 +7046,22 @@ export const GET: RequestHandler = async (event) => {
 <script lang="ts">
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import AppSidebar from '$lib/custom_components/side-bars/admin/side-bar.svelte';
+	import NavBarDashboard from '$lib/custom_components/dashboard/layout/nav-bar-dashboard.svelte';
 	let { children } = $props();
 	let sidebarOpen = $state(false);
 </script>
 
-<Sidebar.Provider controlledOpen bind:open={sidebarOpen}>
+{#snippet trigger()}
+	<Sidebar.Trigger />
+{/snippet}
+<Sidebar.Provider bind:open={sidebarOpen}>
 	<AppSidebar bind:sidebarOpen />
-	<main>
-		{@render children?.()}
-	</main>
+	<div class="flex h-full w-full flex-col">
+		<NavBarDashboard {trigger}></NavBarDashboard>
+		<main class="flex-1 p-4">
+			{@render children?.()}
+		</main>
+	</div>
 </Sidebar.Provider>
 
 ```
@@ -5496,6 +7087,483 @@ export const load = (async () => {
 </script>
 
 <h1>Hi im admin Page</h1>
+
+```
+
+# frontend/src/routes/(dashboard)/dashboard/(admin)/admin/university/+page.server.ts
+
+```ts
+import { error, type Actions } from '@sveltejs/kit';
+import type { PageServerLoad } from './$types';
+import { message, superValidate, type Infer } from 'sveltekit-superforms';
+import {
+	createUnitSchema,
+	deleteUnitSchema,
+	updateUnitSchema,
+	type CreateUnit,
+	type DeleteUnitSchema,
+	type UpdateUnitSchema
+} from '$lib/schemas/unit/schema';
+import { zod } from 'sveltekit-superforms/adapters';
+
+export const load = (async ({ locals: { supabase } }) => {
+	const { data: units, error: unitError } = await supabase.from('unit').select();
+	if (unitError) {
+		error(500, 'Unexpected error, fetching unit error');
+	}
+
+	const createUnitForm = await superValidate(zod(createUnitSchema));
+	const deleteUnitForm = await superValidate(zod(deleteUnitSchema));
+	const updateUnitForm = await superValidate(zod(updateUnitSchema));
+
+	return { units, form: { createUnitForm, deleteUnitForm, updateUnitForm } };
+}) satisfies PageServerLoad;
+
+export const actions: Actions = {
+	createunit: async ({ request, locals: { supabase } }) => {
+		const form = await superValidate<Infer<CreateUnit>, App.Superforms.Message>(
+			request,
+			zod(createUnitSchema)
+		);
+		let { code, name } = form.data;
+		code = code.toUpperCase();
+		name = name.toLowerCase();
+
+		const { error } = await supabase.from('unit').insert({ code, name });
+
+		if (error) {
+			return message(form, {
+				status: 'error',
+				text: `Unexpected internal error please try again later! ${error.message}`
+			});
+		}
+
+		return message(form, { status: 'success', text: `Sucessfully added ${form.data.name}` });
+	},
+	deleteunit: async ({ request, locals: { supabase } }) => {
+		const form = await superValidate<Infer<DeleteUnitSchema>, App.Superforms.Message>(
+			request,
+			zod(deleteUnitSchema)
+		);
+
+		const { id, name } = form.data;
+		const { error } = await supabase.from('unit').delete().eq('id', id);
+
+		if (error) {
+			return message(form, {
+				status: 'error',
+				text: `unexpected internal error please try again later! ${error.message}`
+			});
+		}
+
+		return message(form, {
+			status: 'warning',
+			text: `Succesfully deleted ${name} `
+		});
+	},
+
+	updateunit: async ({ request, locals: { supabase } }) => {
+		const form = await superValidate<Infer<UpdateUnitSchema>, App.Superforms.Message>(
+			request,
+			zod(updateUnitSchema)
+		);
+
+		const { id, name, code } = form.data;
+
+		const { error } = await supabase.from('unit').update({ name: name, code: code }).eq('id', id);
+
+		if (error) {
+			return message(form, {
+				status: 'error',
+				text: `unexpected internal error please try again later! ${error.message}`
+			});
+		}
+
+		return message(form, {
+			status: 'success',
+			text: `Succesfully updated ${name}`
+		});
+	}
+};
+
+```
+
+# frontend/src/routes/(dashboard)/dashboard/(admin)/admin/university/+page.svelte
+
+```svelte
+<script lang="ts">
+	import DataTable from './data-table.svelte';
+	import { createColumns } from './columns';
+	import type { PageData } from './$types';
+	import { unit } from '$lib/states/admin_unit.svelte';
+	import { onDestroy, onMount } from 'svelte';
+	let { data }: { data: PageData } = $props();
+
+	const { units } = data;
+	const {
+		form: { createUnitForm, deleteUnitForm, updateUnitForm }
+	} = data;
+	const { supabase } = data;
+	onMount(() => {
+		unit.set(units);
+		unit.subscribe(supabase);
+	});
+
+	onDestroy(() => {
+		// Clean up subscription
+		unit.unsubscribe();
+	});
+
+	const columns = createColumns(deleteUnitForm, updateUnitForm);
+</script>
+
+<DataTable data={unit.units} {columns} {createUnitForm} />
+
+```
+
+# frontend/src/routes/(dashboard)/dashboard/(admin)/admin/university/columns.ts
+
+```ts
+import { renderComponent, renderSnippet } from '$lib/components/ui/data-table';
+import type { ColumnDef } from '@tanstack/table-core';
+import { createRawSnippet } from 'svelte';
+import DataTableActions from './data-table-actions.svelte';
+import DataTableNameButton from './data-table-code-button.svelte';
+import { Checkbox } from '$lib/components/ui/checkbox/index.js';
+import type { SuperValidated } from 'sveltekit-superforms';
+import type { DeleteUnit, UpdateUnit } from '$lib/schemas/unit/schema';
+
+// This type is used to define the shape of our data.
+export type Unit = {
+	code: string;
+	created_at: string;
+	id: number;
+	name: string;
+	updated_at: string;
+};
+
+export const createColumns = (
+	deleteForm: SuperValidated<DeleteUnit>,
+	updateForm: SuperValidated<UpdateUnit>
+): ColumnDef<Unit>[] => [
+	{
+		id: 'select',
+		header: ({ table }) =>
+			renderComponent(Checkbox, {
+				checked: table.getIsAllPageRowsSelected(),
+				indeterminate: table.getIsSomePageRowsSelected() && !table.getIsAllPageRowsSelected(),
+				onCheckedChange: (value) => table.toggleAllPageRowsSelected(!!value),
+				controlledChecked: true,
+				'aria-label': 'Select all'
+			}),
+		cell: ({ row }) =>
+			renderComponent(Checkbox, {
+				checked: row.getIsSelected(),
+				onCheckedChange: (value) => row.toggleSelected(!!value),
+				controlledChecked: true,
+				'aria-label': 'Select row'
+			}),
+		enableSorting: true,
+		enableHiding: false
+	},
+	{
+		accessorKey: 'code',
+		header: ({ column }) =>
+			renderComponent(DataTableNameButton, {
+				onclick: () => column.toggleSorting(column.getIsSorted() === 'asc')
+			})
+	},
+	{
+		accessorKey: 'name',
+		header: () => {
+			const nameHeaderSnippet = createRawSnippet(() => ({
+				render: () => `<div class="text-left">Unit Name</div>`
+			}));
+			return renderSnippet(nameHeaderSnippet, '');
+		}
+	},
+	{
+		id: 'actions',
+		cell: ({ row }) => {
+			const id = row.original.id;
+			// You can pass whatever you need from `row.original` to the component
+			return renderComponent(DataTableActions, { deleteForm, updateForm, id });
+		}
+	}
+];
+
+```
+
+# frontend/src/routes/(dashboard)/dashboard/(admin)/admin/university/data-table-actions.svelte
+
+```svelte
+<script lang="ts">
+	import Ellipsis from 'lucide-svelte/icons/ellipsis';
+	import { Button } from '$lib/components/ui/button/index.js';
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
+	import DeleteActionUnit from '$lib/custom_components/university_management/delete-action-unit.svelte';
+	import type { SuperValidated } from 'sveltekit-superforms';
+	import type { DeleteUnit, UpdateUnit } from '$lib/schemas/unit/schema';
+	import UpdateDialogUnit from '$lib/custom_components/university_management/update-dialog-unit.svelte';
+
+	interface Props {
+		deleteForm: SuperValidated<DeleteUnit>;
+		updateForm: SuperValidated<UpdateUnit>;
+		id: number;
+	}
+
+	let { deleteForm, updateForm, id }: Props = $props();
+</script>
+
+<DropdownMenu.Root>
+	<DropdownMenu.Trigger>
+		{#snippet child({ props })}
+			<Button {...props} variant="ghost" size="icon" class="relative size-8 p-0">
+				<span class="sr-only">Open menu</span>
+				<Ellipsis class="size-4" />
+			</Button>
+		{/snippet}
+	</DropdownMenu.Trigger>
+	<DropdownMenu.Content>
+		<DropdownMenu.Group>
+			<DropdownMenu.GroupHeading>Actions</DropdownMenu.GroupHeading>
+		</DropdownMenu.Group>
+		<DropdownMenu.Separator />
+		<DropdownMenu.Item><UpdateDialogUnit {updateForm} {id} /></DropdownMenu.Item>
+		<DropdownMenu.Item><DeleteActionUnit {deleteForm} {id} /></DropdownMenu.Item>
+	</DropdownMenu.Content>
+</DropdownMenu.Root>
+
+```
+
+# frontend/src/routes/(dashboard)/dashboard/(admin)/admin/university/data-table-checkbox.svelte
+
+```svelte
+<script lang="ts">
+	import type { ComponentProps } from 'svelte';
+	import { Checkbox } from '$lib/components/ui/checkbox/index';
+
+	let {
+		checked = false,
+		controlledChecked = true,
+		...restProps
+	}: ComponentProps<typeof Checkbox> = $props();
+</script>
+
+<Checkbox {checked} {controlledChecked} {...restProps} />
+
+```
+
+# frontend/src/routes/(dashboard)/dashboard/(admin)/admin/university/data-table-code-button.svelte
+
+```svelte
+<script lang="ts">
+	import type { ComponentProps } from 'svelte';
+	import ArrowUpDown from 'lucide-svelte/icons/arrow-up-down';
+	import { Button } from '$lib/components/ui/button/index.js';
+
+	let { variant = 'ghost', ...restProps }: ComponentProps<typeof Button> = $props();
+</script>
+
+<Button {variant} {...restProps}>
+	Code
+	<ArrowUpDown class="ml-2 size-4" />
+</Button>
+
+```
+
+# frontend/src/routes/(dashboard)/dashboard/(admin)/admin/university/data-table.svelte
+
+```svelte
+<script lang="ts" generics="TData, TValue">
+	import {
+		type ColumnDef,
+		type PaginationState,
+		type SortingState,
+		type ColumnFiltersState,
+		type VisibilityState,
+		type RowSelectionState,
+		getCoreRowModel,
+		getPaginationRowModel,
+		getSortedRowModel,
+		getFilteredRowModel
+	} from '@tanstack/table-core';
+	import Button from '$lib/components/ui/button/button.svelte';
+	import { Input } from '$lib/components/ui/input/index.js';
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
+	import { createSvelteTable, FlexRender } from '$lib/components/ui/data-table/index.js';
+	import * as Table from '$lib/components/ui/table/index.js';
+	import { ChevronDown } from 'lucide-svelte';
+	import CreateDialogUnit from '$lib/custom_components/university_management/create-dialog-unit.svelte';
+	import type { Infer, SuperValidated } from 'sveltekit-superforms';
+	import type { CreateUnit } from '$lib/schemas/unit/schema';
+
+	type DataTableProps<TData, TValue> = {
+		columns: ColumnDef<TData, TValue>[];
+		data: TData[];
+		createUnitForm: SuperValidated<Infer<CreateUnit>, App.Superforms.Message>;
+	};
+
+	let { data, columns, createUnitForm }: DataTableProps<TData, TValue> = $props();
+	let pagination = $state<PaginationState>({ pageIndex: 0, pageSize: 10 });
+	let sorting = $state<SortingState>([]);
+	let columnFilters = $state<ColumnFiltersState>([]);
+	let columnVisibility = $state<VisibilityState>({});
+	let rowSelection = $state<RowSelectionState>({});
+
+	$effect(() => {
+		$inspect(rowSelection);
+	});
+	const table = createSvelteTable({
+		get data() {
+			return data;
+		},
+		columns,
+		getCoreRowModel: getCoreRowModel(),
+		getPaginationRowModel: getPaginationRowModel(),
+		getSortedRowModel: getSortedRowModel(),
+		getFilteredRowModel: getFilteredRowModel(),
+		onPaginationChange: (updater) => {
+			if (typeof updater === 'function') {
+				pagination = updater(pagination);
+			} else {
+				pagination = updater;
+			}
+		},
+		onSortingChange: (updater) => {
+			if (typeof updater === 'function') {
+				sorting = updater(sorting);
+			} else {
+				sorting = updater;
+			}
+		},
+		onColumnFiltersChange: (updater) => {
+			if (typeof updater === 'function') {
+				columnFilters = updater(columnFilters);
+			} else {
+				columnFilters = updater;
+			}
+		},
+		onColumnVisibilityChange: (updater) => {
+			if (typeof updater === 'function') {
+				columnVisibility = updater(columnVisibility);
+			} else {
+				columnVisibility = updater;
+			}
+		},
+		onRowSelectionChange: (updater) => {
+			if (typeof updater === 'function') {
+				rowSelection = updater(rowSelection);
+			} else {
+				rowSelection = updater;
+			}
+		},
+		state: {
+			get pagination() {
+				return pagination;
+			},
+			get sorting() {
+				return sorting;
+			},
+			get columnFilters() {
+				return columnFilters;
+			},
+			get columnVisibility() {
+				return columnVisibility;
+			},
+			get rowSelection() {
+				return rowSelection;
+			}
+		}
+	});
+</script>
+
+<div class="flex items-center gap-3 py-4">
+	<Input
+		placeholder="Filter names..."
+		value={table.getColumn('name')?.getFilterValue() as string}
+		onchange={(e) => table.getColumn('name')?.setFilterValue(e.currentTarget.value)}
+		oninput={(e) => table.getColumn('name')?.setFilterValue(e.currentTarget.value)}
+		class="max-w-sm"
+	/>
+	<CreateDialogUnit data={createUnitForm} />
+	<DropdownMenu.Root>
+		<DropdownMenu.Trigger>
+			{#snippet child({ props })}
+				<Button {...props} variant="outline" class="ml-auto">Columns <ChevronDown /></Button>
+			{/snippet}
+		</DropdownMenu.Trigger>
+		<DropdownMenu.Content align="end">
+			{#each table.getAllColumns().filter((col) => col.getCanHide()) as column (column.id)}
+				<DropdownMenu.CheckboxItem
+					class="capitalize"
+					controlledChecked
+					checked={column.getIsVisible()}
+					onCheckedChange={(value) => column.toggleVisibility(!!value)}
+				>
+					{column.id}
+				</DropdownMenu.CheckboxItem>
+			{/each}
+		</DropdownMenu.Content>
+	</DropdownMenu.Root>
+</div>
+<div class="rounded-md border">
+	<Table.Root>
+		<Table.Header>
+			{#each table.getHeaderGroups() as headerGroup (headerGroup.id)}
+				<Table.Row>
+					{#each headerGroup.headers as header (header.id)}
+						<Table.Head>
+							{#if !header.isPlaceholder}
+								<FlexRender
+									content={header.column.columnDef.header}
+									context={header.getContext()}
+								/>
+							{/if}
+						</Table.Head>
+					{/each}
+				</Table.Row>
+			{/each}
+		</Table.Header>
+		<Table.Body>
+			{#each table.getRowModel().rows as row (row.id)}
+				<Table.Row data-state={row.getIsSelected() && 'selected'}>
+					{#each row.getVisibleCells() as cell (cell.id)}
+						<Table.Cell>
+							<FlexRender content={cell.column.columnDef.cell} context={cell.getContext()} />
+						</Table.Cell>
+					{/each}
+				</Table.Row>
+			{:else}
+				<Table.Row>
+					<Table.Cell colspan={columns.length} class="h-24 text-center">No results.</Table.Cell>
+				</Table.Row>
+			{/each}
+		</Table.Body>
+	</Table.Root>
+</div>
+<div class="flex items-center justify-end space-x-2 py-4">
+	<div class="text-muted-foreground flex-1 text-sm">
+		{table.getFilteredSelectedRowModel().rows.length} of{' '}
+		{table.getFilteredRowModel().rows.length} row(s) selected.
+	</div>
+	<Button
+		variant="outline"
+		size="sm"
+		onclick={() => table.previousPage()}
+		disabled={!table.getCanPreviousPage()}
+	>
+		Previous
+	</Button>
+	<Button
+		variant="outline"
+		size="sm"
+		onclick={() => table.nextPage()}
+		disabled={!table.getCanNextPage()}
+	>
+		Next
+	</Button>
+</div>
 
 ```
 
@@ -5558,8 +7626,7 @@ export const load: PageServerLoad = async ({ params, locals: { supabase } }) => 
 
 export const actions: Actions = {
 	updateprofile: async ({ request, locals: { supabase, session } }) => {
-		const test = await request.formData();
-		const form = await superValidate(test, zod(profileSubmitSchema));
+		const form = await superValidate(request, zod(profileSubmitSchema));
 		console.log(form.data.unit_id);
 		// If not valid return the form with errors
 		if (!form.valid) {
@@ -6415,6 +8482,42 @@ main
 v1.223.10
 ```
 
+# supabase/.temp/gotrue-version
+
+```
+v2.163.2
+```
+
+# supabase/.temp/pooler-url
+
+```
+postgresql://postgres.xixattpbfetzpwecbkde:[YOUR-PASSWORD]@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres
+```
+
+# supabase/.temp/postgres-version
+
+```
+15.6.1.135
+```
+
+# supabase/.temp/project-ref
+
+```
+xixattpbfetzpwecbkde
+```
+
+# supabase/.temp/rest-version
+
+```
+v12.2.3
+```
+
+# supabase/.temp/storage-version
+
+```
+v1.13.0
+```
+
 # supabase/config.toml
 
 ```toml
@@ -6934,6 +9037,14 @@ CREATE TRIGGER set_updated_at
     BEFORE UPDATE ON profiles
     FOR EACH ROW
     EXECUTE FUNCTION fn_set_updated_at();
+```
+
+# supabase/migrations/20241121161213_test.sql
+
+```sql
+alter publication
+supabase_realtime add
+table unit;
 ```
 
 # supabase/seed.sql

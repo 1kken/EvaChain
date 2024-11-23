@@ -6,22 +6,23 @@
 	import { onDestroy, onMount } from 'svelte';
 	let { data }: { data: PageData } = $props();
 
-	const { units } = data;
 	const {
+		units,
+		supabase,
 		form: { createUnitForm, deleteUnitForm, updateUnitForm }
 	} = data;
-	const { supabase } = data;
+
+	const columns = createColumns(deleteUnitForm, updateUnitForm);
+	unit.set(units);
+
+	//fetch unit so it can be used
 	onMount(() => {
-		unit.set(units);
 		unit.subscribe(supabase);
 	});
 
 	onDestroy(() => {
-		// Clean up subscription
 		unit.unsubscribe();
 	});
-
-	const columns = createColumns(deleteUnitForm, updateUnitForm);
 </script>
 
 <DataTable data={unit.units} {columns} {createUnitForm} />

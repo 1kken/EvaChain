@@ -13,10 +13,10 @@ import { zod } from 'sveltekit-superforms/adapters';
 
 export const load = (async ({ locals: { supabase } }) => {
 	const { data: units, error: unitError } = await supabase.from('unit').select();
+
 	if (unitError) {
 		error(500, 'Unexpected error, fetching unit error');
 	}
-
 	const createUnitForm = await superValidate(zod(createUnitSchema));
 	const deleteUnitForm = await superValidate(zod(deleteUnitSchema));
 	const updateUnitForm = await superValidate(zod(updateUnitSchema));

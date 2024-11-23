@@ -17,7 +17,7 @@
 	import { createSvelteTable, FlexRender } from '$lib/components/ui/data-table/index.js';
 	import * as Table from '$lib/components/ui/table/index.js';
 	import { ChevronDown } from 'lucide-svelte';
-	import CreateDialogUnit from '$lib/custom_components/university_management/create-dialog-unit.svelte';
+	import CreateDialogUnit from '$lib/custom_components/university_management/units/create-dialog-unit.svelte';
 	import type { Infer, SuperValidated } from 'sveltekit-superforms';
 	import type { CreateUnit } from '$lib/schemas/unit/schema';
 

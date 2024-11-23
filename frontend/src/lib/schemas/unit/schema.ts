@@ -37,7 +37,5 @@ export type CreateUnit = typeof createUnitSchema;
 export type UpdateUnitSchema = typeof updateUnitSchema;
 export type UpdateUnit = z.infer<typeof updateUnitSchema>;
 
-//recipe
 export type DeleteUnitSchema = typeof deleteUnitSchema;
-//product
 export type DeleteUnit = z.infer<typeof deleteUnitSchema>;
