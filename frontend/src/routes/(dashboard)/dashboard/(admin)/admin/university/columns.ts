@@ -44,6 +44,7 @@ export const createColumns = (
 		accessorKey: 'code',
 		header: ({ column }) =>
 			renderComponent(DataTableNameButton, {
+				text: 'Code',
 				onclick: () => column.toggleSorting(column.getIsSorted() === 'asc')
 			})
 	},

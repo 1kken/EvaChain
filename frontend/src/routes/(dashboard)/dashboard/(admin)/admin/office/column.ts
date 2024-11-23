@@ -47,6 +47,7 @@ export const createColumns = <T extends Record<string, any>>(
 		accessorKey: 'code',
 		header: ({ column }) =>
 			renderComponent(DataTableSortButton, {
+				text: 'Code',
 				onclick: () => column.toggleSorting(column.getIsSorted() === 'asc')
 			})
 	},

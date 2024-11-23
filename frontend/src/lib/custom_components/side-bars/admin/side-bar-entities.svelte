@@ -20,7 +20,6 @@
 		}
 	];
 	function isActive(itemUrl: string) {
-		console.log($page.url.pathname === itemUrl);
 		return $page.url.pathname === itemUrl;
 	}
 

@@ -5,24 +5,28 @@ import DataTableActions from './data-table-actions.svelte';
 import DataTableSortButton from '$lib/custom_components/university_management/data-table-sort-button.svelte';
 import { Checkbox } from '$lib/components/ui/checkbox/index.js';
 import type { SuperValidated } from 'sveltekit-superforms';
-import type { DeleteOffice, UpdateOffice } from '$lib/schemas/office/schema';
+import type { DeleteProgramme, UpdateProgramme } from '$lib/schemas/programme/schema';
 
 // This type is used to define the shape of our data.
-export type Office = {
+export type Programme = {
 	id: number;
-	code: string;
 	name: string;
 	unit: {
 		id: number;
 		code: string;
 		name: string;
 	} | null;
+	office: {
+		id: number;
+		unit_id: number;
+		code: string;
+		name: string;
+	} | null;
 };
-
-export const createColumns = <T extends Record<string, any>>(
-	updateForm: SuperValidated<UpdateOffice>,
-	deleteForm: SuperValidated<DeleteOffice>
-): ColumnDef<Office>[] => [
+export const createColumns = (
+	updateForm: SuperValidated<UpdateProgramme>,
+	deleteForm: SuperValidated<DeleteProgramme>
+): ColumnDef<Programme>[] => [
 	{
 		id: 'select',
 		header: ({ table }) =>
@@ -44,25 +48,35 @@ export const createColumns = <T extends Record<string, any>>(
 		enableHiding: false
 	},
 	{
-		accessorKey: 'code',
+		id: 'name',
+		accessorKey: 'name',
 		header: ({ column }) =>
 			renderComponent(DataTableSortButton, {
+				text: 'Name',
 				onclick: () => column.toggleSorting(column.getIsSorted() === 'asc')
 			})
 	},
 	{
-		accessorKey: 'name',
-		header: () => {
-			const nameHeaderSnippet = createRawSnippet(() => ({
-				render: () => `<div class="text-left">Office Name</div>`
-			}));
-			return renderSnippet(nameHeaderSnippet, '');
+		id: 'unit',
+		accessorKey: 'unit',
+		header: 'Under unit',
+		accessorFn: (row) => {
+			if (row.unit) {
+				return `${row.unit.code}-${row.unit.name}`;
+			}
+			return 'No unit';
 		}
 	},
 	{
-		id: 'unit',
-		header: 'Under unit',
-		accessorFn: (row) => row.unit?.code ?? 'No unit'
+		id: 'office',
+		accessorKey: 'office',
+		header: 'Under office',
+		accessorFn: (row) => {
+			if (row.office) {
+				return `${row.office.code}-${row.office.name}`;
+			}
+			return 'No office';
+		}
 	},
 	{
 		id: 'actions',
