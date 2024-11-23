@@ -5,7 +5,9 @@ import {
 	createOfficeSchema,
 	deleteOfficeSchema,
 	updateOfficeSchema,
-	type CreateOffice
+	type CreateOffice,
+	type DeleteOffice,
+	type UpdateOffice
 } from '$lib/schemas/office/schema';
 import { zod } from 'sveltekit-superforms/adapters';
 import { error, type Actions } from '@sveltejs/kit';
@@ -60,6 +62,54 @@ export const actions: Actions = {
 		return message(form, {
 			status: 'success',
 			text: `Office created ${name}`
+		});
+	},
+	deleteoffice: async ({ request, locals: { supabase } }) => {
+		const form = await superValidate<DeleteOffice, App.Superforms.Message>(
+			request,
+			zod(deleteOfficeSchema)
+		);
+		let { id, name } = form.data;
+
+		const { error } = await supabase.from('office').delete().eq('id', id);
+
+		if (error) {
+			return message(form, {
+				status: 'error',
+				text: `unexpected internal error please try again later! ${error.message}`
+			});
+		}
+
+		return message(form, {
+			status: 'warning',
+			text: `Succesfully deleted ${name} `
+		});
+	},
+
+	updateoffice: async ({ request, locals: { supabase } }) => {
+		const form = await superValidate<UpdateOffice>(request, zod(updateOfficeSchema));
+
+		let { id, name, code, unit_id } = form.data;
+
+		if (name) {
+			name = titleCase(name);
+		}
+
+		const { error } = await supabase
+			.from('office')
+			.update({ name: name, code: code, unit_id: unit_id })
+			.eq('id', id);
+
+		if (error) {
+			return message(form, {
+				status: 'error',
+				text: `unexpected internal error please try again later! ${error.message}`
+			});
+		}
+
+		return message(form, {
+			status: 'success',
+			text: `Succesfully updated ${name}`
 		});
 	}
 };

@@ -2,14 +2,14 @@
 	import Ellipsis from 'lucide-svelte/icons/ellipsis';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
-	import DeleteActionUnit from '$lib/custom_components/university_management/units/delete-action-unit.svelte';
 	import type { SuperValidated } from 'sveltekit-superforms';
-	import type { DeleteUnit, UpdateUnit } from '$lib/schemas/unit/schema';
-	import UpdateDialogUnit from '$lib/custom_components/university_management/units/update-dialog-unit.svelte';
+	import type { DeleteOffice, UpdateOffice } from '$lib/schemas/office/schema';
+	import DeleteActionOffice from '$lib/custom_components/university_management/office/delete-action-office.svelte';
+	import UpdateDialogOffice from '$lib/custom_components/university_management/office/update-dialog-office.svelte';
 
 	interface Props {
-		deleteForm: SuperValidated<DeleteUnit>;
-		updateForm: SuperValidated<UpdateUnit>;
+		deleteForm: SuperValidated<DeleteOffice>;
+		updateForm: SuperValidated<UpdateOffice>;
 		id: number;
 	}
 
@@ -31,10 +31,10 @@
 		</DropdownMenu.Group>
 		<DropdownMenu.Separator />
 		<DropdownMenu.Item onSelect={(e) => e.preventDefault()}
-			><UpdateDialogUnit {updateForm} {id} /></DropdownMenu.Item
+			><DeleteActionOffice {deleteForm} {id} /></DropdownMenu.Item
 		>
 		<DropdownMenu.Item onSelect={(e) => e.preventDefault()}
-			><DeleteActionUnit {deleteForm} {id} /></DropdownMenu.Item
+			><UpdateDialogOffice {id} {updateForm} /></DropdownMenu.Item
 		>
 	</DropdownMenu.Content>
 </DropdownMenu.Root>

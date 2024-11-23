@@ -8,6 +8,8 @@
 	import { createColumns } from './column';
 	import CreateDialogOffice from '$lib/custom_components/university_management/office/create-dialog-office.svelte';
 	import { unit } from '$lib/states/admin_unit.svelte';
+	import DeleteActionOffice from '$lib/custom_components/university_management/office/delete-action-office.svelte';
+	import UpdateDialogOffice from '$lib/custom_components/university_management/office/update-dialog-office.svelte';
 
 	const {
 		units,

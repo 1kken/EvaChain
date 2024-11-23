@@ -1,7 +1,7 @@
 import { renderComponent, renderSnippet } from '$lib/components/ui/data-table';
 import type { ColumnDef } from '@tanstack/table-core';
-import { createRawSnippet } from 'svelte';
-import DataTableActions from '$lib/custom_components/university_management/data-table-actions.svelte';
+import { createRawSnippet, type Component } from 'svelte';
+import DataTableActions from './data-table-actions.svelte';
 import DataTableSortButton from '$lib/custom_components/university_management/data-table-sort-button.svelte';
 import { Checkbox } from '$lib/components/ui/checkbox/index.js';
 import type { SuperValidated } from 'sveltekit-superforms';
@@ -19,7 +19,7 @@ export type Office = {
 	} | null;
 };
 
-export const createColumns = (
+export const createColumns = <T extends Record<string, any>>(
 	updateForm: SuperValidated<UpdateOffice>,
 	deleteForm: SuperValidated<DeleteOffice>
 ): ColumnDef<Office>[] => [
@@ -69,7 +69,7 @@ export const createColumns = (
 		cell: ({ row }) => {
 			const id = row.original.id;
 			// You can pass whatever you need from `row.original` to the component
-			return renderComponent(DataTableActions, { id });
+			return renderComponent(DataTableActions, { id, deleteForm, updateForm });
 		}
 	}
 ];
