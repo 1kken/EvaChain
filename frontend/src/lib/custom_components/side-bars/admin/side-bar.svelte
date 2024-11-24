@@ -1,12 +1,11 @@
 <script lang="ts">
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
-	import SideBarHeader from './side-bar-header.svelte';
-	import SideBarFooter from './side-bar-footer.svelte';
+	import SideBarHeader from '$lib/custom_components/side-bars/side-bar-header.svelte';
+	import SideBarFooter from '$lib/custom_components/side-bars/side-bar-footer.svelte';
 	import SideBarEntities from './side-bar-entities.svelte';
 	import SideBarAttributes from './side-bar-attributes.svelte';
 
 	let { sidebarOpen = $bindable() } = $props();
-	const sidebar = Sidebar.useSidebar();
 
 	let isHover = $state(false);
 	let isDrawerOpen = $state(false);
