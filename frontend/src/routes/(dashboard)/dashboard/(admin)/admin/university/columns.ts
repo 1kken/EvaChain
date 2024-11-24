@@ -21,26 +21,6 @@ export const createColumns = (
 	updateForm: SuperValidated<UpdateUnit>
 ): ColumnDef<Unit>[] => [
 	{
-		id: 'select',
-		header: ({ table }) =>
-			renderComponent(Checkbox, {
-				checked: table.getIsAllPageRowsSelected(),
-				indeterminate: table.getIsSomePageRowsSelected() && !table.getIsAllPageRowsSelected(),
-				onCheckedChange: (value) => table.toggleAllPageRowsSelected(!!value),
-				controlledChecked: true,
-				'aria-label': 'Select all'
-			}),
-		cell: ({ row }) =>
-			renderComponent(Checkbox, {
-				checked: row.getIsSelected(),
-				onCheckedChange: (value) => row.toggleSelected(!!value),
-				controlledChecked: true,
-				'aria-label': 'Select row'
-			}),
-		enableSorting: true,
-		enableHiding: false
-	},
-	{
 		accessorKey: 'code',
 		header: ({ column }) =>
 			renderComponent(DataTableNameButton, {

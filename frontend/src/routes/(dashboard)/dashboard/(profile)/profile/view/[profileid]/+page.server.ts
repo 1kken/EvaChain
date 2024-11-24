@@ -4,9 +4,13 @@ import { fail, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { profileSchema, profileSubmitSchema } from '$lib/schemas/profile/schema';
 
-export const load: PageServerLoad = async ({ params, locals: { supabase } }) => {
+export const load: PageServerLoad = async ({ params, locals: { supabase, session } }) => {
 	if (!params.profileid) {
 		throw error(404, 'Profile ID not found');
+	}
+
+	if (params.profileid !== session?.user.id) {
+		throw error(401, 'Unauthorized you dont have access to this profile');
 	}
 
 	const { data: profile, error: err } = await supabase

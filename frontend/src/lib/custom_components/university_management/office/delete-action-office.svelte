@@ -52,15 +52,20 @@
 </script>
 
 <AlertDialog.Root bind:open={isOpen}>
-	<AlertDialog.Trigger class=" focus-visible:outline-none">Delete</AlertDialog.Trigger>
+	<AlertDialog.Trigger class=" focus-visible:outline-none">
+		<span class="flex items-center gap-3">
+			<Trash2 size={16} />Delete
+		</span>
+	</AlertDialog.Trigger>
 	<AlertDialog.Content>
 		<AlertDialog.Header>
 			<AlertDialog.Title
-				><span class="flex items-center gap-4"><TriangleAlert /> Are you absolutely sure?</span
+				><span class="flex items-center gap-4"
+					><TriangleAlert class="text-red-600" /> Are you absolutely sure?</span
 				></AlertDialog.Title
 			>
 			<AlertDialog.Description>
-				This action cannot be undone. This will permanently {$formData.name}
+				This action cannot be undone. This will permanently delete {$formData.name}
 			</AlertDialog.Description>
 		</AlertDialog.Header>
 		<form method="POST" action="?/deleteoffice" use:enhance>
@@ -81,12 +86,21 @@
 					<AlertDialog.Cancel disabled class="text-gray-500" type="button"
 						>Cancel</AlertDialog.Cancel
 					>
-					<Form.Button disabled><LoaderCircle class="animate-spin" />Deleting...</Form.Button>
+					<Form.Button disabled class="bg-red-300 text-white">
+						<LoaderCircle class="animate-spin" />Deleting...
+					</Form.Button>
 				</div>
 			{:else}
 				<div class="flex justify-between">
-					<AlertDialog.Cancel type="button">Cancel</AlertDialog.Cancel>
-					<AlertDialog.Action type="submit"><Trash2 />Delete</AlertDialog.Action>
+					<AlertDialog.Cancel type="button" class="text-gray-600 hover:text-gray-800">
+						Cancel
+					</AlertDialog.Cancel>
+					<AlertDialog.Action
+						type="submit"
+						class="bg-red-600 text-white hover:bg-red-700 focus:ring-red-500"
+					>
+						<Trash2 />Delete
+					</AlertDialog.Action>
 				</div>
 			{/if}
 		</form>

@@ -33,6 +33,6 @@
 	const columns = createColumns(updateOfficeForm, deleteOfficeForm);
 </script>
 
-<DataTable {columns} data={office.offices}>
+<DataTable filterPlaceholder={'Search by name...'} {columns} data={office.offices}>
 	<CreateDialogOffice data={createOfficeForm} />
 </DataTable>

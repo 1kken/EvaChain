@@ -39,6 +39,6 @@
 	const columns = createColumns(updateProgrammeForm, deleteProgrammeForm);
 </script>
 
-<DataTable {columns} data={programme.programmes}>
+<DataTable filterPlaceholder={'Search by name...'} {columns} data={programme.programmes}>
 	<CreateDialogProgramme data={createProgrammeForm} />
 </DataTable>

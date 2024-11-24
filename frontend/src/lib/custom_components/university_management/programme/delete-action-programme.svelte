@@ -1,24 +1,25 @@
 <script lang="ts">
 	import * as Form from '$lib/components/ui/form';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
-	import { deleteUnitSchema, type DeleteUnit } from '$lib/schemas/unit/schema';
 	import { showErrorToast, showSuccessToast, showWarningToast } from '$lib/utils/toast';
 	import { superForm, type SuperValidated } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { Input } from '$lib/components/ui/input';
-	import { unit } from '$lib/states/admin_unit.svelte';
 	import { LoaderCircle } from 'lucide-svelte';
 	import { TriangleAlert } from 'lucide-svelte';
 	import { Trash2 } from 'lucide-svelte';
+	import { deleteProgrammeSchema, type DeleteProgramme } from '$lib/schemas/programme/schema';
+	import { programme } from '$lib/states/admin_programme.svelte';
+
 	interface Props {
-		deleteForm: SuperValidated<DeleteUnit>;
+		deleteForm: SuperValidated<DeleteProgramme>;
 		id: number;
 	}
 
 	let { deleteForm, id }: Props = $props();
 
 	const form = superForm(deleteForm, {
-		validators: zodClient(deleteUnitSchema),
+		validators: zodClient(deleteProgrammeSchema),
 		multipleSubmits: 'prevent',
 		dataType: 'json'
 	});
@@ -43,8 +44,8 @@
 	});
 
 	$formData.id = id;
-	const curr_unit = unit.units.find((unit) => unit.id === $formData.id);
-	$formData.name = curr_unit?.name;
+	const curr_programme = programme.programmes.find((p) => p.id === $formData.id);
+	$formData.name = curr_programme?.name;
 
 	let isOpen = $state(false);
 </script>
@@ -66,9 +67,9 @@
 				This action cannot be undone. This will permanently delete {$formData.name}
 			</AlertDialog.Description>
 		</AlertDialog.Header>
-		<form method="POST" action="?/deleteunit" use:enhance>
+		<form method="POST" action="?/deleteprogramme" use:enhance>
 			<Input name="id" class="hidden" bind:value={$formData.id} />
-			<Input name="id" class="hidden" bind:value={$formData.name} />
+			<Input name="name" class="hidden" bind:value={$formData.name} />
 			<Form.Field {form} name="confirmation">
 				<Form.FieldErrors />
 				<Form.Control>

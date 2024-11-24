@@ -8,6 +8,7 @@
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { showErrorToast, showSuccessToast, showWarningToast } from '$lib/utils/toast';
 	import { unit } from '$lib/states/admin_unit.svelte';
+	import { Pencil } from 'lucide-svelte';
 
 	let {
 		updateForm,
@@ -50,7 +51,11 @@
 </script>
 
 <Dialog.Root bind:open={isOpen}>
-	<Dialog.Trigger class=" focus-visible:outline-none">Edit Unit</Dialog.Trigger>
+	<Dialog.Trigger class=" focus-visible:outline-none">
+		<span class="flex items-center gap-3">
+			<Pencil size={16} /> Edit Programme
+		</span>
+	</Dialog.Trigger>
 	<Dialog.Content class="sm:max-w-auto">
 		<Dialog.Header>
 			<Dialog.Title>Update Unit</Dialog.Title>

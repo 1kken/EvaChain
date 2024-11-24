@@ -1,7 +1,6 @@
 <script lang="ts">
-	import { buttonVariants } from '$lib/components/ui/button/index.js';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
-	import { Plus } from 'lucide-svelte';
+	import { Pencil } from 'lucide-svelte';
 	import { LoaderCircle } from 'lucide-svelte';
 	import * as Form from '$lib/components/ui/form/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
@@ -50,7 +49,11 @@
 </script>
 
 <Dialog.Root bind:open={isOpen}>
-	<Dialog.Trigger class=" focus-visible:outline-none">Edit Office</Dialog.Trigger>
+	<Dialog.Trigger class=" focus-visible:outline-none">
+		<span class="flex items-center gap-3">
+			<Pencil size={16} /> Edit Office
+		</span>
+	</Dialog.Trigger>
 	<Dialog.Content class="max-h-[85vh] overflow-y-auto sm:max-w-[800px]">
 		<Dialog.Header>
 			<Dialog.Title>Create Office</Dialog.Title>

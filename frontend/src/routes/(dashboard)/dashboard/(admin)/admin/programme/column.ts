@@ -1,9 +1,7 @@
 import { renderComponent, renderSnippet } from '$lib/components/ui/data-table';
 import type { ColumnDef } from '@tanstack/table-core';
-import { createRawSnippet, type Component } from 'svelte';
 import DataTableActions from './data-table-actions.svelte';
 import DataTableSortButton from '$lib/custom_components/university_management/data-table-sort-button.svelte';
-import { Checkbox } from '$lib/components/ui/checkbox/index.js';
 import type { SuperValidated } from 'sveltekit-superforms';
 import type { DeleteProgramme, UpdateProgramme } from '$lib/schemas/programme/schema';
 
@@ -27,26 +25,6 @@ export const createColumns = (
 	updateForm: SuperValidated<UpdateProgramme>,
 	deleteForm: SuperValidated<DeleteProgramme>
 ): ColumnDef<Programme>[] => [
-	{
-		id: 'select',
-		header: ({ table }) =>
-			renderComponent(Checkbox, {
-				checked: table.getIsAllPageRowsSelected(),
-				indeterminate: table.getIsSomePageRowsSelected() && !table.getIsAllPageRowsSelected(),
-				onCheckedChange: (value) => table.toggleAllPageRowsSelected(!!value),
-				controlledChecked: true,
-				'aria-label': 'Select all'
-			}),
-		cell: ({ row }) =>
-			renderComponent(Checkbox, {
-				checked: row.getIsSelected(),
-				onCheckedChange: (value) => row.toggleSelected(!!value),
-				controlledChecked: true,
-				'aria-label': 'Select row'
-			}),
-		enableSorting: true,
-		enableHiding: false
-	},
 	{
 		id: 'name',
 		accessorKey: 'name',

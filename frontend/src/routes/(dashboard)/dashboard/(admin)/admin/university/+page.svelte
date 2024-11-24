@@ -27,6 +27,6 @@
 	});
 </script>
 
-<DataTable data={unit.units} {columns}>
+<DataTable filterPlaceholder={'Search by name...'} data={unit.units} {columns}>
 	<CreateDialogUnit data={createUnitForm} />
 </DataTable>

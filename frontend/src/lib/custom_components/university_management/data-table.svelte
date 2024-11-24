@@ -18,6 +18,7 @@
 	import * as Table from '$lib/components/ui/table/index.js';
 	import { ChevronDown } from 'lucide-svelte';
 	import { type Snippet } from 'svelte';
+	import { Search, ListFilter, X } from 'lucide-svelte';
 
 	interface Props<TData, TValue> {
 		data: TData[];
@@ -28,10 +29,12 @@
 		enableColumnVisibility?: boolean;
 		enableFiltering?: boolean;
 		pageSize?: number;
+		filterPlaceholder: string;
 		children?: Snippet;
 	}
 
 	let {
+		filterPlaceholder = 'Search..',
 		data,
 		columns,
 		filterColumn = 'name',
@@ -111,45 +114,115 @@
 			}
 		}
 	});
+
+	let showMobileSearch = $state(false);
+
+	function toggleMobileSearch() {
+		showMobileSearch = !showMobileSearch;
+	}
 </script>
 
 <div>
 	<div class="flex items-center gap-3 py-4">
-		{#if enableFiltering}
-			<Input
-				placeholder="Filter..."
-				value={table.getColumn(filterColumn)?.getFilterValue() as string}
-				onchange={(e) => table.getColumn(filterColumn)?.setFilterValue(e.currentTarget.value)}
-				oninput={(e) => table.getColumn(filterColumn)?.setFilterValue(e.currentTarget.value)}
-				class="max-w-sm"
-			/>
-		{/if}
+		<div class="hidden w-full items-center gap-3 md:flex">
+			{#if enableFiltering}
+				<Input
+					placeholder={filterPlaceholder}
+					value={table.getColumn(filterColumn)?.getFilterValue() as string}
+					onchange={(e) => table.getColumn(filterColumn)?.setFilterValue(e.currentTarget.value)}
+					oninput={(e) => table.getColumn(filterColumn)?.setFilterValue(e.currentTarget.value)}
+					class="max-w-sm"
+				/>
+			{/if}
 
-		{@render children?.()}
+			{@render children?.()}
 
-		{#if enableColumnVisibility}
-			<DropdownMenu.Root>
-				<DropdownMenu.Trigger>
-					{#snippet child({ props })}
-						<Button {...props} variant="outline" class="ml-auto">
-							Columns <ChevronDown />
+			{#if enableColumnVisibility}
+				<DropdownMenu.Root>
+					<DropdownMenu.Trigger>
+						{#snippet child({ props })}
+							<Button {...props} variant="outline" class="ml-auto">
+								Columns <ChevronDown />
+							</Button>
+						{/snippet}
+					</DropdownMenu.Trigger>
+					<DropdownMenu.Content align="end">
+						{#each table.getAllColumns().filter((col) => col.getCanHide()) as column (column.id)}
+							<DropdownMenu.CheckboxItem
+								class="capitalize"
+								controlledChecked
+								checked={column.getIsVisible()}
+								onCheckedChange={(value) => column.toggleVisibility(!!value)}
+							>
+								{column.id}
+							</DropdownMenu.CheckboxItem>
+						{/each}
+					</DropdownMenu.Content>
+				</DropdownMenu.Root>
+			{/if}
+		</div>
+
+		<!-- Mobile View -->
+		<div class="item-end flex w-full gap-2 md:hidden">
+			{#if showMobileSearch}
+				<div class="flex w-full items-center gap-2">
+					<Input
+						placeholder={filterPlaceholder}
+						value={table.getColumn(filterColumn)?.getFilterValue() as string}
+						onchange={(e) => table.getColumn(filterColumn)?.setFilterValue(e.currentTarget.value)}
+						oninput={(e) => table.getColumn(filterColumn)?.setFilterValue(e.currentTarget.value)}
+						class="w-full"
+					/>
+					<Button variant="ghost" size="icon" onclick={toggleMobileSearch}>
+						<X class="h-4 w-4" />
+					</Button>
+				</div>
+			{:else}
+				<div class="flex w-full items-center justify-between">
+					<!-- Left side: Search button -->
+					<div>
+						<Button variant="ghost" size="icon" onclick={toggleMobileSearch}>
+							<Search class="h-4 w-4" />
 						</Button>
-					{/snippet}
-				</DropdownMenu.Trigger>
-				<DropdownMenu.Content align="end">
-					{#each table.getAllColumns().filter((col) => col.getCanHide()) as column (column.id)}
-						<DropdownMenu.CheckboxItem
-							class="capitalize"
-							controlledChecked
-							checked={column.getIsVisible()}
-							onCheckedChange={(value) => column.toggleVisibility(!!value)}
-						>
-							{column.id}
-						</DropdownMenu.CheckboxItem>
-					{/each}
-				</DropdownMenu.Content>
-			</DropdownMenu.Root>
-		{/if}
+					</div>
+
+					<!-- Right side: Children and column filter -->
+					<div class="flex items-center gap-2">
+						<!-- Children (e.g., Create button) -->
+						<div class="flex-shrink-0">
+							{@render children?.()}
+						</div>
+
+						<!-- Column visibility filter -->
+						{#if enableColumnVisibility}
+							<DropdownMenu.Root>
+								<DropdownMenu.Trigger>
+									{#snippet child({ props })}
+										<Button {...props} variant="ghost" size="icon">
+											<ListFilter class="h-4 w-4" />
+										</Button>
+									{/snippet}
+								</DropdownMenu.Trigger>
+								<DropdownMenu.Content align="end">
+									{#each table
+										.getAllColumns()
+										.filter((col) => col.getCanHide()) as column (column.id)}
+										<DropdownMenu.CheckboxItem
+											class="capitalize"
+											controlledChecked
+											checked={column.getIsVisible()}
+											onCheckedChange={(value) => column.toggleVisibility(!!value)}
+										>
+											{column.id}
+										</DropdownMenu.CheckboxItem>
+									{/each}
+								</DropdownMenu.Content>
+							</DropdownMenu.Root>
+						{/if}
+					</div>
+				</div>
+			{/if}
+		</div>
 	</div>
 
 	<div class="rounded-md border">
