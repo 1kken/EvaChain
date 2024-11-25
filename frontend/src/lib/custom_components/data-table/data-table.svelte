@@ -19,19 +19,20 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import { createSvelteTable, FlexRender } from '$lib/components/ui/data-table/index.js';
 	import * as Table from '$lib/components/ui/table/index.js';
-	import { Filter } from 'lucide-svelte';
+	import { ChevronFirst, ChevronLast, ChevronLeft, ChevronRight, Filter } from 'lucide-svelte';
 	import { ChevronDown } from 'lucide-svelte';
 	import { type Snippet } from 'svelte';
 	import { Search, ListFilter, X } from 'lucide-svelte';
 	import DataTableFacet from './data-table-facet.svelte';
 	import type { PropDataFacet } from './helper';
+	import { Label } from '$lib/components/ui/label';
+	import DataTableFooter from './data-table-footer.svelte';
 
 	interface Props<TData, TValue> {
 		data: TData[];
 		columns: ColumnDef<TData, TValue>[];
 		filterDataFacet?: PropDataFacet[];
 		filterColumn?: string;
-		enableSelection?: boolean;
 		enablePagination?: boolean;
 		enableColumnVisibility?: boolean;
 		enableFiltering?: boolean;
@@ -45,7 +46,6 @@
 		data,
 		columns,
 		filterColumn = 'name',
-		enableSelection = true,
 		enablePagination = true,
 		enableColumnVisibility = true,
 		enableFiltering = true,
@@ -300,29 +300,6 @@
 	</div>
 
 	{#if enablePagination}
-		<div class="flex items-center justify-end space-x-2 py-4">
-			{#if enableSelection}
-				<div class="text-muted-foreground flex-1 text-sm">
-					{table.getFilteredSelectedRowModel().rows.length} of{' '}
-					{table.getFilteredRowModel().rows.length} row(s) selected.
-				</div>
-			{/if}
-			<Button
-				variant="outline"
-				size="sm"
-				onclick={() => table.previousPage()}
-				disabled={!table.getCanPreviousPage()}
-			>
-				Previous
-			</Button>
-			<Button
-				variant="outline"
-				size="sm"
-				onclick={() => table.nextPage()}
-				disabled={!table.getCanNextPage()}
-			>
-				Next
-			</Button>
-		</div>
+		<DataTableFooter {table} />
 	{/if}
 </div>

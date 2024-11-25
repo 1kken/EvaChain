@@ -1,6 +1,7 @@
 <!-- $lib/custom_components/dashboard/layout/nav-bar-dashboard.svelte -->
 <script>
 	import { Bell } from 'lucide-svelte';
+	import { ChevronsRight } from 'lucide-svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { page } from '$app/stores';
 	import ThemeToggle from '$lib/custom_components/theme-toggle.svelte';
@@ -21,15 +22,28 @@
 				<div class="lg:hidden">
 					{@render trigger()}
 				</div>
-				<span class=" text-md">
+				<div class="text-md flex items-center gap-2 px-3 py-2">
 					{#each currentPath as path, i (i)}
 						{#if i === 0}
-							<a href={'/' + currentPath.slice(0, i + 1).join('/')} class="capitalize">{path}</a>
+							<a
+								href={'/' + currentPath.slice(0, i + 1).join('/')}
+								class="capitalize hover:underline"
+							>
+								{path}
+							</a>
 						{:else}
-							<a href={'/' + currentPath.slice(0, i + 1).join('/')} class="capitalize">/{path}</a>
+							<div class="flex items-center gap-2">
+								<ChevronsRight class="text-muted-foreground h-4 w-4" />
+								<a
+									href={'/' + currentPath.slice(0, i + 1).join('/')}
+									class="capitalize hover:underline"
+								>
+									{path}
+								</a>
+							</div>
 						{/if}
 					{/each}
-				</span>
+				</div>
 			</div>
 			<div class="flex items-center gap-4">
 				<Button variant="ghost" size="icon" class="relative">

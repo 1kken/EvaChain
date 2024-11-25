@@ -1,6 +1,5 @@
 import { renderComponent, renderSnippet } from '$lib/components/ui/data-table';
 import type { ColumnDef } from '@tanstack/table-core';
-import { createRawSnippet, type Component } from 'svelte';
 import DataTableActions from './data-table-actions.svelte';
 import DataTableSortButton from '$lib/custom_components/data-table/data-table-sort-button.svelte';
 import type { SuperValidated } from 'sveltekit-superforms';
