@@ -3,6 +3,7 @@
 	import { Bell } from 'lucide-svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { page } from '$app/stores';
+	import ThemeToggle from '$lib/custom_components/theme-toggle.svelte';
 
 	let notificationCount = $state(3);
 	let currentPath = $state(['Dashboard']);
@@ -30,7 +31,7 @@
 					{/each}
 				</span>
 			</div>
-			<div class="flex items-center">
+			<div class="flex items-center gap-4">
 				<Button variant="ghost" size="icon" class="relative">
 					<Bell class="h-5 w-5" />
 					{#if notificationCount > 0}
@@ -39,6 +40,7 @@
 						></span>
 					{/if}
 				</Button>
+				<ThemeToggle />
 			</div>
 		</div>
 	</div>

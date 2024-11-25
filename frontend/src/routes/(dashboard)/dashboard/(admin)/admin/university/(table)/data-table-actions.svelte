@@ -2,10 +2,10 @@
 	import Ellipsis from 'lucide-svelte/icons/ellipsis';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
-	import DeleteActionUnit from '$lib/custom_components/university_management/units/delete-action-unit.svelte';
+	import DeleteActionUnit from './delete-action-unit.svelte';
 	import type { SuperValidated } from 'sveltekit-superforms';
 	import type { DeleteUnit, UpdateUnit } from '$lib/schemas/unit/schema';
-	import UpdateDialogUnit from '$lib/custom_components/university_management/units/update-dialog-unit.svelte';
+	import UpdateDialogUnit from './update-dialog-unit.svelte';
 
 	interface Props {
 		deleteForm: SuperValidated<DeleteUnit>;

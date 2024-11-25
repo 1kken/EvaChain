@@ -1,11 +1,11 @@
 <script lang="ts">
-	import DataTable from '$lib/custom_components/university_management/data-table.svelte';
+	import DataTable from '$lib/custom_components/data-table/data-table.svelte';
 	import { office } from '$lib/states/admin_office.svelte';
 	import { onDestroy, onMount } from 'svelte';
 	import type { PageData } from './$types';
 	let { data }: { data: PageData } = $props();
-	import { createColumns } from './column';
-	import CreateDialogOffice from '$lib/custom_components/university_management/office/create-dialog-office.svelte';
+	import { createColumns } from './(table)/column';
+	import CreateDialogOffice from './(table)/create-dialog-office.svelte';
 	import { unit } from '$lib/states/admin_unit.svelte';
 
 	const {

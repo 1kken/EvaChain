@@ -3,17 +3,19 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import type { SuperValidated } from 'sveltekit-superforms';
-	import type { DeleteOffice, UpdateOffice } from '$lib/schemas/office/schema';
-	import DeleteActionOffice from '$lib/custom_components/university_management/office/delete-action-office.svelte';
-	import UpdateDialogOffice from '$lib/custom_components/university_management/office/update-dialog-office.svelte';
+	import UpdateDialogProgramme from './update-dialog-programme.svelte';
+	import type { DeleteProgramme, UpdateProgramme } from '$lib/schemas/programme/schema';
+	import DeleteActionProgramme from './delete-action-programme.svelte';
 
 	interface Props {
-		deleteForm: SuperValidated<DeleteOffice>;
-		updateForm: SuperValidated<UpdateOffice>;
+		deleteForm: SuperValidated<DeleteProgramme>;
+		updateForm: SuperValidated<UpdateProgramme>;
 		id: number;
 	}
 
 	let { deleteForm, updateForm, id }: Props = $props();
+
+	let isOpen = $state(false);
 </script>
 
 <DropdownMenu.Root>
@@ -30,11 +32,11 @@
 			<DropdownMenu.GroupHeading>Actions</DropdownMenu.GroupHeading>
 		</DropdownMenu.Group>
 		<DropdownMenu.Separator />
+		<DropdownMenu.Item onSelect={(e) => e.preventDefault()}>
+			<DeleteActionProgramme {deleteForm} {id} />
+		</DropdownMenu.Item>
 		<DropdownMenu.Item onSelect={(e) => e.preventDefault()}
-			><DeleteActionOffice {deleteForm} {id} /></DropdownMenu.Item
-		>
-		<DropdownMenu.Item onSelect={(e) => e.preventDefault()}
-			><UpdateDialogOffice {id} {updateForm} /></DropdownMenu.Item
-		>
+			><UpdateDialogProgramme {updateForm} {id} />
+		</DropdownMenu.Item>
 	</DropdownMenu.Content>
 </DropdownMenu.Root>

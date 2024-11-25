@@ -9,20 +9,27 @@
 		getCoreRowModel,
 		getPaginationRowModel,
 		getSortedRowModel,
-		getFilteredRowModel
+		getFilteredRowModel,
+		getFacetedRowModel,
+		getFacetedMinMaxValues,
+		getFacetedUniqueValues
 	} from '@tanstack/table-core';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import { createSvelteTable, FlexRender } from '$lib/components/ui/data-table/index.js';
 	import * as Table from '$lib/components/ui/table/index.js';
+	import { Filter } from 'lucide-svelte';
 	import { ChevronDown } from 'lucide-svelte';
 	import { type Snippet } from 'svelte';
 	import { Search, ListFilter, X } from 'lucide-svelte';
+	import DataTableFacet from './data-table-facet.svelte';
+	import type { PropDataFacet } from './helper';
 
 	interface Props<TData, TValue> {
 		data: TData[];
 		columns: ColumnDef<TData, TValue>[];
+		filterDataFacet?: PropDataFacet[];
 		filterColumn?: string;
 		enableSelection?: boolean;
 		enablePagination?: boolean;
@@ -43,6 +50,7 @@
 		enableColumnVisibility = true,
 		enableFiltering = true,
 		pageSize = 10,
+		filterDataFacet,
 		children
 	}: Props<TData, TValue> = $props();
 
@@ -61,6 +69,9 @@
 		getPaginationRowModel: getPaginationRowModel(),
 		getSortedRowModel: getSortedRowModel(),
 		getFilteredRowModel: getFilteredRowModel(),
+		getFacetedRowModel: getFacetedRowModel(),
+		getFacetedUniqueValues: getFacetedUniqueValues(),
+		getFacetedMinMaxValues: getFacetedMinMaxValues(),
 		onPaginationChange: (updater) => {
 			if (typeof updater === 'function') {
 				pagination = updater(pagination);
@@ -116,15 +127,28 @@
 	});
 
 	let showMobileSearch = $state(false);
-
+	let showMobileFilter = $state(false);
 	function toggleMobileSearch() {
 		showMobileSearch = !showMobileSearch;
+	}
+
+	function toggleMobileFilter() {
+		showMobileFilter = !showMobileFilter;
 	}
 </script>
 
 <div>
 	<div class="flex items-center gap-3 py-4">
 		<div class="hidden w-full items-center gap-3 md:flex">
+			{#if filterDataFacet}
+				{#each filterDataFacet as filter, i (i)}
+					<DataTableFacet
+						column={table.getColumn(filter.column)}
+						title={filter.column}
+						options={filter.options}
+					/>
+				{/each}
+			{/if}
 			{#if enableFiltering}
 				<Input
 					placeholder={filterPlaceholder}
@@ -138,6 +162,9 @@
 			{@render children?.()}
 
 			{#if enableColumnVisibility}
+				{#if enableFiltering}
+					<Button>Hello World</Button>
+				{/if}
 				<DropdownMenu.Root>
 					<DropdownMenu.Trigger>
 						{#snippet child({ props })}
@@ -177,23 +204,40 @@
 						<X class="h-4 w-4" />
 					</Button>
 				</div>
+			{:else if showMobileFilter}
+				<div class="flex w-full items-center justify-items-start gap-2">
+					{#if filterDataFacet}
+						{#each filterDataFacet as filter, i (i)}
+							<DataTableFacet
+								column={table.getColumn(filter.column)}
+								title={filter.column}
+								options={filter.options}
+							/>
+						{/each}
+					{/if}
+				</div>
+				<Button variant="ghost" size="icon" onclick={toggleMobileFilter}>
+					<X class="h-4 w-4" />
+				</Button>
 			{:else}
 				<div class="flex w-full items-center justify-between">
-					<!-- Left side: Search button -->
-					<div>
-						<Button variant="ghost" size="icon" onclick={toggleMobileSearch}>
-							<Search class="h-4 w-4" />
-						</Button>
+					<div class="flex">
+						<div>
+							<Button variant="ghost" size="icon" onclick={toggleMobileSearch}>
+								<Search class="h-4 w-4" />
+							</Button>
+						</div>
 					</div>
-
-					<!-- Right side: Children and column filter -->
 					<div class="flex items-center gap-2">
-						<!-- Children (e.g., Create button) -->
 						<div class="flex-shrink-0">
 							{@render children?.()}
 						</div>
+						<div>
+							<Button variant="ghost" size="icon" onclick={toggleMobileFilter}>
+								<Filter class="h-4 w-4" />
+							</Button>
+						</div>
 
-						<!-- Column visibility filter -->
 						{#if enableColumnVisibility}
 							<DropdownMenu.Root>
 								<DropdownMenu.Trigger>

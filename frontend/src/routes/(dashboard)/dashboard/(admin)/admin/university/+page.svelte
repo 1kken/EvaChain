@@ -1,11 +1,11 @@
 <script lang="ts">
-	import DataTable from '$lib/custom_components/university_management/data-table.svelte';
+	import DataTable from '$lib/custom_components/data-table/data-table.svelte';
 
-	import { createColumns } from './columns';
+	import { createColumns } from './(table)/columns';
 	import type { PageData } from './$types';
 	import { unit } from '$lib/states/admin_unit.svelte';
 	import { onDestroy, onMount } from 'svelte';
-	import CreateDialogUnit from '$lib/custom_components/university_management/units/create-dialog-unit.svelte';
+	import CreateDialogUnit from './(table)/create-dialog-unit.svelte';
 	let { data }: { data: PageData } = $props();
 
 	const {

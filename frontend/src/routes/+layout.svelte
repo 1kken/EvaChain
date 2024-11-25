@@ -5,6 +5,7 @@
 	import Footer from '$lib/custom_components/footer.svelte';
 	import { Toaster } from 'svelte-sonner';
 	import { authStore } from '$lib/utils/authStore';
+	import { ModeWatcher } from 'mode-watcher';
 	let { children, data } = $props();
 
 	let { session, supabase } = $derived(data);
@@ -23,6 +24,6 @@
 </script>
 
 <Toaster richColors position="top-right" />
-<!-- <Navbar /> -->
+<ModeWatcher />
 {@render children()}
 <Footer />

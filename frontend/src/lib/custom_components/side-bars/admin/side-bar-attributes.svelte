@@ -11,11 +11,11 @@
 		},
 		{
 			title: 'Nature of Work',
-			url: '#'
+			url: '/dashboard/admin/natureofwork'
 		},
 		{
 			title: 'Position',
-			url: '#'
+			url: '/dashboard/admin/position'
 		}
 	];
 
