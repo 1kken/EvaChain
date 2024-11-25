@@ -51,12 +51,12 @@
 <Dialog.Root bind:open={isOpen}>
 	<Dialog.Trigger class=" focus-visible:outline-none">
 		<span class="flex items-center gap-3">
-			<Pencil size={16} /> Edit Office
+			<Pencil size={16} /> Edit
 		</span>
 	</Dialog.Trigger>
 	<Dialog.Content class="max-h-[85vh] overflow-y-auto sm:max-w-[800px]">
 		<Dialog.Header>
-			<Dialog.Title>Create Office</Dialog.Title>
+			<Dialog.Title>Update Office</Dialog.Title>
 			<Dialog.Description>
 				An office in DMMMSU is a unit tasked with specific functions to support the university's
 				mission and goals.

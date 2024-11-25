@@ -24,20 +24,22 @@ export const createColumns = (
 		header: ({ column }) =>
 			renderComponent(DataTableSortButton, {
 				text: 'Code',
+				arrangement: column.getIsSorted(),
 				onclick: () => column.toggleSorting(column.getIsSorted() === 'asc')
 			})
 	},
 	{
 		accessorKey: 'name',
-		header: () => {
-			const nameHeaderSnippet = createRawSnippet(() => ({
-				render: () => `<div class="text-left">Unit Name</div>`
-			}));
-			return renderSnippet(nameHeaderSnippet, '');
-		}
+		header: ({ column }) =>
+			renderComponent(DataTableSortButton, {
+				text: 'Name',
+				arrangement: column.getIsSorted(),
+				onclick: () => column.toggleSorting(column.getIsSorted() === 'asc')
+			})
 	},
 	{
 		id: 'actions',
+		header: 'Actions',
 		cell: ({ row }) => {
 			const id = row.original.id;
 			// You can pass whatever you need from `row.original` to the component

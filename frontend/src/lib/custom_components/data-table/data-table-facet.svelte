@@ -39,10 +39,15 @@
 
 <Popover.Root bind:open>
 	<Popover.Trigger>
-		<Button
-			variant="outline"
-			size="sm"
-			class={cn('h-8 border-dashed', selectedValues?.length && 'border-solid')}
+		<div
+			class={cn(
+				'ring-offset-background inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors',
+				'h-8 border border-dashed px-3',
+				'hover:bg-accent hover:text-accent-foreground',
+				'focus:ring-ring focus:outline-none focus:ring-2 focus:ring-offset-2',
+				'disabled:pointer-events-none disabled:opacity-50',
+				selectedValues?.length && 'border-solid'
+			)}
 		>
 			<PlusCircle class="mr-2 h-4 w-4" />
 			{title}
@@ -64,6 +69,7 @@
 								}}
 								onclick={(e) => {
 									e.preventDefault();
+									e.stopPropagation();
 									handleSelect(value);
 								}}
 							>
@@ -73,7 +79,7 @@
 					{/each}
 				</div>
 			{/if}
-		</Button>
+		</div>
 	</Popover.Trigger>
 	<Popover.Content class="w-[200px] p-0" align="start">
 		<Command.Root>

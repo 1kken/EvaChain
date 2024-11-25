@@ -3,13 +3,13 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import type { SuperValidated } from 'sveltekit-superforms';
-	import UpdateDialogProgramme from './update-dialog-programme.svelte';
-	import type { DeleteProgramme, UpdateProgramme } from '$lib/schemas/programme/schema';
-	import DeleteActionProgramme from './delete-action-programme.svelte';
+	import UpdateDialogProgramme from './update-dialog-program.svelte';
+	import type { DeleteProgram, UpdateProgram } from '$lib/schemas/program/schema';
+	import DeleteActionProgramme from './delete-action-program.svelte';
 
 	interface Props {
-		deleteForm: SuperValidated<DeleteProgramme>;
-		updateForm: SuperValidated<UpdateProgramme>;
+		deleteForm: SuperValidated<DeleteProgram>;
+		updateForm: SuperValidated<UpdateProgram>;
 		id: number;
 	}
 

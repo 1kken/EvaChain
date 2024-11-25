@@ -8,21 +8,21 @@
 	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';
 	import * as Select from '$lib/components/ui/select';
 	import { unit } from '$lib/states/admin_unit.svelte';
-	import { updateProgrammeSchema, type UpdateProgramme } from '$lib/schemas/programme/schema';
+	import { updateProgramSchema, type UpdateProgram } from '$lib/schemas/program/schema';
 	import { office } from '$lib/states/admin_office.svelte';
 	import type { Tables } from '$lib/types/database.types';
-	import { programme } from '$lib/states/admin_programme.svelte';
+	import { program } from '$lib/states/admin_program.svelte';
 	import { Pencil } from 'lucide-svelte';
 
 	interface Props {
-		updateForm: SuperValidated<UpdateProgramme>;
+		updateForm: SuperValidated<UpdateProgram>;
 		id: number;
 	}
 	let { updateForm, id }: Props = $props();
 
 	let isOpen = $state(false);
 	const form = superForm(updateForm, {
-		validators: zodClient(updateProgrammeSchema),
+		validators: zodClient(updateProgramSchema),
 		multipleSubmits: 'prevent',
 		dataType: 'json'
 	});
@@ -41,12 +41,12 @@
 	});
 
 	$formData.id = id;
-	//find the programme
-	const curr_programme = programme.programmes.find((p) => p.id === $formData.id);
+	//find the program
+	const curr_program = program.programs.find((p) => p.id === $formData.id);
 
 	//set necessary details for update
-	$formData.name = curr_programme?.name ?? 'Error';
-	$formData.office_id = curr_programme?.office?.id;
+	$formData.name = curr_program?.name ?? 'Error';
+	$formData.office_id = curr_program?.office?.id;
 
 	const curr_under_unit = unit.units;
 	const curr_under_office = office.offices;
@@ -56,7 +56,6 @@
 	function findUnit() {
 		const in_office = curr_under_office.find((o) => o.id === $formData.office_id);
 		const in_unit = curr_under_unit.find((u) => u.id === in_office?.unit?.id);
-		console.log(in_unit?.id);
 		curr_unit = in_unit;
 		if (in_unit) {
 			$formData.unit_id = in_unit.id;
@@ -68,24 +67,24 @@
 <Dialog.Root bind:open={isOpen}>
 	<Dialog.Trigger class=" focus-visible:outline-none">
 		<span class="flex items-center gap-3">
-			<Pencil size={16} /> Edit Programme
+			<Pencil size={16} /> Edit
 		</span>
 	</Dialog.Trigger>
 	<Dialog.Content class="max-h-[85vh] overflow-y-auto sm:max-w-[800px]">
 		<Dialog.Header>
-			<Dialog.Title>Update Programme</Dialog.Title>
+			<Dialog.Title>Update Program</Dialog.Title>
 			<Dialog.Description>
 				DMMMSU programs are structured academic offerings designed to develop skills and knowledge
 				in various fields, supporting student growth and career readiness.
 			</Dialog.Description>
 		</Dialog.Header>
-		<form action="?/updateprogramme" method="POST" use:enhance class="space-y-6">
+		<form action="?/updateprogram" method="POST" use:enhance class="space-y-6">
 			<Form.Field {form} name="name">
 				<Form.Control>
 					{#snippet children({ props })}
 						<Form.Label>Name</Form.Label>
 						<Input {...props} bind:value={$formData.name} />
-						<Form.Description>This is the name of the programme.</Form.Description>
+						<Form.Description>This is the name of the program.</Form.Description>
 					{/snippet}
 				</Form.Control>
 				<Form.FieldErrors />
@@ -118,7 +117,7 @@
 								</Select.Content>
 							</Select.Root>
 							<Form.Description>
-								Select the office under which this programme will operate
+								Select the office under which this program will operate
 							</Form.Description>
 						{/snippet}
 					</Form.Control>

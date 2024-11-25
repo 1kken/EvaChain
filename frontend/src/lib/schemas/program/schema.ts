@@ -1,8 +1,8 @@
 import { message } from 'sveltekit-superforms';
 import { z } from 'zod';
 
-// Base schema for common programme fields
-export const programmeSchema = z.object({
+// Base schema for common program fields
+export const programSchema = z.object({
 	id: z.number().int(),
 	unit_id: z.number().int(),
 	office_id: z.number().int(),
@@ -11,8 +11,8 @@ export const programmeSchema = z.object({
 	updated_at: z.string().datetime() // for ISO date strings
 });
 
-// Schema for creating new programmes (without id and timestamps)
-export const createProgrammeSchema = z.object({
+// Schema for creating new programs (without id and timestamps)
+export const createProgramSchema = z.object({
 	unit_id: z.number().int().positive('Please select a unit'),
 	office_id: z.number().int().positive('Please select an office'),
 	name: z.string().refine((value) => value.length >= 4 && value.length <= 200, {
@@ -20,16 +20,16 @@ export const createProgrammeSchema = z.object({
 	})
 });
 
-// Schema for updating programmes
-export const updateProgrammeSchema = z.object({
+// Schema for updating programs
+export const updateProgramSchema = z.object({
 	id: z.number().int(),
 	unit_id: z.number().int().positive('Unit ID must be a positive number').optional(),
 	office_id: z.number().int().positive('Office ID must be a positive number').optional(),
 	name: z.string().min(4).max(200).optional()
 });
 
-// Schema for deleting programmes
-export const deleteProgrammeSchema = z.object({
+// Schema for deleting programs
+export const deleteProgramSchema = z.object({
 	confirmation: z.string().refine((val) => val?.toLowerCase() === 'delete', {
 		message: 'Please type "delete" to confirm'
 	}),
@@ -38,7 +38,7 @@ export const deleteProgrammeSchema = z.object({
 });
 
 // Type definitions
-export type ProgrammeSchema = typeof programmeSchema;
-export type CreateProgramme = z.infer<typeof createProgrammeSchema>;
-export type UpdateProgramme = z.infer<typeof updateProgrammeSchema>;
-export type DeleteProgramme = z.infer<typeof deleteProgrammeSchema>;
+export type programSchema = typeof programSchema;
+export type CreateProgram = z.infer<typeof createProgramSchema>;
+export type UpdateProgram = z.infer<typeof updateProgramSchema>;
+export type DeleteProgram = z.infer<typeof deleteProgramSchema>;

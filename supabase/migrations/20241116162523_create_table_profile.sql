@@ -11,7 +11,7 @@ create table profiles (
   unit_id integer references unit(id),
   nature_of_work_id integer references nature_of_work(id),
   office_id integer references office(id),
-  programme_id integer references programme(id),
+  program_id integer references program(id),
   position_id integer references position(id),
   employee_status_id integer references employee_status(id),
   created_at timestamp with time zone default timezone('utc'::text, now())

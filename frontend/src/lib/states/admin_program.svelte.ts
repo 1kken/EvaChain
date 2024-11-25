@@ -2,10 +2,10 @@ import type { RealtimeChannel, SupabaseClient } from '@supabase/supabase-js';
 import type { Tables } from '$lib/types/database.types';
 
 // Type for the raw database record
-type DatabaseProgramme = Tables<'programme'>;
+type DatabaseProgram = Tables<'program'>;
 
 // Type for the transformed data with joined unit and office
-export type Programme = {
+export type Program = {
 	id: number;
 	name: string;
 	unit: {
@@ -21,22 +21,22 @@ export type Programme = {
 	} | null;
 };
 
-export const programme = $state<{
-	programmes: Programme[];
+export const program = $state<{
+	programs: Program[];
 	channel: RealtimeChannel | null;
 	handler: ((payload: any) => void) | null;
 	fetch: (supabase: SupabaseClient) => Promise<void>;
-	set: (programmes: Programme[]) => void;
+	set: (programs: Program[]) => void;
 	subscribe: (supabase: SupabaseClient) => void;
 	unsubscribe: () => void;
 }>({
-	programmes: [],
+	programs: [],
 	channel: null,
 	handler: null,
 
 	async fetch(supabase: SupabaseClient) {
 		const { data, error } = await supabase
-			.from('programme')
+			.from('program')
 			.select(
 				`
                 id,
@@ -57,12 +57,12 @@ export const programme = $state<{
 			.order('created_at', { ascending: false });
 
 		if (error) {
-			console.error('Error fetching programmes:', error);
+			console.error('Error fetching programs:', error);
 			return;
 		}
 
-		this.programmes = (data ?? []).map(
-			(item: any): Programme => ({
+		this.programs = (data ?? []).map(
+			(item: any): Program => ({
 				id: item.id,
 				name: item.name,
 				unit: item.unit
@@ -84,14 +84,14 @@ export const programme = $state<{
 		);
 	},
 
-	set(programmes: Programme[] | DatabaseProgramme[]) {
-		if (programmes.length === 0) {
-			this.programmes = [];
+	set(programs: Program[] | DatabaseProgram[]) {
+		if (programs.length === 0) {
+			this.programs = [];
 			return;
 		}
 
-		if ('unit_id' in programmes[0] || 'office_id' in programmes[0]) {
-			this.programmes = (programmes as DatabaseProgramme[]).map((item) => ({
+		if ('unit_id' in programs[0] || 'office_id' in programs[0]) {
+			this.programs = (programs as DatabaseProgram[]).map((item) => ({
 				id: item.id,
 				name: item.name,
 				unit: null, // You might want to fetch the unit data here
@@ -99,7 +99,7 @@ export const programme = $state<{
 			}));
 		} else {
 			// These are already transformed records
-			this.programmes = programmes as Programme[];
+			this.programs = programs as Program[];
 		}
 	},
 
@@ -109,18 +109,18 @@ export const programme = $state<{
 				// Refetch to get the joined data
 				this.fetch(supabase);
 			} else if (payload.eventType === 'DELETE') {
-				this.programmes = this.programmes.filter((programme) => programme.id !== payload.old.id);
+				this.programs = this.programs.filter((program) => program.id !== payload.old.id);
 			}
 		};
 
 		this.channel = supabase
-			.channel('programmes-changes')
+			.channel('programs-changes')
 			.on(
 				'postgres_changes',
 				{
 					event: '*',
 					schema: 'public',
-					table: 'programme'
+					table: 'program'
 				},
 				this.handler
 			)

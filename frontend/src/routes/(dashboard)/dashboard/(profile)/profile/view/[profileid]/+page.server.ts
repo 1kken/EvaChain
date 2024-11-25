@@ -75,7 +75,7 @@ export const actions: Actions = {
 			unit_id,
 			nature_of_work_id,
 			office_id,
-			programme_id,
+			program_id,
 			position_id,
 			employee_status_id
 		} = form.data;
@@ -94,7 +94,7 @@ export const actions: Actions = {
 				unit_id,
 				nature_of_work_id,
 				office_id,
-				programme_id,
+				program_id,
 				position_id,
 				employee_status_id
 			})

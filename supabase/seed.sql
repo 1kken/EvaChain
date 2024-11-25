@@ -38,7 +38,7 @@ ON CONFLICT (code) DO UPDATE
         updated_at = timezone('utc'::text, now());
 
 -- 4. Programme Seeder (Using subqueries to get unit_ids and office_ids)
-INSERT INTO public.programme (unit_id, office_id, name) VALUES
+INSERT INTO public.program (unit_id, office_id, name) VALUES
     -- SLUC Programmes
     ((SELECT id FROM public.unit WHERE code = 'SLUC'),
      (SELECT id FROM public.office WHERE code = 'CCS'),

@@ -5,8 +5,8 @@
 	import { onDestroy, onMount } from 'svelte';
 	import type { PageData } from './$types';
 	import { createColumns } from './(table)/column';
-	import { programme } from '$lib/states/admin_programme.svelte';
-	import CreateDialogProgramme from './(table)/create-dialog-programme.svelte';
+	import { program } from '$lib/states/admin_program.svelte';
+	import CreateDialogProgram from './(table)/create-dialog-program.svelte';
 	import {
 		mapToOptions,
 		type PropDataFacet,
@@ -16,29 +16,29 @@
 	let { data }: { data: PageData } = $props();
 
 	const {
-		programmes,
+		programs,
 		units,
 		offices,
-		createProgrammeForm,
-		updateProgrammeForm,
-		deleteProgrammeForm,
+		createProgramForm,
+		updateProgramForm,
+		deleteProgramForm,
 		supabase
 	} = data;
 
-	programme.set(programmes);
+	program.set(programs);
 	unit.set(units);
 	office.set(offices);
 
 	onMount(() => {
 		unit.subscribe(supabase);
 		office.subscribe(supabase);
-		programme.subscribe(supabase);
+		program.subscribe(supabase);
 	});
 
 	onDestroy(() => {
 		office.unsubscribe();
 		unit.unsubscribe();
-		programme.unsubscribe();
+		program.unsubscribe();
 	});
 
 	let unitOptions: PropOptionFacet[] = mapToOptions(unit.units, 'name', 'code');
@@ -54,14 +54,14 @@
 		{ column: 'unit', options: unitOptions },
 		{ column: 'office', options: officeOptions }
 	];
-	const columns = createColumns(updateProgrammeForm, deleteProgrammeForm);
+	const columns = createColumns(updateProgramForm, deleteProgramForm);
 </script>
 
 <DataTable
 	filterDataFacet={propDataFacet}
 	filterPlaceholder={'Search by name...'}
 	{columns}
-	data={programme.programmes}
+	data={program.programs}
 >
-	<CreateDialogProgramme data={createProgrammeForm} />
+	<CreateDialogProgram data={createProgramForm} />
 </DataTable>

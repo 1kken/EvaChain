@@ -7,6 +7,11 @@
 	import { createColumns } from './(table)/column';
 	import CreateDialogOffice from './(table)/create-dialog-office.svelte';
 	import { unit } from '$lib/states/admin_unit.svelte';
+	import {
+		mapToOptions,
+		type PropDataFacet,
+		type PropOptionFacet
+	} from '$lib/custom_components/data-table/helper';
 
 	const {
 		units,
@@ -29,10 +34,21 @@
 		office.unsubscribe();
 		unit.unsubscribe();
 	});
+	let unitOptions: PropOptionFacet[] = mapToOptions(unit.units, 'name', 'code');
+	$effect(() => {
+		unitOptions = mapToOptions(unit.units, 'name', 'code');
+	});
+
+	const propDataFacet: PropDataFacet[] = [{ column: 'unit', options: unitOptions }];
 
 	const columns = createColumns(updateOfficeForm, deleteOfficeForm);
 </script>
 
-<DataTable filterPlaceholder={'Search by name...'} {columns} data={office.offices}>
+<DataTable
+	filterDataFacet={propDataFacet}
+	filterPlaceholder={'Search by name...'}
+	{columns}
+	data={office.offices}
+>
 	<CreateDialogOffice data={createOfficeForm} />
 </DataTable>

@@ -26,26 +26,33 @@ export const createColumns = <T extends Record<string, any>>(
 		accessorKey: 'code',
 		header: ({ column }) =>
 			renderComponent(DataTableSortButton, {
-				text: 'Code',
+				arrangement: column.getIsSorted(),
+				text: 'Acronym',
 				onclick: () => column.toggleSorting(column.getIsSorted() === 'asc')
 			})
 	},
 	{
 		accessorKey: 'name',
-		header: () => {
-			const nameHeaderSnippet = createRawSnippet(() => ({
-				render: () => `<div class="text-left">Office Name</div>`
-			}));
-			return renderSnippet(nameHeaderSnippet, '');
-		}
+		header: ({ column }) =>
+			renderComponent(DataTableSortButton, {
+				arrangement: column.getIsSorted(),
+				text: 'Office Name',
+				onclick: () => column.toggleSorting(column.getIsSorted() === 'asc')
+			})
 	},
 	{
 		id: 'unit',
-		header: 'Under unit',
-		accessorFn: (row) => row.unit?.code ?? 'No unit'
+		header: ({ column }) =>
+			renderComponent(DataTableSortButton, {
+				arrangement: column.getIsSorted(),
+				text: 'Under Unit',
+				onclick: () => column.toggleSorting(column.getIsSorted() === 'asc')
+			}),
+		accessorFn: (row) => row.unit?.name ?? 'No unit'
 	},
 	{
 		id: 'actions',
+		header: 'Actions',
 		cell: ({ row }) => {
 			const id = row.original.id;
 			// You can pass whatever you need from `row.original` to the component

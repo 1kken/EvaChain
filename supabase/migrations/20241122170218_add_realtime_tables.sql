@@ -2,7 +2,7 @@ alter publication supabase_realtime
 add table unit,
            nature_of_work,
            office,
-           programme, 
+           program, 
            position,
            employee_status,
            profiles;

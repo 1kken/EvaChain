@@ -36,11 +36,7 @@ export const profileSchema = z.object({
 		.int('Must be an integer')
 		.positive('Must be a positive number')
 		.nullable(),
-	programme_id: z
-		.number()
-		.int('Must be an integer')
-		.positive('Must be a positive number')
-		.nullable(),
+	program_id: z.number().int('Must be an integer').positive('Must be a positive number').nullable(),
 	unit_id: z.number().int('Must be an integer').positive('Must be a positive number').nullable(),
 	updated_at: z.string().nullable().optional()
 });

@@ -20,7 +20,7 @@
 	import {
 		fetchOfficeByUnit,
 		fetchPositionByNatureOfWork,
-		fetchProgrammeByOffice
+		fetchProgramByOffice
 	} from '$lib/utils/profileHelper';
 	import { onMount } from 'svelte';
 	let { data }: { data: PageData } = $props();
@@ -31,7 +31,7 @@
 	const { natureOfWork } = data;
 	const { employeeStatus } = data;
 	let offices = $state<Tables<'office'>[]>();
-	let programme = $state<Tables<'programme'>[]>();
+	let program = $state<Tables<'program'>[]>();
 	let positions = $state<Tables<'position'>[]>();
 
 	const form = superForm(profileForm, {
@@ -40,9 +40,9 @@
 	});
 
 	const { form: formData, enhance } = form;
-	let showProgramme = $derived($formData.nature_of_work_id === 1);
+	let showProgram = $derived($formData.nature_of_work_id === 1);
 	let isLoadingOffices = $state(false);
-	let isProgrammeLoading = $state(false);
+	let isProgramLoading = $state(false);
 	let isLoadingPositions = $state(false);
 	onMount(async () => {
 		const promises = [];
@@ -63,7 +63,7 @@
 
 		if ($formData.office_id && $formData.nature_of_work_id === 1) {
 			promises.push(
-				fetchProgrammeByOffice($formData.office_id, supabase).then((result) => (programme = result))
+				fetchProgramByOffice($formData.office_id, supabase).then((result) => (program = result))
 			);
 		}
 
@@ -222,7 +222,7 @@
 					</div>
 				</div>
 				<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-					<div class="space-y-2" class:sm:col-span-2={!showProgramme}>
+					<div class="space-y-2" class:sm:col-span-2={!showProgram}>
 						<Form.Field {form} name="office_id">
 							<Form.Control>
 								{#snippet children({ props })}
@@ -232,19 +232,19 @@
 										value={$formData.office_id?.toString()}
 										onValueChange={async (value) => {
 											$formData.office_id = value ? parseInt(value) : null;
-											if (showProgramme) {
-												programme = [];
-												$formData.programme_id = null;
-												isProgrammeLoading = true;
-												programme = await fetchProgrammeByOffice(parseInt(value), supabase);
-												isProgrammeLoading = false;
+											if (showProgram) {
+												program = [];
+												$formData.program_id = null;
+												isProgramLoading = true;
+												program = await fetchProgramByOffice(parseInt(value), supabase);
+												isProgramLoading = false;
 											}
 										}}
 										disabled={!$formData.unit_id || isLoadingOffices}
 									>
 										<Select.Trigger
 											{...props}
-											class={`truncate ${!showProgramme ? 'w-full' : 'max-w-[350px]'}`}
+											class={`truncate ${!showProgram ? 'w-full' : 'max-w-[350px]'}`}
 										>
 											{#if !$formData.unit_id}
 												Please select a unit first
@@ -259,7 +259,7 @@
 												Select an office
 											{/if}
 										</Select.Trigger>
-										<Select.Content class={!showProgramme ? 'w-full' : 'max-w-[350px]'}>
+										<Select.Content class={!showProgram ? 'w-full' : 'max-w-[350px]'}>
 											{#if !$formData.unit_id}
 												<Select.Item value="" disabled>Please select a unit first</Select.Item>
 											{:else if isLoadingOffices}
@@ -286,45 +286,45 @@
 						</Form.Field>
 					</div>
 
-					{#if showProgramme}
+					{#if showProgram}
 						<div class="space-y-2">
-							<Form.Field {form} name="programme_id">
+							<Form.Field {form} name="program_id">
 								<Form.Control>
 									{#snippet children({ props })}
-										<Form.Label>Programme</Form.Label>
+										<Form.Label>Program</Form.Label>
 										<Select.Root
 											type="single"
-											value={$formData.programme_id?.toString()}
+											value={$formData.program_id?.toString()}
 											onValueChange={(value) => {
-												$formData.programme_id = value ? parseInt(value) : null;
+												$formData.program_id = value ? parseInt(value) : null;
 											}}
-											disabled={!$formData.office_id || isProgrammeLoading}
+											disabled={!$formData.office_id || isProgramLoading}
 										>
 											<Select.Trigger {...props} class="max-w-[350px] truncate">
 												{#if !$formData.office_id}
 													Please select an office first
-												{:else if isProgrammeLoading}
-													Loading programmes...
-												{:else if !programme || programme.length === 0}
-													No programmes available for this office
-												{:else if $formData.programme_id}
-													{programme.find((p) => p.id === $formData.programme_id)?.name ??
-														'Programme not found'}
+												{:else if isProgramLoading}
+													Loading programs...
+												{:else if !program || program.length === 0}
+													No programs available for this office
+												{:else if $formData.program_id}
+													{program.find((p) => p.id === $formData.program_id)?.name ??
+														'Program not found'}
 												{:else}
-													Select a programme
+													Select a program
 												{/if}
 											</Select.Trigger>
 											<Select.Content class="max-w-[350px]">
 												{#if !$formData.office_id}
 													<Select.Item value="" disabled>Please select an office first</Select.Item>
-												{:else if isProgrammeLoading}
-													<Select.Item value="" disabled>Loading programmes...</Select.Item>
-												{:else if !programme || programme.length === 0}
+												{:else if isProgramLoading}
+													<Select.Item value="" disabled>Loading programs...</Select.Item>
+												{:else if !program || program.length === 0}
 													<Select.Item value="" disabled>
-														No programmes available for this office
+														No programs available for this office
 													</Select.Item>
 												{:else}
-													{#each programme as prog (prog.id)}
+													{#each program as prog (prog.id)}
 														<Select.Item
 															value={String(prog.id)}
 															label={prog.name}
@@ -336,7 +336,7 @@
 										</Select.Root>
 									{/snippet}
 								</Form.Control>
-								<Form.Description>Select your programme.</Form.Description>
+								<Form.Description>Select your program.</Form.Description>
 								<Form.FieldErrors />
 							</Form.Field>
 						</div>

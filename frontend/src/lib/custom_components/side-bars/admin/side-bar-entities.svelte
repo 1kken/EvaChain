@@ -7,16 +7,16 @@
 	import { page } from '$app/stores';
 	const items = [
 		{
-			title: 'Universities',
-			url: '/dashboard/admin/university'
+			title: 'Units',
+			url: '/dashboard/admin/units'
 		},
 		{
 			title: 'Offices',
 			url: '/dashboard/admin/office'
 		},
 		{
-			title: 'Programmes',
-			url: '/dashboard/admin/programme'
+			title: 'Programs',
+			url: '/dashboard/admin/program'
 		}
 	];
 	function isActive(itemUrl: string) {

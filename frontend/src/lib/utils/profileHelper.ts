@@ -15,11 +15,11 @@ export const fetchOfficeByUnit = async (
 	return data || [];
 };
 
-export const fetchProgrammeByOffice = async (
+export const fetchProgramByOffice = async (
 	officeId: number | null,
 	supabase: SupabaseClient
-): Promise<Tables<'programme'>[]> => {
-	const { data, error } = await supabase.from('programme').select('*').eq('office_id', officeId);
+): Promise<Tables<'program'>[]> => {
+	const { data, error } = await supabase.from('program').select('*').eq('office_id', officeId);
 
 	if (error) {
 		throw error;

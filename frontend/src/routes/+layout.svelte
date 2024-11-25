@@ -23,7 +23,7 @@
 	});
 </script>
 
-<Toaster richColors position="top-right" />
+<Toaster richColors position="top-right" closeButton />
 <ModeWatcher />
 {@render children()}
 <Footer />

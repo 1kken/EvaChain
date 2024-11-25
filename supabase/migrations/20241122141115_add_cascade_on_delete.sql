@@ -1,8 +1,8 @@
 -- First, drop existing foreign key constraints
 ALTER TABLE office DROP CONSTRAINT office_unit_id_fkey;
 
-ALTER TABLE programme DROP CONSTRAINT programme_unit_id_fkey;
-ALTER TABLE programme DROP CONSTRAINT programme_office_id_fkey;
+ALTER TABLE program DROP CONSTRAINT program_unit_id_fkey;
+ALTER TABLE program DROP CONSTRAINT program_office_id_fkey;
 
 ALTER TABLE position DROP CONSTRAINT position_nature_of_work_id_fkey;
 
@@ -13,14 +13,14 @@ ALTER TABLE office
     REFERENCES unit(id) 
     ON DELETE CASCADE;
 
-ALTER TABLE programme 
-    ADD CONSTRAINT programme_unit_id_fkey 
+ALTER TABLE program 
+    ADD CONSTRAINT program_unit_id_fkey 
     FOREIGN KEY (unit_id) 
     REFERENCES unit(id) 
     ON DELETE CASCADE;
 
-ALTER TABLE programme 
-    ADD CONSTRAINT programme_office_id_fkey 
+ALTER TABLE program 
+    ADD CONSTRAINT program_office_id_fkey 
     FOREIGN KEY (office_id) 
     REFERENCES office(id) 
     ON DELETE CASCADE;

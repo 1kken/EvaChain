@@ -8,18 +8,19 @@
 	import { LoaderCircle } from 'lucide-svelte';
 	import { TriangleAlert } from 'lucide-svelte';
 	import { Trash2 } from 'lucide-svelte';
-	import { deleteProgrammeSchema, type DeleteProgramme } from '$lib/schemas/programme/schema';
-	import { programme } from '$lib/states/admin_programme.svelte';
+	import { deleteProgramSchema, type DeleteProgram } from '$lib/schemas/program/schema';
+
+	import { program } from '$lib/states/admin_program.svelte';
 
 	interface Props {
-		deleteForm: SuperValidated<DeleteProgramme>;
+		deleteForm: SuperValidated<DeleteProgram>;
 		id: number;
 	}
 
 	let { deleteForm, id }: Props = $props();
 
 	const form = superForm(deleteForm, {
-		validators: zodClient(deleteProgrammeSchema),
+		validators: zodClient(deleteProgramSchema),
 		multipleSubmits: 'prevent',
 		dataType: 'json'
 	});
@@ -44,8 +45,8 @@
 	});
 
 	$formData.id = id;
-	const curr_programme = programme.programmes.find((p) => p.id === $formData.id);
-	$formData.name = curr_programme?.name;
+	const curr_program = program.programs.find((p) => p.id === $formData.id);
+	$formData.name = curr_program?.name;
 
 	let isOpen = $state(false);
 </script>
@@ -67,7 +68,7 @@
 				This action cannot be undone. This will permanently delete {$formData.name}
 			</AlertDialog.Description>
 		</AlertDialog.Header>
-		<form method="POST" action="?/deleteprogramme" use:enhance>
+		<form method="POST" action="?/deleteprogram" use:enhance>
 			<Input name="id" class="hidden" bind:value={$formData.id} />
 			<Input name="name" class="hidden" bind:value={$formData.name} />
 			<Form.Field {form} name="confirmation">

@@ -1,19 +1,19 @@
 import { error, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import {
-	createProgrammeSchema,
-	deleteProgrammeSchema,
-	updateProgrammeSchema,
-	type CreateProgramme,
-	type DeleteProgramme,
-	type UpdateProgramme
-} from '$lib/schemas/programme/schema';
+	createProgramSchema,
+	deleteProgramSchema,
+	updateProgramSchema,
+	type CreateProgram,
+	type DeleteProgram,
+	type UpdateProgram
+} from '$lib/schemas/program/schema';
 import { zod } from 'sveltekit-superforms/adapters';
 import { message, superValidate } from 'sveltekit-superforms';
 import { titleCase } from 'title-case';
 
 export const load = (async ({ locals: { supabase } }) => {
-	const { data: programmes, error: programmeError } = await supabase.from('programme').select(`
+	const { data: programs, error: programError } = await supabase.from('program').select(`
 	id,
 	name,
 	unit(id,code,name),
@@ -26,35 +26,35 @@ export const load = (async ({ locals: { supabase } }) => {
 			unit(id,code,name)`);
 	const { data: units, error: unitError } = await supabase.from('unit').select();
 
-	if (programmeError || officeError || unitError) {
+	if (programError || officeError || unitError) {
 		error(500, 'Unexpected error, fetching database');
 	}
 
-	const createProgrammeForm = await superValidate(zod(createProgrammeSchema));
-	const deleteProgrammeForm = await superValidate(zod(deleteProgrammeSchema));
-	const updateProgrammeForm = await superValidate(zod(updateProgrammeSchema));
+	const createProgramForm = await superValidate(zod(createProgramSchema));
+	const deleteProgramForm = await superValidate(zod(deleteProgramSchema));
+	const updateProgramForm = await superValidate(zod(updateProgramSchema));
 	return {
-		programmes,
+		programs,
 		offices,
 		units,
-		updateProgrammeForm,
-		deleteProgrammeForm,
-		createProgrammeForm
+		updateProgramForm,
+		deleteProgramForm,
+		createProgramForm
 	};
 }) satisfies PageServerLoad;
 
 export const actions: Actions = {
-	createprogramme: async ({ request, locals: { supabase } }) => {
-		const form = await superValidate<CreateProgramme, App.Superforms.Message>(
+	createprogram: async ({ request, locals: { supabase } }) => {
+		const form = await superValidate<CreateProgram, App.Superforms.Message>(
 			request,
-			zod(createProgrammeSchema)
+			zod(createProgramSchema)
 		);
 
 		let { unit_id, name, office_id } = form.data;
 		name = titleCase(name);
 
 		const { error: insertError } = await supabase
-			.from('programme')
+			.from('program')
 			.insert({ name: name, office_id: office_id, unit_id: unit_id });
 
 		if (insertError) {
@@ -66,20 +66,20 @@ export const actions: Actions = {
 
 		return message(form, {
 			status: 'success',
-			text: `Programme created ${name}`
+			text: `program created ${name}`
 		});
 	},
-	updateprogramme: async ({ request, locals: { supabase } }) => {
-		const form = await superValidate<UpdateProgramme, App.Superforms.Message>(
+	updateprogram: async ({ request, locals: { supabase } }) => {
+		const form = await superValidate<UpdateProgram, App.Superforms.Message>(
 			request,
-			zod(updateProgrammeSchema)
+			zod(updateProgramSchema)
 		);
 		let { id, unit_id, name, office_id } = form.data;
 		if (name) {
 			name = titleCase(name);
 		}
 		const { error: updateError } = await supabase
-			.from('programme')
+			.from('program')
 			.update({ unit_id, name, office_id })
 			.eq('id', id);
 
@@ -92,18 +92,18 @@ export const actions: Actions = {
 
 		return message(form, {
 			status: 'success',
-			text: `Programme updated ${name}`
+			text: `program updated ${name}`
 		});
 	},
-	deleteprogramme: async ({ request, locals: { supabase } }) => {
-		const form = await superValidate<DeleteProgramme, App.Superforms.Message>(
+	deleteprogram: async ({ request, locals: { supabase } }) => {
+		const form = await superValidate<DeleteProgram, App.Superforms.Message>(
 			request,
-			zod(deleteProgrammeSchema)
+			zod(deleteProgramSchema)
 		);
 
 		const { id, name } = form.data;
 
-		const { error } = await supabase.from('programme').delete().eq('id', id);
+		const { error } = await supabase.from('program').delete().eq('id', id);
 
 		if (error) {
 			return message(form, {

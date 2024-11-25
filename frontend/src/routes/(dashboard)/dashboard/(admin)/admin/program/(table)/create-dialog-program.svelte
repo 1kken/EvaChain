@@ -10,15 +10,15 @@
 	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';
 	import * as Select from '$lib/components/ui/select';
 	import { unit } from '$lib/states/admin_unit.svelte';
-	import { createProgrammeSchema, type CreateProgramme } from '$lib/schemas/programme/schema';
+	import { createProgramSchema, type CreateProgram } from '$lib/schemas/program/schema';
 	import { office } from '$lib/states/admin_office.svelte';
 	import type { Tables } from '$lib/types/database.types';
 
-	let { data }: { data: SuperValidated<CreateProgramme> } = $props();
+	let { data }: { data: SuperValidated<CreateProgram> } = $props();
 
 	let isOpen = $state(false);
 	const form = superForm(data, {
-		validators: zodClient(createProgrammeSchema),
+		validators: zodClient(createProgramSchema),
 		multipleSubmits: 'prevent',
 		dataType: 'json'
 	});
@@ -54,23 +54,23 @@
 
 <Dialog.Root bind:open={isOpen}>
 	<Dialog.Trigger class={buttonVariants({ variant: 'default' })}>
-		<Plus /> Create Programme
+		<Plus /> Create Program
 	</Dialog.Trigger>
 	<Dialog.Content class="max-h-[85vh] overflow-y-auto sm:max-w-[800px]">
 		<Dialog.Header>
-			<Dialog.Title>Create Programme</Dialog.Title>
+			<Dialog.Title>Create Program</Dialog.Title>
 			<Dialog.Description>
 				DMMMSU programs are structured academic offerings designed to develop skills and knowledge
 				in various fields, supporting student growth and career readiness.
 			</Dialog.Description>
 		</Dialog.Header>
-		<form action="?/createprogramme" method="POST" use:enhance class="space-y-6">
+		<form action="?/createprogram" method="POST" use:enhance class="space-y-6">
 			<Form.Field {form} name="name">
 				<Form.Control>
 					{#snippet children({ props })}
 						<Form.Label>Name</Form.Label>
 						<Input {...props} bind:value={$formData.name} />
-						<Form.Description>This is the name of the programme.</Form.Description>
+						<Form.Description>This is the name of the program.</Form.Description>
 					{/snippet}
 				</Form.Control>
 				<Form.FieldErrors />
@@ -103,7 +103,7 @@
 								</Select.Content>
 							</Select.Root>
 							<Form.Description>
-								Select the office under which this programme will operate
+								Select the office under which this program will operate
 							</Form.Description>
 						{/snippet}
 					</Form.Control>

@@ -139,6 +139,7 @@
 
 <div>
 	<div class="flex items-center gap-3 py-4">
+		{@render children?.()}
 		<div class="hidden w-full items-center gap-3 md:flex">
 			{#if filterDataFacet}
 				{#each filterDataFacet as filter, i (i)}
@@ -159,12 +160,7 @@
 				/>
 			{/if}
 
-			{@render children?.()}
-
 			{#if enableColumnVisibility}
-				{#if enableFiltering}
-					<Button>Hello World</Button>
-				{/if}
 				<DropdownMenu.Root>
 					<DropdownMenu.Trigger>
 						{#snippet child({ props })}
@@ -229,15 +225,13 @@
 						</div>
 					</div>
 					<div class="flex items-center gap-2">
-						<div class="flex-shrink-0">
-							{@render children?.()}
-						</div>
-						<div>
-							<Button variant="ghost" size="icon" onclick={toggleMobileFilter}>
-								<Filter class="h-4 w-4" />
-							</Button>
-						</div>
-
+						{#if filterDataFacet}
+							<div>
+								<Button variant="ghost" size="icon" onclick={toggleMobileFilter}>
+									<Filter class="h-4 w-4" />
+								</Button>
+							</div>
+						{/if}
 						{#if enableColumnVisibility}
 							<DropdownMenu.Root>
 								<DropdownMenu.Trigger>

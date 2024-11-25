@@ -157,7 +157,7 @@ export type Database = {
           nature_of_work_id: number | null
           office_id: number | null
           position_id: number | null
-          programme_id: number | null
+          program_id: number | null
           unit_id: number | null
           updated_at: string | null
         }
@@ -174,7 +174,7 @@ export type Database = {
           nature_of_work_id?: number | null
           office_id?: number | null
           position_id?: number | null
-          programme_id?: number | null
+          program_id?: number | null
           unit_id?: number | null
           updated_at?: string | null
         }
@@ -191,7 +191,7 @@ export type Database = {
           nature_of_work_id?: number | null
           office_id?: number | null
           position_id?: number | null
-          programme_id?: number | null
+          program_id?: number | null
           unit_id?: number | null
           updated_at?: string | null
         }
@@ -225,10 +225,10 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "profiles_programme_id_fkey"
-            columns: ["programme_id"]
+            foreignKeyName: "profiles_program_id_fkey"
+            columns: ["program_id"]
             isOneToOne: false
-            referencedRelation: "programme"
+            referencedRelation: "program"
             referencedColumns: ["id"]
           },
           {
@@ -240,7 +240,7 @@ export type Database = {
           },
         ]
       }
-      programme: {
+      program: {
         Row: {
           created_at: string
           id: number
@@ -267,14 +267,14 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "programme_office_id_fkey"
+            foreignKeyName: "program_office_id_fkey"
             columns: ["office_id"]
             isOneToOne: false
             referencedRelation: "office"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "programme_unit_id_fkey"
+            foreignKeyName: "program_unit_id_fkey"
             columns: ["unit_id"]
             isOneToOne: false
             referencedRelation: "unit"

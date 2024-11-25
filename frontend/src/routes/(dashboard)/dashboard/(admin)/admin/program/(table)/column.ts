@@ -2,7 +2,7 @@ import { renderComponent, renderSnippet } from '$lib/components/ui/data-table';
 import type { ColumnDef } from '@tanstack/table-core';
 import DataTableActions from './data-table-actions.svelte';
 import type { SuperValidated } from 'sveltekit-superforms';
-import type { DeleteProgramme, UpdateProgramme } from '$lib/schemas/programme/schema';
+import type { DeleteProgram, UpdateProgram } from '$lib/schemas/program/schema';
 import DataTableSortButton from '$lib/custom_components/data-table/data-table-sort-button.svelte';
 
 // This type is used to define the shape of our data.
@@ -22,8 +22,8 @@ export type Programme = {
 	} | null;
 };
 export const createColumns = (
-	updateForm: SuperValidated<UpdateProgramme>,
-	deleteForm: SuperValidated<DeleteProgramme>
+	updateForm: SuperValidated<UpdateProgram>,
+	deleteForm: SuperValidated<DeleteProgram>
 ): ColumnDef<Programme>[] => [
 	{
 		id: 'name',

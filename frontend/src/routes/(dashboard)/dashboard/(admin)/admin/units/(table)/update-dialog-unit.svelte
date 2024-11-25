@@ -53,7 +53,7 @@
 <Dialog.Root bind:open={isOpen}>
 	<Dialog.Trigger class=" focus-visible:outline-none">
 		<span class="flex items-center gap-3">
-			<Pencil size={16} /> Edit Programme
+			<Pencil size={16} /> Edit
 		</span>
 	</Dialog.Trigger>
 	<Dialog.Content class="sm:max-w-auto">
