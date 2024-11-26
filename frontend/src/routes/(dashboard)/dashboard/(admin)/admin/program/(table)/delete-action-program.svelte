@@ -15,9 +15,10 @@
 	interface Props {
 		deleteForm: SuperValidated<DeleteProgram>;
 		id: number;
+		dropDownOpen: boolean;
 	}
 
-	let { deleteForm, id }: Props = $props();
+	let { deleteForm, id, dropDownOpen = $bindable() }: Props = $props();
 
 	const form = superForm(deleteForm, {
 		validators: zodClient(deleteProgramSchema),
@@ -26,21 +27,24 @@
 	});
 
 	const { form: formData, enhance, message, delayed } = form;
-
+	function closeAllTabs() {
+		isOpen = false;
+		dropDownOpen = false;
+	}
 	$effect(() => {
 		if ($message?.status == 'success') {
 			showSuccessToast($message.text);
-			isOpen = false;
+			closeAllTabs();
 		}
 
 		if ($message?.status == 'error') {
 			showErrorToast($message.text);
-			isOpen = false;
+			closeAllTabs();
 		}
 
 		if ($message?.status == 'warning') {
 			showWarningToast($message.text);
-			isOpen = false;
+			closeAllTabs();
 		}
 	});
 

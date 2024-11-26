@@ -4,10 +4,12 @@
 	import { ChevronRight } from 'lucide-svelte';
 	import { SquareUser } from 'lucide-svelte';
 	import { fade } from 'svelte/transition';
+	import { page } from '$app/stores';
+
 	const items = [
 		{
 			title: 'Employee Status',
-			url: '/dashboard/admin/university'
+			url: '/dashboard/admin/employeestatus'
 		},
 		{
 			title: 'Nature of Work',
@@ -19,6 +21,18 @@
 		}
 	];
 
+	// Function to check if current URL matches item URL
+	function isActive(itemUrl: string) {
+		return $page.url.pathname === itemUrl;
+	}
+
+	// Auto-open the collapsible if one of its items is active
+	$effect(() => {
+		if (items.some((item) => isActive(item.url))) {
+			isOpen = true;
+		}
+	});
+
 	let isOpen = $state(false);
 </script>
 
@@ -27,7 +41,11 @@
 		<Sidebar.MenuItem>
 			<Collapsible.Trigger>
 				{#snippet child({ props })}
-					<Sidebar.MenuButton {...props} isActive={isOpen} class="flex space-x-8 ">
+					<Sidebar.MenuButton
+						{...props}
+						isActive={isOpen || items.some((item) => isActive(item.url))}
+						class="flex space-x-8"
+					>
 						<SquareUser />
 						<div class="flex w-full justify-between">
 							<span>Attributes</span>
@@ -45,7 +63,7 @@
 							<Sidebar.MenuSub>
 								{#each items as item (item.title)}
 									<Sidebar.MenuSubItem>
-										<Sidebar.MenuSubButton>
+										<Sidebar.MenuSubButton class={isActive(item.url) ? 'font-bold' : ''}>
 											{#snippet child({ props })}
 												<a href={item.url} {...props}>
 													<span>{item.title}</span>

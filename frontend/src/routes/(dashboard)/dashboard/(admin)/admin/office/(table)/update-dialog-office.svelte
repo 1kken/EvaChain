@@ -15,9 +15,10 @@
 	interface Props {
 		updateForm: SuperValidated<UpdateOffice>;
 		id: number;
+		dropDownOpen: boolean;
 	}
 
-	let { updateForm, id }: Props = $props();
+	let { updateForm, id, dropDownOpen = $bindable() }: Props = $props();
 
 	const form = superForm(updateForm, {
 		validators: zodClient(updateOfficeSchema),
@@ -28,15 +29,19 @@
 	let isOpen = $state(false);
 	const { form: formData, enhance, message, delayed } = form;
 
+	function closeAllTabs() {
+		isOpen = false;
+		dropDownOpen = false;
+	}
 	$effect(() => {
 		if ($message?.status == 'success') {
 			showSuccessToast($message.text);
-			isOpen = false;
+			closeAllTabs();
 		}
 
 		if ($message?.status == 'error') {
 			showErrorToast($message.text);
-			isOpen = false;
+			closeAllTabs();
 		}
 	});
 
@@ -85,40 +90,38 @@
 					<Form.FieldErrors />
 				</Form.Field>
 			</div>
-			<div class="flex justify-between">
-				<Form.Field {form} name="unit_id">
-					<Form.Control>
-						{#snippet children({ props })}
-							<Form.Label>Unit</Form.Label>
-							<Select.Root
-								type="single"
-								value={$formData.unit_id?.toString()}
-								onValueChange={(value) => {
-									$formData.unit_id = parseInt(value);
-								}}
-								name={props.name}
-							>
-								<Select.Trigger {...props}>
-									{$formData.unit_id
-										? curr_under_unit.find((u) => u.id === $formData.unit_id)?.code
-										: 'Select the unit under which this office will operate'}
-								</Select.Trigger>
-								<Select.Content>
-									{#each curr_under_unit as unit (unit.id)}
-										<Select.Item value={unit.id.toString()} label={unit.name}>
-											{unit.code} - {unit.name}
-										</Select.Item>
-									{/each}
-								</Select.Content>
-							</Select.Root>
-							<Form.Description>
-								Select the unit under which this office will operate.
-							</Form.Description>
-						{/snippet}
-					</Form.Control>
-					<Form.FieldErrors />
-				</Form.Field>
-			</div>
+			<Form.Field {form} name="unit_id">
+				<Form.Control>
+					{#snippet children({ props })}
+						<Form.Label>Unit</Form.Label>
+						<Select.Root
+							type="single"
+							value={$formData.unit_id?.toString()}
+							onValueChange={(value) => {
+								$formData.unit_id = parseInt(value);
+							}}
+							name={props.name}
+						>
+							<Select.Trigger {...props} class="w-full max-w-[85vw] truncate md:max-w-full">
+								{$formData.unit_id
+									? curr_under_unit.find((u) => u.id === $formData.unit_id)?.name
+									: 'Select the unit under which this office will operate'}
+							</Select.Trigger>
+							<Select.Content>
+								{#each curr_under_unit as unit (unit.id)}
+									<Select.Item value={unit.id.toString()} label={unit.name}>
+										{unit.name}
+									</Select.Item>
+								{/each}
+							</Select.Content>
+						</Select.Root>
+						<Form.Description>
+							Select the unit under which this office will operate.
+						</Form.Description>
+					{/snippet}
+				</Form.Control>
+				<Form.FieldErrors />
+			</Form.Field>
 			{#if $delayed}
 				<Form.Button disabled><LoaderCircle class="animate-spin" />Processing...</Form.Button>
 			{:else}

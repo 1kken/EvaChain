@@ -12,10 +12,12 @@
 
 	let {
 		updateForm,
-		id
+		id,
+		dropDownOpen = $bindable()
 	}: {
 		updateForm: SuperValidated<UpdateUnit>;
 		id: number;
+		dropDownOpen?: boolean;
 	} = $props();
 
 	let isOpen = $state(false);
@@ -34,18 +36,24 @@
 	$formData.code = curr_unit?.code;
 	$formData.name = curr_unit?.name;
 
+	function closeAllTabs() {
+		isOpen = false;
+		dropDownOpen = false;
+	}
 	$effect(() => {
 		if ($message?.status == 'success') {
 			showSuccessToast($message.text);
-			isOpen = false;
+			closeAllTabs();
 		}
 
 		if ($message?.status == 'error') {
 			showErrorToast($message.text);
+			closeAllTabs();
 		}
 
 		if ($message?.status == 'warning') {
 			showWarningToast($message.text);
+			closeAllTabs();
 		}
 	});
 </script>

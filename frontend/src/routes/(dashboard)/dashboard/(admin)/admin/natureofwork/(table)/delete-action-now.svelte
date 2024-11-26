@@ -5,15 +5,18 @@
 	import { superForm, type SuperValidated } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { Input } from '$lib/components/ui/input';
-	import { unit } from '$lib/states/admin_unit.svelte';
 	import { LoaderCircle } from 'lucide-svelte';
 	import { TriangleAlert } from 'lucide-svelte';
 	import { Trash2 } from 'lucide-svelte';
-	import { type DeleteOffice, deleteOfficeSchema } from '$lib/schemas/office/schema';
-	import { office } from '$lib/states/admin_office.svelte';
+
+	import {
+		deleteNatureOfWorkSchema,
+		type DeleteNatureOfWork
+	} from '$lib/schemas/natureofwork/schema';
+	import { natureOfWork } from '$lib/states/admin_nature_of_work.svelte';
 
 	interface Props {
-		deleteForm: SuperValidated<DeleteOffice>;
+		deleteForm: SuperValidated<DeleteNatureOfWork>;
 		id: number;
 		dropDownOpen: boolean;
 	}
@@ -21,7 +24,7 @@
 	let { deleteForm, id, dropDownOpen = $bindable() }: Props = $props();
 
 	const form = superForm(deleteForm, {
-		validators: zodClient(deleteOfficeSchema),
+		validators: zodClient(deleteNatureOfWorkSchema),
 		multipleSubmits: 'prevent',
 		dataType: 'json'
 	});
@@ -46,13 +49,13 @@
 
 		if ($message?.status == 'warning') {
 			showWarningToast($message.text);
-			closeAllTabs();
+			isOpen = false;
 		}
 	});
 
 	$formData.id = id;
-	const curr_office = office.offices.find((office) => office.id == $formData.id);
-	$formData.name = curr_office?.name;
+	const curr_now = natureOfWork.natureOfWorks.find((n) => n.id === $formData.id);
+	$formData.type = curr_now?.type;
 
 	let isOpen = $state(false);
 </script>
@@ -71,12 +74,12 @@
 				></AlertDialog.Title
 			>
 			<AlertDialog.Description>
-				This action cannot be undone. This will permanently delete {$formData.name} and its dependants.
+				This action cannot be undone. This will permanently delete {$formData.type}
 			</AlertDialog.Description>
 		</AlertDialog.Header>
-		<form method="POST" action="?/deleteoffice" use:enhance>
+		<form method="POST" action="?/deletenow" use:enhance>
 			<Input name="id" class="hidden" bind:value={$formData.id} />
-			<Input name="name" class="hidden" bind:value={$formData.name} />
+			<Input name="name" class="hidden" bind:value={$formData.type} />
 			<Form.Field {form} name="confirmation">
 				<Form.FieldErrors />
 				<Form.Control>

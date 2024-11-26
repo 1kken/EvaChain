@@ -13,9 +13,10 @@
 	interface Props {
 		deleteForm: SuperValidated<DeleteUnit>;
 		id: number;
+		dropDownOpen: boolean;
 	}
 
-	let { deleteForm, id }: Props = $props();
+	let { deleteForm, id, dropDownOpen = $bindable() }: Props = $props();
 
 	const form = superForm(deleteForm, {
 		validators: zodClient(deleteUnitSchema),
@@ -25,20 +26,24 @@
 
 	const { form: formData, enhance, message, delayed } = form;
 
+	function closeAllTabs() {
+		isOpen = false;
+		dropDownOpen = false;
+	}
 	$effect(() => {
 		if ($message?.status == 'success') {
 			showSuccessToast($message.text);
-			isOpen = false;
+			closeAllTabs();
 		}
 
 		if ($message?.status == 'error') {
 			showErrorToast($message.text);
-			isOpen = false;
+			closeAllTabs();
 		}
 
 		if ($message?.status == 'warning') {
 			showWarningToast($message.text);
-			isOpen = false;
+			closeAllTabs();
 		}
 	});
 
@@ -63,7 +68,7 @@
 				></AlertDialog.Title
 			>
 			<AlertDialog.Description>
-				This action cannot be undone. This will permanently delete {$formData.name}
+				This action cannot be undone. This will permanently delete {$formData.name} and all its dependants.
 			</AlertDialog.Description>
 		</AlertDialog.Header>
 		<form method="POST" action="?/deleteunit" use:enhance>

@@ -14,9 +14,11 @@
 	}
 
 	let { deleteForm, updateForm, id }: Props = $props();
+	let dropDownOpen = $state(false);
+	$inspect(dropDownOpen);
 </script>
 
-<DropdownMenu.Root>
+<DropdownMenu.Root bind:open={dropDownOpen}>
 	<DropdownMenu.Trigger>
 		{#snippet child({ props })}
 			<Button {...props} variant="ghost" size="icon" class="relative size-8 p-0">
@@ -30,11 +32,14 @@
 			<DropdownMenu.GroupHeading>Actions</DropdownMenu.GroupHeading>
 		</DropdownMenu.Group>
 		<DropdownMenu.Separator />
-		<DropdownMenu.Item onSelect={(e) => e.preventDefault()}
-			><UpdateDialogUnit {updateForm} {id} /></DropdownMenu.Item
+
+		<DropdownMenu.Item
+			onSelect={(e) => {
+				e.preventDefault();
+			}}><UpdateDialogUnit {updateForm} {id} bind:dropDownOpen /></DropdownMenu.Item
 		>
 		<DropdownMenu.Item onSelect={(e) => e.preventDefault()}
-			><DeleteActionUnit {deleteForm} {id} /></DropdownMenu.Item
+			><DeleteActionUnit {deleteForm} {id} bind:dropDownOpen /></DropdownMenu.Item
 		>
 	</DropdownMenu.Content>
 </DropdownMenu.Root>

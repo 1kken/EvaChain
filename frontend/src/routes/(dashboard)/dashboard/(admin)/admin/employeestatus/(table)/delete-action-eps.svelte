@@ -5,15 +5,15 @@
 	import { superForm, type SuperValidated } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { Input } from '$lib/components/ui/input';
-	import { unit } from '$lib/states/admin_unit.svelte';
 	import { LoaderCircle } from 'lucide-svelte';
 	import { TriangleAlert } from 'lucide-svelte';
 	import { Trash2 } from 'lucide-svelte';
 	import { type DeleteOffice, deleteOfficeSchema } from '$lib/schemas/office/schema';
-	import { office } from '$lib/states/admin_office.svelte';
+	import type { DeleteEmployeeStatus } from '$lib/schemas/employeestatus/schema';
+	import { employeeStatus } from '$lib/states/admin_employee_status.svelte';
 
 	interface Props {
-		deleteForm: SuperValidated<DeleteOffice>;
+		deleteForm: SuperValidated<DeleteEmployeeStatus>;
 		id: number;
 		dropDownOpen: boolean;
 	}
@@ -51,8 +51,8 @@
 	});
 
 	$formData.id = id;
-	const curr_office = office.offices.find((office) => office.id == $formData.id);
-	$formData.name = curr_office?.name;
+	const curr_eps = employeeStatus.employeeStatuses.find((e) => e.id === $formData.id);
+	$formData.type = curr_eps?.type;
 
 	let isOpen = $state(false);
 </script>
@@ -71,12 +71,12 @@
 				></AlertDialog.Title
 			>
 			<AlertDialog.Description>
-				This action cannot be undone. This will permanently delete {$formData.name} and its dependants.
+				This action cannot be undone. This will permanently delete {$formData.type}
 			</AlertDialog.Description>
 		</AlertDialog.Header>
-		<form method="POST" action="?/deleteoffice" use:enhance>
+		<form method="POST" action="?/deleteeps" use:enhance>
 			<Input name="id" class="hidden" bind:value={$formData.id} />
-			<Input name="name" class="hidden" bind:value={$formData.name} />
+			<Input name="name" class="hidden" bind:value={$formData.type} />
 			<Form.Field {form} name="confirmation">
 				<Form.FieldErrors />
 				<Form.Control>

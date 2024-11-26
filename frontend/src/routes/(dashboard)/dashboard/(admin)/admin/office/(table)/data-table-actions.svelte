@@ -14,9 +14,11 @@
 	}
 
 	let { deleteForm, updateForm, id }: Props = $props();
+
+	let dropDownOpen = $state(false);
 </script>
 
-<DropdownMenu.Root>
+<DropdownMenu.Root bind:open={dropDownOpen}>
 	<DropdownMenu.Trigger>
 		{#snippet child({ props })}
 			<Button {...props} variant="ghost" size="icon" class="relative size-8 p-0">
@@ -31,10 +33,10 @@
 		</DropdownMenu.Group>
 		<DropdownMenu.Separator />
 		<DropdownMenu.Item onSelect={(e) => e.preventDefault()}
-			><DeleteActionOffice {deleteForm} {id} /></DropdownMenu.Item
+			><UpdateDialogOffice {id} {updateForm} bind:dropDownOpen /></DropdownMenu.Item
 		>
 		<DropdownMenu.Item onSelect={(e) => e.preventDefault()}
-			><UpdateDialogOffice {id} {updateForm} /></DropdownMenu.Item
+			><DeleteActionOffice {deleteForm} {id} bind:dropDownOpen /></DropdownMenu.Item
 		>
 	</DropdownMenu.Content>
 </DropdownMenu.Root>

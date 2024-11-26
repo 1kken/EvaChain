@@ -17,8 +17,9 @@
 	interface Props {
 		updateForm: SuperValidated<UpdateProgram>;
 		id: number;
+		dropDownOpen: boolean;
 	}
-	let { updateForm, id }: Props = $props();
+	let { updateForm, id, dropDownOpen = $bindable() }: Props = $props();
 
 	let isOpen = $state(false);
 	const form = superForm(updateForm, {
@@ -28,15 +29,20 @@
 	});
 
 	const { form: formData, enhance, message, delayed } = form;
+	function closeAllTabs() {
+		isOpen = false;
+		dropDownOpen = false;
+	}
 
 	$effect(() => {
 		if ($message?.status == 'success') {
 			showSuccessToast($message.text);
-			isOpen = false;
+			closeAllTabs();
 		}
 
 		if ($message?.status == 'error') {
 			showErrorToast($message.text);
+			closeAllTabs();
 		}
 	});
 
@@ -139,7 +145,9 @@
 										: 'Select office to automatically asign unit'}
 								</Select.Trigger>
 							</Select.Root>
-							<Form.Description>Select office to automatically asign unit</Form.Description>
+							<Form.Description>
+								Select office to <span class=" font-bold"> automatically</span> asign unit
+							</Form.Description>
 						{/snippet}
 					</Form.Control>
 					<Form.FieldErrors />

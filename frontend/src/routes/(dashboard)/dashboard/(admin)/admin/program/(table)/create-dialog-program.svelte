@@ -125,7 +125,9 @@
 										: 'Select office to automatically asign unit'}
 								</Select.Trigger>
 							</Select.Root>
-							<Form.Description>Select office to automatically asign unit</Form.Description>
+							<Form.Description
+								>Select office to <span class=" font-bold"> automatically</span> asign unit
+							</Form.Description>
 						{/snippet}
 					</Form.Control>
 					<Form.FieldErrors />

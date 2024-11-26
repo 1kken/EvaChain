@@ -62,7 +62,7 @@
 						<Input {...props} bind:value={$formData.name} />
 					{/snippet}
 				</Form.Control>
-				<Form.Description>This is the acronym/code of the unit.</Form.Description>
+				<Form.Description>This is the display name of the unit.</Form.Description>
 				<Form.FieldErrors />
 			</Form.Field>
 			{#if $delayed}

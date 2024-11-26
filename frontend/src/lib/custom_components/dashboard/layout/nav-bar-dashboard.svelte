@@ -22,7 +22,7 @@
 				<div class="lg:hidden">
 					{@render trigger()}
 				</div>
-				<div class="text-md flex items-center gap-2 px-3 py-2">
+				<div class="md:text-md flex items-center gap-2 px-3 py-2 text-sm">
 					{#each currentPath as path, i (i)}
 						{#if i === 0}
 							<a
