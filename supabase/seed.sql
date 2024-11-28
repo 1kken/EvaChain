@@ -121,3 +121,4 @@ INSERT INTO public.employee_status (type) VALUES
     ('Part-Time')
 ON CONFLICT (type) DO UPDATE 
     SET updated_at = timezone('utc'::text, now());
+

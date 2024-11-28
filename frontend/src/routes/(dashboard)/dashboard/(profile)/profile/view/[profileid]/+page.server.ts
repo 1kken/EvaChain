@@ -1,6 +1,6 @@
 import { error, redirect } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
-import { fail, superValidate } from 'sveltekit-superforms';
+import { fail, message, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { profileSchema, profileSubmitSchema } from '$lib/schemas/profile/schema';
 
@@ -99,5 +99,48 @@ export const actions: Actions = {
 				employee_status_id
 			})
 			.eq('id', session?.user.id);
+	},
+	uploadImage: async ({ request, locals: { supabase, session } }) => {
+		try {
+			const formData = await request.formData();
+			const image = formData.get('image');
+			if (!image || !(image instanceof File)) {
+				return fail(422, { message: 'Invalid input, input unporcessable' });
+			}
+
+			const { data, error } = await supabase.storage
+				.from('avatars')
+				.upload(`/${session?.user.id}/avatar${Date.now()}`, image, {
+					cacheControl: '3600',
+					upsert: true
+				});
+
+			const path = data?.path;
+			if (!path) {
+				return fail(500);
+			}
+
+			const { data: publicUrl } = await supabase.storage.from('avatars').getPublicUrl(path);
+
+			if (!publicUrl) {
+				return fail(500);
+			}
+
+			const { data: updateProf, error: updateProfErr } = await supabase
+				.from('profiles')
+				.update({ avatar_url: publicUrl.publicUrl })
+				.eq('id', session!.user.id);
+
+			if (updateProfErr) {
+				return fail(500);
+			}
+			if (error) {
+				return fail(500);
+			}
+
+			return publicUrl;
+		} catch (error) {
+			return fail(500);
+		}
 	}
 };

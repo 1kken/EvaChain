@@ -86,8 +86,8 @@ create trigger on_auth_user_created
   for each row execute procedure public.handle_new_user();
 
 -- Set up Storage!
-insert into storage.buckets (id, name)
-  values ('avatars', 'avatars');
+insert into storage.buckets (id, name, public)
+  values ('avatars', 'avatars',true);
 
 -- Set up access controls for storage.
 -- See https://supabase.com/docs/guides/storage#policy-examples for more details.
@@ -96,6 +96,13 @@ create policy "Avatar images are publicly accessible." on storage.objects
 
 create policy "Anyone can upload an avatar." on storage.objects
   for insert with check (bucket_id = 'avatars');
+
+-- Allow users to upload their own avatar
+create policy "Users can update their own avatar" on storage.objects
+  for update to authenticated using (
+    bucket_id = 'avatars' 
+    and auth.uid()::text = (storage.foldername(name))[1]
+  );
 
 -- Add updated_at trigger
 CREATE TRIGGER set_updated_at

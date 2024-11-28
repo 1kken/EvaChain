@@ -9,7 +9,6 @@
 		CardTitle
 	} from '$lib/components/ui/card';
 	import * as Form from '$lib/components/ui/form';
-	import { Avatar, AvatarFallback, AvatarImage } from '$lib/components/ui/avatar';
 	import { Button } from '$lib/components/ui/button';
 	//zod
 	import { superForm } from 'sveltekit-superforms';
@@ -23,8 +22,10 @@
 		fetchProgramByOffice
 	} from '$lib/utils/profileHelper';
 	import { onMount } from 'svelte';
+	import AvatarUploadDialog from './(components)/avatar-upload-dialog.svelte';
 	let { data }: { data: PageData } = $props();
 	const { form: profileForm } = data;
+	const { session } = data;
 	const { profile } = data;
 	const { supabase } = data;
 	const { units } = data;
@@ -44,6 +45,7 @@
 	let isLoadingOffices = $state(false);
 	let isProgramLoading = $state(false);
 	let isLoadingPositions = $state(false);
+
 	onMount(async () => {
 		const promises = [];
 
@@ -69,9 +71,6 @@
 
 		await Promise.all(promises);
 	});
-	$effect(() => {
-		$inspect($formData);
-	});
 </script>
 
 <div class="container mx-auto p-4">
@@ -82,11 +81,8 @@
 		</CardHeader>
 		<CardContent>
 			<form method="POST" action="?/updateprofile" class="space-y-4" use:enhance>
-				<div class="mb-4 flex justify-center">
-					<Avatar class="h-24 w-24">
-						<AvatarImage src={profile.avatar_url} alt={profile.first_name} />
-						<AvatarFallback>{profile.first_name?.[0]}{profile.last_name?.[0]}</AvatarFallback>
-					</Avatar>
+				<div class="flex justify-center p-4">
+					<AvatarUploadDialog {profile} />
 				</div>
 				<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
 					<Form.Field {form} name="employee_id">

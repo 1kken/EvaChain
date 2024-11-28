@@ -15,7 +15,6 @@
 
 	let { deleteForm, updateForm, id }: Props = $props();
 	let dropDownOpen = $state(false);
-	$inspect(dropDownOpen);
 </script>
 
 <DropdownMenu.Root bind:open={dropDownOpen}>

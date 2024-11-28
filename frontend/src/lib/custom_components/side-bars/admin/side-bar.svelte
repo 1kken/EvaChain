@@ -37,6 +37,10 @@
 				<SideBarAttributes />
 			</Sidebar.GroupContent>
 		</Sidebar.Group>
+		<Sidebar.Group>
+			<Sidebar.GroupLabel>Role Management</Sidebar.GroupLabel>
+			<Sidebar.GroupContent></Sidebar.GroupContent>
+		</Sidebar.Group>
 	</Sidebar.Content>
 	<SideBarFooter bind:isDrawerOpen />
 </Sidebar.Root>
