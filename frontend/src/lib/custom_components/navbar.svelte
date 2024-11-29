@@ -3,10 +3,11 @@
 	import { page } from '$app/stores';
 	import { Button } from '$lib/components/ui/button';
 
-	import { isAuthenticated, currentProfile } from '$lib/utils/authStore';
+	import { getAuthStore } from '$lib/utils/authStore';
 	import SheetNav from './sheet_nav.svelte';
 	let currPathName: String = $state($page.url.pathname);
 
+	const { isAuthenticated, currentProfile } = getAuthStore();
 	$effect(() => {
 		currPathName = $page.url.pathname;
 	});

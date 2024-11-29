@@ -25,7 +25,6 @@
 	import AvatarUploadDialog from './(components)/avatar-upload-dialog.svelte';
 	let { data }: { data: PageData } = $props();
 	const { form: profileForm } = data;
-	const { session } = data;
 	const { profile } = data;
 	const { supabase } = data;
 	const { units } = data;

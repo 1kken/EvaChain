@@ -7,13 +7,14 @@
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import { currentProfile } from '$lib/utils/authStore';
+	import { getAuthStore } from '$lib/utils/authStore';
 	import * as Avatar from '$lib/components/ui/avatar';
 	import type { Tables } from '$lib/types/database.types';
 
 	const profileId = $page.data.session?.user.id;
 	let profile: Tables<'profiles'> | null = $state(null);
 
+	const { currentProfile } = getAuthStore();
 	$effect(() => {
 		profile = $currentProfile;
 	});

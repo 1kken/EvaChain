@@ -1,6 +1,5 @@
 import type { Tables } from '$lib/types/database.types';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { NavigationMenuLinkPropsWithoutHTML } from 'bits-ui';
 
 export const fetchOfficeByUnit = async (
 	unitId: number | null,

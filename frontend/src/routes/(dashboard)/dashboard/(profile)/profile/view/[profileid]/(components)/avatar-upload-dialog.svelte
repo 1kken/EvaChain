@@ -10,11 +10,10 @@
 	import { LoaderCircle } from 'lucide-svelte';
 	import { Upload } from 'lucide-svelte';
 	import { X } from 'lucide-svelte';
-	import { onDestroy, setContext } from 'svelte';
+	import { onDestroy } from 'svelte';
 	import { enhance } from '$app/forms';
 	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';
-	import type { SubmitFunction } from '../$types';
-	import { setImgUrl } from './img-url.svelte';
+	import { getAuthStore } from '$lib/utils/authStore';
 	let { profile }: { profile: Tables<'profiles'> } = $props();
 
 	type AcceptedFileTypes = 'image/jpeg' | 'image/png' | 'image/jpg';
@@ -106,11 +105,11 @@
 
 	let isOpen = $state(false);
 	let uploading = $state(false);
-	setImgUrl(profile.avatar_url);
+	const { currentProfile } = getAuthStore();
 </script>
 
 <Dialog.Root bind:open={isOpen}>
-	<Dialog.Trigger class="focus-visible:outline-none"><AvatarButton {profile} /></Dialog.Trigger>
+	<Dialog.Trigger class="focus-visible:outline-none"><AvatarButton /></Dialog.Trigger>
 	<Dialog.Content>
 		<Dialog.Header>
 			<div class="mx-auto w-full max-w-md">
@@ -130,7 +129,9 @@
 								uploading = false;
 								showSuccessToast('Image Upload Successfull');
 								isOpen = false;
-								setImgUrl(result.data?.publicUrl as string);
+								if ($currentProfile) {
+									$currentProfile.avatar_url = result.data?.publicUrl as string;
+								}
 							}
 							if (result.type === 'failure') {
 								uploading = false;
