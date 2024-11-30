@@ -1,6 +1,6 @@
 -- 1. Unit Seeder
 INSERT INTO public.unit (code, name) VALUES
-    ('OUS', 'Office of the University Secretary'),
+    ('OUS', 'Open University System'),
     ('SLUC', 'South La Union Campus'),
     ('MLUC', 'Middle La Union campus'),
     ('NLUC', 'North La Union Campus'),
@@ -122,3 +122,14 @@ INSERT INTO public.employee_status (type) VALUES
 ON CONFLICT (type) DO UPDATE 
     SET updated_at = timezone('utc'::text, now());
 
+-- create admin role
+INSERT INTO roles (name) 
+VALUES ('system_admin')
+ON CONFLICT (name) DO NOTHING;
+
+-- seed admin,individual user
+INSERT INTO auth.users VALUES ('00000000-0000-0000-0000-000000000000', '22eb2885-4e6b-4558-bfc0-9feae34e8844', 'authenticated', 'authenticated', 'admin@dmmmsu.edu.ph', '$2a$10$U3JqJsuGSruaURhgjztjIujSLycL/bX49.3QRNjqz12IdJQW4Q/9O', '2024-11-30 11:34:22.219117+00', NULL, '', NULL, '', NULL, '', '', NULL, '2024-11-30 13:39:54.432218+00', '{"provider": "email", "providers": ["email"]}', '{"sub": "22eb2885-4e6b-4558-bfc0-9feae34e8844", "email": "admin@dmmmsu.edu.ph", "last_name": "user", "first_name": "admin", "email_verified": false, "phone_verified": false}', NULL, '2024-11-30 11:34:22.209783+00', '2024-11-30 13:39:54.434587+00', NULL, NULL, '', '', NULL, DEFAULT, '', 0, NULL, '', NULL, false, NULL, false);
+INSERT INTO auth.users VALUES ('00000000-0000-0000-0000-000000000000', '12b5599e-364f-4e9d-8727-08b8f7aaf3c7', 'authenticated', 'authenticated', 'individual@dmmmsu.edu.ph', '$2a$10$wKaq5JDb/QPGzfugIgmsXOQXlJ4e3ZtkkpRguYI1/tzcPpv68Ym1S', '2024-11-30 13:56:50.700787+00', NULL, '', NULL, '', NULL, '', '', NULL, '2024-11-30 13:56:50.705201+00', '{"provider": "email", "providers": ["email"]}', '{"sub": "12b5599e-364f-4e9d-8727-08b8f7aaf3c7", "email": "individual@dmmmsu.edu.ph", "last_name": "user", "first_name": "individual", "email_verified": false, "phone_verified": false}', NULL, '2024-11-30 13:56:50.692301+00', '2024-11-30 13:56:50.706494+00', NULL, NULL, '', '', NULL, DEFAULT, '', 0, NULL, '', NULL, false, NULL, false);
+
+INSERT INTO auth.identities VALUES ('22eb2885-4e6b-4558-bfc0-9feae34e8844', '22eb2885-4e6b-4558-bfc0-9feae34e8844', '{"sub": "22eb2885-4e6b-4558-bfc0-9feae34e8844", "email": "admin@dmmmsu.edu.ph", "last_name": "user", "first_name": "admin", "email_verified": false, "phone_verified": false}', 'email', '2024-11-30 11:34:22.216223+00', '2024-11-30 11:34:22.216253+00', '2024-11-30 11:34:22.216253+00', DEFAULT, '74e316dc-9045-48df-a3ac-6b0f43e960c6');
+INSERT INTO auth.identities VALUES ('12b5599e-364f-4e9d-8727-08b8f7aaf3c7', '12b5599e-364f-4e9d-8727-08b8f7aaf3c7', '{"sub": "12b5599e-364f-4e9d-8727-08b8f7aaf3c7", "email": "individual@dmmmsu.edu.ph", "last_name": "user", "first_name": "individual", "email_verified": false, "phone_verified": false}', 'email', '2024-11-30 13:56:50.698296+00', '2024-11-30 13:56:50.698322+00', '2024-11-30 13:56:50.698322+00', DEFAULT, '3e60c891-6293-4a73-835e-d51e2e7497a9');

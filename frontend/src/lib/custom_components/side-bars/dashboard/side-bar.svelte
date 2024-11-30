@@ -2,6 +2,8 @@
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import SideBarHeader from '$lib/custom_components/side-bars/side-bar-header.svelte';
 	import SideBarFooter from '$lib/custom_components/side-bars/side-bar-footer.svelte';
+	import SideBarDocuments from './side-bar-documents.svelte';
+	import { getAuthStore } from '$lib/utils/authStore';
 
 	let { sidebarOpen = $bindable() } = $props();
 
@@ -12,6 +14,7 @@
 		const open = isHover || isDrawerOpen;
 		sidebarOpen = open;
 	}
+	const authstore = getAuthStore();
 </script>
 
 <Sidebar.Root
@@ -30,7 +33,9 @@
 	<Sidebar.Content>
 		<Sidebar.Group>
 			<Sidebar.GroupLabel>Document Management</Sidebar.GroupLabel>
-			<Sidebar.GroupContent></Sidebar.GroupContent>
+			<Sidebar.GroupContent>
+				<SideBarDocuments />
+			</Sidebar.GroupContent>
 		</Sidebar.Group>
 	</Sidebar.Content>
 	<SideBarFooter bind:isDrawerOpen />

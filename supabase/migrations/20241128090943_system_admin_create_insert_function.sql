@@ -1,8 +1,3 @@
--- First ensure system_admin role exists
-INSERT INTO roles (name) 
-VALUES ('system_admin')
-ON CONFLICT (name) DO NOTHING;
-
 -- Create function to check if user is system admin
 CREATE OR REPLACE FUNCTION is_system_admin()
 RETURNS BOOLEAN

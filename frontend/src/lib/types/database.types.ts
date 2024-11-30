@@ -34,6 +34,112 @@ export type Database = {
   }
   public: {
     Tables: {
+      administrative_designation: {
+        Row: {
+          actual_accomplishments: string | null
+          created_at: string
+          evidence_img_urls: string[] | null
+          id: number
+          ipcr_id: string
+          rating_a: number
+          rating_e: number
+          rating_q: number
+          rating_t: number
+          remarks: string | null
+          success_indicators: string
+          updated_at: string
+        }
+        Insert: {
+          actual_accomplishments?: string | null
+          created_at?: string
+          evidence_img_urls?: string[] | null
+          id?: number
+          ipcr_id: string
+          rating_a: number
+          rating_e: number
+          rating_q: number
+          rating_t: number
+          remarks?: string | null
+          success_indicators: string
+          updated_at?: string
+        }
+        Update: {
+          actual_accomplishments?: string | null
+          created_at?: string
+          evidence_img_urls?: string[] | null
+          id?: number
+          ipcr_id?: string
+          rating_a?: number
+          rating_e?: number
+          rating_q?: number
+          rating_t?: number
+          remarks?: string | null
+          success_indicators?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "administrative_designation_ipcr_id_fkey"
+            columns: ["ipcr_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      advance_education_service: {
+        Row: {
+          actual_accomplishments: string | null
+          created_at: string
+          evidence_img_urls: string[] | null
+          id: number
+          ipcr_id: string
+          rating_a: number
+          rating_e: number
+          rating_q: number
+          rating_t: number
+          remarks: string | null
+          success_indicators: string
+          updated_at: string
+        }
+        Insert: {
+          actual_accomplishments?: string | null
+          created_at?: string
+          evidence_img_urls?: string[] | null
+          id?: number
+          ipcr_id: string
+          rating_a: number
+          rating_e: number
+          rating_q: number
+          rating_t: number
+          remarks?: string | null
+          success_indicators: string
+          updated_at?: string
+        }
+        Update: {
+          actual_accomplishments?: string | null
+          created_at?: string
+          evidence_img_urls?: string[] | null
+          id?: number
+          ipcr_id?: string
+          rating_a?: number
+          rating_e?: number
+          rating_q?: number
+          rating_t?: number
+          remarks?: string | null
+          success_indicators?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "advance_education_service_ipcr_id_fkey"
+            columns: ["ipcr_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       employee_status: {
         Row: {
           created_at: string
@@ -54,6 +160,132 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      instructional_imperative: {
+        Row: {
+          actual_accomplishments: string | null
+          created_at: string
+          evidence_img_urls: string[] | null
+          id: number
+          ipcr_id: string
+          rating_a: number
+          rating_e: number
+          rating_q: number
+          rating_t: number
+          remarks: string | null
+          success_indicators: string
+          updated_at: string
+        }
+        Insert: {
+          actual_accomplishments?: string | null
+          created_at?: string
+          evidence_img_urls?: string[] | null
+          id?: number
+          ipcr_id: string
+          rating_a: number
+          rating_e: number
+          rating_q: number
+          rating_t: number
+          remarks?: string | null
+          success_indicators: string
+          updated_at?: string
+        }
+        Update: {
+          actual_accomplishments?: string | null
+          created_at?: string
+          evidence_img_urls?: string[] | null
+          id?: number
+          ipcr_id?: string
+          rating_a?: number
+          rating_e?: number
+          rating_q?: number
+          rating_t?: number
+          remarks?: string | null
+          success_indicators?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "instructional_imperative_ipcr_id_fkey"
+            columns: ["ipcr_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ipcr: {
+        Row: {
+          advanced_education_units: number | null
+          created_at: string
+          higher_education_units: number | null
+          id: string
+          office_id: number
+          owner_id: string
+          program_id: number | null
+          research_units: number | null
+          status: Database["public"]["Enums"]["ipcr_status"]
+          supervisor_id: string | null
+          technical_extension_units: number | null
+          title: string
+          unit_id: number
+          updated_at: string
+        }
+        Insert: {
+          advanced_education_units?: number | null
+          created_at?: string
+          higher_education_units?: number | null
+          id?: string
+          office_id: number
+          owner_id: string
+          program_id?: number | null
+          research_units?: number | null
+          status?: Database["public"]["Enums"]["ipcr_status"]
+          supervisor_id?: string | null
+          technical_extension_units?: number | null
+          title: string
+          unit_id: number
+          updated_at?: string
+        }
+        Update: {
+          advanced_education_units?: number | null
+          created_at?: string
+          higher_education_units?: number | null
+          id?: string
+          office_id?: number
+          owner_id?: string
+          program_id?: number | null
+          research_units?: number | null
+          status?: Database["public"]["Enums"]["ipcr_status"]
+          supervisor_id?: string | null
+          technical_extension_units?: number | null
+          title?: string
+          unit_id?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ipcr_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "office"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ipcr_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "program"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ipcr_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "unit"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       nature_of_work: {
         Row: {
@@ -110,6 +342,83 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      other_activities: {
+        Row: {
+          actual_accomplishments: string | null
+          created_at: string
+          evidence_img_urls: string[] | null
+          id: number
+          ipcr_id: string
+          rating_a: number
+          rating_e: number
+          rating_q: number
+          rating_t: number
+          remarks: string | null
+          success_indicators: string
+          updated_at: string
+        }
+        Insert: {
+          actual_accomplishments?: string | null
+          created_at?: string
+          evidence_img_urls?: string[] | null
+          id?: number
+          ipcr_id: string
+          rating_a: number
+          rating_e: number
+          rating_q: number
+          rating_t: number
+          remarks?: string | null
+          success_indicators: string
+          updated_at?: string
+        }
+        Update: {
+          actual_accomplishments?: string | null
+          created_at?: string
+          evidence_img_urls?: string[] | null
+          id?: number
+          ipcr_id?: string
+          rating_a?: number
+          rating_e?: number
+          rating_q?: number
+          rating_t?: number
+          remarks?: string | null
+          success_indicators?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "other_activities_ipcr_id_fkey"
+            columns: ["ipcr_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      permissions: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: number
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: number
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: number
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       position: {
         Row: {
@@ -282,6 +591,386 @@ export type Database = {
           },
         ]
       }
+      required_activity: {
+        Row: {
+          actual_accomplishments: string | null
+          created_at: string
+          evidence_img_urls: string[] | null
+          id: number
+          ipcr_id: string
+          rating_a: number
+          rating_e: number
+          rating_q: number
+          rating_t: number
+          remarks: string | null
+          success_indicators: string
+          updated_at: string
+        }
+        Insert: {
+          actual_accomplishments?: string | null
+          created_at?: string
+          evidence_img_urls?: string[] | null
+          id?: number
+          ipcr_id: string
+          rating_a: number
+          rating_e: number
+          rating_q: number
+          rating_t: number
+          remarks?: string | null
+          success_indicators: string
+          updated_at?: string
+        }
+        Update: {
+          actual_accomplishments?: string | null
+          created_at?: string
+          evidence_img_urls?: string[] | null
+          id?: number
+          ipcr_id?: string
+          rating_a?: number
+          rating_e?: number
+          rating_q?: number
+          rating_t?: number
+          remarks?: string | null
+          success_indicators?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "required_activity_ipcr_id_fkey"
+            columns: ["ipcr_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      research_service: {
+        Row: {
+          actual_accomplishments: string | null
+          created_at: string
+          evidence_img_urls: string[] | null
+          id: number
+          ipcr_id: string
+          rating_a: number
+          rating_e: number
+          rating_q: number
+          rating_t: number
+          remarks: string | null
+          success_indicators: string
+          updated_at: string
+        }
+        Insert: {
+          actual_accomplishments?: string | null
+          created_at?: string
+          evidence_img_urls?: string[] | null
+          id?: number
+          ipcr_id: string
+          rating_a: number
+          rating_e: number
+          rating_q: number
+          rating_t: number
+          remarks?: string | null
+          success_indicators: string
+          updated_at?: string
+        }
+        Update: {
+          actual_accomplishments?: string | null
+          created_at?: string
+          evidence_img_urls?: string[] | null
+          id?: number
+          ipcr_id?: string
+          rating_a?: number
+          rating_e?: number
+          rating_q?: number
+          rating_t?: number
+          remarks?: string | null
+          success_indicators?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "research_service_ipcr_id_fkey"
+            columns: ["ipcr_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      role_permissions: {
+        Row: {
+          created_at: string
+          id: number
+          permission_id: number | null
+          role_id: number | null
+          scope: Database["public"]["Enums"]["scope_type"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          permission_id?: number | null
+          role_id?: number | null
+          scope?: Database["public"]["Enums"]["scope_type"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          permission_id?: number | null
+          role_id?: number | null
+          scope?: Database["public"]["Enums"]["scope_type"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "role_permissions_permission_id_fkey"
+            columns: ["permission_id"]
+            isOneToOne: false
+            referencedRelation: "permissions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "role_permissions_role_id_fkey"
+            columns: ["role_id"]
+            isOneToOne: false
+            referencedRelation: "roles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "role_permissions_role_id_fkey"
+            columns: ["role_id"]
+            isOneToOne: false
+            referencedRelation: "user_role_view"
+            referencedColumns: ["role_id"]
+          },
+        ]
+      }
+      roles: {
+        Row: {
+          created_at: string
+          id: number
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      support_function: {
+        Row: {
+          actual_accomplishments: string | null
+          created_at: string
+          evidence_img_urls: string[] | null
+          id: number
+          ipcr_id: string
+          rating_a: number
+          rating_e: number
+          rating_q: number
+          rating_t: number
+          remarks: string | null
+          success_indicators: string
+          support_function_header_id: string
+          updated_at: string
+        }
+        Insert: {
+          actual_accomplishments?: string | null
+          created_at?: string
+          evidence_img_urls?: string[] | null
+          id?: number
+          ipcr_id: string
+          rating_a: number
+          rating_e: number
+          rating_q: number
+          rating_t: number
+          remarks?: string | null
+          success_indicators: string
+          support_function_header_id: string
+          updated_at?: string
+        }
+        Update: {
+          actual_accomplishments?: string | null
+          created_at?: string
+          evidence_img_urls?: string[] | null
+          id?: number
+          ipcr_id?: string
+          rating_a?: number
+          rating_e?: number
+          rating_q?: number
+          rating_t?: number
+          remarks?: string | null
+          success_indicators?: string
+          support_function_header_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "support_function_ipcr_id_fkey"
+            columns: ["ipcr_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "support_function_support_function_header_id_fkey"
+            columns: ["support_function_header_id"]
+            isOneToOne: false
+            referencedRelation: "support_function_header"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      support_function_header: {
+        Row: {
+          created_at: string
+          id: string
+          ipcr_id: string
+          title: string
+          units: number | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          ipcr_id: string
+          title: string
+          units?: number | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          ipcr_id?: string
+          title?: string
+          units?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "support_function_header_ipcr_id_fkey"
+            columns: ["ipcr_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      teaching_effectiveness: {
+        Row: {
+          actual_accomplishments: string | null
+          created_at: string
+          evidence_img_urls: string[] | null
+          id: number
+          ipcr_id: string
+          rating_a: number
+          rating_e: number
+          rating_q: number
+          rating_t: number
+          remarks: string | null
+          success_indicators: string
+          updated_at: string
+        }
+        Insert: {
+          actual_accomplishments?: string | null
+          created_at?: string
+          evidence_img_urls?: string[] | null
+          id?: number
+          ipcr_id: string
+          rating_a: number
+          rating_e: number
+          rating_q: number
+          rating_t: number
+          remarks?: string | null
+          success_indicators: string
+          updated_at?: string
+        }
+        Update: {
+          actual_accomplishments?: string | null
+          created_at?: string
+          evidence_img_urls?: string[] | null
+          id?: number
+          ipcr_id?: string
+          rating_a?: number
+          rating_e?: number
+          rating_q?: number
+          rating_t?: number
+          remarks?: string | null
+          success_indicators?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "teaching_effectiveness_ipcr_id_fkey"
+            columns: ["ipcr_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      technical_extension_service: {
+        Row: {
+          actual_accomplishments: string | null
+          created_at: string
+          evidence_img_urls: string[] | null
+          id: number
+          ipcr_id: string
+          rating_a: number
+          rating_e: number
+          rating_q: number
+          rating_t: number
+          remarks: string | null
+          success_indicators: string
+          updated_at: string
+        }
+        Insert: {
+          actual_accomplishments?: string | null
+          created_at?: string
+          evidence_img_urls?: string[] | null
+          id?: number
+          ipcr_id: string
+          rating_a: number
+          rating_e: number
+          rating_q: number
+          rating_t: number
+          remarks?: string | null
+          success_indicators: string
+          updated_at?: string
+        }
+        Update: {
+          actual_accomplishments?: string | null
+          created_at?: string
+          evidence_img_urls?: string[] | null
+          id?: number
+          ipcr_id?: string
+          rating_a?: number
+          rating_e?: number
+          rating_q?: number
+          rating_t?: number
+          remarks?: string | null
+          success_indicators?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "technical_extension_service_ipcr_id_fkey"
+            columns: ["ipcr_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       unit: {
         Row: {
           code: string
@@ -306,15 +995,81 @@ export type Database = {
         }
         Relationships: []
       }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: number
+          role_id: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          role_id: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          role_id?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_roles_role_id_fkey"
+            columns: ["role_id"]
+            isOneToOne: false
+            referencedRelation: "roles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_roles_role_id_fkey"
+            columns: ["role_id"]
+            isOneToOne: false
+            referencedRelation: "user_role_view"
+            referencedColumns: ["role_id"]
+          },
+        ]
+      }
     }
     Views: {
-      [_ in never]: never
+      user_role_view: {
+        Row: {
+          role_id: number | null
+          role_name: string | null
+          user_id: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
-      [_ in never]: never
+      check_permission: {
+        Args: {
+          required_permission: string
+          target_office_id?: number
+          target_unit_id?: number
+          target_program_id?: number
+        }
+        Returns: boolean
+      }
+      get_user_role: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          role_name: string
+          role_id: number
+        }[]
+      }
+      is_system_admin: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      ipcr_status: "draft" | "submit" | "review" | "passed"
+      scope_type: "all" | "office" | "program" | "unit"
     }
     CompositeTypes: {
       [_ in never]: never

@@ -165,7 +165,8 @@
 					<DropdownMenu.Trigger>
 						{#snippet child({ props })}
 							<Button {...props} variant="outline" class="ml-auto">
-								Columns <ChevronDown />
+								<ListFilter class="h-4 w-4" />
+								View
 							</Button>
 						{/snippet}
 					</DropdownMenu.Trigger>

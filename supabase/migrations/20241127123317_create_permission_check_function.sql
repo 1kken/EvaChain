@@ -1,12 +1,14 @@
 CREATE OR REPLACE FUNCTION check_permission(
     required_permission VARCHAR,
     target_office_id INTEGER DEFAULT NULL,
-    target_unit_id INTEGER DEFAULT NULL
+    target_unit_id INTEGER DEFAULT NULL,
+    target_program_id INTEGER DEFAULT NULL
 ) RETURNS BOOLEAN AS $$
 DECLARE
     user_permission_scope scope_type;
     user_assigned_office_id INTEGER;
     user_assigned_unit_id INTEGER;
+    user_assigned_program_id INTEGER;
     permission_exists BOOLEAN;
 BEGIN
     -- Get user's scope and IDs
@@ -14,6 +16,7 @@ BEGIN
         role_permission.scope,
         profile.office_id,
         profile.unit_id,
+        profile.program_id,
         EXISTS (
             SELECT 1 
             FROM role_permissions role_permission_check
@@ -25,6 +28,7 @@ BEGIN
         user_permission_scope,
         user_assigned_office_id,
         user_assigned_unit_id,
+        user_assigned_program_id,
         permission_exists
     FROM profiles profile
     JOIN user_roles user_role ON profile.id = user_role.user_id
@@ -38,14 +42,27 @@ BEGIN
         RETURN FALSE;
     END IF;
 
-    -- Check scope access
-    RETURN CASE user_permission_scope
-        WHEN 'all' THEN TRUE
-        WHEN 'office' THEN 
+    -- Check scope access from highest (all) to lowest (unit)
+    RETURN CASE
+        -- All level (highest scope)
+        WHEN user_permission_scope = 'all' THEN 
+            TRUE
+            
+        -- Program level
+        WHEN user_permission_scope = 'program' THEN 
+            target_program_id IS NULL OR target_program_id = user_assigned_program_id
+            
+        -- Office level
+        WHEN user_permission_scope = 'office' THEN 
             target_office_id IS NULL OR target_office_id = user_assigned_office_id
-        WHEN 'unit' THEN 
+            
+        -- Unit level (lowest scope)
+        WHEN user_permission_scope = 'unit' THEN 
             target_unit_id IS NULL OR target_unit_id = user_assigned_unit_id
-        ELSE FALSE
+            
+        -- Default case
+        ELSE 
+            FALSE
     END;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
