@@ -3,16 +3,19 @@
 	import type { PageData } from './$types';
 	import { getIPCRStore } from './(data)/state.svelte';
 	import { createColumns } from './(table)/columns';
+	import CreateDialogIpcr from './(table)/create-dialog-ipcr.svelte';
 
 	let { data }: { data: PageData } = $props();
-
 	const { currentUserIPCR } = getIPCRStore();
+	const { createIPCRForm } = data.form;
 	const columns = createColumns();
 </script>
 
 <DataTable
-	filterPlaceholder={'Search by name'}
+	filterPlaceholder={'Search by name...'}
 	filterColumn={'title'}
 	{columns}
 	data={$currentUserIPCR}
-/>
+>
+	<CreateDialogIpcr data={createIPCRForm} />
+</DataTable>

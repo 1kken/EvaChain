@@ -1,11 +1,7 @@
 import { renderComponent, renderSnippet } from '$lib/components/ui/data-table';
 import type { ColumnDef } from '@tanstack/table-core';
-import { createRawSnippet } from 'svelte';
-import DataTableActions from './data-table-actions.svelte';
 import DataTableSortButton from '$lib/custom_components/data-table/data-table-sort-button.svelte';
-import type { SuperValidated } from 'sveltekit-superforms';
-import type { DeleteUnit, UpdateUnit } from '$lib/schemas/unit/schema';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import DateCell from './date-cell.svelte';
 
 export type IPCR = {
@@ -36,7 +32,7 @@ export const createColumns = () // deleteForm: SuperValidated<DeleteUnit>,
 			}),
 		cell: ({ getValue }) => {
 			const dateValue = getValue<string>();
-			return format(new Date(dateValue), 'MM/dd/yyyy');
+			return renderComponent(DateCell, { date: dateValue });
 		}
 	},
 	{

@@ -67,7 +67,7 @@ export const actions: Actions = {
 				form
 			});
 		}
-		const {
+		let {
 			first_name,
 			last_name,
 			middle_name,
@@ -80,6 +80,9 @@ export const actions: Actions = {
 			employee_status_id
 		} = form.data;
 
+		first_name = first_name.trim();
+		last_name = last_name.trim();
+		middle_name = middle_name?.trim() ?? null;
 		if (!session?.user) {
 			redirect(401, 'Unauthorized');
 		}
@@ -99,6 +102,7 @@ export const actions: Actions = {
 				employee_status_id
 			})
 			.eq('id', session?.user.id);
+		console.log(error);
 	},
 	uploadImage: async ({ request, locals: { supabase, session } }) => {
 		try {

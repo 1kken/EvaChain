@@ -1,8 +1,9 @@
 <script lang="ts">
-	import { format } from 'date-fns';
-	export let date: string;
+	import { format, parseISO } from 'date-fns';
+
+	const { date } = $props();
 </script>
 
 <span class="w-max">
-	{format(new Date(date), 'MM/dd/yyyy')}
+	{date ? format(parseISO(date), 'MM/dd/yyyy') : ''}
 </span>
