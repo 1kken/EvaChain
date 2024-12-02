@@ -1,8 +1,12 @@
 import { error, redirect } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
-import { fail, message, superValidate } from 'sveltekit-superforms';
+import { fail, message, superValidate, type Infer } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import { profileSchema, profileSubmitSchema } from '$lib/schemas/profile/schema';
+import {
+	profileSchema,
+	profileSubmitSchema,
+	type ProfileSubmitSchema
+} from '$lib/schemas/profile/schema';
 
 export const load: PageServerLoad = async ({ params, locals: { supabase, session } }) => {
 	if (!params.profileid) {
@@ -58,13 +62,16 @@ export const load: PageServerLoad = async ({ params, locals: { supabase, session
 
 export const actions: Actions = {
 	updateprofile: async ({ request, locals: { supabase, session } }) => {
-		const form = await superValidate(request, zod(profileSubmitSchema));
-		console.log(form.data.unit_id);
+		const form = await superValidate<Infer<ProfileSubmitSchema>, App.Superforms.Message>(
+			request,
+			zod(profileSubmitSchema)
+		);
+
 		// If not valid return the form with errors
 		if (!form.valid) {
-			console.log(form);
-			return fail(400, {
-				form
+			return message(form, {
+				status: 'error',
+				text: 'Unprocessable input!'
 			});
 		}
 		let {
@@ -86,7 +93,6 @@ export const actions: Actions = {
 		if (!session?.user) {
 			redirect(401, 'Unauthorized');
 		}
-		//update
 		const { error } = await supabase
 			.from('profiles')
 			.update({
@@ -102,7 +108,16 @@ export const actions: Actions = {
 				employee_status_id
 			})
 			.eq('id', session?.user.id);
-		console.log(error);
+		if (error) {
+			return message(form, {
+				status: 'error',
+				text: 'Something went wrong on update!'
+			});
+		}
+		return message(form, {
+			status: 'success',
+			text: 'Profile successfully updated!'
+		});
 	},
 	uploadImage: async ({ request, locals: { supabase, session } }) => {
 		try {

@@ -10,6 +10,7 @@
 	} from '$lib/components/ui/card';
 	import * as Form from '$lib/components/ui/form';
 	import { Button } from '$lib/components/ui/button';
+	import { ArrowLeftToLine } from 'lucide-svelte';
 	//zod
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
@@ -23,6 +24,8 @@
 	} from '$lib/utils/profileHelper';
 	import { onMount } from 'svelte';
 	import AvatarUploadDialog from './(components)/avatar-upload-dialog.svelte';
+	import { goto, invalidateAll } from '$app/navigation';
+	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';
 	let { data }: { data: PageData } = $props();
 	const { form: profileForm } = data;
 	const { profile } = data;
@@ -39,11 +42,22 @@
 		dataType: 'json'
 	});
 
-	const { form: formData, enhance } = form;
+	const { form: formData, message, enhance } = form;
 	let showProgram = $derived($formData.nature_of_work_id === 1);
 	let isLoadingOffices = $state(false);
 	let isProgramLoading = $state(false);
 	let isLoadingPositions = $state(false);
+
+	$effect(() => {
+		if ($message?.status == 'success') {
+			showSuccessToast($message.text);
+			invalidateAll();
+		}
+
+		if ($message?.status == 'error') {
+			showErrorToast($message.text);
+		}
+	});
 
 	onMount(async () => {
 		const promises = [];
@@ -75,8 +89,20 @@
 <div class="container mx-auto p-4">
 	<Card class="mx-auto w-full max-w-2xl">
 		<CardHeader>
-			<CardTitle>Employee Profile</CardTitle>
-			<CardDescription>Update your employee information</CardDescription>
+			<div class="flex justify-between">
+				<Button
+					onclick={async () => {
+						await goto('/dashboard');
+					}}
+				>
+					<ArrowLeftToLine />
+					Back
+				</Button>
+				<div>
+					<CardTitle>Employee Profile</CardTitle>
+					<CardDescription>Update your employee information</CardDescription>
+				</div>
+			</div>
 		</CardHeader>
 		<CardContent>
 			<form method="POST" action="?/updateprofile" class="space-y-4" use:enhance>
