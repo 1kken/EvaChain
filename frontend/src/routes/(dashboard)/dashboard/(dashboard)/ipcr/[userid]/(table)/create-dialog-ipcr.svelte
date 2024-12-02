@@ -17,14 +17,10 @@
 	import { getAuthStore } from '$lib/utils/authStore';
 	import { checkProfileCompletion } from '$lib/utils/missingDetailsToast';
 	import { goto } from '$app/navigation';
-	import type { Tables } from '$lib/types/database.types';
 	import { getIPCRStore } from '../(data)/state.svelte';
+	import type { IPCRFormResult } from '../(data)/types';
 
 	let { data }: { data: SuperValidated<Infer<CreateIPCRSchema>> } = $props();
-	type IPCRFormResult = {
-		form: any; // You can type this more specifically if needed
-		ipcr: Tables<'ipcr'>;
-	};
 	let ipcrStore = getIPCRStore();
 	let isOpen = $state(false);
 	const form = superForm(data, {

@@ -7,8 +7,8 @@
 
 	let { data }: { data: PageData } = $props();
 	const { currentUserIPCR } = getIPCRStore();
-	const { createIPCRForm } = data.form;
-	const columns = createColumns();
+	const { createIPCRForm, deleteIPCRForm } = data.form;
+	const columns = createColumns(deleteIPCRForm);
 </script>
 
 <DataTable

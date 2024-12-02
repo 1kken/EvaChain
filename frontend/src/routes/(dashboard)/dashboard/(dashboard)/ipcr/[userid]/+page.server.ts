@@ -1,13 +1,20 @@
 import { message, superValidate, type Infer } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import { createIPCRSchema, type CreateIPCRSchema } from './(data)/schema.js';
+import {
+	createIPCRSchema,
+	deleteIPCRSchema,
+	type CreateIPCRSchema,
+	type DeleteIPCRSchema,
+	type DeleteIPCRSchemanType
+} from './(data)/schema.js';
 import { error, type Actions } from '@sveltejs/kit';
 import { titleCase } from 'title-case';
 
 export const load = async ({ params, locals: { supabase, session } }) => {
 	const createIPCRForm = await superValidate(zod(createIPCRSchema));
+	const deleteIPCRForm = await superValidate(zod(deleteIPCRSchema));
 
-	return { form: { createIPCRForm } };
+	return { form: { createIPCRForm, deleteIPCRForm } };
 };
 
 export const actions: Actions = {
@@ -45,7 +52,43 @@ export const actions: Actions = {
 				text: `Error saving IPCR ${savingError}`
 			});
 		}
-		console.log(ipcr);
 		return { form, ipcr };
+	},
+	deleteipcr: async ({ request, locals: { supabase, session } }) => {
+		const form = await superValidate<Infer<DeleteIPCRSchemanType>, App.Superforms.Message>(
+			request,
+			zod(deleteIPCRSchema)
+		);
+		const { owner_id } = form.data;
+
+		if (!form.valid) {
+			return message(form, {
+				status: 'error',
+				text: 'Unprocessable input!'
+			});
+		}
+
+		console.log(session?.user.id);
+		console.log(owner_id);
+		if (session?.user.id !== owner_id) {
+			return message(form, {
+				status: 'error',
+				text: 'Unaothorized deletion of IPCR, IPCR owner doesnt mathc with the current logged in user'
+			});
+		}
+		const { error: deleteError, data: deletedIPCR } = await supabase
+			.from('ipcr')
+			.delete()
+			.eq('owner_id', owner_id)
+			.select()
+			.single();
+
+		if (deleteError) {
+			return message(form, {
+				status: 'error',
+				text: `Error saving IPCR ${deleteError}`
+			});
+		}
+		return { form, deletedIPCR };
 	}
 };

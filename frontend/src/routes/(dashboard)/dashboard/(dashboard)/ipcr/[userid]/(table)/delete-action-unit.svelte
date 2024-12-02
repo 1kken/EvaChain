@@ -1,57 +1,71 @@
 <script lang="ts">
 	import * as Form from '$lib/components/ui/form';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
-	import { deleteUnitSchema, type DeleteUnit } from '$lib/schemas/unit/schema';
-	import { showErrorToast, showSuccessToast, showWarningToast } from '$lib/utils/toast';
-	import { superForm, type SuperValidated } from 'sveltekit-superforms';
+	import { showErrorToast, showWarningToast } from '$lib/utils/toast';
+	import { superForm, type FormResult, type SuperValidated } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { Input } from '$lib/components/ui/input';
 	import { unit } from '$lib/states/admin_unit.svelte';
 	import { LoaderCircle } from 'lucide-svelte';
 	import { TriangleAlert } from 'lucide-svelte';
 	import { Trash2 } from 'lucide-svelte';
+	import { deleteIPCRSchema, type DeleteIPCRSchema } from '../(data)/schema';
+	import { getIPCRStore } from '../(data)/state.svelte';
+	import { getAuthStore } from '$lib/utils/authStore';
+	import { goto, invalidateAll } from '$app/navigation';
+	import type { IPCRFormResult } from '../(data)/types';
 	interface Props {
-		deleteForm: SuperValidated<DeleteUnit>;
-		id: number;
+		deleteForm: SuperValidated<DeleteIPCRSchema>;
+		id: string;
 		dropDownOpen: boolean;
 	}
 
 	let { deleteForm, id, dropDownOpen = $bindable() }: Props = $props();
+	const { currentUserIPCR, removeIPCR } = getIPCRStore();
+	const { currentProfile } = getAuthStore();
 
 	const form = superForm(deleteForm, {
-		validators: zodClient(deleteUnitSchema),
+		validators: zodClient(deleteIPCRSchema),
 		multipleSubmits: 'prevent',
-		dataType: 'json'
+		dataType: 'json',
+		onUpdate({ form, result }) {
+			const action = result.data as FormResult<IPCRFormResult>;
+			if (form.valid && action) {
+				const ipcrData = action.deletedIPCR;
+				console.log(ipcrData);
+				removeIPCR(ipcrData.id);
+				showWarningToast(`Succesfully deleted IPCR ${ipcrData.title}`);
+				closeAllTabs();
+			}
+		}
 	});
-
 	const { form: formData, enhance, message, delayed } = form;
+	const title = $currentUserIPCR.find((ip) => ip.owner_id === id)?.title;
 
 	function closeAllTabs() {
 		isOpen = false;
 		dropDownOpen = false;
 	}
-	$effect(() => {
-		if ($message?.status == 'success') {
-			showSuccessToast($message.text);
-			closeAllTabs();
-		}
 
+	$effect(() => {
 		if ($message?.status == 'error') {
 			showErrorToast($message.text);
 			closeAllTabs();
 		}
-
-		if ($message?.status == 'warning') {
-			showWarningToast($message.text);
-			closeAllTabs();
-		}
 	});
 
-	$formData.id = id;
-	const curr_unit = unit.units.find((unit) => unit.id === $formData.id);
-	$formData.name = curr_unit?.name;
-
 	let isOpen = $state(false);
+	if (!$currentProfile) {
+		goto('/dashboard');
+		invalidateAll();
+	}
+
+	if (title) {
+		$formData.expectedTitle = title;
+	}
+	if ($currentProfile?.id) {
+		$formData.owner_id = $currentProfile?.id;
+	}
 </script>
 
 <AlertDialog.Root bind:open={isOpen}>
@@ -68,21 +82,23 @@
 				></AlertDialog.Title
 			>
 			<AlertDialog.Description>
-				This action cannot be undone. This will permanently delete {$formData.name} and all its dependants.
+				This action cannot be undone. This will permanently delete {title} and all its dependants.
 			</AlertDialog.Description>
 		</AlertDialog.Header>
-		<form method="POST" action="?/deleteunit" use:enhance>
-			<Input name="id" class="hidden" bind:value={$formData.id} />
-			<Input name="id" class="hidden" bind:value={$formData.name} />
-			<Form.Field {form} name="confirmation">
+		<input hidden value={$formData.owner_id} name="owner_id" />
+		<form method="POST" action="?/deleteipcr" use:enhance>
+			<Input name="id" class="hidden" bind:value={$formData.owner_id} />
+			<Form.Field {form} name="confirmTitle">
 				<Form.FieldErrors />
 				<Form.Control>
 					{#snippet children({ props })}
 						<Form.Label>Please Confirm</Form.Label>
-						<Input {...props} bind:value={$formData.confirmation} />
+						<Input {...props} bind:value={$formData.confirmTitle} />
 					{/snippet}
 				</Form.Control>
-				<Form.Description>Please type "delete" to proceed.</Form.Description>
+				<Form.Description
+					>Please type <span class=" font-bold">{title}</span> to proceed.
+				</Form.Description>
 			</Form.Field>
 			{#if $delayed}
 				<div class="flex justify-between">

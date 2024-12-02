@@ -19,13 +19,11 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import { createSvelteTable, FlexRender } from '$lib/components/ui/data-table/index.js';
 	import * as Table from '$lib/components/ui/table/index.js';
-	import { ChevronFirst, ChevronLast, ChevronLeft, ChevronRight, Filter } from 'lucide-svelte';
-	import { ChevronDown } from 'lucide-svelte';
+	import { Filter } from 'lucide-svelte';
 	import { type Snippet } from 'svelte';
 	import { Search, ListFilter, X } from 'lucide-svelte';
 	import DataTableFacet from './data-table-facet.svelte';
 	import type { PropDataFacet } from './helper';
-	import { Label } from '$lib/components/ui/label';
 	import DataTableFooter from './data-table-footer.svelte';
 
 	interface Props<TData, TValue> {

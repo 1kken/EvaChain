@@ -18,4 +18,17 @@ export const createIPCRSchema = z.object({
 	technical_extension_units: z.number().min(0).max(999.99).multipleOf(0.01).nullable()
 });
 
+export const deleteIPCRSchema = z
+	.object({
+		confirmTitle: z.string().min(1, 'Please fill in the necessary field'),
+		owner_id: z.string(),
+		expectedTitle: z.string()
+	})
+	.refine((data) => data.confirmTitle === data.expectedTitle, {
+		message: "The title doesn't match",
+		path: ['confirmTitle']
+	});
+
+export type DeleteIPCRSchema = z.infer<typeof deleteIPCRSchema>;
+export type DeleteIPCRSchemanType = typeof deleteIPCRSchema;
 export type CreateIPCRSchema = typeof createIPCRSchema;

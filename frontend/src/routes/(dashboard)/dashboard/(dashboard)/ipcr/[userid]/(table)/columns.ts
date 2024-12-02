@@ -1,18 +1,21 @@
 import { renderComponent, renderSnippet } from '$lib/components/ui/data-table';
 import type { ColumnDef } from '@tanstack/table-core';
 import DataTableSortButton from '$lib/custom_components/data-table/data-table-sort-button.svelte';
-import { format, parseISO } from 'date-fns';
 import DateCell from './date-cell.svelte';
+import DataTableActions from './data-table-actions.svelte';
+import type { DeleteIPCRSchema } from '../(data)/schema';
+import type { SuperValidated } from 'sveltekit-superforms';
 
 export type IPCR = {
+	owner_id: string;
 	title: string;
 	created_at: string;
 	updated_at: string;
 };
 
-export const createColumns = () // deleteForm: SuperValidated<DeleteUnit>,
-// updateForm: SuperValidated<UpdateUnit>
-: ColumnDef<IPCR>[] => [
+export const createColumns = (
+	deleteForm: SuperValidated<DeleteIPCRSchema> // updateForm: SuperValidated<UpdateUnit>
+): ColumnDef<IPCR>[] => [
 	{
 		accessorKey: 'title',
 		header: ({ column }) =>
@@ -47,14 +50,14 @@ export const createColumns = () // deleteForm: SuperValidated<DeleteUnit>,
 			const dateValue = getValue<string>();
 			return renderComponent(DateCell, { date: dateValue });
 		}
+	},
+	{
+		id: 'actions',
+		header: 'Actions',
+		cell: ({ row }) => {
+			const id = row.original.owner_id;
+			// You can pass whatever you need from `row.original` to the component
+			return renderComponent(DataTableActions, { deleteForm, id });
+		}
 	}
-	// {
-	// 	id: 'actions',
-	// 	header: 'Actions',
-	// 	cell: ({ row }) => {
-	// 		const id = row.original.id;
-	// 		// You can pass whatever you need from `row.original` to the component
-	// 		return renderComponent(DataTableActions, { deleteForm, updateForm, id });
-	// 	}
-	// }
 ];

@@ -4,16 +4,15 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import DeleteActionUnit from './delete-action-unit.svelte';
 	import type { SuperValidated } from 'sveltekit-superforms';
-	import type { DeleteUnit, UpdateUnit } from '$lib/schemas/unit/schema';
-	import UpdateDialogUnit from './update-dialog-unit.svelte';
+	import type { DeleteIPCRSchema } from '../(data)/schema';
 
 	interface Props {
-		deleteForm: SuperValidated<DeleteUnit>;
-		updateForm: SuperValidated<UpdateUnit>;
-		id: number;
+		deleteForm: SuperValidated<DeleteIPCRSchema>;
+		// updateForm: SuperValidated<UpdateUnit>;
+		id: string;
 	}
 
-	let { deleteForm, updateForm, id }: Props = $props();
+	let { deleteForm, id }: Props = $props();
 	let dropDownOpen = $state(false);
 </script>
 
@@ -32,11 +31,6 @@
 		</DropdownMenu.Group>
 		<DropdownMenu.Separator />
 
-		<DropdownMenu.Item
-			onSelect={(e) => {
-				e.preventDefault();
-			}}><UpdateDialogUnit {updateForm} {id} bind:dropDownOpen /></DropdownMenu.Item
-		>
 		<DropdownMenu.Item onSelect={(e) => e.preventDefault()}
 			><DeleteActionUnit {deleteForm} {id} bind:dropDownOpen /></DropdownMenu.Item
 		>
