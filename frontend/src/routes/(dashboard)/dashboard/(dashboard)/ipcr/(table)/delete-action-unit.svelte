@@ -5,7 +5,6 @@
 	import { superForm, type FormResult, type SuperValidated } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { Input } from '$lib/components/ui/input';
-	import { unit } from '$lib/states/admin_unit.svelte';
 	import { LoaderCircle } from 'lucide-svelte';
 	import { TriangleAlert } from 'lucide-svelte';
 	import { Trash2 } from 'lucide-svelte';

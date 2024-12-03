@@ -5,10 +5,10 @@
 	import DeleteActionUnit from './delete-action-unit.svelte';
 	import type { SuperValidated } from 'sveltekit-superforms';
 	import type { DeleteIPCRSchema } from '../(data)/schema';
+	import { SquareArrowOutUpRight } from 'lucide-svelte';
 
 	interface Props {
 		deleteForm: SuperValidated<DeleteIPCRSchema>;
-		// updateForm: SuperValidated<UpdateUnit>;
 		id: string;
 	}
 
@@ -31,8 +31,15 @@
 		</DropdownMenu.Group>
 		<DropdownMenu.Separator />
 
-		<DropdownMenu.Item onSelect={(e) => e.preventDefault()}
-			><DeleteActionUnit {deleteForm} {id} bind:dropDownOpen /></DropdownMenu.Item
-		>
+		<DropdownMenu.Item onSelect={(e) => e.preventDefault()}>
+			<DeleteActionUnit {deleteForm} {id} bind:dropDownOpen />
+		</DropdownMenu.Item>
+		<DropdownMenu.Item onSelect={(e) => e.preventDefault()}>
+			<a href={`/dashboard/ipcr/${id}`}>
+				<span class="flex items-center gap-3">
+					<SquareArrowOutUpRight size={16} /> Open
+				</span>
+			</a>
+		</DropdownMenu.Item>
 	</DropdownMenu.Content>
 </DropdownMenu.Root>

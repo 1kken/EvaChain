@@ -89,7 +89,7 @@
 <div class="container mx-auto p-4">
 	<Card class="mx-auto w-full max-w-2xl">
 		<CardHeader>
-			<div class="flex justify-between">
+			<div class="flex gap-10 md:justify-between">
 				<Button
 					onclick={async () => {
 						await goto('/dashboard');

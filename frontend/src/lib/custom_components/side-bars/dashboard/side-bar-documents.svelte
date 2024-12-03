@@ -5,8 +5,8 @@
 
 	const items = [
 		{
-			title: 'IPCR (Individual Performance Commitment Review)',
-			url: `/dashboard/ipcr/${$page.data.session?.user.id}`,
+			title: 'IPCR',
+			url: `/dashboard/ipcr`,
 
 			icon: ScrollText
 		}

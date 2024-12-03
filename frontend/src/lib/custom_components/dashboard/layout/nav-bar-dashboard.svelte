@@ -18,34 +18,36 @@
 <nav class="sticky top-0 z-10 min-h-14 w-full border-b shadow-md backdrop-blur-lg">
 	<div class="w-full px-4 sm:px-6 lg:px-8">
 		<div class="flex h-14 items-center justify-between">
-			<div class="flex items-center space-x-4">
+			<div class="flex min-w-0 items-center space-x-4">
 				<div class="lg:hidden">
 					{@render trigger()}
 				</div>
-				<div class="md:text-md flex items-center gap-2 px-3 py-2 text-sm">
-					{#each currentPath as path, i (i)}
-						{#if i === 0}
-							<a
-								href={'/' + currentPath.slice(0, i + 1).join('/')}
-								class="capitalize hover:underline"
-							>
-								{path}
-							</a>
-						{:else}
-							<div class="flex items-center gap-2">
-								<ChevronsRight class="text-muted-foreground h-4 w-4" />
+				<div class="md:text-md flex min-w-0 flex-1 items-center gap-2 px-3 py-2 text-sm">
+					<div class="flex min-w-0 flex-1 items-center">
+						{#each currentPath as path, i (i)}
+							{#if i === 0}
 								<a
 									href={'/' + currentPath.slice(0, i + 1).join('/')}
-									class="capitalize hover:underline"
+									class="truncate capitalize hover:underline"
 								>
 									{path}
 								</a>
-							</div>
-						{/if}
-					{/each}
+							{:else}
+								<div class="flex min-w-0 items-center gap-2">
+									<ChevronsRight class="text-muted-foreground h-4 w-4 flex-shrink-0" />
+									<a
+										href={'/' + currentPath.slice(0, i + 1).join('/')}
+										class="truncate capitalize hover:underline"
+									>
+										{path}
+									</a>
+								</div>
+							{/if}
+						{/each}
+					</div>
 				</div>
 			</div>
-			<div class="flex items-center gap-4">
+			<div class="flex flex-shrink-0 items-center gap-4">
 				<Button variant="ghost" size="icon" class="relative">
 					<Bell class="h-5 w-5" />
 					{#if notificationCount > 0}

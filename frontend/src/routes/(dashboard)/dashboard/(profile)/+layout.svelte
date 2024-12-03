@@ -1,9 +1,10 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import type { LayoutData } from './$types';
-	import backgroundSvg from '$lib/assets/backgroundSvg.svg';
+	import backgroundSvg from '$lib/assets/background.svg';
 
 	let { data, children }: { data: LayoutData; children: Snippet } = $props();
+	console.log(backgroundSvg);
 </script>
 
 <div class="relative min-h-screen w-full">
