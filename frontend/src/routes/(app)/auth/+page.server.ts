@@ -1,8 +1,14 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import { superValidate } from 'sveltekit-superforms';
+import { message, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import { logInSchema, signupSchema } from '$lib/schemas/auth/schema';
+import {
+	logInSchema,
+	signupSchema,
+	type LogInSchema,
+	type LogInSchemaInferred,
+	type SignupSchemaInferred
+} from '$lib/schemas/auth/schema';
 
 //PROPS passed down to +page.svelte
 export const load: PageServerLoad = async () => {
@@ -18,12 +24,15 @@ export const load: PageServerLoad = async () => {
 export const actions: Actions = {
 	signup: async ({ request, locals: { supabase } }) => {
 		// Server side validation
-		const form = await superValidate(request, zod(signupSchema));
+		const form = await superValidate<SignupSchemaInferred, App.Superforms.Message>(
+			request,
+			zod(signupSchema)
+		);
 		// If not valid return the form with errors
 		if (!form.valid) {
-			console.log(form);
-			return fail(400, {
-				form
+			return message(form, {
+				status: 'error',
+				text: 'Sign up error please check your input!'
 			});
 		}
 
@@ -48,29 +57,30 @@ export const actions: Actions = {
 		});
 		// If Supabase returns an error
 		if (error) {
-			console.error(error);
-			// Return both the form and the error message
-			return fail(400, {
-				form,
-				message: error.message
+			return message(form, {
+				status: 'error',
+				text: `Error Signing up  ${error.message}`
 			});
 		}
 
 		// If success, return both form and success message
-		return {
-			form,
-			success: true,
-			message: 'Account created successfully! Please check your email.'
-		};
+		return message(form, {
+			status: 'success',
+			text: 'Account created successfully! Please check your email.'
+		});
 	},
 	login: async ({ request, locals: { supabase } }) => {
 		// Server side validation
-		const form = await superValidate(request, zod(logInSchema));
+		const form = await superValidate<LogInSchemaInferred, App.Superforms.Message>(
+			request,
+			zod(logInSchema)
+		);
+		// const form = await superValidate(request, zod(logInSchema));
 		// If not valid return the form with errors
 		if (!form.valid) {
-			console.log(form);
-			return fail(400, {
-				form
+			return message(form, {
+				status: 'error',
+				text: 'Log in error please check your input!'
 			});
 		}
 
@@ -80,19 +90,16 @@ export const actions: Actions = {
 		const { error } = await supabase.auth.signInWithPassword({ email, password });
 		// If Supabase returns an error
 		if (error) {
-			console.error(error);
-			// Return both the form and the error message
-			return fail(400, {
-				form,
-				message: error.message
+			return message(form, {
+				status: 'error',
+				text: `${error.message}`
 			});
 		}
 
 		// If success, return both form and success message
-		return {
-			form,
-			success: true,
-			message: 'Log successful!'
-		};
+		return message(form, {
+			status: 'success',
+			text: 'Log in successfull!'
+		});
 	}
 };

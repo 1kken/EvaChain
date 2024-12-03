@@ -19,13 +19,13 @@
 		validators: zodClient(signupSchema)
 	});
 
-	const { form: formData, enhance: logInEnhance } = form;
+	const { form: formData, message, enhance: logInEnhance } = form;
 	$effect(() => {
-		if ($page.form?.success) {
-			showSuccessToast($page.form.message);
-			goto('/auth');
-		} else if ($page.form?.message) {
-			showErrorToast($page.form.message);
+		if ($message?.status === 'success') {
+			showSuccessToast($message.text);
+		}
+		if ($message?.status === 'error') {
+			showErrorToast($message.text);
 		}
 	});
 </script>
