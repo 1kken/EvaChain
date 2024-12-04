@@ -34,108 +34,93 @@ export type Database = {
   }
   public: {
     Tables: {
-      administrative_designation: {
+      core_function: {
         Row: {
-          actual_accomplishments: string | null
           created_at: string
-          evidence_img_urls: string[] | null
-          id: number
-          ipcr_id: string
-          rating_a: number
-          rating_e: number
-          rating_q: number
-          rating_t: number
-          remarks: string | null
-          success_indicators: string
+          id: string
+          ipcr_teaching_id: string | null
+          name: string
+          reviewer_id: string | null
+          unit: number
           updated_at: string
         }
         Insert: {
-          actual_accomplishments?: string | null
           created_at?: string
-          evidence_img_urls?: string[] | null
-          id?: number
-          ipcr_id: string
-          rating_a: number
-          rating_e: number
-          rating_q: number
-          rating_t: number
-          remarks?: string | null
-          success_indicators: string
+          id?: string
+          ipcr_teaching_id?: string | null
+          name: string
+          reviewer_id?: string | null
+          unit: number
           updated_at?: string
         }
         Update: {
-          actual_accomplishments?: string | null
           created_at?: string
-          evidence_img_urls?: string[] | null
-          id?: number
-          ipcr_id?: string
-          rating_a?: number
-          rating_e?: number
-          rating_q?: number
-          rating_t?: number
-          remarks?: string | null
-          success_indicators?: string
+          id?: string
+          ipcr_teaching_id?: string | null
+          name?: string
+          reviewer_id?: string | null
+          unit?: number
           updated_at?: string
         }
         Relationships: [
           {
-            foreignKeyName: "administrative_designation_ipcr_id_fkey"
-            columns: ["ipcr_id"]
+            foreignKeyName: "core_function_ipcr_teaching_id_fkey"
+            columns: ["ipcr_teaching_id"]
             isOneToOne: false
-            referencedRelation: "ipcr"
+            referencedRelation: "ipcr_teaching"
             referencedColumns: ["id"]
           },
         ]
       }
-      advance_education_service: {
+      core_function_indicator: {
         Row: {
-          actual_accomplishments: string | null
+          accomplishment: string | null
+          accomplishment_date: string | null
+          average_rating: number | null
+          core_function_id: string | null
           created_at: string
-          evidence_img_urls: string[] | null
-          id: number
-          ipcr_id: string
-          rating_a: number
-          rating_e: number
-          rating_q: number
-          rating_t: number
-          remarks: string | null
-          success_indicators: string
+          efficiency_rating: number | null
+          id: string
+          indicator: string
+          indicator_date: string | null
+          quality_rating: number | null
+          timeliness_rating: number | null
           updated_at: string
         }
         Insert: {
-          actual_accomplishments?: string | null
+          accomplishment?: string | null
+          accomplishment_date?: string | null
+          average_rating?: number | null
+          core_function_id?: string | null
           created_at?: string
-          evidence_img_urls?: string[] | null
-          id?: number
-          ipcr_id: string
-          rating_a: number
-          rating_e: number
-          rating_q: number
-          rating_t: number
-          remarks?: string | null
-          success_indicators: string
+          efficiency_rating?: number | null
+          id?: string
+          indicator: string
+          indicator_date?: string | null
+          quality_rating?: number | null
+          timeliness_rating?: number | null
           updated_at?: string
         }
         Update: {
-          actual_accomplishments?: string | null
+          accomplishment?: string | null
+          accomplishment_date?: string | null
+          average_rating?: number | null
+          core_function_id?: string | null
           created_at?: string
-          evidence_img_urls?: string[] | null
-          id?: number
-          ipcr_id?: string
-          rating_a?: number
-          rating_e?: number
-          rating_q?: number
-          rating_t?: number
-          remarks?: string | null
-          success_indicators?: string
+          efficiency_rating?: number | null
+          id?: string
+          indicator?: string
+          indicator_date?: string | null
+          quality_rating?: number | null
+          timeliness_rating?: number | null
           updated_at?: string
         }
         Relationships: [
           {
-            foreignKeyName: "advance_education_service_ipcr_id_fkey"
-            columns: ["ipcr_id"]
+            foreignKeyName: "core_function_indicator_core_function_id_fkey"
+            columns: ["core_function_id"]
             isOneToOne: false
-            referencedRelation: "ipcr"
+            referencedRelation: "core_function"
             referencedColumns: ["id"]
           },
         ]
@@ -161,125 +146,54 @@ export type Database = {
         }
         Relationships: []
       }
-      instructional_imperative: {
+      ipcr_teaching: {
         Row: {
-          actual_accomplishments: string | null
           created_at: string
-          evidence_img_urls: string[] | null
-          id: number
-          ipcr_id: string
-          rating_a: number
-          rating_e: number
-          rating_q: number
-          rating_t: number
-          remarks: string | null
-          success_indicators: string
-          updated_at: string
-        }
-        Insert: {
-          actual_accomplishments?: string | null
-          created_at?: string
-          evidence_img_urls?: string[] | null
-          id?: number
-          ipcr_id: string
-          rating_a: number
-          rating_e: number
-          rating_q: number
-          rating_t: number
-          remarks?: string | null
-          success_indicators: string
-          updated_at?: string
-        }
-        Update: {
-          actual_accomplishments?: string | null
-          created_at?: string
-          evidence_img_urls?: string[] | null
-          id?: number
-          ipcr_id?: string
-          rating_a?: number
-          rating_e?: number
-          rating_q?: number
-          rating_t?: number
-          remarks?: string | null
-          success_indicators?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "instructional_imperative_ipcr_id_fkey"
-            columns: ["ipcr_id"]
-            isOneToOne: false
-            referencedRelation: "ipcr"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      ipcr: {
-        Row: {
-          advanced_education_units: number | null
-          created_at: string
-          higher_education_units: number | null
           id: string
-          office_id: number
-          owner_id: string
+          office_id: number | null
+          owner_id: string | null
           program_id: number | null
-          research_units: number | null
-          status: Database["public"]["Enums"]["ipcr_status"]
-          supervisor_id: string | null
-          technical_extension_units: number | null
           title: string
-          unit_id: number
+          unit_id: number | null
           updated_at: string
         }
         Insert: {
-          advanced_education_units?: number | null
           created_at?: string
-          higher_education_units?: number | null
           id?: string
-          office_id: number
-          owner_id: string
+          office_id?: number | null
+          owner_id?: string | null
           program_id?: number | null
-          research_units?: number | null
-          status?: Database["public"]["Enums"]["ipcr_status"]
-          supervisor_id?: string | null
-          technical_extension_units?: number | null
           title: string
-          unit_id: number
+          unit_id?: number | null
           updated_at?: string
         }
         Update: {
-          advanced_education_units?: number | null
           created_at?: string
-          higher_education_units?: number | null
           id?: string
-          office_id?: number
-          owner_id?: string
+          office_id?: number | null
+          owner_id?: string | null
           program_id?: number | null
-          research_units?: number | null
-          status?: Database["public"]["Enums"]["ipcr_status"]
-          supervisor_id?: string | null
-          technical_extension_units?: number | null
           title?: string
-          unit_id?: number
+          unit_id?: number | null
           updated_at?: string
         }
         Relationships: [
           {
-            foreignKeyName: "ipcr_office_id_fkey"
+            foreignKeyName: "ipcr_teaching_office_id_fkey"
             columns: ["office_id"]
             isOneToOne: false
             referencedRelation: "office"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "ipcr_program_id_fkey"
+            foreignKeyName: "ipcr_teaching_program_id_fkey"
             columns: ["program_id"]
             isOneToOne: false
             referencedRelation: "program"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "ipcr_unit_id_fkey"
+            foreignKeyName: "ipcr_teaching_unit_id_fkey"
             columns: ["unit_id"]
             isOneToOne: false
             referencedRelation: "unit"
@@ -339,59 +253,6 @@ export type Database = {
             columns: ["unit_id"]
             isOneToOne: false
             referencedRelation: "unit"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      other_activities: {
-        Row: {
-          actual_accomplishments: string | null
-          created_at: string
-          evidence_img_urls: string[] | null
-          id: number
-          ipcr_id: string
-          rating_a: number
-          rating_e: number
-          rating_q: number
-          rating_t: number
-          remarks: string | null
-          success_indicators: string
-          updated_at: string
-        }
-        Insert: {
-          actual_accomplishments?: string | null
-          created_at?: string
-          evidence_img_urls?: string[] | null
-          id?: number
-          ipcr_id: string
-          rating_a: number
-          rating_e: number
-          rating_q: number
-          rating_t: number
-          remarks?: string | null
-          success_indicators: string
-          updated_at?: string
-        }
-        Update: {
-          actual_accomplishments?: string | null
-          created_at?: string
-          evidence_img_urls?: string[] | null
-          id?: number
-          ipcr_id?: string
-          rating_a?: number
-          rating_e?: number
-          rating_q?: number
-          rating_t?: number
-          remarks?: string | null
-          success_indicators?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "other_activities_ipcr_id_fkey"
-            columns: ["ipcr_id"]
-            isOneToOne: false
-            referencedRelation: "ipcr"
             referencedColumns: ["id"]
           },
         ]
@@ -591,112 +452,6 @@ export type Database = {
           },
         ]
       }
-      required_activity: {
-        Row: {
-          actual_accomplishments: string | null
-          created_at: string
-          evidence_img_urls: string[] | null
-          id: number
-          ipcr_id: string
-          rating_a: number
-          rating_e: number
-          rating_q: number
-          rating_t: number
-          remarks: string | null
-          success_indicators: string
-          updated_at: string
-        }
-        Insert: {
-          actual_accomplishments?: string | null
-          created_at?: string
-          evidence_img_urls?: string[] | null
-          id?: number
-          ipcr_id: string
-          rating_a: number
-          rating_e: number
-          rating_q: number
-          rating_t: number
-          remarks?: string | null
-          success_indicators: string
-          updated_at?: string
-        }
-        Update: {
-          actual_accomplishments?: string | null
-          created_at?: string
-          evidence_img_urls?: string[] | null
-          id?: number
-          ipcr_id?: string
-          rating_a?: number
-          rating_e?: number
-          rating_q?: number
-          rating_t?: number
-          remarks?: string | null
-          success_indicators?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "required_activity_ipcr_id_fkey"
-            columns: ["ipcr_id"]
-            isOneToOne: false
-            referencedRelation: "ipcr"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      research_service: {
-        Row: {
-          actual_accomplishments: string | null
-          created_at: string
-          evidence_img_urls: string[] | null
-          id: number
-          ipcr_id: string
-          rating_a: number
-          rating_e: number
-          rating_q: number
-          rating_t: number
-          remarks: string | null
-          success_indicators: string
-          updated_at: string
-        }
-        Insert: {
-          actual_accomplishments?: string | null
-          created_at?: string
-          evidence_img_urls?: string[] | null
-          id?: number
-          ipcr_id: string
-          rating_a: number
-          rating_e: number
-          rating_q: number
-          rating_t: number
-          remarks?: string | null
-          success_indicators: string
-          updated_at?: string
-        }
-        Update: {
-          actual_accomplishments?: string | null
-          created_at?: string
-          evidence_img_urls?: string[] | null
-          id?: number
-          ipcr_id?: string
-          rating_a?: number
-          rating_e?: number
-          rating_q?: number
-          rating_t?: number
-          remarks?: string | null
-          success_indicators?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "research_service_ipcr_id_fkey"
-            columns: ["ipcr_id"]
-            isOneToOne: false
-            referencedRelation: "ipcr"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       role_permissions: {
         Row: {
           created_at: string
@@ -767,206 +522,37 @@ export type Database = {
         }
         Relationships: []
       }
-      support_function: {
+      sub_core_function: {
         Row: {
-          actual_accomplishments: string | null
-          created_at: string
-          evidence_img_urls: string[] | null
-          id: number
-          ipcr_id: string
-          rating_a: number
-          rating_e: number
-          rating_q: number
-          rating_t: number
-          remarks: string | null
-          success_indicators: string
-          support_function_header_id: string
-          updated_at: string
-        }
-        Insert: {
-          actual_accomplishments?: string | null
-          created_at?: string
-          evidence_img_urls?: string[] | null
-          id?: number
-          ipcr_id: string
-          rating_a: number
-          rating_e: number
-          rating_q: number
-          rating_t: number
-          remarks?: string | null
-          success_indicators: string
-          support_function_header_id: string
-          updated_at?: string
-        }
-        Update: {
-          actual_accomplishments?: string | null
-          created_at?: string
-          evidence_img_urls?: string[] | null
-          id?: number
-          ipcr_id?: string
-          rating_a?: number
-          rating_e?: number
-          rating_q?: number
-          rating_t?: number
-          remarks?: string | null
-          success_indicators?: string
-          support_function_header_id?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "support_function_ipcr_id_fkey"
-            columns: ["ipcr_id"]
-            isOneToOne: false
-            referencedRelation: "ipcr"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "support_function_support_function_header_id_fkey"
-            columns: ["support_function_header_id"]
-            isOneToOne: false
-            referencedRelation: "support_function_header"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      support_function_header: {
-        Row: {
+          core_function_id: string | null
           created_at: string
           id: string
-          ipcr_id: string
-          title: string
-          units: number | null
+          index: number
+          name: string
           updated_at: string
         }
         Insert: {
+          core_function_id?: string | null
           created_at?: string
           id?: string
-          ipcr_id: string
-          title: string
-          units?: number | null
+          index: number
+          name: string
           updated_at?: string
         }
         Update: {
+          core_function_id?: string | null
           created_at?: string
           id?: string
-          ipcr_id?: string
-          title?: string
-          units?: number | null
+          index?: number
+          name?: string
           updated_at?: string
         }
         Relationships: [
           {
-            foreignKeyName: "support_function_header_ipcr_id_fkey"
-            columns: ["ipcr_id"]
+            foreignKeyName: "sub_core_function_core_function_id_fkey"
+            columns: ["core_function_id"]
             isOneToOne: false
-            referencedRelation: "ipcr"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      teaching_effectiveness: {
-        Row: {
-          actual_accomplishments: string | null
-          created_at: string
-          evidence_img_urls: string[] | null
-          id: number
-          ipcr_id: string
-          rating_a: number
-          rating_e: number
-          rating_q: number
-          rating_t: number
-          remarks: string | null
-          success_indicators: string
-          updated_at: string
-        }
-        Insert: {
-          actual_accomplishments?: string | null
-          created_at?: string
-          evidence_img_urls?: string[] | null
-          id?: number
-          ipcr_id: string
-          rating_a: number
-          rating_e: number
-          rating_q: number
-          rating_t: number
-          remarks?: string | null
-          success_indicators: string
-          updated_at?: string
-        }
-        Update: {
-          actual_accomplishments?: string | null
-          created_at?: string
-          evidence_img_urls?: string[] | null
-          id?: number
-          ipcr_id?: string
-          rating_a?: number
-          rating_e?: number
-          rating_q?: number
-          rating_t?: number
-          remarks?: string | null
-          success_indicators?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "teaching_effectiveness_ipcr_id_fkey"
-            columns: ["ipcr_id"]
-            isOneToOne: false
-            referencedRelation: "ipcr"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      technical_extension_service: {
-        Row: {
-          actual_accomplishments: string | null
-          created_at: string
-          evidence_img_urls: string[] | null
-          id: number
-          ipcr_id: string
-          rating_a: number
-          rating_e: number
-          rating_q: number
-          rating_t: number
-          remarks: string | null
-          success_indicators: string
-          updated_at: string
-        }
-        Insert: {
-          actual_accomplishments?: string | null
-          created_at?: string
-          evidence_img_urls?: string[] | null
-          id?: number
-          ipcr_id: string
-          rating_a: number
-          rating_e: number
-          rating_q: number
-          rating_t: number
-          remarks?: string | null
-          success_indicators: string
-          updated_at?: string
-        }
-        Update: {
-          actual_accomplishments?: string | null
-          created_at?: string
-          evidence_img_urls?: string[] | null
-          id?: number
-          ipcr_id?: string
-          rating_a?: number
-          rating_e?: number
-          rating_q?: number
-          rating_t?: number
-          remarks?: string | null
-          success_indicators?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "technical_extension_service_ipcr_id_fkey"
-            columns: ["ipcr_id"]
-            isOneToOne: false
-            referencedRelation: "ipcr"
+            referencedRelation: "core_function"
             referencedColumns: ["id"]
           },
         ]
@@ -1068,7 +654,6 @@ export type Database = {
       }
     }
     Enums: {
-      ipcr_status: "draft" | "submit" | "review" | "passed"
       scope_type: "all" | "office" | "program" | "unit"
     }
     CompositeTypes: {

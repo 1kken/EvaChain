@@ -8,7 +8,7 @@ export const load = (async ({ params, locals: { supabase, session } }) => {
 	}
 
 	const { data: ipcrs, error: fetchError } = await supabase
-		.from('ipcr')
+		.from('ipcr_teaching')
 		.select()
 		.eq('owner_id', userId);
 

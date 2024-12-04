@@ -25,5 +25,5 @@ export function checkProfileCompletion(profile: Tables<'profiles'> | null) {
 	}
 
 	// If multiple fields are missing, return general message
-	return 'Please fill up your profile page, some details are missing!';
+	return 'Please complete your profile page. Some details are missing! ';
 }

@@ -3,11 +3,11 @@
 	import type { PageData } from './$types';
 	import { getIPCRStore } from './(data)/state.svelte';
 	import { createColumns } from './(table)/columns';
-	import CreateDialogIpcr from './(table)/create-dialog-ipcr.svelte';
+	import CreateButtonIpcrTeaching from './(table)/create-button-ipcr-teaching.svelte';
 
 	let { data }: { data: PageData } = $props();
-	const { currentUserIPCR } = getIPCRStore();
 	const { createIPCRForm, deleteIPCRForm } = data.form;
+	const { currentUserIPCR } = getIPCRStore();
 	const columns = createColumns(deleteIPCRForm);
 </script>
 
@@ -17,5 +17,5 @@
 	{columns}
 	data={$currentUserIPCR}
 >
-	<CreateDialogIpcr data={createIPCRForm} />
+	<CreateButtonIpcrTeaching data={createIPCRForm} />
 </DataTable>

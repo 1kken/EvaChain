@@ -8,11 +8,12 @@
 	import { LoaderCircle } from 'lucide-svelte';
 	import { TriangleAlert } from 'lucide-svelte';
 	import { Trash2 } from 'lucide-svelte';
-	import { deleteIPCRSchema, type DeleteIPCRSchema } from '../(data)/schema';
+	// import { deleteIPCRSchema, type DeleteIPCRSchema } from '../(data)/schema';
 	import { getIPCRStore } from '../(data)/state.svelte';
 	import { getAuthStore } from '$lib/utils/authStore';
 	import { goto, invalidateAll } from '$app/navigation';
 	import type { IPCRFormResult } from '../(data)/types';
+	import { deleteIPCRSchema, type DeleteIPCRSchema } from '../(data)/schema';
 	interface Props {
 		deleteForm: SuperValidated<DeleteIPCRSchema>;
 		id: string;

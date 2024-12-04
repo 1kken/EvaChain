@@ -6,8 +6,7 @@ import {
 	type CreateIPCRSchema,
 	type DeleteIPCRSchemanType
 } from './(data)/schema.js';
-import { error, type Actions } from '@sveltejs/kit';
-import { titleCase } from 'title-case';
+import { type Actions } from '@sveltejs/kit';
 
 export const load = async ({ params, locals: { supabase, session } }) => {
 	const createIPCRForm = await superValidate(zod(createIPCRSchema));
@@ -29,29 +28,48 @@ export const actions: Actions = {
 				text: 'Unprocessable input!'
 			});
 		}
-		let { title, owner_id, office_id, unit_id, program_id } = form.data;
-		console.log(session?.user.id);
-		console.log(owner_id);
-		title = titleCase(title);
-		if (session?.user.id !== owner_id) {
+
+		const { owner_id } = form.data;
+		//check if the same user
+		if (owner_id !== session?.user.id) {
 			return message(form, {
 				status: 'error',
-				text: 'Unauthorized creation of IPCR owner and currently logged in user is not match!'
+				text: 'User is not the same in tehserver please refresh the page!'
 			});
 		}
-		const { data: ipcr, error: savingError } = await supabase
-			.from('ipcr')
-			.insert({ title, owner_id, office_id, unit_id, program_id })
+
+		//fetch the user
+		const { data: profile, error: profileError } = await supabase
+			.from('profiles')
+			.select()
+			.eq('id', owner_id)
+			.single();
+		if (profileError) {
+			return message(form, {
+				status: 'error',
+				text: 'Error fetching user profile, please log in again!'
+			});
+		}
+		const { unit_id, office_id, program_id } = profile;
+		//create a title
+		const currentYear = new Date().getFullYear();
+		const lastName = profile.last_name;
+		const title = `${lastName}_${currentYear}_January_June`;
+		//create the ipcr
+		const { data: ipcrData, error: ipcrError } = await supabase
+			.from('ipcr_teaching')
+			.insert({ title, owner_id, unit_id, office_id, program_id })
 			.select()
 			.single();
 
-		if (savingError) {
+		if (ipcrError) {
 			return message(form, {
 				status: 'error',
-				text: `Error saving IPCR ${savingError}`
+				text: 'Error creating IPCR!'
 			});
 		}
-		return { form, ipcr };
+
+		return { form, ipcrData };
 	},
 	deleteipcr: async ({ request, locals: { supabase, session } }) => {
 		const form = await superValidate<Infer<DeleteIPCRSchemanType>, App.Superforms.Message>(
@@ -68,7 +86,7 @@ export const actions: Actions = {
 		}
 
 		const { error: deleteError, data: deletedIPCR } = await supabase
-			.from('ipcr')
+			.from('ipcr_teaching')
 			.delete()
 			.eq('id', id)
 			.select()

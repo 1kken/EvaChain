@@ -3,25 +3,28 @@ import type { ColumnDef } from '@tanstack/table-core';
 import DataTableSortButton from '$lib/custom_components/data-table/data-table-sort-button.svelte';
 import DateCell from './date-cell.svelte';
 import DataTableActions from './data-table-actions.svelte';
-import type { DeleteIPCRSchema } from '../(data)/schema';
+// import type { DeleteIPCRSchema } from '../(data)/schema';
 import type { SuperValidated } from 'sveltekit-superforms';
+import type { Tables } from '$lib/types/database.types';
+import type { DeleteIPCRSchema } from '../(data)/schema';
 
-export type IPCR = {
-	id: string;
-	owner_id: string;
-	title: string;
-	created_at: string;
-	updated_at: string;
-};
+export type IPCR = Tables<'ipcr_teaching'>;
 
-export const createColumns = (
-	deleteForm: SuperValidated<DeleteIPCRSchema> // updateForm: SuperValidated<UpdateUnit>
-): ColumnDef<IPCR>[] => [
+export const createColumns = (deleteForm: SuperValidated<DeleteIPCRSchema>): ColumnDef<IPCR>[] => [
 	{
 		accessorKey: 'title',
 		header: ({ column }) =>
 			renderComponent(DataTableSortButton, {
 				text: 'Title',
+				arrangement: column.getIsSorted(),
+				onclick: () => column.toggleSorting(column.getIsSorted() === 'asc')
+			})
+	},
+	{
+		accessorKey: 'status',
+		header: ({ column }) =>
+			renderComponent(DataTableSortButton, {
+				text: 'IPCR status',
 				arrangement: column.getIsSorted(),
 				onclick: () => column.toggleSorting(column.getIsSorted() === 'asc')
 			})
