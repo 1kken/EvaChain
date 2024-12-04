@@ -20,6 +20,7 @@ export const createIPCRSchema = z.object({
 
 export const deleteIPCRSchema = z
 	.object({
+		id: z.string(),
 		confirmTitle: z.string().min(1, 'Please fill in the necessary field'),
 		owner_id: z.string(),
 		expectedTitle: z.string()

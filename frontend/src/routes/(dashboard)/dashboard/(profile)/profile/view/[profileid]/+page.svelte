@@ -12,7 +12,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import { ArrowLeftToLine } from 'lucide-svelte';
 	//zod
-	import { superForm } from 'sveltekit-superforms';
+	import { superForm, type FormResult } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { profileSubmitSchema } from '$lib/schemas/profile/schema';
 	import * as Select from '$lib/components/ui/select';
@@ -26,9 +26,10 @@
 	import AvatarUploadDialog from './(components)/avatar-upload-dialog.svelte';
 	import { goto, invalidateAll } from '$app/navigation';
 	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';
+	import { getAuthStore } from '$lib/utils/authStore';
+	import type { ProfileResultForm } from '../(data)/types';
 	let { data }: { data: PageData } = $props();
 	const { form: profileForm } = data;
-	const { profile } = data;
 	const { supabase } = data;
 	const { units } = data;
 	const { natureOfWork } = data;
@@ -37,9 +38,24 @@
 	let program = $state<Tables<'program'>[]>();
 	let positions = $state<Tables<'position'>[]>();
 
+	const { currentProfile } = getAuthStore();
 	const form = superForm(profileForm, {
+		resetForm: false,
 		validators: zodClient(profileSubmitSchema),
-		dataType: 'json'
+		dataType: 'json',
+		onUpdate({ form, result }) {
+			const action = result.data as FormResult<ProfileResultForm>;
+			if (form.valid && action) {
+				const profile = action.profile;
+				$currentProfile = {
+					...$currentProfile,
+					...profile
+				};
+			}
+		},
+		onUpdated({ form }) {
+			showSuccessToast('Successfully update the profile!');
+		}
 	});
 
 	const { form: formData, message, enhance } = form;
@@ -49,11 +65,6 @@
 	let isLoadingPositions = $state(false);
 
 	$effect(() => {
-		if ($message?.status == 'success') {
-			showSuccessToast($message.text);
-			invalidateAll();
-		}
-
 		if ($message?.status == 'error') {
 			showErrorToast($message.text);
 		}
@@ -107,7 +118,7 @@
 		<CardContent>
 			<form method="POST" action="?/updateprofile" class="space-y-4" use:enhance>
 				<div class="flex justify-center p-4">
-					<AvatarUploadDialog {profile} />
+					<AvatarUploadDialog />
 				</div>
 				<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
 					<Form.Field {form} name="employee_id">

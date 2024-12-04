@@ -7,6 +7,7 @@ import type { DeleteIPCRSchema } from '../(data)/schema';
 import type { SuperValidated } from 'sveltekit-superforms';
 
 export type IPCR = {
+	id: string;
 	owner_id: string;
 	title: string;
 	created_at: string;
@@ -55,7 +56,7 @@ export const createColumns = (
 		id: 'actions',
 		header: 'Actions',
 		cell: ({ row }) => {
-			const id = row.original.owner_id;
+			const id = row.original.id;
 			// You can pass whatever you need from `row.original` to the component
 			return renderComponent(DataTableActions, { deleteForm, id });
 		}

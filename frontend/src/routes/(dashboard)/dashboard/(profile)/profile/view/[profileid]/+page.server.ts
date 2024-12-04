@@ -93,7 +93,7 @@ export const actions: Actions = {
 		if (!session?.user) {
 			redirect(401, 'Unauthorized');
 		}
-		const { error } = await supabase
+		const { data: profile, error } = await supabase
 			.from('profiles')
 			.update({
 				first_name,
@@ -107,17 +107,17 @@ export const actions: Actions = {
 				position_id,
 				employee_status_id
 			})
-			.eq('id', session?.user.id);
+			.eq('id', session?.user.id)
+			.select()
+			.single();
 		if (error) {
 			return message(form, {
 				status: 'error',
 				text: 'Something went wrong on update!'
 			});
 		}
-		return message(form, {
-			status: 'success',
-			text: 'Profile successfully updated!'
-		});
+
+		return { form, profile };
 	},
 	uploadImage: async ({ request, locals: { supabase, session } }) => {
 		try {

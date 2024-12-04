@@ -31,7 +31,6 @@
 			const action = result.data as FormResult<IPCRFormResult>;
 			if (form.valid && action) {
 				const ipcrData = action.deletedIPCR;
-				console.log(ipcrData);
 				removeIPCR(ipcrData.id);
 				showWarningToast(`Succesfully deleted IPCR ${ipcrData.title}`);
 				closeAllTabs();
@@ -39,7 +38,7 @@
 		}
 	});
 	const { form: formData, enhance, message, delayed } = form;
-	const title = $currentUserIPCR.find((ip) => ip.owner_id === id)?.title;
+	const title = $currentUserIPCR.find((ip) => ip.id === id)?.title;
 
 	function closeAllTabs() {
 		isOpen = false;
@@ -65,6 +64,7 @@
 	if ($currentProfile?.id) {
 		$formData.owner_id = $currentProfile?.id;
 	}
+	$formData.id = id;
 </script>
 
 <AlertDialog.Root bind:open={isOpen}>
@@ -84,9 +84,9 @@
 				This action cannot be undone. This will permanently delete {title} and all its dependants.
 			</AlertDialog.Description>
 		</AlertDialog.Header>
-		<input hidden value={$formData.owner_id} name="owner_id" />
 		<form method="POST" action="?/deleteipcr" use:enhance>
-			<Input name="id" class="hidden" bind:value={$formData.owner_id} />
+			<input hidden value={$formData.owner_id} name="owner_id" />
+			<Input name="id" class="hidden" bind:value={$formData.id} />
 			<Form.Field {form} name="confirmTitle">
 				<Form.FieldErrors />
 				<Form.Control>

@@ -14,7 +14,6 @@
 	import { enhance } from '$app/forms';
 	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';
 	import { getAuthStore } from '$lib/utils/authStore';
-	let { profile }: { profile: Tables<'profiles'> } = $props();
 
 	type AcceptedFileTypes = 'image/jpeg' | 'image/png' | 'image/jpg';
 	const ACCEPTED_FILE_TYPES: AcceptedFileTypes[] = ['image/jpeg', 'image/png', 'image/jpg'];

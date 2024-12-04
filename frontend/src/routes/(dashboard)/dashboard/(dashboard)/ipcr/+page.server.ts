@@ -4,7 +4,6 @@ import {
 	createIPCRSchema,
 	deleteIPCRSchema,
 	type CreateIPCRSchema,
-	type DeleteIPCRSchema,
 	type DeleteIPCRSchemanType
 } from './(data)/schema.js';
 import { error, type Actions } from '@sveltejs/kit';
@@ -59,7 +58,7 @@ export const actions: Actions = {
 			request,
 			zod(deleteIPCRSchema)
 		);
-		const { owner_id } = form.data;
+		const { id } = form.data;
 
 		if (!form.valid) {
 			return message(form, {
@@ -68,18 +67,10 @@ export const actions: Actions = {
 			});
 		}
 
-		console.log(session?.user.id);
-		console.log(owner_id);
-		if (session?.user.id !== owner_id) {
-			return message(form, {
-				status: 'error',
-				text: 'Unaothorized deletion of IPCR, IPCR owner doesnt mathc with the current logged in user'
-			});
-		}
 		const { error: deleteError, data: deletedIPCR } = await supabase
 			.from('ipcr')
 			.delete()
-			.eq('owner_id', owner_id)
+			.eq('id', id)
 			.select()
 			.single();
 
