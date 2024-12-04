@@ -18,7 +18,7 @@
 
 <Navbar />
 <main class="relative min-h-screen">
-	<Particles className="absolute inset-0 -z-10" quantity={particleCount} />
+	<Particles className="absolute inset-0 -z-10 w-screen h-screen" quantity={particleCount} />
 	<div class="flex min-h-[calc(100vh-3.5rem)] flex-col items-center justify-center px-4">
 		{@render children()}
 	</div>

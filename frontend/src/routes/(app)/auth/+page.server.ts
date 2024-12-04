@@ -1,14 +1,13 @@
-import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { message, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import {
 	logInSchema,
 	signupSchema,
-	type LogInSchema,
 	type LogInSchemaInferred,
 	type SignupSchemaInferred
-} from '$lib/schemas/auth/schema';
+} from './(data)/schema';
+import { titleCase } from 'title-case';
 
 //PROPS passed down to +page.svelte
 export const load: PageServerLoad = async () => {
@@ -28,7 +27,7 @@ export const actions: Actions = {
 			request,
 			zod(signupSchema)
 		);
-		// If not valid return the form with errors
+
 		if (!form.valid) {
 			return message(form, {
 				status: 'error',
@@ -36,13 +35,9 @@ export const actions: Actions = {
 			});
 		}
 
-		// If form valid, use the validated data from superValidate
-		const { email, password, firstName, lastName } = form.data;
-
-		function handleName(name: string): string {
-			//remove all extra spaces then join with one space
-			return name.toLowerCase().split(/\s+/).join(' ');
-		}
+		let { email, password, firstName, lastName } = form.data;
+		firstName = titleCase(firstName);
+		lastName = titleCase(lastName);
 
 		// Attempt signup with Supabase
 		const { error } = await supabase.auth.signUp({
@@ -50,11 +45,12 @@ export const actions: Actions = {
 			password,
 			options: {
 				data: {
-					first_name: handleName(firstName),
-					last_name: handleName(lastName)
+					first_name: firstName,
+					last_name: lastName
 				}
 			}
 		});
+
 		// If Supabase returns an error
 		if (error) {
 			return message(form, {
@@ -69,6 +65,7 @@ export const actions: Actions = {
 			text: 'Account created successfully! Please check your email.'
 		});
 	},
+
 	login: async ({ request, locals: { supabase } }) => {
 		// Server side validation
 		const form = await superValidate<LogInSchemaInferred, App.Superforms.Message>(

@@ -13,18 +13,20 @@
 		dy: number;
 		magnetism: number;
 		rotation: number;
+		connected: boolean;
 	}
 
 	const {
 		className = '',
-		quantity = 100,
-		staticity = 30,
-		ease = 50,
-		size = 50,
+		quantity = 100, // Increased quantity for more web-like feel
+		staticity = 40, // Increased for more stable movement
+		ease = 30, // Reduced for snappier response
+		size = 10, // Smaller cubes for web aesthetic
 		refresh = true,
-		color = '#28A228',
+		color = '#047857', // Web-like blue color
 		vx = 0,
-		vy = 0
+		vy = 0,
+		connectionDistance = 150 // Maximum distance for connecting lines
 	} = $props<{
 		className?: string;
 		quantity?: number;
@@ -35,6 +37,7 @@
 		color?: string;
 		vx?: number;
 		vy?: number;
+		connectionDistance?: number;
 	}>();
 
 	let canvasRef: HTMLCanvasElement;
@@ -71,10 +74,10 @@
 		const translateY = 0;
 		const cubeSize = Math.floor(Math.random() * 2) + size;
 		const alpha = 0;
-		const targetAlpha = parseFloat((Math.random() * 0.6 + 0.1).toFixed(1));
-		const dx = (Math.random() - 0.5) * 0.1;
-		const dy = (Math.random() - 0.5) * 0.1;
-		const magnetism = 0.1 + Math.random() * 4;
+		const targetAlpha = parseFloat((Math.random() * 0.4 + 0.1).toFixed(1)); // Reduced alpha for lighter appearance
+		const dx = (Math.random() - 0.5) * 0.3; // Increased movement speed
+		const dy = (Math.random() - 0.5) * 0.3;
+		const magnetism = 0.1 + Math.random() * 2;
 		const rotation = Math.random() * Math.PI * 2;
 
 		return {
@@ -88,8 +91,35 @@
 			dx,
 			dy,
 			magnetism,
-			rotation
+			rotation,
+			connected: false
 		};
+	}
+
+	function drawConnections(): void {
+		if (context) {
+			context.strokeStyle = `rgba(${rgb.join(', ')}, 0.15)`; // Light connection lines
+			context.lineWidth = 1;
+
+			for (let i = 0; i < cubes.length; i++) {
+				for (let j = i + 1; j < cubes.length; j++) {
+					const cube1 = cubes[i];
+					const cube2 = cubes[j];
+					const dx = cube1.x + cube1.translateX - (cube2.x + cube2.translateX);
+					const dy = cube1.y + cube1.translateY - (cube2.y + cube2.translateY);
+					const distance = Math.sqrt(dx * dx + dy * dy);
+
+					if (distance < connectionDistance) {
+						const opacity = 1 - distance / connectionDistance;
+						context.beginPath();
+						context.strokeStyle = `rgba(${rgb.join(', ')}, ${opacity * 0.15})`;
+						context.moveTo(cube1.x + cube1.translateX, cube1.y + cube1.translateY);
+						context.lineTo(cube2.x + cube2.translateX, cube2.y + cube2.translateY);
+						context.stroke();
+					}
+				}
+			}
+		}
 	}
 
 	function resizeCanvas(): void {
@@ -119,36 +149,14 @@
 			context.translate(x + translateX, y + translateY);
 			context.rotate(rotation);
 
-			const offset = size * 0.2;
-
-			// Front face
+			// Simplified cube drawing for web aesthetic
 			context.beginPath();
 			context.moveTo(-size / 2, -size / 2);
 			context.lineTo(size / 2, -size / 2);
 			context.lineTo(size / 2, size / 2);
 			context.lineTo(-size / 2, size / 2);
 			context.closePath();
-			context.fillStyle = `rgba(${rgb.join(', ')}, ${alpha})`;
-			context.fill();
-
-			// Top face (lighter)
-			context.beginPath();
-			context.moveTo(-size / 2, -size / 2);
-			context.lineTo(-size / 2 + offset, -size / 2 - offset);
-			context.lineTo(size / 2 + offset, -size / 2 - offset);
-			context.lineTo(size / 2, -size / 2);
-			context.closePath();
-			context.fillStyle = `rgba(${rgb.join(', ')}, ${alpha * 1.2})`;
-			context.fill();
-
-			// Right face (darker)
-			context.beginPath();
-			context.moveTo(size / 2, -size / 2);
-			context.lineTo(size / 2 + offset, -size / 2 - offset);
-			context.lineTo(size / 2 + offset, size / 2 - offset);
-			context.lineTo(size / 2, size / 2);
-			context.closePath();
-			context.fillStyle = `rgba(${rgb.join(', ')}, ${alpha * 0.8})`;
+			context.fillStyle = `rgba(${rgb.join(', ')}, ${alpha * 0.5})`; // Lighter fill
 			context.fill();
 
 			context.restore();
@@ -174,6 +182,7 @@
 		if (!isAnimating) return;
 
 		clearContext();
+		drawConnections(); // Draw connections before cubes
 
 		cubes = cubes.map((cube) => {
 			const edge = [
@@ -202,7 +211,7 @@
 						: cube.targetAlpha * remapClosestEdge,
 				x: cube.x + cube.dx + vx,
 				y: cube.y + cube.dy + vy,
-				rotation: cube.rotation + 0.01,
+				rotation: cube.rotation + 0.005, // Slower rotation
 				translateX:
 					cube.translateX + (mouse.x / (staticity / cube.magnetism) - cube.translateX) / ease,
 				translateY:
@@ -250,7 +259,7 @@
 </script>
 
 <div class={className} bind:this={canvasContainerRef} aria-hidden="true">
-	<canvas bind:this={canvasRef} class="size-full"> </canvas>
+	<canvas bind:this={canvasRef} class="size-full backdrop-blur-sm"> </canvas>
 </div>
 
 <style>

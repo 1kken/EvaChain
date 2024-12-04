@@ -11,18 +11,29 @@ export const signupSchema = z
 	.object({
 		firstName: z
 			.string()
-			.min(3)
-			.regex(/^[A-Za-z]+$/, 'Names cannot contain numbers'),
+			.regex(/^[A-Za-z\s]+$/)
+			.transform((s) => s.trim())
+			.refine(
+				(s) => s.length >= 3,
+				'First name must contain at least 3 letters and can include spaces'
+			),
 		lastName: z
 			.string()
-			.min(3)
-			.regex(/^[A-Za-z]+$/, 'Names cannot contain numbers'),
+			.regex(/^[A-Za-z\s]+$/)
+			.transform((s) => s.trim())
+			.refine(
+				(s) => s.length >= 3,
+				'Last name must contain at least 3 letters and can include spaces'
+			),
 		email: z
 			.string()
 			.email()
 			.regex(/^[a-zA-Z0-9._%+-]+@dmmmsu\.edu\.ph$/, 'Only dmmmsu.edu.ph email is allowed'),
 		password: z.string().min(6),
-		passwordRepeat: z.string().min(6)
+		passwordRepeat: z.string().min(6),
+		agree: z.literal(true, {
+			errorMap: () => ({ message: 'You must agree to the terms and conditions' })
+		})
 	})
 	.refine((data) => data.password === data.passwordRepeat, {
 		message: "Passwords don't match",
