@@ -10,7 +10,7 @@
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { Input } from '$lib/components/ui/input';
 	import { showErrorToast } from '$lib/utils/toast';
-
+	import google from '$lib/assets/google.svg';
 	type Props = {
 		data: SuperValidated<Infer<LogInSchema>>;
 	};
@@ -115,10 +115,6 @@
 	type="button"
 	class="flex w-full items-center justify-center gap-3 rounded-lg border px-4 py-2 transition duration-200 "
 >
-	<img
-		src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
-		alt="Google"
-		class="h-5 w-5"
-	/>
+	<img src={google} alt="Google" class="h-5 w-5" />
 	<span>Google</span>
 </Button>

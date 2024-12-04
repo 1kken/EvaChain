@@ -175,8 +175,8 @@
 				{#snippet children({ props })}
 					<Checkbox {...props} bind:checked={$formData.agree} />
 					<div class="space-y-1 leading-none">
-						<Form.Label>I agree to the</Form.Label>
 						<Form.Description>
+							I agree to the
 							<a
 								href="https://example.com/terms"
 								target="_blank"
@@ -192,6 +192,7 @@
 					</div>
 				{/snippet}
 			</Form.Control>
+			<Form.FieldErrors />
 		</Form.Field>
 	</div>
 
