@@ -9,7 +9,6 @@
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';
 	import * as Select from '$lib/components/ui/select';
-	import type { Tables } from '$lib/types/database.types';
 	import { createPositionSchema, type CreatePosition } from '$lib/schemas/position/schema';
 	import { natureOfWork } from '$lib/states/admin_nature_of_work.svelte';
 
