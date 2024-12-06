@@ -14,8 +14,8 @@
 	import {
 		deleteCoreFunctionSchema,
 		type DeleteCoreFunctionSchema
-	} from '../../../../(data)/core_function_schema';
-	import { getCoreFunctionStore } from '../../../../(data)/corefunctionstate.svelte';
+	} from '../../../../(data)/(schema)/core_function_schema';
+	import { getCoreFunctionStore } from '../../../../(data)/(state)/corefunctionstate.svelte';
 	import type { CoreFunctionFormResult } from '../../../../(data)/types';
 	import { getCoreFunctionFormContext } from '../../../../(data)/(forms)/core_function_form.svelte';
 	interface Props {

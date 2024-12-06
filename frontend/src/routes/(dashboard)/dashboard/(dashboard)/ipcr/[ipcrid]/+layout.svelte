@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import type { LayoutData } from './$types';
-	import { setCoreFunctionStore } from './(components)/(data)/corefunctionstate.svelte';
+	import { setCoreFunctionStore } from './(components)/(data)/(state)/corefunctionstate.svelte';
 	import { setCoreFunctionFormContext } from './(components)/(data)/(forms)/core_function_form.svelte';
 
 	let { data, children }: { data: LayoutData; children: Snippet } = $props();

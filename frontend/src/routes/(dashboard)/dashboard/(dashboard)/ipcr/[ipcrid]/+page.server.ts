@@ -8,7 +8,7 @@ import {
 	type DeleteCoreFunctionInput,
 	type DeleteCoreFunctionSchema,
 	type UpdateCoreFunctionSchema
-} from './(components)/(data)/core_function_schema';
+} from './(components)/(data)/(schema)/core_function_schema';
 import { zod } from 'sveltekit-superforms/adapters';
 import { titleCase } from 'title-case';
 

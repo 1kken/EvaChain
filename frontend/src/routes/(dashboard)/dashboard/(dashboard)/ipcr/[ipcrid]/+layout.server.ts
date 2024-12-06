@@ -5,7 +5,7 @@ import {
 	createCoreFunctionSchema,
 	deleteCoreFunctionSchema,
 	updateCoreFunctionSchema
-} from './(components)/(data)/core_function_schema';
+} from './(components)/(data)/(schema)/core_function_schema';
 import { zod } from 'sveltekit-superforms/adapters';
 
 export const load = (async ({ params, locals: { supabase, safeGetSession } }) => {

@@ -4,7 +4,7 @@
 	import { cn } from '$lib/utils';
 	import CoreFunctionCreateDialog from './(subcomponents)/(create_dialogs)/CoreFunctionCreateDialog.svelte';
 	import SubCoreFunction from './SubCoreFunction.svelte';
-	import { getCoreFunctionStore } from '../../(data)/corefunctionstate.svelte';
+	import { getCoreFunctionStore } from '../../(data)/(state)/corefunctionstate.svelte';
 
 	const { currentCoreFunctions } = getCoreFunctionStore();
 	let isExpanded = $state(false);

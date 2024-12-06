@@ -7,12 +7,12 @@
 	import { getCoreFunctionFormContext } from '../../../../(data)/(forms)/core_function_form.svelte';
 	import { superForm, type FormResult } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
-	import { createCoreFunctionSchema } from '../../../../(data)/core_function_schema';
+	import { createCoreFunctionSchema } from '../../../../(data)/(schema)/core_function_schema';
 	import { getIPCRStore } from '../../../../../../(data)/state.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import type { CoreFunctionFormResult } from '../../../../(data)/types';
 	import { showSuccessToast } from '$lib/utils/toast';
-	import { getCoreFunctionStore } from '../../../../(data)/corefunctionstate.svelte';
+	import { getCoreFunctionStore } from '../../../../(data)/(state)/corefunctionstate.svelte';
 
 	let { ipcrId }: { ipcrId: string } = $props();
 	let isOpen = $state(false);

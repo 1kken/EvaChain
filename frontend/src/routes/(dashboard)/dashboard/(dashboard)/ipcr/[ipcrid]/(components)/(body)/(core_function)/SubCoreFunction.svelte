@@ -51,7 +51,7 @@
 	{#if isExpanded}
 		<div class="border-t p-4">
 			<div class="space-y-4">
-				<h1>No Core Subfunctions found</h1>
+				<h1>No Sub-core functions found</h1>
 			</div>
 		</div>
 	{/if}

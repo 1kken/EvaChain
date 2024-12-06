@@ -6,11 +6,11 @@
 	import { getCoreFunctionFormContext } from '../../../../(data)/(forms)/core_function_form.svelte';
 	import { superForm, type FormResult } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
-	import { updateCoreFunctionSchema } from '../../../../(data)/core_function_schema';
+	import { updateCoreFunctionSchema } from '../../../../(data)/(schema)/core_function_schema';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import type { CoreFunctionFormResult } from '../../../../(data)/types';
 	import { showSuccessToast } from '$lib/utils/toast';
-	import { getCoreFunctionStore } from '../../../../(data)/corefunctionstate.svelte';
+	import { getCoreFunctionStore } from '../../../../(data)/(state)/corefunctionstate.svelte';
 
 	let {
 		coreFunctionId,

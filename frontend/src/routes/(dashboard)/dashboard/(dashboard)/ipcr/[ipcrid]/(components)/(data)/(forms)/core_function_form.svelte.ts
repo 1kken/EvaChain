@@ -3,7 +3,7 @@ import type {
 	CreateCoreFunctionSchema,
 	DeleteCoreFunctionSchema,
 	UpdateCoreFunctionSchema
-} from '../core_function_schema';
+} from '../(schema)/core_function_schema';
 import { getContext, setContext } from 'svelte';
 
 const CORE_FUNCTION_FORM_KEY = Symbol('CORE_FUNCTION_FORM_KEY');
