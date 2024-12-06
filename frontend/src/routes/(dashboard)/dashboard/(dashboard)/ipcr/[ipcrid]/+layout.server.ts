@@ -3,7 +3,8 @@ import type { LayoutServerLoad } from './$types';
 import { superValidate } from 'sveltekit-superforms';
 import {
 	createCoreFunctionSchema,
-	deleteCoreFunctionSchema
+	deleteCoreFunctionSchema,
+	updateCoreFunctionSchema
 } from './(components)/(data)/core_function_schema';
 import { zod } from 'sveltekit-superforms/adapters';
 
@@ -16,6 +17,7 @@ export const load = (async ({ params, locals: { supabase, safeGetSession } }) =>
 	}
 	const createCoreFunctionForm = await superValidate(zod(createCoreFunctionSchema));
 	const deleteCoreFunctionForm = await superValidate(zod(deleteCoreFunctionSchema));
+	const updateCoreFunctionForm = await superValidate(zod(updateCoreFunctionSchema));
 	const { data: coreFunctions, error: coreFunctionError } = await supabase
 		.from('core_function')
 		.select()
@@ -26,6 +28,6 @@ export const load = (async ({ params, locals: { supabase, safeGetSession } }) =>
 	return {
 		ipcrId,
 		data: { coreFunctions },
-		coreForms: { createCoreFunctionForm, deleteCoreFunctionForm }
+		coreForms: { createCoreFunctionForm, deleteCoreFunctionForm, updateCoreFunctionForm }
 	};
 }) satisfies LayoutServerLoad;

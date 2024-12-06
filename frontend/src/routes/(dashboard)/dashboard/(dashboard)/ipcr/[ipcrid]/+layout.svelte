@@ -7,9 +7,13 @@
 	let { data, children }: { data: LayoutData; children: Snippet } = $props();
 	const { ipcrId } = data;
 	const { coreFunctions } = data.data;
-	const { createCoreFunctionForm, deleteCoreFunctionForm } = data.coreForms;
+	const { createCoreFunctionForm, deleteCoreFunctionForm, updateCoreFunctionForm } = data.coreForms;
 	setCoreFunctionStore(coreFunctions);
-	setCoreFunctionFormContext({ createCoreFunctionForm, deleteCoreFunctionForm });
+	setCoreFunctionFormContext({
+		updateCoreFunctionForm,
+		createCoreFunctionForm,
+		deleteCoreFunctionForm
+	});
 </script>
 
 {@render children()}

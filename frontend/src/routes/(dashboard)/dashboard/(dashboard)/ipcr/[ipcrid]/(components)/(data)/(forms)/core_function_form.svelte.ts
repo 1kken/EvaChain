@@ -1,10 +1,15 @@
 import type { Infer, SuperValidated } from 'sveltekit-superforms';
-import type { CreateCoreFunctionSchema, DeleteCoreFunctionSchema } from '../core_function_schema';
+import type {
+	CreateCoreFunctionSchema,
+	DeleteCoreFunctionSchema,
+	UpdateCoreFunctionSchema
+} from '../core_function_schema';
 import { getContext, setContext } from 'svelte';
 
 const CORE_FUNCTION_FORM_KEY = Symbol('CORE_FUNCTION_FORM_KEY');
 
 type CoreFunctionForm = {
+	updateCoreFunctionForm: SuperValidated<Infer<UpdateCoreFunctionSchema>>;
 	deleteCoreFunctionForm: SuperValidated<Infer<DeleteCoreFunctionSchema>>;
 	createCoreFunctionForm: SuperValidated<Infer<CreateCoreFunctionSchema>>;
 };

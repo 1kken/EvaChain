@@ -1,11 +1,14 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
-	import ToolTipWrapper from '$lib/custom_components/ToolTipWrapper.svelte';
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import { cn } from '$lib/utils';
 	import { ChevronDown, Plus } from 'lucide-svelte';
 	import SubCoreFunctionCreateDialog from './(subcomponents)/(create_dialogs)/SubCoreFunctionCreateDialog.svelte';
 	import CoreFunctionIndicator from './CoreFunctionIndicator.svelte';
 	import DeleteActionCoreFunction from './(subcomponents)/(delete_actions)/DeleteActionCoreFunction.svelte';
+	import DropDownWrapper from './(subcomponents)/DropDownWrapper.svelte';
+	import CoreFunctionUpdateDialog from './(subcomponents)/(update_dialogs)/CoreFunctionUpdateDialog.svelte';
+	import CoreFunctionCreateDialog from './(subcomponents)/(create_dialogs)/CoreFunctionCreateDialog.svelte';
 
 	// Props
 	let { name, units, coreFunctionId }: { name: string; units: number; coreFunctionId: string } =
@@ -35,8 +38,16 @@
 				<p class="text-muted-foreground text-xs md:text-sm">({units} units)</p>
 			</div>
 		</div>
-		<DeleteActionCoreFunction id={coreFunctionId} />
-		<SubCoreFunctionCreateDialog />
+		{#snippet deleteAction()}
+			<DeleteActionCoreFunction id={coreFunctionId} />
+		{/snippet}
+		{#snippet updateDialog()}
+			<CoreFunctionUpdateDialog {coreFunctionId} />
+		{/snippet}
+		<div class="flex gap-4">
+			<SubCoreFunctionCreateDialog />
+			<DropDownWrapper {deleteAction} {updateDialog} />
+		</div>
 	</div>
 
 	{#if isExpanded}
