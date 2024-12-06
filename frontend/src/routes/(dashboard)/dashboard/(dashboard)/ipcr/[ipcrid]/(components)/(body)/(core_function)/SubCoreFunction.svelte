@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
-	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import { cn } from '$lib/utils';
 	import { ChevronDown, Plus } from 'lucide-svelte';
 	import SubCoreFunctionCreateDialog from './(subcomponents)/(create_dialogs)/SubCoreFunctionCreateDialog.svelte';
@@ -8,14 +7,13 @@
 	import DeleteActionCoreFunction from './(subcomponents)/(delete_actions)/DeleteActionCoreFunction.svelte';
 	import DropDownWrapper from './(subcomponents)/DropDownWrapper.svelte';
 	import CoreFunctionUpdateDialog from './(subcomponents)/(update_dialogs)/CoreFunctionUpdateDialog.svelte';
-	import CoreFunctionCreateDialog from './(subcomponents)/(create_dialogs)/CoreFunctionCreateDialog.svelte';
 
 	// Props
 	let { name, units, coreFunctionId }: { name: string; units: number; coreFunctionId: string } =
 		$props();
 
 	let isExpanded: boolean = $state(false);
-	let subFunctions: string[] = $state(['Instructional Imperatives']);
+	let isDrawerOpen: boolean = $state(false);
 
 	const toggleExpand = () => {
 		isExpanded = !isExpanded;
@@ -39,23 +37,21 @@
 			</div>
 		</div>
 		{#snippet deleteAction()}
-			<DeleteActionCoreFunction id={coreFunctionId} />
+			<DeleteActionCoreFunction id={coreFunctionId} bind:isDrawerOpen />
 		{/snippet}
 		{#snippet updateDialog()}
-			<CoreFunctionUpdateDialog {coreFunctionId} />
+			<CoreFunctionUpdateDialog {coreFunctionId} bind:isDrawerOpen />
 		{/snippet}
 		<div class="flex gap-4">
 			<SubCoreFunctionCreateDialog />
-			<DropDownWrapper {deleteAction} {updateDialog} />
+			<DropDownWrapper {deleteAction} {updateDialog} bind:isDrawerOpen />
 		</div>
 	</div>
 
 	{#if isExpanded}
 		<div class="border-t p-4">
 			<div class="space-y-4">
-				{#each subFunctions as subFunction}
-					<CoreFunctionIndicator name={subFunction} />
-				{/each}
+				<h1>No Core Subfunctions found</h1>
 			</div>
 		</div>
 	{/if}

@@ -12,7 +12,10 @@
 	import { showSuccessToast } from '$lib/utils/toast';
 	import { getCoreFunctionStore } from '../../../../(data)/corefunctionstate.svelte';
 
-	let { coreFunctionId }: { coreFunctionId: string } = $props();
+	let {
+		coreFunctionId,
+		isDrawerOpen = $bindable()
+	}: { coreFunctionId: string; isDrawerOpen: boolean } = $props();
 	let isOpen = $state(false);
 	let suggestions: { id: string; display: string }[] = $state([]);
 	let displayName = $state('');
@@ -33,6 +36,7 @@
 				showSuccessToast(`Succesfully added core function ${coreFunction.name}`);
 				displayName = '';
 				isOpen = false;
+				isDrawerOpen = false;
 			}
 		}
 	});
@@ -48,9 +52,6 @@
 			if (currentCoreFunction.reviewer_id) {
 				fetchReviewer(currentCoreFunction.reviewer_id);
 			}
-		}
-		if ($message?.status === 'success') {
-			showSuccessToast($message.text);
 		}
 		if ($message?.status === 'error') {
 			showSuccessToast($message.text);

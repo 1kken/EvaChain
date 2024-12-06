@@ -20,10 +20,11 @@
 	import { getCoreFunctionFormContext } from '../../../../(data)/(forms)/core_function_form.svelte';
 	interface Props {
 		id: string;
+		isDrawerOpen: boolean;
 	}
 	const { currentCoreFunctions, removeCoreFunction } = getCoreFunctionStore();
 
-	let { id }: Props = $props();
+	let { id, isDrawerOpen = $bindable() }: Props = $props();
 
 	const { deleteCoreFunctionForm: data } = getCoreFunctionFormContext();
 	const form = superForm(data, {
@@ -36,12 +37,12 @@
 				const core_function = action.coreFunction;
 				removeCoreFunction(core_function.id);
 				showWarningToast(`Succesfully deleted IPCR ${core_function.name}`);
+				isDrawerOpen = false;
 			}
 		}
 	});
-	const { form: formData, enhance, message, delayed } = form;
+	const { form: formData, enhance, delayed } = form;
 	let isOpen = $state(false);
-
 	const currentCoreFunction = $currentCoreFunctions.find((c) => (c.id = id));
 	let name = $state('');
 	if (currentCoreFunction) {
