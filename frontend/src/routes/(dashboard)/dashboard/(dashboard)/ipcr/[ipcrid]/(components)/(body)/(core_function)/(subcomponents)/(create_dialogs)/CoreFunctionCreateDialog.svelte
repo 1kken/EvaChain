@@ -5,7 +5,7 @@
 	import * as Form from '$lib/components/ui/form/index.js';
 	import { LoaderCircle, Plus } from 'lucide-svelte';
 	import { getCoreFunctionFormContext } from '../../../../(data)/(forms)/core_function_form.svelte';
-	import { superForm, type FormResult } from 'sveltekit-superforms';
+	import SuperDebug, { superForm, type FormResult } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { createCoreFunctionSchema } from '../../../../(data)/(schema)/core_function_schema';
 	import { getIPCRStore } from '../../../../../../(data)/state.svelte';
@@ -13,6 +13,7 @@
 	import type { CoreFunctionFormResult } from '../../../../(data)/types';
 	import { showSuccessToast } from '$lib/utils/toast';
 	import { getCoreFunctionStore } from '../../../../(data)/(state)/corefunctionstate.svelte';
+	import { browser } from '$app/environment';
 
 	let { ipcrId }: { ipcrId: string } = $props();
 	let isOpen = $state(false);
@@ -27,13 +28,14 @@
 		onUpdate({ form, result }) {
 			const action = result.data as FormResult<CoreFunctionFormResult>;
 			if (form.valid && action && coreFunctionStore) {
+				console.log(action);
 				const coreFunction = action.coreFunction;
 				coreFunctionStore.addCoreFunction(coreFunction);
 				showSuccessToast(`Succesfully added core function ${coreFunction.name}`);
 				const ipcrId = $formData.ipcr_teaching_id; // Save ID before reset
+				isOpen = false;
 				reset({ data: { ipcr_teaching_id: ipcrId }, newState: { ipcr_teaching_id: ipcrId } });
 				displayName = '';
-				isOpen = false;
 			}
 		}
 	});
@@ -125,7 +127,7 @@
 					<Form.Control>
 						{#snippet children({ props })}
 							<Form.Label>Unit</Form.Label>
-							<Input type="number" {...props} bind:value={$formData.unit} />
+							<Input type="number" step="0.1" {...props} bind:value={$formData.unit} />
 							<Form.Description
 								>A unit represents your credit allocation for each core function in your performance
 								evaluation.</Form.Description
@@ -190,5 +192,8 @@
 				{/if}
 			</div>
 		</form>
+		{#if browser}
+			<SuperDebug data={$formData} />
+		{/if}
 	</Dialog.Content>
 </Dialog.Root>

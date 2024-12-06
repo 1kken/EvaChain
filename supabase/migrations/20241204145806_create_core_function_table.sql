@@ -3,8 +3,8 @@ CREATE TABLE core_function (
    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
    name TEXT NOT NULL,
    ipcr_teaching_id UUID REFERENCES ipcr_teaching(id) ON DELETE CASCADE NOT NULL,
-   unit NUMERIC(4,2) NOT NULL,
-   reviewer_id UUID REFERENCES auth.users(id) NOT NULL,
+   unit NUMERIC(4,2) ,
+   reviewer_id UUID REFERENCES auth.users(id),
    created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
    updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
 );

@@ -22,7 +22,6 @@
 
 	const { updateCoreFunctionForm: data } = getCoreFunctionFormContext();
 	const { currentCoreFunctions, updateCoreFunction } = getCoreFunctionStore();
-
 	const form = superForm(data!, {
 		dataType: 'json',
 		validators: zodClient(updateCoreFunctionSchema),
@@ -149,7 +148,7 @@
 					<Form.Control>
 						{#snippet children({ props })}
 							<Form.Label>Unit</Form.Label>
-							<Input type="number" {...props} bind:value={$formData.unit} />
+							<Input type="number" step="0.1" {...props} bind:value={$formData.unit} />
 							<Form.Description
 								>A unit represents your credit allocation for each core function in your performance
 								evaluation.</Form.Description

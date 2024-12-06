@@ -9,6 +9,7 @@ CREATE TABLE core_function_indicator (
    timeliness_rating NUMERIC(3,2),
    average_rating NUMERIC(3,2),
    core_function_id UUID REFERENCES core_function(id) ON DELETE CASCADE,
+   index INTEGER NOT NULL,
    created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
    updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
 );

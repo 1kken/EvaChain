@@ -4,6 +4,13 @@
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { Plus } from 'lucide-svelte';
+	import { getSubCoreFunctionFormContext } from '../../../../(data)/(forms)/sub_core_function_form.svelte';
+	interface Props {
+		coreFunctionId: string;
+	}
+	let { coreFunctionId }: Props = $props();
+
+	const { createSubCoreFunctionForm } = getSubCoreFunctionFormContext();
 </script>
 
 <Dialog.Root>

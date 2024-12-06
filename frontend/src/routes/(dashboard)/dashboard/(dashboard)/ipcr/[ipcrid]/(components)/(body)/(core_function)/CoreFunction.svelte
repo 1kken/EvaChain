@@ -39,7 +39,7 @@
 		{#if $currentCoreFunctions.length === 0}
 			<h1>No Core functions found</h1>
 		{:else}
-			{#each $currentCoreFunctions as coreFunction}
+			{#each $currentCoreFunctions as coreFunction (coreFunction.id)}
 				<SubCoreFunction
 					name={coreFunction.name}
 					units={coreFunction.unit}

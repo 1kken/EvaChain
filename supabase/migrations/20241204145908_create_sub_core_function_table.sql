@@ -1,8 +1,7 @@
 CREATE TABLE sub_core_function (
    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-   core_function_id UUID REFERENCES core_function(id) ON DELETE CASCADE,
+   core_function_id UUID REFERENCES core_function(id) ON DELETE CASCADE NOT NULL,
    name TEXT NOT NULL,
-   index INTEGER NOT NULL,
    created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
    updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
 );

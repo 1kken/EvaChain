@@ -25,7 +25,6 @@
 	const { currentCoreFunctions, removeCoreFunction } = getCoreFunctionStore();
 
 	let { id, isDrawerOpen = $bindable() }: Props = $props();
-
 	const { deleteCoreFunctionForm: data } = getCoreFunctionFormContext();
 	const form = superForm(data, {
 		validators: zodClient(deleteCoreFunctionSchema),
@@ -43,7 +42,7 @@
 	});
 	const { form: formData, enhance, delayed } = form;
 	let isOpen = $state(false);
-	const currentCoreFunction = $currentCoreFunctions.find((c) => (c.id = id));
+	const currentCoreFunction = $currentCoreFunctions.find((c) => c.id === id);
 	let name = $state('');
 	if (currentCoreFunction) {
 		$formData.id = currentCoreFunction.id;

@@ -6,9 +6,9 @@ export const createCoreFunctionSchema = z.object({
 
 	ipcr_teaching_id: z.string().uuid('Invalid IPCR Teaching ID format'),
 
-	unit: z.number().min(1, 'Unit must be greater than zero'),
+	unit: z.number().multipleOf(0.01).min(1, 'Unit must be greater than zero').nullable(),
 
-	reviewer_id: z.string().uuid('Invalid User')
+	reviewer_id: z.string().uuid('Invalid User').nullable()
 });
 
 export const updateCoreFunctionSchema = z
@@ -19,7 +19,12 @@ export const updateCoreFunctionSchema = z
 			.min(1, 'Name is required')
 			.max(1000, 'Name must be less than 1000 characters')
 			.optional(),
-		unit: z.number().min(1, 'Unit must be greater than zero').optional(),
+		unit: z
+			.number()
+			.multipleOf(0.01)
+			.min(1, 'Unit must be greater than zero')
+			.optional()
+			.nullable(),
 		reviewer_id: z.string().uuid('Invalid User').optional()
 	})
 	.refine((data) => Object.keys(data).length > 0, {
@@ -39,9 +44,7 @@ export const deleteCoreFunctionSchema = z
 	});
 
 export type DeleteCoreFunctionSchema = typeof deleteCoreFunctionSchema;
-
 export type DeleteCoreFunctionInput = z.infer<typeof deleteCoreFunctionSchema>;
-// Export types
 export type CreateCoreFunctionSchema = typeof createCoreFunctionSchema;
 export type CreateCoreFunctionInput = z.infer<typeof createCoreFunctionSchema>;
 export type UpdateCoreFunctionSchema = typeof updateCoreFunctionSchema;

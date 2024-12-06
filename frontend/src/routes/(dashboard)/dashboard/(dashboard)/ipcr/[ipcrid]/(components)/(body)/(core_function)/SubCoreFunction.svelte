@@ -18,6 +18,7 @@
 	const toggleExpand = () => {
 		isExpanded = !isExpanded;
 	};
+	console.log(coreFunctionId);
 </script>
 
 <div class="rounded-lg border">
@@ -33,7 +34,7 @@
 			</Button>
 			<div>
 				<h3 class="text-sm font-semibold md:text-base">{name}</h3>
-				<p class="text-muted-foreground text-xs md:text-sm">({units} units)</p>
+				<p class="text-muted-foreground text-xs md:text-sm">({!units ? ' _' : units} units)</p>
 			</div>
 		</div>
 		{#snippet deleteAction()}
@@ -43,7 +44,7 @@
 			<CoreFunctionUpdateDialog {coreFunctionId} bind:isDrawerOpen />
 		{/snippet}
 		<div class="flex gap-4">
-			<SubCoreFunctionCreateDialog />
+			<SubCoreFunctionCreateDialog {coreFunctionId} />
 			<DropDownWrapper {deleteAction} {updateDialog} bind:isDrawerOpen />
 		</div>
 	</div>
