@@ -38,28 +38,31 @@ export type Database = {
         Row: {
           created_at: string
           id: string
-          ipcr_teaching_id: string | null
+          ipcr_teaching_id: string
           name: string
+          position: number
           reviewer_id: string | null
-          unit: number
+          unit: number | null
           updated_at: string
         }
         Insert: {
           created_at?: string
           id?: string
-          ipcr_teaching_id?: string | null
+          ipcr_teaching_id: string
           name: string
+          position: number
           reviewer_id?: string | null
-          unit: number
+          unit?: number | null
           updated_at?: string
         }
         Update: {
           created_at?: string
           id?: string
-          ipcr_teaching_id?: string | null
+          ipcr_teaching_id?: string
           name?: string
+          position?: number
           reviewer_id?: string | null
-          unit?: number
+          unit?: number | null
           updated_at?: string
         }
         Relationships: [
@@ -81,6 +84,7 @@ export type Database = {
           created_at: string
           efficiency_rating: number | null
           id: string
+          index: number
           indicator: string
           indicator_date: string | null
           quality_rating: number | null
@@ -95,6 +99,7 @@ export type Database = {
           created_at?: string
           efficiency_rating?: number | null
           id?: string
+          index: number
           indicator: string
           indicator_date?: string | null
           quality_rating?: number | null
@@ -109,6 +114,7 @@ export type Database = {
           created_at?: string
           efficiency_rating?: number | null
           id?: string
+          index?: number
           indicator?: string
           indicator_date?: string | null
           quality_rating?: number | null
@@ -153,6 +159,7 @@ export type Database = {
           office_id: number | null
           owner_id: string | null
           program_id: number | null
+          status: Database["public"]["Enums"]["ipcr_status"]
           title: string
           unit_id: number | null
           updated_at: string
@@ -163,6 +170,7 @@ export type Database = {
           office_id?: number | null
           owner_id?: string | null
           program_id?: number | null
+          status?: Database["public"]["Enums"]["ipcr_status"]
           title: string
           unit_id?: number | null
           updated_at?: string
@@ -173,6 +181,7 @@ export type Database = {
           office_id?: number | null
           owner_id?: string | null
           program_id?: number | null
+          status?: Database["public"]["Enums"]["ipcr_status"]
           title?: string
           unit_id?: number | null
           updated_at?: string
@@ -524,27 +533,27 @@ export type Database = {
       }
       sub_core_function: {
         Row: {
-          core_function_id: string | null
+          core_function_id: string
           created_at: string
           id: string
-          index: number
           name: string
+          position: number
           updated_at: string
         }
         Insert: {
-          core_function_id?: string | null
+          core_function_id: string
           created_at?: string
           id?: string
-          index: number
           name: string
+          position: number
           updated_at?: string
         }
         Update: {
-          core_function_id?: string | null
+          core_function_id?: string
           created_at?: string
           id?: string
-          index?: number
           name?: string
+          position?: number
           updated_at?: string
         }
         Relationships: [
@@ -654,6 +663,7 @@ export type Database = {
       }
     }
     Enums: {
+      ipcr_status: "draft" | "submitted" | "reviewing" | "approved"
       scope_type: "all" | "office" | "program" | "unit"
     }
     CompositeTypes: {

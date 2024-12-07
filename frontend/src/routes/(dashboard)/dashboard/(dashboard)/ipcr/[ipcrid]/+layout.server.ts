@@ -32,7 +32,8 @@ export const load = (async ({ params, locals: { supabase, safeGetSession } }) =>
 	const { data: coreFunctions, error: coreFunctionError } = await supabase
 		.from('core_function')
 		.select()
-		.eq('ipcr_teaching_id', ipcrId);
+		.eq('ipcr_teaching_id', ipcrId)
+		.order('position');
 	if (coreFunctionError) {
 		error(500, { message: 'Something went wrong, please contact the developer' });
 	}

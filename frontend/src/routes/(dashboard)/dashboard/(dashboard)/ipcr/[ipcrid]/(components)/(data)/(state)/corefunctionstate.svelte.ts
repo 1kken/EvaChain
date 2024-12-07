@@ -6,6 +6,7 @@ const CORE_FUNCTION_STATE_KEY = Symbol('CORE_FUNCTION_STATE_KEY');
 
 type CoreFunctionState = {
 	currentCoreFunctions: Writable<Tables<'core_function'>[]>;
+	size: Writable<number>;
 	addCoreFunction: (coreFunction: Tables<'core_function'>) => void;
 	updateCoreFunction: (id: string, updates: Partial<Tables<'core_function'>>) => void;
 	removeCoreFunction: (id: string) => void;
@@ -13,6 +14,12 @@ type CoreFunctionState = {
 
 function createCoreFunctionStore(initialData?: Tables<'core_function'>[]): CoreFunctionState {
 	const currentCoreFunctions = writable<Tables<'core_function'>[]>(initialData || []);
+	const size = writable(initialData?.length || 0);
+
+	// Update size whenever currentCoreFunctions changes
+	currentCoreFunctions.subscribe((functions) => {
+		size.set(functions.length);
+	});
 
 	function addCoreFunction(coreFunction: Tables<'core_function'>) {
 		currentCoreFunctions.update((functions) => [...functions, coreFunction]);
@@ -30,6 +37,7 @@ function createCoreFunctionStore(initialData?: Tables<'core_function'>[]): CoreF
 
 	return {
 		currentCoreFunctions,
+		size,
 		addCoreFunction,
 		updateCoreFunction,
 		removeCoreFunction

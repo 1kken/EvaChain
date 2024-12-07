@@ -7,10 +7,13 @@
 	import DeleteActionCoreFunction from './(subcomponents)/(delete_actions)/DeleteActionCoreFunction.svelte';
 	import DropDownWrapper from './(subcomponents)/DropDownWrapper.svelte';
 	import CoreFunctionUpdateDialog from './(subcomponents)/(update_dialogs)/CoreFunctionUpdateDialog.svelte';
+	import type { Tables } from '$lib/types/database.types';
 
-	// Props
-	let { name, units, coreFunctionId }: { name: string; units: number; coreFunctionId: string } =
-		$props();
+	let {
+		name,
+		units,
+		coreFunctionId
+	}: { name: string; units?: number | null; coreFunctionId: string } = $props();
 
 	let isExpanded: boolean = $state(false);
 	let isDrawerOpen: boolean = $state(false);
@@ -18,7 +21,29 @@
 	const toggleExpand = () => {
 		isExpanded = !isExpanded;
 	};
-	console.log(coreFunctionId);
+
+	interface SubCoreFunctionResponse {
+		data: Tables<'sub_core_function'>[];
+		error?: string;
+	}
+
+	async function fetchSubCoreFunctions(
+		coreFunctionId: string
+	): Promise<Tables<'sub_core_function'>[]> {
+		try {
+			const response = await fetch(`/api/sub_core_function?core_function_id=${coreFunctionId}`);
+			const result: SubCoreFunctionResponse = await response.json();
+
+			if (!response.ok) {
+				throw new Error(result.error || 'Failed to fetch sub core functions');
+			}
+
+			return result.data;
+		} catch (error) {
+			console.error('Error fetching sub core functions:', error);
+			throw error;
+		}
+	}
 </script>
 
 <div class="rounded-lg border">
@@ -50,10 +75,23 @@
 	</div>
 
 	{#if isExpanded}
-		<div class="border-t p-4">
+		<div class="relative space-y-4 px-4 pt-4 md:pl-14 md:pr-10">
+			{#await fetchSubCoreFunctions(coreFunctionId)}
+				loading...
+			{:then data}
+				{#if data.length === 0}
+				<h1>No Sub-core functions found</h1>
+				{:else}
+				{#each data as d (d.id)}
+					<CoreFunctionIndicator name={d.name} />
+				{/each}
+				{/if}
+			{/await}
+		</div>
+		<!-- <div class="border-t p-4">
 			<div class="space-y-4">
 				<h1>No Sub-core functions found</h1>
 			</div>
-		</div>
+		</div> -->
 	{/if}
 </div>

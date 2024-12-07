@@ -21,6 +21,7 @@
 	let displayName = $state('');
 	const { createCoreFunctionForm: data } = getCoreFunctionFormContext();
 	const coreFunctionStore = getCoreFunctionStore();
+	const { size } = coreFunctionStore;
 	const form = superForm(data!, {
 		dataType: 'json',
 		validators: zodClient(createCoreFunctionSchema),
@@ -28,13 +29,15 @@
 		onUpdate({ form, result }) {
 			const action = result.data as FormResult<CoreFunctionFormResult>;
 			if (form.valid && action && coreFunctionStore) {
-				console.log(action);
 				const coreFunction = action.coreFunction;
 				coreFunctionStore.addCoreFunction(coreFunction);
 				showSuccessToast(`Succesfully added core function ${coreFunction.name}`);
 				const ipcrId = $formData.ipcr_teaching_id; // Save ID before reset
 				isOpen = false;
-				reset({ data: { ipcr_teaching_id: ipcrId }, newState: { ipcr_teaching_id: ipcrId } });
+				reset({
+					data: { ipcr_teaching_id: ipcrId, position: $size },
+					newState: { ipcr_teaching_id: ipcrId, position: $size }
+				});
 				displayName = '';
 			}
 		}
@@ -44,6 +47,7 @@
 	const { form: formData, enhance, delayed, message, reset } = form;
 	$effect(() => {
 		const currentIpcr = $currentUserIPCR.find((c) => c.id === ipcrId);
+		$formData.position = $size;
 		if (currentIpcr) {
 			$formData.ipcr_teaching_id = currentIpcr.id;
 		}
@@ -111,6 +115,7 @@
 			</Dialog.Description>
 		</Dialog.Header>
 		<form action="?/createcorefunction" method="POST" use:enhance class="space-y-6">
+			<input hidden name="index" value={$formData.position} />
 			<input hidden name="ipcr_etaching_id" value={$formData.ipcr_teaching_id} />
 			<Form.Field {form} name="name">
 				<Form.Control>

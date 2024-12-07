@@ -5,7 +5,6 @@ import {
 	deleteCoreFunctionSchema,
 	updateCoreFunctionSchema,
 	type CreateCoreFunctionSchema,
-	type DeleteCoreFunctionInput,
 	type DeleteCoreFunctionSchema,
 	type UpdateCoreFunctionSchema
 } from './(components)/(data)/(schema)/core_function_schema';
@@ -26,12 +25,12 @@ export const actions = {
 			});
 		}
 
-		let { name, ipcr_teaching_id, unit, reviewer_id } = form.data;
+		let { name, ipcr_teaching_id, unit, reviewer_id, position } = form.data;
 		name = titleCase(name.toLocaleLowerCase());
 
 		const { data: coreFunction, error: coreFunctionError } = await supabase
 			.from('core_function')
-			.insert({ name, ipcr_teaching_id, unit, reviewer_id })
+			.insert({ name, ipcr_teaching_id, unit, reviewer_id, position })
 			.select()
 			.single();
 		if (coreFunctionError) {

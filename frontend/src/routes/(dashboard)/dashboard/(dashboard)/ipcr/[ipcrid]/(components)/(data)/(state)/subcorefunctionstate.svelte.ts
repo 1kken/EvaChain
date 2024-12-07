@@ -6,6 +6,7 @@ const SUB_CORE_FUNCTION_STATE_KEY = Symbol('SUB_CORE_FUNCTION_STATE_KEY');
 
 type SubCoreFunctionState = {
 	currentSubCoreFunctions: Writable<Tables<'sub_core_function'>[]>;
+	size: Writable<number>;
 	addSubCoreFunction: (subCoreFunction: Tables<'sub_core_function'>) => void;
 	updateSubCoreFunction: (id: string, updates: Partial<Tables<'sub_core_function'>>) => void;
 	removeSubCoreFunction: (id: string) => void;
@@ -15,6 +16,12 @@ function createSubCoreFunctionStore(
 	initialData?: Tables<'sub_core_function'>[]
 ): SubCoreFunctionState {
 	const currentSubCoreFunctions = writable<Tables<'sub_core_function'>[]>(initialData || []);
+	const size = writable(initialData?.length || 0);
+
+	// Update size whenever currentSubCoreFunctions changes
+	currentSubCoreFunctions.subscribe((functions) => {
+		size.set(functions.length);
+	});
 
 	function addSubCoreFunction(subCoreFunction: Tables<'sub_core_function'>) {
 		currentSubCoreFunctions.update((functions) => [...functions, subCoreFunction]);
@@ -32,6 +39,7 @@ function createSubCoreFunctionStore(
 
 	return {
 		currentSubCoreFunctions,
+		size,
 		addSubCoreFunction,
 		updateSubCoreFunction,
 		removeSubCoreFunction

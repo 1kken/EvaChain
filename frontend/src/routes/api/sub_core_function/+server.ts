@@ -1,43 +1,30 @@
-import { error, json, type RequestHandler } from '@sveltejs/kit';
+import { json } from '@sveltejs/kit';
+import type { RequestHandler } from './$types';
+
 export const GET: RequestHandler = async ({ url, locals: { supabase } }) => {
 	try {
-		const coreFunctionId = url.searchParams.get('coreFunctionId');
+		// Get core_function_id from URL parameter
+		const coreFunctionId = url.searchParams.get('core_function_id');
 
 		if (!coreFunctionId) {
-			throw error(400, 'Core Function ID is required');
+			return json({ error: 'core_function_id is required' }, { status: 400 });
 		}
 
-		const { data: subCoreFunctions, error: supabaseError } = await supabase
+		// Query the database for sub core functions
+		const { data: subCoreFunctions, error } = await supabase
 			.from('sub_core_function')
-			.select(
-				`
-                id,
-                name,
-                created_at,
-                updated_at,
-                core_function_id,
-                core_function:core_function_id (
-                    id,
-                    name,
-                    unit,
-                    reviewer_id
-                )
-            `
-			)
+			.select('*')
 			.eq('core_function_id', coreFunctionId)
-			.order('created_at', { ascending: true });
+			.order('position');
 
-		if (supabaseError) {
-			throw error(500, 'Error fetching sub core functions');
+		if (error) {
+			console.error('Database error:', error);
+			return json({ error: 'Failed to fetch sub core functions' }, { status: 500 });
 		}
 
-		if (!subCoreFunctions) {
-			throw error(404, 'Sub core functions not found');
-		}
-
-		return json({ subCoreFunctions });
+		return json({ data: subCoreFunctions });
 	} catch (err) {
-		console.error('Error in GET sub core functions:', err);
-		throw error(500, 'Internal server error');
+		console.error('Server error:', err);
+		return json({ error: 'Internal server error' }, { status: 500 });
 	}
 };
