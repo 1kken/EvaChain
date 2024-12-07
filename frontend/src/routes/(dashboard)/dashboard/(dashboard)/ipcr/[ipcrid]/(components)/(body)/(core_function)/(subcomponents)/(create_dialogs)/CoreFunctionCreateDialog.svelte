@@ -3,7 +3,8 @@
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
-	import { LoaderCircle, Plus } from 'lucide-svelte';
+	import { LoaderCircle } from 'lucide-svelte';
+	import { Plus } from 'lucide-svelte';
 	import { getCoreFunctionFormContext } from '../../../../(data)/(forms)/core_function_form.svelte';
 	import SuperDebug, { superForm, type FormResult } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
@@ -115,8 +116,8 @@
 			</Dialog.Description>
 		</Dialog.Header>
 		<form action="?/createcorefunction" method="POST" use:enhance class="space-y-6">
-			<input hidden name="index" value={$formData.position} />
-			<input hidden name="ipcr_etaching_id" value={$formData.ipcr_teaching_id} />
+			<input hidden name="position" value={$formData.position} />
+			<input hidden name="ipcr_teaching_id" value={$formData.ipcr_teaching_id} />
 			<Form.Field {form} name="name">
 				<Form.Control>
 					{#snippet children({ props })}

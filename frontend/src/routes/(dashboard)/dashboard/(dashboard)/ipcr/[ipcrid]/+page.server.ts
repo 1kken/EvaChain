@@ -10,6 +10,10 @@ import {
 } from './(components)/(data)/(schema)/core_function_schema';
 import { zod } from 'sveltekit-superforms/adapters';
 import { titleCase } from 'title-case';
+import {
+	createSubCoreFunctionSchema,
+	type CreateSubCoreFunctionSchema
+} from './(components)/(data)/(schema)/sub_core_function_schema';
 
 export const actions = {
 	createcorefunction: async ({ request, locals: { supabase, session } }) => {
@@ -99,5 +103,36 @@ export const actions = {
 			});
 		}
 		return { form, coreFunction };
+	},
+	//sub core actions
+	createsubcorefunction: async ({ request, locals: { supabase, session } }) => {
+		const form = await superValidate<Infer<CreateSubCoreFunctionSchema>, App.Superforms.Message>(
+			request,
+			zod(createSubCoreFunctionSchema)
+		);
+
+		if (!form.valid) {
+			return message(form, {
+				status: 'error',
+				text: 'Unprocessable input!'
+			});
+		}
+
+		let { name, position, core_function_id } = form.data;
+		name = titleCase(name.toLocaleLowerCase());
+
+		const { data: subCoreFunction, error: errorSubCoreFunction } = await supabase
+			.from('sub_core_function')
+			.insert({ name, position, core_function_id })
+			.select()
+			.single();
+
+		if (errorSubCoreFunction) {
+			return message(form, {
+				status: 'error',
+				text: `Error saving core function, ${errorSubCoreFunction.message}`
+			});
+		}
+		return { form, subCoreFunction };
 	}
 } satisfies Actions;

@@ -3,9 +3,7 @@ import type { RequestHandler } from './$types';
 import type { Tables } from '$lib/types/database.types';
 
 export const POST: RequestHandler = async ({ request, locals: { supabase } }) => {
-	// Add artificial delay (1 second)
 	try {
-		await new Promise((resolve) => setTimeout(resolve, 1000));
 		const items: Tables<'core_function'>[] = await request.json();
 
 		// Process each update sequentially
