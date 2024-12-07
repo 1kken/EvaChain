@@ -7,7 +7,8 @@ CREATE TABLE core_function (
    reviewer_id UUID REFERENCES auth.users(id),
    position SMALLINT NOT NULL,
    created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
-   updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
+   updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
+   UNIQUE(name, ipcr_teaching_id)
 );
 
 -- Add index for better query performance when ordering by position

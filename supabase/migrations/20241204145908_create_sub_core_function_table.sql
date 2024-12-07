@@ -2,9 +2,10 @@ CREATE TABLE sub_core_function (
    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
    core_function_id UUID REFERENCES core_function(id) ON DELETE CASCADE NOT NULL,
    name TEXT NOT NULL,
-   position INTEGER NOT NULL,  -- Added position column with default value
+   position INTEGER NOT NULL,
    created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
-   updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
+   updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
+   UNIQUE(core_function_id, name)
 );
 
 -- Add an index on position and core_function_id for better performance when sorting

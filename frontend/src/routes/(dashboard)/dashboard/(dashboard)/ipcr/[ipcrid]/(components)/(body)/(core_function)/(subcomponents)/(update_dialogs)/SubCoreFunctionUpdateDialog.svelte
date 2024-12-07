@@ -5,12 +5,11 @@
 	import { LoaderCircle } from 'lucide-svelte';
 	import { getSubCoreFunctionFormContext } from '../../../../(data)/(forms)/sub_core_function_form.svelte';
 	import { getSubCoreFunctionStore } from '../../../../(data)/(state)/subcorefunctionstate.svelte';
-	import SuperDebug, { superForm, type FormResult } from 'sveltekit-superforms';
+	import { superForm, type FormResult } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { updateSubCoreFunctionSchema } from '../../../../(data)/(schema)/sub_core_function_schema';
 	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';
 	import * as Form from '$lib/components/ui/form/index.js';
-	import { browser } from '$app/environment';
 	import type { SubCoreFunctionFormResult } from '../../../../(data)/types';
 	interface Props {
 		subCoreFunctionId: string;
@@ -31,7 +30,7 @@
 		multipleSubmits: 'prevent',
 		onUpdate({ form, result }) {
 			const action = result.data as FormResult<SubCoreFunctionFormResult>;
-			if (form.valid && action && subCoreFunctionStore) {
+			if (form.valid && action.subCoreFunction && subCoreFunctionStore) {
 				const subCoreFunction = action.subCoreFunction;
 				subCoreFunctionStore.updateSubCoreFunction(subCoreFunction.id, subCoreFunction);
 				showSuccessToast(`Succesfully added core function ${subCoreFunction.name}`);
@@ -98,8 +97,5 @@
 				{/if}
 			</div>
 		</form>
-		{#if browser}
-			<SuperDebug data={$formData} />
-		{/if}
 	</Dialog.Content>
 </Dialog.Root>

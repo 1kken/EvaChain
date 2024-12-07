@@ -12,7 +12,7 @@
 	import { getIPCRStore } from '../../../../../../(data)/state.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import type { CoreFunctionFormResult } from '../../../../(data)/types';
-	import { showSuccessToast } from '$lib/utils/toast';
+	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';
 	import { getCoreFunctionStore } from '../../../../(data)/(state)/corefunctionstate.svelte';
 	import { browser } from '$app/environment';
 
@@ -29,7 +29,7 @@
 		multipleSubmits: 'prevent',
 		onUpdate({ form, result }) {
 			const action = result.data as FormResult<CoreFunctionFormResult>;
-			if (form.valid && action && coreFunctionStore) {
+			if (form.valid && action.coreFunction && coreFunctionStore) {
 				const coreFunction = action.coreFunction;
 				coreFunctionStore.addCoreFunction(coreFunction);
 				showSuccessToast(`Succesfully added core function ${coreFunction.name}`);
@@ -52,11 +52,8 @@
 		if (currentIpcr) {
 			$formData.ipcr_teaching_id = currentIpcr.id;
 		}
-		if ($message?.status === 'success') {
-			showSuccessToast($message.text);
-		}
 		if ($message?.status === 'error') {
-			showSuccessToast($message.text);
+			showErrorToast($message.text);
 		}
 	});
 
@@ -198,8 +195,5 @@
 				{/if}
 			</div>
 		</form>
-		{#if browser}
-			<SuperDebug data={$formData} />
-		{/if}
 	</Dialog.Content>
 </Dialog.Root>

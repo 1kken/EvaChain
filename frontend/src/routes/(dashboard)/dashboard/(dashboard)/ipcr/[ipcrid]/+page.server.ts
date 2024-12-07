@@ -42,6 +42,12 @@ export const actions = {
 			.select()
 			.single();
 		if (coreFunctionError) {
+			if (coreFunctionError.code === '23505') {
+				return message(form, {
+					status: 'error',
+					text: `Cannot have the same name for core functions!`
+				});
+			}
 			return message(form, {
 				status: 'error',
 				text: `Error saving core function, ${coreFunctionError.message}`
@@ -101,6 +107,12 @@ export const actions = {
 			.select()
 			.single();
 		if (updateError) {
+			if (updateError.code === '23505') {
+				return message(form, {
+					status: 'error',
+					text: `Cannot have the same name for core functions!`
+				});
+			}
 			return message(form, {
 				status: 'error',
 				text: `Error saving IPCR ${updateError.message}`
@@ -132,6 +144,12 @@ export const actions = {
 			.single();
 
 		if (errorSubCoreFunction) {
+			if (errorSubCoreFunction.code === '23505') {
+				return message(form, {
+					status: 'error',
+					text: `Cannot have the same name for sub core functions!`
+				});
+			}
 			return message(form, {
 				status: 'error',
 				text: `Error saving core function, ${errorSubCoreFunction.message}`
@@ -191,6 +209,12 @@ export const actions = {
 			.select()
 			.single();
 		if (updateError) {
+			if (updateError.code === '23505') {
+				return message(form, {
+					status: 'error',
+					text: `Cannot have the same name for sub core functions!`
+				});
+			}
 			return message(form, {
 				status: 'error',
 				text: `Error saving IPCR ${updateError.message}`

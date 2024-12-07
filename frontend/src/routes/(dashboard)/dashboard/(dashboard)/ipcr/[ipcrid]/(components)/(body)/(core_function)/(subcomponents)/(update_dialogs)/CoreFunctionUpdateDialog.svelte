@@ -9,7 +9,7 @@
 	import { updateCoreFunctionSchema } from '../../../../(data)/(schema)/core_function_schema';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import type { CoreFunctionFormResult } from '../../../../(data)/types';
-	import { showSuccessToast } from '$lib/utils/toast';
+	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';
 	import { getCoreFunctionStore } from '../../../../(data)/(state)/corefunctionstate.svelte';
 
 	let {
@@ -26,16 +26,15 @@
 		dataType: 'json',
 		validators: zodClient(updateCoreFunctionSchema),
 		multipleSubmits: 'prevent',
-		resetForm: false,
 		onUpdate({ form, result }) {
 			const action = result.data as FormResult<CoreFunctionFormResult>;
-			if (form.valid && action && currentCoreFunction) {
+			if (form.valid && action.coreFunction && currentCoreFunction) {
 				const coreFunction = action.coreFunction;
 				updateCoreFunction(coreFunctionId, coreFunction);
-				showSuccessToast(`Succesfully added core function ${coreFunction.name}`);
 				displayName = '';
 				isOpen = false;
 				isDrawerOpen = false;
+				showSuccessToast(`Succesfully added core function ${coreFunction.name}`);
 			}
 		}
 	});
@@ -53,7 +52,7 @@
 			}
 		}
 		if ($message?.status === 'error') {
-			showSuccessToast($message.text);
+			showErrorToast($message.text);
 		}
 	});
 
