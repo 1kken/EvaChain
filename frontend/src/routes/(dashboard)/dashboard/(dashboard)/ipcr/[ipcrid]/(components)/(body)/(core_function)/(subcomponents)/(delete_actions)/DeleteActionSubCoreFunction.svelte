@@ -1,52 +1,47 @@
 <script lang="ts">
 	import * as Form from '$lib/components/ui/form';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
-	import { showSuccessToast, showWarningToast } from '$lib/utils/toast';
+	import { showWarningToast } from '$lib/utils/toast';
 	import { superForm, type FormResult, type SuperValidated } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { Input } from '$lib/components/ui/input';
 	import { LoaderCircle } from 'lucide-svelte';
 	import { TriangleAlert } from 'lucide-svelte';
 	import { Trash2 } from 'lucide-svelte';
-	import { deleteCoreFunctionSchema } from '../../../../(data)/(schema)/core_function_schema';
-	import { getCoreFunctionStore } from '../../../../(data)/(state)/corefunctionstate.svelte';
-	import type { CoreFunctionFormResult } from '../../../../(data)/types';
-	import { getCoreFunctionFormContext } from '../../../../(data)/(forms)/core_function_form.svelte';
+	import { getSubCoreFunctionStore } from '../../../../(data)/(state)/subcorefunctionstate.svelte';
+	import { getSubCoreFunctionFormContext } from '../../../../(data)/(forms)/sub_core_function_form.svelte';
+	import { deleteSubCoreFunctionSchema } from '../../../../(data)/(schema)/sub_core_function_schema';
+	import type { SubCoreFunctionFormResult } from '../../../../(data)/types';
+
 	interface Props {
-		id: string;
+		subCoreFunctionId: string;
 		isDrawerOpen: boolean;
 	}
-	const { currentCoreFunctions, removeCoreFunction } = getCoreFunctionStore();
-
-	let { id, isDrawerOpen = $bindable() }: Props = $props();
-	const { deleteCoreFunctionForm: data } = getCoreFunctionFormContext();
+	const { currentSubCoreFunctions, removeSubCoreFunction } = getSubCoreFunctionStore();
+	const { deleteSubCoreFunctionForm: data } = getSubCoreFunctionFormContext();
+	let { subCoreFunctionId, isDrawerOpen = $bindable() }: Props = $props();
 	const form = superForm(data, {
-		validators: zodClient(deleteCoreFunctionSchema),
+		validators: zodClient(deleteSubCoreFunctionSchema),
 		multipleSubmits: 'prevent',
 		dataType: 'json',
 		onUpdate({ form, result }) {
-			const action = result.data as FormResult<CoreFunctionFormResult>;
+			const action = result.data as FormResult<SubCoreFunctionFormResult>;
 			if (form.valid && action) {
-				const core_function = action.coreFunction;
-				removeCoreFunction(core_function.id);
-				showWarningToast(`Succesfully deleted IPCR ${core_function.name}`);
+				const sub_core_function = action.subCoreFunction;
+				removeSubCoreFunction(sub_core_function.id);
+				showWarningToast(`Succesfully deleted IPCR ${sub_core_function.name}`);
 				isDrawerOpen = false;
 			}
 		}
 	});
-	const { form: formData, enhance, message, delayed } = form;
-	$effect(() => {
-		if ($message?.status === 'error') {
-			showSuccessToast($message.text);
-		}
-	});
+	const { form: formData, enhance, delayed } = form;
 	let isOpen = $state(false);
-	const currentCoreFunction = $currentCoreFunctions.find((c) => c.id === id);
+	const currentSubCoreFunction = $currentSubCoreFunctions.find((c) => c.id === subCoreFunctionId);
 	let name = $state('');
-	if (currentCoreFunction) {
-		$formData.id = currentCoreFunction.id;
-		$formData.expectedTitle = currentCoreFunction.name;
-		name = currentCoreFunction.name;
+	if (currentSubCoreFunction) {
+		$formData.id = currentSubCoreFunction.id;
+		$formData.expectedTitle = currentSubCoreFunction.name;
+		name = currentSubCoreFunction.name;
 	}
 </script>
 
@@ -67,7 +62,7 @@
 				This action cannot be undone. This will permanently delete {name} and all its dependants.
 			</AlertDialog.Description>
 		</AlertDialog.Header>
-		<form method="POST" action="?/deletecorefunction" use:enhance>
+		<form method="POST" action="?/deletesubcorefunction" use:enhance>
 			<input hidden value={$formData.owner_id} name="owner_id" />
 			<Input name="id" class="hidden" bind:value={$formData.id} />
 			<Form.Field {form} name="confirmTitle">

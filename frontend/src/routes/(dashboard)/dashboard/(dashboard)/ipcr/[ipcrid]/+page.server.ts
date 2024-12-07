@@ -12,7 +12,11 @@ import { zod } from 'sveltekit-superforms/adapters';
 import { titleCase } from 'title-case';
 import {
 	createSubCoreFunctionSchema,
-	type CreateSubCoreFunctionSchema
+	deleteSubCoreFunctionSchema,
+	updateSubCoreFunctionSchema,
+	type CreateSubCoreFunctionSchema,
+	type DeleteSubCoreFunctionSchema,
+	type UpdateSubCoreFunctionSchema
 } from './(components)/(data)/(schema)/sub_core_function_schema';
 
 export const actions = {
@@ -131,6 +135,65 @@ export const actions = {
 			return message(form, {
 				status: 'error',
 				text: `Error saving core function, ${errorSubCoreFunction.message}`
+			});
+		}
+		return { form, subCoreFunction };
+	},
+	deletesubcorefunction: async ({ request, locals: { supabase, session } }) => {
+		const form = await superValidate<Infer<DeleteSubCoreFunctionSchema>, App.Superforms.Message>(
+			request,
+			zod(deleteSubCoreFunctionSchema)
+		);
+		const { id } = form.data;
+
+		if (!form.valid) {
+			return message(form, {
+				status: 'error',
+				text: 'Unprocessable input!'
+			});
+		}
+
+		const { error: deleteError, data: subCoreFunction } = await supabase
+			.from('sub_core_function')
+			.delete()
+			.eq('id', id)
+			.select()
+			.single();
+
+		if (deleteError) {
+			return message(form, {
+				status: 'error',
+				text: `Error saving IPCR ${deleteError.message}`
+			});
+		}
+		return { form, subCoreFunction };
+	},
+	updatesubcorefunction: async ({ request, locals: { supabase, session } }) => {
+		const form = await superValidate<Infer<UpdateSubCoreFunctionSchema>, App.Superforms.Message>(
+			request,
+			zod(updateSubCoreFunctionSchema)
+		);
+
+		if (!form.valid) {
+			return message(form, {
+				status: 'error',
+				text: 'Unprocessable input!'
+			});
+		}
+		let { id, name } = form.data;
+		if (name) {
+			name = titleCase(name.toLocaleLowerCase());
+		}
+		const { data: subCoreFunction, error: updateError } = await supabase
+			.from('sub_core_function')
+			.update({ name })
+			.eq('id', id)
+			.select()
+			.single();
+		if (updateError) {
+			return message(form, {
+				status: 'error',
+				text: `Error saving IPCR ${updateError.message}`
 			});
 		}
 		return { form, subCoreFunction };

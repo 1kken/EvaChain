@@ -15,8 +15,7 @@ export const updateSubCoreFunctionSchema = z
 			.string()
 			.min(1, 'Name is required')
 			.max(1000, 'Name must be less than 1000 characters')
-			.optional(),
-		position: z.number().int('Position must be an integer').min(0).optional()
+			.optional()
 	})
 	.refine((data) => Object.keys(data).length > 1, {
 		message: 'At least one field must be provided for update'

@@ -3,12 +3,21 @@
 	import { Button } from '$lib/components/ui/button';
 	import { cn } from '$lib/utils';
 	import SubCoreFunctionIndicatorCreateDialog from './(subcomponents)/(create_dialogs)/SubCoreFunctionIndicatorCreateDialog.svelte';
+	import DeleteActionSubCoreFunction from './(subcomponents)/(delete_actions)/DeleteActionSubCoreFunction.svelte';
+	import SubCoreFunction from './SubCoreFunction.svelte';
+	import DropDownWrapper from './(subcomponents)/DropDownWrapper.svelte';
+	import SubCoreFunctionUpdateDialog from './(subcomponents)/(update_dialogs)/SubCoreFunctionUpdateDialog.svelte';
 
+	interface Props {
+		name: string;
+		sub_core_function_id: string;
+	}
 	// Props
-	let { name }: { name: string } = $props();
+	let { name, sub_core_function_id }: Props = $props();
 
 	// States
 	let isExpanded: boolean = $state(false);
+	let isDrawerOpen = $state(false);
 	let targets: number[] = $state([0]); // Initialize with one target
 
 	/** Toggle expansion */
@@ -30,7 +39,17 @@
 			</Button>
 			<h4 class="font-medium">{name}</h4>
 		</div>
-		<SubCoreFunctionIndicatorCreateDialog />
+
+		{#snippet deleteAction()}
+			<DeleteActionSubCoreFunction subCoreFunctionId={sub_core_function_id} bind:isDrawerOpen />
+		{/snippet}
+		{#snippet updateDialog()}
+			<SubCoreFunctionUpdateDialog subCoreFunctionId={sub_core_function_id} bind:isDrawerOpen />
+		{/snippet}
+		<div class="flex gap-4">
+			<SubCoreFunctionIndicatorCreateDialog />
+			<DropDownWrapper {deleteAction} {updateDialog} bind:isDrawerOpen />
+		</div>
 	</div>
 
 	{#if isExpanded}

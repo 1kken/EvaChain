@@ -1,45 +1,46 @@
 <script lang="ts">
-	import { buttonVariants } from '$lib/components/ui/button/index.js';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
-	import { Plus } from 'lucide-svelte';
+	import { Pencil } from 'lucide-svelte';
 	import { LoaderCircle } from 'lucide-svelte';
 	import { getSubCoreFunctionFormContext } from '../../../../(data)/(forms)/sub_core_function_form.svelte';
 	import { getSubCoreFunctionStore } from '../../../../(data)/(state)/subcorefunctionstate.svelte';
 	import SuperDebug, { superForm, type FormResult } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
-	import { createSubCoreFunctionSchema } from '../../../../(data)/(schema)/sub_core_function_schema';
-	import type { SubCoreFunctionFormResult } from '../../../../(data)/types';
+	import { updateSubCoreFunctionSchema } from '../../../../(data)/(schema)/sub_core_function_schema';
 	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';
 	import * as Form from '$lib/components/ui/form/index.js';
 	import { browser } from '$app/environment';
+	import type { SubCoreFunctionFormResult } from '../../../../(data)/types';
 	interface Props {
-		coreFunctionId: string;
+		subCoreFunctionId: string;
+		isDrawerOpen: boolean;
 	}
-	let { coreFunctionId }: Props = $props();
+	let { subCoreFunctionId, isDrawerOpen = $bindable() }: Props = $props();
 	let isOpen = $state(false);
-	const { createSubCoreFunctionForm: data } = getSubCoreFunctionFormContext();
+	const { updateSubCoreFunctionForm: data } = getSubCoreFunctionFormContext();
 	// Get the complete store object
 	const subCoreFunctionStore = getSubCoreFunctionStore();
 
 	// Destructure specific properties
-	const { currentSubCoreFunctions, size } = subCoreFunctionStore;
+	const { currentSubCoreFunctions } = subCoreFunctionStore;
 
 	const form = superForm(data!, {
 		dataType: 'json',
-		validators: zodClient(createSubCoreFunctionSchema),
+		validators: zodClient(updateSubCoreFunctionSchema),
 		multipleSubmits: 'prevent',
 		onUpdate({ form, result }) {
 			const action = result.data as FormResult<SubCoreFunctionFormResult>;
 			if (form.valid && action && subCoreFunctionStore) {
 				const subCoreFunction = action.subCoreFunction;
-				subCoreFunctionStore.addSubCoreFunction(subCoreFunction);
+				subCoreFunctionStore.updateSubCoreFunction(subCoreFunction.id, subCoreFunction);
 				showSuccessToast(`Succesfully added core function ${subCoreFunction.name}`);
-				const core_function_id = $formData.core_function_id; // Save ID before reset
+				const sub_core_function_id = $formData.id; // Save ID before reset
 				isOpen = false;
+				isDrawerOpen = false;
 				reset({
-					data: { core_function_id: core_function_id, position: $size },
-					newState: { core_function_id: core_function_id, position: $size }
+					data: { id: sub_core_function_id },
+					newState: { id: sub_core_function_id }
 				});
 			}
 		}
@@ -50,18 +51,22 @@
 		if ($message?.status === 'error') {
 			showErrorToast($message.text);
 		}
-		if (coreFunctionId) {
-			$formData.core_function_id = coreFunctionId;
-			$formData.position = $size;
+		if (subCoreFunctionId) {
+			$formData.id = subCoreFunctionId;
+		}
+		const currentSubCoreFunction = $currentSubCoreFunctions.find(
+			(sf) => sf.id === subCoreFunctionId
+		);
+		if (currentSubCoreFunction) {
+			$formData.name = currentSubCoreFunction.name;
 		}
 	});
 </script>
 
 <Dialog.Root bind:open={isOpen}>
-	<Dialog.Trigger class={buttonVariants({ variant: 'outline' })}>
-		<span class="flex items-center gap-2">
-			<Plus class="h-5 w-5" />
-			<span class="hidden md:inline">Add Sub Core Function</span>
+	<Dialog.Trigger class="focus-visible:outline-none">
+		<span class="flex items-center gap-3">
+			<Pencil size={16} />Edit
 		</span>
 	</Dialog.Trigger>
 	<Dialog.Content class="sm:max-w-[425px]">
@@ -73,9 +78,8 @@
 				actionable components for detailed performance evaluation.
 			</Dialog.Description>
 		</Dialog.Header>
-		<form action="?/createsubcorefunction" method="POST" use:enhance class="space-y-6">
-			<input hidden name="position" value={$formData.position} />
-			<input hidden name="core_function_id" value={$formData.core_function_id} />
+		<form action="?/updatesubcorefunction" method="POST" use:enhance class="space-y-6">
+			<input hidden name="id" value={$formData.id} />
 			<Form.Field {form} name="name">
 				<Form.Control>
 					{#snippet children({ props })}

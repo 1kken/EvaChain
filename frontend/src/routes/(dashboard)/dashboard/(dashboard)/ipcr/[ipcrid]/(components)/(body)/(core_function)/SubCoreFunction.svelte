@@ -177,7 +177,10 @@
 					{:else}
 						{#each dndItems as subCoreFunction (subCoreFunction.id)}
 							<div class="py-2">
-								<CoreFunctionIndicator name={subCoreFunction.name} />
+								<CoreFunctionIndicator
+									name={subCoreFunction.name}
+									sub_core_function_id={subCoreFunction.id}
+								/>
 							</div>
 						{/each}
 					{/if}

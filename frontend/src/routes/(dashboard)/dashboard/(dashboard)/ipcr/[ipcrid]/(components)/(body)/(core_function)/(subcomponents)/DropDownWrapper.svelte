@@ -4,8 +4,8 @@
 	import type { Snippet } from 'svelte';
 
 	interface Props {
-		deleteAction: Snippet;
-		updateDialog: Snippet;
+		deleteAction?: Snippet;
+		updateDialog?: Snippet;
 		isDrawerOpen: boolean;
 	}
 
@@ -23,14 +23,14 @@
 					e.preventDefault();
 				}}
 			>
-				{@render deleteAction()}
+				{@render deleteAction?.()}
 			</DropdownMenu.Item>
 			<DropdownMenu.Item
 				onSelect={(e) => {
 					e.preventDefault();
 				}}
 			>
-				{@render updateDialog()}
+				{@render updateDialog?.()}
 			</DropdownMenu.Item>
 		</DropdownMenu.Group>
 	</DropdownMenu.Content>
