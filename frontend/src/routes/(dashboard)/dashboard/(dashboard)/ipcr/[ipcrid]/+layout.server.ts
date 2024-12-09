@@ -12,7 +12,11 @@ import {
 	deleteSubCoreFunctionSchema,
 	updateSubCoreFunctionSchema
 } from './(components)/(data)/(schema)/sub_core_function_schema';
-
+import {
+	createIndicatorSchema,
+	updateIndicatorSchema
+} from './(components)/(data)/indicator_schema';
+import { universalDeleteSchema } from './(components)/(data)/universal_delete_schema';
 export const load = (async ({ params, locals: { supabase, safeGetSession } }) => {
 	const ipcrId = params.ipcrid;
 	if (!ipcrId) {
@@ -28,6 +32,10 @@ export const load = (async ({ params, locals: { supabase, safeGetSession } }) =>
 	const createSubCoreFunctionForm = await superValidate(zod(createSubCoreFunctionSchema));
 	const deleteSubCoreFunctionForm = await superValidate(zod(deleteSubCoreFunctionSchema));
 	const updateSubCoreFunctionForm = await superValidate(zod(updateSubCoreFunctionSchema));
+	//indicator form
+	const createIndicatorForm = await superValidate(zod(createIndicatorSchema));
+	const deleteIndicatorForm = await superValidate(zod(universalDeleteSchema));
+	const updateIndicatorForm = await superValidate(zod(updateIndicatorSchema));
 	// core function fetch
 	const { data: coreFunctions, error: coreFunctionError } = await supabase
 		.from('core_function')
@@ -45,6 +53,11 @@ export const load = (async ({ params, locals: { supabase, safeGetSession } }) =>
 			createSubCoreFunctionForm,
 			deleteSubCoreFunctionForm,
 			updateSubCoreFunctionForm
+		},
+		indicatorForm: {
+			createIndicatorForm,
+			deleteIndicatorForm,
+			updateIndicatorForm
 		}
 	};
 }) satisfies LayoutServerLoad;

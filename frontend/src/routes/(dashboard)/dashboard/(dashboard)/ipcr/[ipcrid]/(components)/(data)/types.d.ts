@@ -7,3 +7,8 @@ export type SubCoreFunctionFormResult = {
 	form: any;
 	core_function: Tables<'sub_core_function'>;
 };
+
+export type indicatorFormResult = {
+	form: any;
+	indicatorData: Tables<'sub_core_function'>;
+};

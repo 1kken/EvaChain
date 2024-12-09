@@ -100,7 +100,7 @@
 {#if isExpanded}
 	<div
 		class="relative space-y-4 px-4 pt-4 md:pl-14 md:pr-10"
-		use:dndzone={{ items: dndItems, flipDurationMs }}
+		use:dndzone={{ items: dndItems, flipDurationMs, dropFromOthersDisabled: true }}
 		onconsider={handleDndConsider}
 		onfinalize={handleDndFinalize}
 	>

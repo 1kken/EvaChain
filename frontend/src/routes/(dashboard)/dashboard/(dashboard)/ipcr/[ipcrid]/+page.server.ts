@@ -18,6 +18,11 @@ import {
 	type DeleteSubCoreFunctionSchema,
 	type UpdateSubCoreFunctionSchema
 } from './(components)/(data)/(schema)/sub_core_function_schema';
+import type CreateIndicatorDialog from './(components)/(indicator)/CreateIndicatorDialog.svelte';
+import {
+	createIndicatorSchema,
+	type CreateIndicatorSchema
+} from './(components)/(data)/indicator_schema';
 
 export const actions = {
 	createcorefunction: async ({ request, locals: { supabase, session } }) => {
@@ -221,5 +226,33 @@ export const actions = {
 			});
 		}
 		return { form, subCoreFunction };
+	},
+	createindicator: async ({ request, locals: { supabase, session } }) => {
+		const form = await superValidate<Infer<CreateIndicatorSchema>, App.Superforms.Message>(
+			request,
+			zod(createIndicatorSchema)
+		);
+
+		if (!form.valid) {
+			return message(form, {
+				status: 'error',
+				text: 'Unprocessable input!'
+			});
+		}
+
+		let { indicator, core_function_id, sub_core_function_id, position } = form.data;
+
+		const { data: indicatorData, error: indicatorError } = await supabase
+			.from('indicator')
+			.insert({ indicator, core_function_id, sub_core_function_id, position })
+			.select()
+			.single();
+		if (indicatorError) {
+			return message(form, {
+				status: 'error',
+				text: `Error saving core function, ${indicatorError.message}`
+			});
+		}
+		return { form, indicatorData };
 	}
 } satisfies Actions;

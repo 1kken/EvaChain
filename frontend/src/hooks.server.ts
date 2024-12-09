@@ -1,5 +1,5 @@
 import { createServerClient } from '@supabase/ssr';
-import { type Handle, redirect } from '@sveltejs/kit';
+import { error, type Handle, redirect } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
 import type { Database } from '$lib/types/database.types';
 import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public';
@@ -73,6 +73,10 @@ const authGuard: Handle = async ({ event, resolve }) => {
 	if (!event.locals.session && event.url.pathname.startsWith('/dashboard')) {
 		redirect(303, '/auth');
 	}
+
+	// if (!event.locals.session && event.url.pathname.startsWith('/api')) {
+	// 	error(403, 'Unauthorized access');
+	// }
 
 	if (event.locals.session && event.url.pathname === '/auth') {
 		redirect(303, '/dashboard');

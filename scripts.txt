@@ -13,3 +13,6 @@ npx supabase gen types --lang=typescript --local > frontend/src/lib/types/databa
 
 //generate summary
 npx ai-digest -i EvaChain/ -o EvaChain/project_summary.md
+
+//run docker
+docker run -d --restart always -p 127.0.0.1:8010:8010 -e langtool_languageModel=/ngrams -v /root/ngrams:/ngrams:ro erikvl87/languagetool

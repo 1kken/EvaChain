@@ -6,7 +6,7 @@
 	import { LoaderCircle } from 'lucide-svelte';
 	import { Plus } from 'lucide-svelte';
 	import { getCoreFunctionFormContext } from '../../../../(data)/(forms)/core_function_form.svelte';
-	import SuperDebug, { superForm, type FormResult } from 'sveltekit-superforms';
+	import { superForm, type FormResult } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { createCoreFunctionSchema } from '../../../../(data)/(schema)/core_function_schema';
 	import { getIPCRStore } from '../../../../../../(data)/state.svelte';
@@ -14,7 +14,6 @@
 	import type { CoreFunctionFormResult } from '../../../../(data)/types';
 	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';
 	import { getCoreFunctionStore } from '../../../../(data)/(state)/corefunctionstate.svelte';
-	import { browser } from '$app/environment';
 
 	let { ipcrId }: { ipcrId: string } = $props();
 	let isOpen = $state(false);

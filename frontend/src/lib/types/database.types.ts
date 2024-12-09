@@ -75,62 +75,6 @@ export type Database = {
           },
         ]
       }
-      core_function_indicator: {
-        Row: {
-          accomplishment: string | null
-          accomplishment_date: string | null
-          average_rating: number | null
-          core_function_id: string | null
-          created_at: string
-          efficiency_rating: number | null
-          id: string
-          index: number
-          indicator: string
-          indicator_date: string | null
-          quality_rating: number | null
-          timeliness_rating: number | null
-          updated_at: string
-        }
-        Insert: {
-          accomplishment?: string | null
-          accomplishment_date?: string | null
-          average_rating?: number | null
-          core_function_id?: string | null
-          created_at?: string
-          efficiency_rating?: number | null
-          id?: string
-          index: number
-          indicator: string
-          indicator_date?: string | null
-          quality_rating?: number | null
-          timeliness_rating?: number | null
-          updated_at?: string
-        }
-        Update: {
-          accomplishment?: string | null
-          accomplishment_date?: string | null
-          average_rating?: number | null
-          core_function_id?: string | null
-          created_at?: string
-          efficiency_rating?: number | null
-          id?: string
-          index?: number
-          indicator?: string
-          indicator_date?: string | null
-          quality_rating?: number | null
-          timeliness_rating?: number | null
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "core_function_indicator_core_function_id_fkey"
-            columns: ["core_function_id"]
-            isOneToOne: false
-            referencedRelation: "core_function"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       employee_status: {
         Row: {
           created_at: string
@@ -151,6 +95,75 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      indicator: {
+        Row: {
+          accomplishment: string | null
+          accomplishment_date: string | null
+          average_rating: number | null
+          core_function_id: string | null
+          created_at: string
+          efficiency_rating: number | null
+          id: string
+          indicator: string
+          indicator_date: string | null
+          position: number
+          quality_rating: number | null
+          status: Database["public"]["Enums"]["indicator_status"]
+          sub_core_function_id: string | null
+          timeliness_rating: number | null
+          updated_at: string
+        }
+        Insert: {
+          accomplishment?: string | null
+          accomplishment_date?: string | null
+          average_rating?: number | null
+          core_function_id?: string | null
+          created_at?: string
+          efficiency_rating?: number | null
+          id?: string
+          indicator: string
+          indicator_date?: string | null
+          position: number
+          quality_rating?: number | null
+          status?: Database["public"]["Enums"]["indicator_status"]
+          sub_core_function_id?: string | null
+          timeliness_rating?: number | null
+          updated_at?: string
+        }
+        Update: {
+          accomplishment?: string | null
+          accomplishment_date?: string | null
+          average_rating?: number | null
+          core_function_id?: string | null
+          created_at?: string
+          efficiency_rating?: number | null
+          id?: string
+          indicator?: string
+          indicator_date?: string | null
+          position?: number
+          quality_rating?: number | null
+          status?: Database["public"]["Enums"]["indicator_status"]
+          sub_core_function_id?: string | null
+          timeliness_rating?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "indicator_core_function_id_fkey"
+            columns: ["core_function_id"]
+            isOneToOne: false
+            referencedRelation: "core_function"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "indicator_sub_core_function_id_fkey"
+            columns: ["sub_core_function_id"]
+            isOneToOne: false
+            referencedRelation: "sub_core_function"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       ipcr_teaching: {
         Row: {
@@ -663,6 +676,7 @@ export type Database = {
       }
     }
     Enums: {
+      indicator_status: "draft" | "submitted" | "reviewing" | "approved"
       ipcr_status: "draft" | "submitted" | "reviewing" | "approved"
       scope_type: "all" | "office" | "program" | "unit"
     }
