@@ -21,8 +21,14 @@ import {
 import type CreateIndicatorDialog from './(components)/(indicator)/CreateIndicatorDialog.svelte';
 import {
 	createIndicatorSchema,
-	type CreateIndicatorSchema
+	updateIndicatorSchema,
+	type CreateIndicatorSchema,
+	type UpdateIndicatorSchema
 } from './(components)/(data)/indicator_schema';
+import {
+	universalDeleteSchema,
+	type UniversalDeleteSchema
+} from './(components)/(data)/universal_delete_schema';
 
 export const actions = {
 	createcorefunction: async ({ request, locals: { supabase, session } }) => {
@@ -251,6 +257,66 @@ export const actions = {
 			return message(form, {
 				status: 'error',
 				text: `Error saving core function, ${indicatorError.message}`
+			});
+		}
+		return { form, indicatorData };
+	},
+	deleteindicator: async ({ request, locals: { supabase, session } }) => {
+		const form = await superValidate<Infer<UniversalDeleteSchema>, App.Superforms.Message>(
+			request,
+			zod(universalDeleteSchema)
+		);
+		const { id } = form.data;
+
+		if (!form.valid) {
+			return message(form, {
+				status: 'error',
+				text: 'Unprocessable input!'
+			});
+		}
+
+		const { error: deleteError, data: indicatorData } = await supabase
+			.from('indicator')
+			.delete()
+			.eq('id', id)
+			.select()
+			.single();
+
+		if (deleteError) {
+			console.log(deleteError.message);
+			return message(form, {
+				status: 'error',
+				text: `Error saving IPCR ${deleteError.message}`
+			});
+		}
+		return { form, indicatorData };
+	},
+	updateindicator: async ({ request, locals: { supabase, session } }) => {
+		const form = await superValidate<Infer<UpdateIndicatorSchema>, App.Superforms.Message>(
+			request,
+			zod(updateIndicatorSchema)
+		);
+		const { id, indicator, accomplishment, accomplishment_date } = form.data;
+
+		if (!form.valid) {
+			return message(form, {
+				status: 'error',
+				text: 'Unprocessable input!'
+			});
+		}
+		console.log(id, indicator, accomplishment, accomplishment_date);
+		const { error: updateError, data: indicatorData } = await supabase
+			.from('indicator')
+			.update({ indicator, accomplishment, accomplishment_date })
+			.eq('id', id)
+			.select()
+			.single();
+
+		if (updateError) {
+			console.log(updateError.message);
+			return message(form, {
+				status: 'error',
+				text: `Error saving IPCR ${updateError.message}`
 			});
 		}
 		return { form, indicatorData };

@@ -6,12 +6,13 @@
 	import type { DndEvent } from 'svelte-dnd-action';
 	import debounce from 'debounce';
 	import DeleteActionSubCoreFunction from './(subcomponents)/(delete_actions)/DeleteActionSubCoreFunction.svelte';
-	import DropDownWrapper from './(subcomponents)/DropDownWrapper.svelte';
+	import DropDownWrapper from '../DropDownWrapper.svelte';
 	import SubCoreFunctionUpdateDialog from './(subcomponents)/(update_dialogs)/SubCoreFunctionUpdateDialog.svelte';
 	import CreateIndicatorDialog from '../../(indicator)/CreateIndicatorDialog.svelte';
-	import IndicatorComponent from '../../(body)/IndicatorComponent.svelte';
+	import IndicatorComponent from '../../(indicator)/IndicatorComponent.svelte';
 	import { setIndicatorStore } from '../../(data)/indicator_state.svelte';
 	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';
+	import { fetchIndicatorsByParam } from '../../../utils/fetching-utils';
 	import type { Tables } from '$lib/types/database.types';
 
 	type Indicator = Tables<'indicator'>;
@@ -94,11 +95,13 @@
 	async function fetchIndicators(): Promise<void> {
 		try {
 			isLoading = true;
-			const response = await fetch(`/api/indicator?sub_core_function_id=${sub_core_function_id}`);
-			const result: IndicatorResponse = await response.json();
+			const result = await fetchIndicatorsByParam({
+				url_params: 'sub_core_function_id',
+				id: sub_core_function_id
+			});
 
-			if (!response.ok) {
-				throw new Error(result.error || 'Failed to fetch indicators');
+			if (result.error) {
+				throw new Error(result.error);
 			}
 
 			indicators = result.data;
@@ -131,7 +134,7 @@
 <div class="rounded-lg border">
 	<div class="flex min-h-[3.5rem] items-center justify-between p-3">
 		<div class="flex items-center gap-2">
-			<Button variant="ghost" size="icon" class="hidden md:flex" onclick={toggleExpand}>
+			<Button variant="ghost" size="icon" class=" md:flex" onclick={toggleExpand}>
 				<ChevronDown
 					class={cn(
 						'h-5 w-5 text-gray-500 transition-transform duration-200',
@@ -150,7 +153,7 @@
 		{/snippet}
 		<div class="flex gap-4">
 			<CreateIndicatorDialog config={{ type: 'sub_core_function', id: sub_core_function_id }} />
-			<DropDownWrapper {deleteAction} {updateDialog} bind:isDrawerOpen />
+			<DropDownWrapper childrens={[updateDialog, deleteAction]} bind:isDrawerOpen />
 		</div>
 	</div>
 

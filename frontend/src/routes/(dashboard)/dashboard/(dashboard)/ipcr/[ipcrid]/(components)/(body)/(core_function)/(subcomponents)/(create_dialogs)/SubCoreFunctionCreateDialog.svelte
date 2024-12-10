@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { buttonVariants } from '$lib/components/ui/button/index.js';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Plus } from 'lucide-svelte';
@@ -14,8 +13,9 @@
 	import * as Form from '$lib/components/ui/form/index.js';
 	interface Props {
 		coreFunctionId: string;
+		isDrawerOpen?: boolean;
 	}
-	let { coreFunctionId }: Props = $props();
+	let { coreFunctionId, isDrawerOpen = $bindable() }: Props = $props();
 	let isOpen = $state(false);
 	const { createSubCoreFunctionForm: data } = getSubCoreFunctionFormContext();
 	// Get the complete store object
@@ -37,6 +37,7 @@
 				showSuccessToast(`Succesfully added core function ${subCoreFunction.name}`);
 				const core_function_id = $formData.core_function_id; // Save ID before reset
 				isOpen = false;
+				isDrawerOpen = false;
 				reset({
 					data: { core_function_id: core_function_id, position: $size },
 					newState: { core_function_id: core_function_id, position: $size }
@@ -58,10 +59,9 @@
 </script>
 
 <Dialog.Root bind:open={isOpen}>
-	<Dialog.Trigger class={buttonVariants({ variant: 'outline' })}>
-		<span class="flex items-center gap-2">
-			<Plus class="h-5 w-5" />
-			<span class="hidden md:inline">Add Sub Core Function</span>
+	<Dialog.Trigger class="focus-visible:outline-none">
+		<span class="flex items-center gap-3">
+			<Plus size={16} /> Add Sub Core Function
 		</span>
 	</Dialog.Trigger>
 	<Dialog.Content class="sm:max-w-[425px]">

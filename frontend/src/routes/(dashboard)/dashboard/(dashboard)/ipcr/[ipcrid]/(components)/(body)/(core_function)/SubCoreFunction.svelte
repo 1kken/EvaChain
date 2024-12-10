@@ -8,59 +8,96 @@
 	import SubCoreFunctionCreateDialog from './(subcomponents)/(create_dialogs)/SubCoreFunctionCreateDialog.svelte';
 	import Indicator from './Indicator.svelte';
 	import DeleteActionCoreFunction from './(subcomponents)/(delete_actions)/DeleteActionCoreFunction.svelte';
-	import DropDownWrapper from './(subcomponents)/DropDownWrapper.svelte';
+	import DropDownWrapper from '../DropDownWrapper.svelte';
 	import CoreFunctionUpdateDialog from './(subcomponents)/(update_dialogs)/CoreFunctionUpdateDialog.svelte';
 	import { setSubCoreFunctionStore } from '../../(data)/(state)/subcorefunctionstate.svelte';
 	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';
 	import type { Tables } from '$lib/types/database.types';
-
-	type SubCoreFunction = Tables<'sub_core_function'>;
+	import CreateIndicatorDialog from '../../(indicator)/CreateIndicatorDialog.svelte';
+	import { setIndicatorStore } from '../../(data)/indicator_state.svelte';
+	import IndicatorComponent from '../../(indicator)/IndicatorComponent.svelte';
+	import { fetchIndicatorsByParam, fetchSubCoreFunctions } from '../../../utils/fetching-utils';
+	import {
+		updateIndicatorPositions,
+		updateSubCoreFunctionPositions
+	} from '../../../utils/position-update';
 
 	let {
 		name,
 		units,
 		coreFunctionId
 	}: { name: string; units?: number | null; coreFunctionId: string } = $props();
+	// Types
+	type DndItem =
+		| (Tables<'sub_core_function'> & { itemType: 'sub_function' })
+		| (Tables<'indicator'> & { itemType: 'indicator' });
 
+	// State variables
 	let isExpanded = $state(false);
 	let isDrawerOpen = $state(false);
+	let isAddDrawerOpen = $state(false);
 	let isLoading = $state(false);
 	let isUpdating = $state(false);
-	let subFunctions = $state<SubCoreFunction[]>([]);
-	let dndItems = $state<SubCoreFunction[]>([]);
+	let dndItems = $state<DndItem[]>([]);
 	const flipDurationMs = 300;
 
-	// Initialize store when component mounts
+	// Initialize stores
 	const store = setSubCoreFunctionStore();
 	const { currentSubCoreFunctions } = store;
+	const { currentIndicators } = setIndicatorStore();
 
-	interface SubCoreFunctionResponse {
-		data: Tables<'sub_core_function'>[];
-		error?: string;
-	}
-
-	const updateSubCoreFunctionPositions = debounce(async (items: SubCoreFunction[]) => {
+	// Combined fetch function
+	async function fetchData(): Promise<void> {
 		try {
-			const response = await fetch('/api/sub_core_function', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify(items)
-			});
-			if (!response.ok) {
-				throw new Error('Failed to update positions');
+			isLoading = true;
+			const [subFunctionsResult, indicatorsResult] = await Promise.all([
+				fetchSubCoreFunctions(coreFunctionId),
+				fetchIndicatorsByParam({
+					url_params: 'core_function_id',
+					id: coreFunctionId
+				})
+			]);
+
+			// Handle any fetch errors
+			if (subFunctionsResult.error || indicatorsResult.error) {
+				throw new Error(subFunctionsResult.error || indicatorsResult.error);
 			}
 
-			const result = await response.json();
-			return result.data;
-		} catch (error) {
-			console.error('Error updating positions:', error);
-			throw error;
-		}
-	}, 2000);
+			// Add type discriminator
+			const subFunctionItems = subFunctionsResult.data.map((item) => ({
+				...item,
+				itemType: 'sub_function' as const
+			}));
 
-	function handleDndConsider(e: CustomEvent<DndEvent<SubCoreFunction>>) {
+			const indicatorItems = indicatorsResult.data.map((item) => ({
+				...item,
+				itemType: 'indicator' as const
+			}));
+
+			// Combine and sort by position
+			dndItems = [...subFunctionItems, ...indicatorItems].sort((a, b) => a.position - b.position);
+
+			// Update stores
+			$currentSubCoreFunctions = subFunctionsResult.data;
+			$currentIndicators = indicatorsResult.data;
+		} catch (error) {
+			console.error('Error fetching data:', error);
+			showErrorToast('Failed to load data');
+		} finally {
+			isLoading = false;
+		}
+	}
+
+	// Update toggle function
+	async function toggleExpand() {
+		isExpanded = !isExpanded;
+		if (isExpanded && dndItems.length === 0) {
+			await fetchData();
+		}
+	}
+
+	// DND handlers
+	function handleDndConsider(e: CustomEvent<DndEvent<DndItem>>) {
 		const updatedItems = e.detail.items.map((item, index) => ({
 			...item,
 			position: (index + 1) * 100
@@ -68,7 +105,7 @@
 		dndItems = updatedItems;
 	}
 
-	async function handleDndFinalize(e: CustomEvent<DndEvent<SubCoreFunction>>) {
+	async function handleDndFinalize(e: CustomEvent<DndEvent<DndItem>>) {
 		try {
 			isUpdating = true;
 			const updatedItems = e.detail.items.map((item, index) => ({
@@ -76,51 +113,49 @@
 				position: (index + 1) * 100
 			}));
 
-			await updateSubCoreFunctionPositions(updatedItems);
-			$currentSubCoreFunctions = updatedItems;
-			subFunctions = updatedItems;
-			showSuccessToast('Updated Sub Core Function Position');
+			// Split items by type
+			const subFunctions = updatedItems.filter(
+				(item): item is Tables<'sub_core_function'> & { itemType: 'sub_function' } =>
+					item.itemType === 'sub_function'
+			);
+
+			const indicators = updatedItems.filter(
+				(item): item is Tables<'indicator'> & { itemType: 'indicator' } =>
+					item.itemType === 'indicator'
+			);
+
+			// Update both types
+			await Promise.all([
+				updateSubCoreFunctionPositions(subFunctions),
+				updateIndicatorPositions(indicators)
+			]);
+
+			dndItems = updatedItems;
+			$currentSubCoreFunctions = subFunctions;
+			$currentIndicators = indicators;
+
+			showSuccessToast('Updated positions successfully');
 		} catch (error) {
 			console.error('Failed to update positions:', error);
 			showErrorToast('Failed to update order. Please try again.');
-			dndItems = [...subFunctions];
 		} finally {
 			isUpdating = false;
 		}
 	}
 
-	async function fetchSubCoreFunctions(): Promise<void> {
-		try {
-			isLoading = true;
-			const response = await fetch(`/api/sub_core_function?core_function_id=${coreFunctionId}`);
-			const result: SubCoreFunctionResponse = await response.json();
-
-			if (!response.ok) {
-				throw new Error(result.error || 'Failed to fetch sub core functions');
-			}
-
-			subFunctions = result.data;
-			dndItems = result.data;
-			$currentSubCoreFunctions = result.data;
-		} catch (error) {
-			console.error('Error fetching sub core functions:', error);
-			showErrorToast('Failed to load sub core functions');
-		} finally {
-			isLoading = false;
-		}
-	}
-
-	async function toggleExpand() {
-		isExpanded = !isExpanded;
-		if (isExpanded && subFunctions.length === 0) {
-			await fetchSubCoreFunctions();
-		}
-	}
 	$effect(() => {
 		if (!isUpdating && !isLoading) {
-			const newData = $currentSubCoreFunctions;
-			subFunctions = newData;
-			dndItems = newData;
+			const subFunctionItems = $currentSubCoreFunctions.map((item) => ({
+				...item,
+				itemType: 'sub_function' as const
+			}));
+
+			const indicatorItems = $currentIndicators.map((item) => ({
+				...item,
+				itemType: 'indicator' as const
+			}));
+
+			dndItems = [...subFunctionItems, ...indicatorItems].sort((a, b) => a.position - b.position);
 		}
 	});
 </script>
@@ -147,9 +182,24 @@
 		{#snippet updateDialog()}
 			<CoreFunctionUpdateDialog {coreFunctionId} bind:isDrawerOpen />
 		{/snippet}
+		{#snippet createSubCoreFunction()}
+			<SubCoreFunctionCreateDialog {coreFunctionId} bind:isDrawerOpen={isAddDrawerOpen} />
+		{/snippet}
+		{#snippet createIndicatorDialog()}
+			<CreateIndicatorDialog
+				isDirectChild={true}
+				config={{ type: 'core_function', id: coreFunctionId }}
+				bind:isDrawerOpen={isAddDrawerOpen}
+			/>
+		{/snippet}
 		<div class="flex gap-4">
-			<SubCoreFunctionCreateDialog {coreFunctionId} />
-			<DropDownWrapper {deleteAction} {updateDialog} bind:isDrawerOpen />
+			<DropDownWrapper
+				icon={ChevronDown}
+				text={'Add selections'}
+				childrens={[createSubCoreFunction, createIndicatorDialog]}
+				bind:isDrawerOpen={isAddDrawerOpen}
+			/>
+			<DropDownWrapper childrens={[updateDialog, deleteAction]} bind:isDrawerOpen />
 		</div>
 	</div>
 
@@ -178,11 +228,15 @@
 					{/if}
 
 					{#if dndItems.length === 0}
-						<div class="text-center text-gray-500">No sub-core functions found</div>
+						<div class="text-center text-gray-500">No items found</div>
 					{:else}
-						{#each dndItems as subCoreFunction (subCoreFunction.id)}
+						{#each dndItems as item (item.id)}
 							<div class="py-2">
-								<Indicator name={subCoreFunction.name} sub_core_function_id={subCoreFunction.id} />
+								{#if item.itemType === 'sub_function'}
+									<Indicator name={item.name} sub_core_function_id={item.id} />
+								{:else}
+									<IndicatorComponent indicator={item} />
+								{/if}
 							</div>
 						{/each}
 					{/if}

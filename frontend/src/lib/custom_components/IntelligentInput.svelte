@@ -7,6 +7,7 @@
 	interface Iprops {
 		placeholder?: string;
 		content: string;
+		name: string;
 	}
 
 	interface GrammarError {
@@ -17,8 +18,11 @@
 		length: number;
 	}
 
-	let { placeholder = 'Start typing to check grammar...', content = $bindable() }: Iprops =
-		$props();
+	let {
+		placeholder = 'Start typing to check grammar...',
+		content = $bindable(),
+		name
+	}: Iprops = $props();
 	let isFetching = $state(false);
 	let errors = $state<GrammarError[]>([]);
 
@@ -86,7 +90,7 @@
 
 <div class="space-y-4">
 	<Textarea
-		name="indicator"
+		{name}
 		bind:value={content}
 		{placeholder}
 		oninput={handleInput}

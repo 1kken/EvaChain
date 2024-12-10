@@ -45,7 +45,6 @@ export const GET: RequestHandler = async ({ url, locals: { supabase } }) => {
 export const POST: RequestHandler = async ({ request, locals: { supabase } }) => {
 	try {
 		const items: Tables<'indicator'>[] = await request.json();
-
 		// Process each update sequentially
 		for (const item of items) {
 			const { error } = await supabase

@@ -18,11 +18,8 @@ export const updateIndicatorSchema = z.object({
 		.string()
 		.min(1, 'Indicator is required')
 		.max(1000, 'Indicator must be less than 1000 characters'),
-	accomplishment: z.string().min(1, 'Accomplishment is required'),
-	accomplishment_date: z.coerce.date({
-		required_error: 'Accomplishment date is required',
-		invalid_type_error: "That's not a date!"
-	})
+	accomplishment: z.string().nullable(),
+	accomplishment_date: z.string().nullable()
 });
 
 // Export types

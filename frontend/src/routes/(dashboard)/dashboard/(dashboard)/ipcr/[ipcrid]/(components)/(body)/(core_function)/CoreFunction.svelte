@@ -13,13 +13,14 @@
 
 	type CoreFunction = Tables<'core_function'>;
 
-	const { currentCoreFunctions } = getCoreFunctionStore();
+	const { currentCoreFunctions, currentIPCRid: currentIPCRidStore } = getCoreFunctionStore();
 	let isExpanded = $state(false);
 	let isUpdating = $state(false);
 	let flipDurationMs = 300;
 	let dndItems = $state<CoreFunction[]>([]);
 
 	let { currentIpcrId }: { currentIpcrId: string } = $props();
+	$currentIPCRidStore = currentIpcrId;
 
 	// Sync dndItems with store
 	$effect(() => {

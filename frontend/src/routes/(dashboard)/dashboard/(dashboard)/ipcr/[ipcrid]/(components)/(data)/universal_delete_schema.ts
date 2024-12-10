@@ -4,12 +4,11 @@ export const universalDeleteSchema = z
 	.object({
 		id: z.string(),
 		confirmText: z.string().min(1, 'Please fill in the necessary field'),
-		owner_id: z.string(),
 		expectedText: z.string()
 	})
 	.refine((data) => data.confirmText === data.expectedText, {
-		message: "The title doesn't match",
-		path: ['confirmTitle']
+		message: "The confirm text doesn't match",
+		path: ['confirmText']
 	});
 
 export type UniversalDeleteSchema = typeof universalDeleteSchema;

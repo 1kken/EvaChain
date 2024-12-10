@@ -1,17 +1,15 @@
 <script lang="ts">
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
-	import SuperDebug, { superForm, type FormResult } from 'sveltekit-superforms';
+	import { superForm, type FormResult } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { getIndicatorFormContext } from '../(data)/indicator_form.svelte';
 	import { createIndicatorSchema } from '../(data)/indicator_schema';
 	import { buttonVariants } from '$lib/components/ui/button';
 	import { Plus } from 'lucide-svelte';
-	import { browser } from '$app/environment';
 	import IntelligentInput from '$lib/custom_components/IntelligentInput.svelte';
 	import { getIndicatorStore } from '../(data)/indicator_state.svelte';
 	import type { indicatorFormResult } from '../(data)/types';
-	import Indicator from '../(body)/(core_function)/Indicator.svelte';
 	import { showSuccessToast } from '$lib/utils/toast';
 	import { handleIndicatorConfig } from './utils';
 
@@ -21,7 +19,11 @@
 	}
 
 	//config
-	let { config }: { config: IndicatorConfig } = $props();
+	let {
+		config,
+		isDirectChild = false,
+		isDrawerOpen = $bindable()
+	}: { config: IndicatorConfig; isDirectChild?: boolean; isDrawerOpen?: boolean } = $props();
 	let isOpen = $state(false);
 
 	//stores
@@ -32,6 +34,7 @@
 	const form = superForm(data, {
 		validators: zodClient(createIndicatorSchema),
 		multipleSubmits: 'prevent',
+		id: Date.now().toString(),
 		onUpdate({ form, result }) {
 			const action = result.data as FormResult<indicatorFormResult>;
 			if (form.valid && action.indicatorData && indicatorStore) {
@@ -39,11 +42,13 @@
 				indicatorStore.addIndicator(indicator);
 				showSuccessToast(`Succesfully added indicator!`);
 				isOpen = false;
+				isDrawerOpen = false;
 				const resetConfig = handleIndicatorConfig(configType, config);
 				reset(resetConfig);
 			}
 		}
 	});
+
 	//form
 	const { form: formData, enhance, reset } = form;
 	//procces by config
@@ -69,12 +74,20 @@
 </script>
 
 <Dialog.Root bind:open={isOpen} onOpenChange={handleDialogOpenChange}>
-	<Dialog.Trigger class={buttonVariants({ variant: 'outline' })}>
-		<span class="flex items-center gap-2">
-			<Plus class="h-5 w-5" />
-			<span class="hidden md:inline">Add Indicator</span>
-		</span>
-	</Dialog.Trigger>
+	{#if isDirectChild}
+		<Dialog.Trigger class="focus-visible:outline-none">
+			<span class="flex items-center gap-3">
+				<Plus size={16} /> Add indicator
+			</span>
+		</Dialog.Trigger>
+	{:else}
+		<Dialog.Trigger class={buttonVariants({ variant: 'outline' })}>
+			<span class="flex items-center gap-2">
+				<Plus class="h-5 w-5" />
+				<span class="hidden md:inline">Add Indicator</span>
+			</span>
+		</Dialog.Trigger>
+	{/if}
 	<Dialog.Content class="max-h-[85vh] overflow-y-auto sm:max-w-[800px]">
 		<Dialog.Header>
 			<Dialog.Title>Create Indicator</Dialog.Title>
@@ -93,6 +106,7 @@
 					{#snippet children({ props })}
 						<Form.Label>Indicator</Form.Label>
 						<IntelligentInput
+							name="indicator"
 							placeholder={'Please type your indicator'}
 							bind:content={$formData.indicator}
 						/>
@@ -105,8 +119,5 @@
 				<Form.Button>Submit</Form.Button>
 			</div>
 		</form>
-		{#if browser}
-			<SuperDebug data={$formData} />
-		{/if}
 	</Dialog.Content>
 </Dialog.Root>
