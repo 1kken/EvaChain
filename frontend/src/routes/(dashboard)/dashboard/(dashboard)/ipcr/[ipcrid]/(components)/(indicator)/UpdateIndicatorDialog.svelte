@@ -2,7 +2,7 @@
 	import type { Tables } from '$lib/types/database.types';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { getIndicatorFormContext } from '../(data)/indicator_form.svelte';
-	import { updateIndicatorSchema } from '../(data)/indicator_schema';
+	import { updateIndicatorSchema } from '../../utils/schemas/indicator_schema';
 	import SuperDebug, { superForm, type FormResult } from 'sveltekit-superforms';
 	import type { indicatorFormResult } from '../(data)/types';
 	import { getIndicatorStore } from '../(data)/indicator_state.svelte';

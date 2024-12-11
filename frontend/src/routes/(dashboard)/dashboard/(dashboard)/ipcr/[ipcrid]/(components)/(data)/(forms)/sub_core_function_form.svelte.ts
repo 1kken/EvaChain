@@ -3,7 +3,7 @@ import type {
 	CreateSubCoreFunctionSchema,
 	DeleteSubCoreFunctionSchema,
 	UpdateSubCoreFunctionSchema
-} from '../(schema)/sub_core_function_schema';
+} from '../../../utils/schemas/sub_core_function_schema';
 import { getContext, setContext } from 'svelte';
 
 const SUB_CORE_FUNCTION_FORM_KEY = Symbol('SUB_CORE_FUNCTION_FORM_KEY');

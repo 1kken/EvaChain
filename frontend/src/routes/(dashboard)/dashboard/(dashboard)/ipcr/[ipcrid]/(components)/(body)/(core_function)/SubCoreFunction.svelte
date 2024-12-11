@@ -8,7 +8,7 @@
 	import SubCoreFunctionCreateDialog from './(subcomponents)/(create_dialogs)/SubCoreFunctionCreateDialog.svelte';
 	import Indicator from './Indicator.svelte';
 	import DeleteActionCoreFunction from './(subcomponents)/(delete_actions)/DeleteActionCoreFunction.svelte';
-	import DropDownWrapper from '../DropDownWrapper.svelte';
+	import DropDownWrapper from '../../(helpers)/DropDownWrapper.svelte';
 	import CoreFunctionUpdateDialog from './(subcomponents)/(update_dialogs)/CoreFunctionUpdateDialog.svelte';
 	import { setSubCoreFunctionStore } from '../../(data)/(state)/subcorefunctionstate.svelte';
 	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';

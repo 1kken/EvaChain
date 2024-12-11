@@ -6,7 +6,7 @@
 	import type { DndEvent } from 'svelte-dnd-action';
 	import debounce from 'debounce';
 	import DeleteActionSubCoreFunction from './(subcomponents)/(delete_actions)/DeleteActionSubCoreFunction.svelte';
-	import DropDownWrapper from '../DropDownWrapper.svelte';
+	import DropDownWrapper from '../../(helpers)/DropDownWrapper.svelte';
 	import SubCoreFunctionUpdateDialog from './(subcomponents)/(update_dialogs)/SubCoreFunctionUpdateDialog.svelte';
 	import CreateIndicatorDialog from '../../(indicator)/CreateIndicatorDialog.svelte';
 	import IndicatorComponent from '../../(indicator)/IndicatorComponent.svelte';

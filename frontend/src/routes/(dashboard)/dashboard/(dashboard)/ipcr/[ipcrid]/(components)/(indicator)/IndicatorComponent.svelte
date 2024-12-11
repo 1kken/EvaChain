@@ -1,10 +1,8 @@
 <script lang="ts">
 	import type { Tables } from '$lib/types/database.types';
-	import { Pencil, Send } from 'lucide-svelte';
-	import DropDownWrapper from '../(body)/DropDownWrapper.svelte';
+	import DropDownWrapper from '../(helpers)/DropDownWrapper.svelte';
 	import DeleteIndicatorAction from './DeleteIndicatorAction.svelte';
 	import UpdateIndicatorDialog from './UpdateIndicatorDialog.svelte';
-	import { Button } from '$lib/components/ui/button';
 	import { getCoreFunctionStore } from '../(data)/(state)/corefunctionstate.svelte';
 
 	let { indicator }: { indicator: Tables<'indicator'> } = $props();

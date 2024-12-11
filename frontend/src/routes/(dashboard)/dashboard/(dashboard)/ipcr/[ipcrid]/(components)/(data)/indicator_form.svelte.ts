@@ -1,6 +1,9 @@
 import type { Infer, SuperValidated } from 'sveltekit-superforms';
-import type { CreateIndicatorSchema, UpdateIndicatorSchema } from './indicator_schema';
-import { type UniversalDeleteSchema } from './universal_delete_schema';
+import type {
+	CreateIndicatorSchema,
+	UpdateIndicatorSchema
+} from '../../utils/schemas/indicator_schema';
+import { type UniversalDeleteSchema } from '../../utils/schemas/universal_delete_schema';
 import { getContext, setContext } from 'svelte';
 
 const INDICATOR_FORM_KEY = Symbol('INDICATOR_FORM_KEY');

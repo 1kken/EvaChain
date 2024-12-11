@@ -12,7 +12,7 @@
 	import { getIndicatorFormContext } from '../(data)/indicator_form.svelte';
 	import { getIndicatorStore } from '../(data)/indicator_state.svelte';
 	import type { indicatorFormResult } from '../(data)/types';
-	import { universalDeleteSchema } from '../(data)/universal_delete_schema';
+	import { universalDeleteSchema } from '../../utils/schemas/universal_delete_schema';
 	import { handleIndicatorConfig } from './utils';
 
 	interface Props {

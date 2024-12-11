@@ -10,7 +10,7 @@
 	import { Trash2 } from 'lucide-svelte';
 	import { getSubCoreFunctionStore } from '../../../../(data)/(state)/subcorefunctionstate.svelte';
 	import { getSubCoreFunctionFormContext } from '../../../../(data)/(forms)/sub_core_function_form.svelte';
-	import { deleteSubCoreFunctionSchema } from '../../../../(data)/(schema)/sub_core_function_schema';
+	import { deleteSubCoreFunctionSchema } from '../../../../../utils/schemas/sub_core_function_schema';
 	import type { SubCoreFunctionFormResult } from '../../../../(data)/types';
 
 	interface Props {

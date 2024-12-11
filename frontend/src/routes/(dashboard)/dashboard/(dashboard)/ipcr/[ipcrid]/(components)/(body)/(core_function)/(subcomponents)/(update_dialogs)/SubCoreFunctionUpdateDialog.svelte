@@ -7,7 +7,7 @@
 	import { getSubCoreFunctionStore } from '../../../../(data)/(state)/subcorefunctionstate.svelte';
 	import { superForm, type FormResult } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
-	import { updateSubCoreFunctionSchema } from '../../../../(data)/(schema)/sub_core_function_schema';
+	import { updateSubCoreFunctionSchema } from '../../../../../utils/schemas/sub_core_function_schema';
 	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';
 	import * as Form from '$lib/components/ui/form/index.js';
 	import type { SubCoreFunctionFormResult } from '../../../../(data)/types';

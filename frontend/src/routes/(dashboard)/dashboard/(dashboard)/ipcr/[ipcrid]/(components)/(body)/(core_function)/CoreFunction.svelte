@@ -10,6 +10,7 @@
 	import SubCoreFunction from './SubCoreFunction.svelte';
 	import { getCoreFunctionStore } from '../../(data)/(state)/corefunctionstate.svelte';
 	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';
+	import SubmitIpcrAction from '../../(helpers)/SubmitIPCRAction.svelte';
 
 	type CoreFunction = Tables<'core_function'>;
 
@@ -94,7 +95,10 @@
 			</Button>
 			<h2 class="text-base font-bold md:text-xl">CORE FUNCTIONS</h2>
 		</div>
-		<CoreFunctionCreateDialog ipcrId={currentIpcrId} />
+		<div class="flex items-center gap-5">
+			<SubmitIpcrAction ipcrId={currentIpcrId} />
+			<CoreFunctionCreateDialog ipcrId={currentIpcrId} />
+		</div>
 	</header>
 </div>
 

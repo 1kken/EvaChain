@@ -4,7 +4,7 @@
 	import { superForm, type FormResult } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { getIndicatorFormContext } from '../(data)/indicator_form.svelte';
-	import { createIndicatorSchema } from '../(data)/indicator_schema';
+	import { createIndicatorSchema } from '../../utils/schemas/indicator_schema';
 	import { buttonVariants } from '$lib/components/ui/button';
 	import { Plus } from 'lucide-svelte';
 	import IntelligentInput from '$lib/custom_components/IntelligentInput.svelte';

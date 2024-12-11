@@ -5,18 +5,15 @@ import {
 	createCoreFunctionSchema,
 	deleteCoreFunctionSchema,
 	updateCoreFunctionSchema
-} from './(components)/(data)/(schema)/core_function_schema';
+} from './utils/schemas/core_function_schema';
 import { zod } from 'sveltekit-superforms/adapters';
 import {
 	createSubCoreFunctionSchema,
 	deleteSubCoreFunctionSchema,
 	updateSubCoreFunctionSchema
-} from './(components)/(data)/(schema)/sub_core_function_schema';
-import {
-	createIndicatorSchema,
-	updateIndicatorSchema
-} from './(components)/(data)/indicator_schema';
-import { universalDeleteSchema } from './(components)/(data)/universal_delete_schema';
+} from './utils/schemas/sub_core_function_schema';
+import { createIndicatorSchema, updateIndicatorSchema } from './utils/schemas/indicator_schema';
+import { universalDeleteSchema } from './utils/schemas/universal_delete_schema';
 export const load = (async ({ params, locals: { supabase, safeGetSession } }) => {
 	const ipcrId = params.ipcrid;
 	if (!ipcrId) {

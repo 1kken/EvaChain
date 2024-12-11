@@ -8,7 +8,7 @@
 	import { LoaderCircle } from 'lucide-svelte';
 	import { TriangleAlert } from 'lucide-svelte';
 	import { Trash2 } from 'lucide-svelte';
-	import { deleteCoreFunctionSchema } from '../../../../(data)/(schema)/core_function_schema';
+	import { deleteCoreFunctionSchema } from '../../../../../utils/schemas/core_function_schema';
 	import { getCoreFunctionStore } from '../../../../(data)/(state)/corefunctionstate.svelte';
 	import type { CoreFunctionFormResult } from '../../../../(data)/types';
 	import { getCoreFunctionFormContext } from '../../../../(data)/(forms)/core_function_form.svelte';
