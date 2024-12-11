@@ -2,18 +2,16 @@
 	import { Button } from '$lib/components/ui/button';
 	import { ChevronDown, LoaderCircle } from 'lucide-svelte';
 	import { cn } from '$lib/utils';
-	import debounce from 'debounce';
-	import { dndzone } from 'svelte-dnd-action';
-	import type { DndEvent } from 'svelte-dnd-action';
 	import type { Tables } from '$lib/types/database.types';
 	import CoreFunctionCreateDialog from './(subcomponents)/(create_dialogs)/CoreFunctionCreateDialog.svelte';
 	import SubCoreFunction from './SubCoreFunction.svelte';
 	import { getCoreFunctionStore } from '../../(data)/(state)/corefunctionstate.svelte';
-	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';
 	import SubmitIpcrAction from '../SubmitIPCRAction.svelte';
 	import type { Infer, SuperValidated } from 'sveltekit-superforms';
 	import type { SubmitIPCRSchema } from '../../../utils/schemas/submit_ipcr_schema';
 	import { getSingleIPCRStore, setSingleIPCRStore } from '../../(data)/(state)/ipcr-state.svelte';
+	import DndContainer from '$lib/custom_components/dashboard/documents/DndContainer.svelte';
+	import { getSubCoreFunctionFormContext } from '../../(data)/(forms)/sub_core_function_form.svelte';
 
 	type CoreFunction = Tables<'core_function'>;
 
@@ -30,16 +28,15 @@
 	const { currentIPCR: ipcr, canEdit } = getSingleIPCRStore();
 
 	let isExpanded = $state(false);
-	let isUpdating = $state(false);
-	let flipDurationMs = 300;
+	let isLoading = $state(false);
+	let showSubmit = $state(true);
 	let dndItems = $state<CoreFunction[]>([]);
 
-	// Sync dndItems with store
 	$effect(() => {
 		dndItems = [...$currentCoreFunctions];
 	});
 
-	const updateCoreFunctionPositions = debounce(async (items: CoreFunction[]) => {
+	const updateCoreFunctionPositions = async (items: CoreFunction[]) => {
 		try {
 			const response = await fetch('/api/core_function', {
 				method: 'POST',
@@ -52,47 +49,17 @@
 				throw new Error('Failed to update positions');
 			}
 
-			const result = await response.json();
-			return result.data;
+			$currentCoreFunctions = items;
+			return; // Return void to match the type
 		} catch (error) {
 			console.error('Error updating positions:', error);
 			throw error;
 		}
-	}, 2000);
-
-	function handleDndConsider(e: CustomEvent<DndEvent<CoreFunction>>) {
-		const updatedItems = e.detail.items.map((item, index) => ({
-			...item,
-			position: (index + 1) * 100
-		}));
-		dndItems = updatedItems;
-	}
-
-	async function handleDndFinalize(e: CustomEvent<DndEvent<CoreFunction>>) {
-		try {
-			isUpdating = true;
-			const updatedItems = e.detail.items.map((item, index) => ({
-				...item,
-				position: (index + 1) * 100
-			}));
-
-			await updateCoreFunctionPositions(updatedItems);
-			$currentCoreFunctions = updatedItems;
-			showSuccessToast('Updated Core Function Position');
-		} catch (error) {
-			console.error('Failed to update positions:', error);
-			showErrorToast('Failed to update order. Please try again.');
-			dndItems = [...$currentCoreFunctions];
-		} finally {
-			isUpdating = false;
-		}
-	}
+	};
 
 	function toggleExpand() {
 		isExpanded = !isExpanded;
 	}
-	let showSubmit = $state(true);
-	// Initialize showSubmit based on initial conditions
 	$effect(() => {
 		const length = $currentCoreFunctions.length;
 		showSubmit = $canEdit && length > 0;
@@ -124,28 +91,21 @@
 </div>
 
 {#if isExpanded}
-	<div
-		class="relative space-y-4 px-4 pt-4 md:pl-14 md:pr-10"
-		use:dndzone={{ items: dndItems, flipDurationMs, dropFromOthersDisabled: true }}
-		onconsider={handleDndConsider}
-		onfinalize={handleDndFinalize}
-	>
-		{#if isUpdating}
-			<div class="absolute right-2 top-2">
-				<LoaderCircle class="h-4 w-4 animate-spin" />
-			</div>
-		{/if}
-
-		{#if dndItems.length === 0}
-			<h1>No Core functions found</h1>
-		{:else}
+	{#snippet subCoreFunction(coreFunction: Tables<'core_function'>)}
+		<SubCoreFunction {coreFunction} />
+	{/snippet}
+	<div class="relative space-y-4 px-4 pt-4 md:pl-14 md:pr-10">
+		<DndContainer
+			bind:items={dndItems}
+			{isLoading}
+			onPositionsUpdate={updateCoreFunctionPositions}
+			emptyMessage="No Core functions found"
+			successMessage="Updated Core Function Position"
+			errorMessage="Failed to update core function order. Please try again."
+		>
 			{#each dndItems as coreFunction (coreFunction.id)}
-				<SubCoreFunction
-					name={coreFunction.name}
-					units={coreFunction.unit}
-					coreFunctionId={coreFunction.id}
-				/>
+				{@render subCoreFunction(coreFunction)}
 			{/each}
-		{/if}
+		</DndContainer>
 	</div>
 {/if}

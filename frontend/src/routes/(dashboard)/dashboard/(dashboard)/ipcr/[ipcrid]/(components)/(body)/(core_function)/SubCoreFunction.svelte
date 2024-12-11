@@ -2,17 +2,13 @@
 	import { Button } from '$lib/components/ui/button';
 	import { cn } from '$lib/utils';
 	import { ChevronDown, Plus, LoaderCircle } from 'lucide-svelte';
-	import { dndzone } from 'svelte-dnd-action';
-	import type { DndEvent } from 'svelte-dnd-action';
+	import type { Tables } from '$lib/types/database.types';
 	import SubCoreFunctionCreateDialog from './(subcomponents)/(create_dialogs)/SubCoreFunctionCreateDialog.svelte';
 	import Indicator from './Indicator.svelte';
 	import DeleteActionCoreFunction from './(subcomponents)/(delete_actions)/DeleteActionCoreFunction.svelte';
 	import DropDownWrapper from '../../(wrappers)/DropDownWrapper.svelte';
 	import CoreFunctionUpdateDialog from './(subcomponents)/(update_dialogs)/CoreFunctionUpdateDialog.svelte';
 	import { setSubCoreFunctionStore } from '../../(data)/(state)/subcorefunctionstate.svelte';
-	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';
-	import type { Tables } from '$lib/types/database.types';
-	import CreateIndicatorDialog from '../../(indicator)/CreateIndicatorDialog.svelte';
 	import { setIndicatorStore } from '../../(data)/(state)/indicator_state.svelte';
 	import IndicatorComponent from '../../(indicator)/IndicatorComponent.svelte';
 	import { fetchIndicatorsByParam, fetchSubCoreFunctions } from '../../../utils/fetching_utils';
@@ -21,12 +17,12 @@
 		updateSubCoreFunctionPositions
 	} from '../../../utils/position_update';
 	import { getSingleIPCRStore } from '../../(data)/(state)/ipcr-state.svelte';
+	import CreateIndicatorDialog from '../../(indicator)/CreateIndicatorDialog.svelte';
+	import DndContainer from '$lib/custom_components/dashboard/documents/DndContainer.svelte';
+	import { showErrorToast } from '$lib/utils/toast';
 
-	let {
-		name,
-		units,
-		coreFunctionId
-	}: { name: string; units?: number | null; coreFunctionId: string } = $props();
+	let { coreFunction }: { coreFunction: Tables<'core_function'> } = $props();
+
 	// Types
 	type DndItem =
 		| (Tables<'sub_core_function'> & { itemType: 'sub_function' })
@@ -37,9 +33,7 @@
 	let isDrawerOpen = $state(false);
 	let isAddDrawerOpen = $state(false);
 	let isLoading = $state(false);
-	let isUpdating = $state(false);
 	let dndItems = $state<DndItem[]>([]);
-	const flipDurationMs = 300;
 
 	// Initialize stores
 	const store = setSubCoreFunctionStore();
@@ -54,10 +48,10 @@
 		try {
 			isLoading = true;
 			const [subFunctionsResult, indicatorsResult] = await Promise.all([
-				fetchSubCoreFunctions(coreFunctionId),
+				fetchSubCoreFunctions(coreFunction.id),
 				fetchIndicatorsByParam({
 					url_params: 'core_function_id',
-					id: coreFunctionId
+					id: coreFunction.id
 				})
 			]);
 
@@ -99,55 +93,29 @@
 		}
 	}
 
-	// DND handlers
-	function handleDndConsider(e: CustomEvent<DndEvent<DndItem>>) {
-		const updatedItems = e.detail.items.map((item, index) => ({
-			...item,
-			position: (index + 1) * 100
-		}));
-		dndItems = updatedItems;
-	}
+	// Position update handler
+	async function handlePositionsUpdate(updatedItems: DndItem[]): Promise<void> {
+		const subFunctions = updatedItems.filter(
+			(item): item is Tables<'sub_core_function'> & { itemType: 'sub_function' } =>
+				item.itemType === 'sub_function'
+		);
 
-	async function handleDndFinalize(e: CustomEvent<DndEvent<DndItem>>) {
-		try {
-			isUpdating = true;
-			const updatedItems = e.detail.items.map((item, index) => ({
-				...item,
-				position: (index + 1) * 100
-			}));
+		const indicators = updatedItems.filter(
+			(item): item is Tables<'indicator'> & { itemType: 'indicator' } =>
+				item.itemType === 'indicator'
+		);
 
-			// Split items by type
-			const subFunctions = updatedItems.filter(
-				(item): item is Tables<'sub_core_function'> & { itemType: 'sub_function' } =>
-					item.itemType === 'sub_function'
-			);
+		await Promise.all([
+			updateSubCoreFunctionPositions(subFunctions),
+			updateIndicatorPositions(indicators)
+		]);
 
-			const indicators = updatedItems.filter(
-				(item): item is Tables<'indicator'> & { itemType: 'indicator' } =>
-					item.itemType === 'indicator'
-			);
-
-			// Update both types
-			await Promise.all([
-				updateSubCoreFunctionPositions(subFunctions),
-				updateIndicatorPositions(indicators)
-			]);
-
-			dndItems = updatedItems;
-			$currentSubCoreFunctions = subFunctions;
-			$currentIndicators = indicators;
-
-			showSuccessToast('Updated positions successfully');
-		} catch (error) {
-			console.error('Failed to update positions:', error);
-			showErrorToast('Failed to update order. Please try again.');
-		} finally {
-			isUpdating = false;
-		}
+		$currentSubCoreFunctions = subFunctions;
+		$currentIndicators = indicators;
 	}
 
 	$effect(() => {
-		if (!isUpdating && !isLoading) {
+		if (!isLoading) {
 			const subFunctionItems = $currentSubCoreFunctions.map((item) => ({
 				...item,
 				itemType: 'sub_function' as const
@@ -175,25 +143,30 @@
 				/>
 			</Button>
 			<div>
-				<h3 class="text-sm font-semibold md:text-base">{name}</h3>
-				<p class="text-muted-foreground text-xs md:text-sm">({!units ? ' _' : units} units)</p>
+				<h3 class="text-sm font-semibold md:text-base">{coreFunction.name}</h3>
+				<p class="text-muted-foreground text-xs md:text-sm">
+					({!coreFunction.unit ? ' _' : coreFunction.unit} units)
+				</p>
 			</div>
 		</div>
 		<div class="flex gap-4">
 			{#if $canEdit}
 				{#snippet deleteAction()}
-					<DeleteActionCoreFunction id={coreFunctionId} bind:isDrawerOpen />
+					<DeleteActionCoreFunction id={coreFunction.id} bind:isDrawerOpen />
 				{/snippet}
 				{#snippet updateDialog()}
-					<CoreFunctionUpdateDialog {coreFunctionId} bind:isDrawerOpen />
+					<CoreFunctionUpdateDialog coreFunctionId={coreFunction.id} bind:isDrawerOpen />
 				{/snippet}
 				{#snippet createSubCoreFunction()}
-					<SubCoreFunctionCreateDialog {coreFunctionId} bind:isDrawerOpen={isAddDrawerOpen} />
+					<SubCoreFunctionCreateDialog
+						coreFunctionId={coreFunction.id}
+						bind:isDrawerOpen={isAddDrawerOpen}
+					/>
 				{/snippet}
 				{#snippet createIndicatorDialog()}
 					<CreateIndicatorDialog
 						isDirectChild={true}
-						config={{ type: 'core_function', id: coreFunctionId }}
+						config={{ type: 'core_function', id: coreFunction.id }}
 						bind:isDrawerOpen={isAddDrawerOpen}
 					/>
 				{/snippet}
@@ -210,43 +183,28 @@
 
 	{#if isExpanded}
 		<div class="border-t p-4">
-			{#if isLoading}
-				<div class="flex justify-center py-4">
-					<LoaderCircle class="h-6 w-6 animate-spin" />
-				</div>
-			{:else}
-				<div
-					class="relative"
-					use:dndzone={{
-						items: dndItems,
-						flipDurationMs,
-						dropFromOthersDisabled: true,
-						dropTargetStyle: { outline: `rgba(102, 204, 255, 0.7) solid 2px` }
-					}}
-					onconsider={handleDndConsider}
-					onfinalize={handleDndFinalize}
-				>
-					{#if isUpdating}
-						<div class="absolute right-2 top-2">
-							<LoaderCircle class="h-4 w-4 animate-spin" />
-						</div>
-					{/if}
-
-					{#if dndItems.length === 0}
-						<div class="text-center text-gray-500">No items found</div>
+			{#snippet dndItem(item: DndItem)}
+				<div class="py-2">
+					{#if item.itemType === 'sub_function'}
+						<Indicator name={item.name} sub_core_function_id={item.id} />
 					{:else}
-						{#each dndItems as item (item.id)}
-							<div class="py-2">
-								{#if item.itemType === 'sub_function'}
-									<Indicator name={item.name} sub_core_function_id={item.id} />
-								{:else}
-									<IndicatorComponent indicator={item} />
-								{/if}
-							</div>
-						{/each}
+						<IndicatorComponent indicator={item} />
 					{/if}
 				</div>
-			{/if}
+			{/snippet}
+
+			<DndContainer
+				bind:items={dndItems}
+				{isLoading}
+				onPositionsUpdate={handlePositionsUpdate}
+				emptyMessage="No items found"
+				successMessage="Updated positions successfully"
+				errorMessage="Failed to update order. Please try again."
+			>
+				{#each dndItems as item (item.id)}
+					{@render dndItem(item)}
+				{/each}
+			</DndContainer>
 		</div>
 	{/if}
 </div>

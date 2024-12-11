@@ -4,7 +4,7 @@
 	type BadgeVariant = 'default' | 'destructive' | 'outline' | 'secondary';
 
 	interface Props {
-		status: 'draft' | 'submitted' | 'reviewing' | 'approved';
+		status: 'draft' | 'submitted' | 'reviewing' | 'approved' | 'revision';
 	}
 
 	let { status }: Props = $props();
