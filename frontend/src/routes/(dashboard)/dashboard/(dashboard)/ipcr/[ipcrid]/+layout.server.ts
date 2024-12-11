@@ -1,25 +1,16 @@
 import { error } from '@sveltejs/kit';
 import type { LayoutServerLoad } from './$types';
 import { superValidate } from 'sveltekit-superforms';
-import {
-	createCoreFunctionSchema,
-	deleteCoreFunctionSchema,
-	updateCoreFunctionSchema
-} from './utils/schemas/core_function_schema';
 import { zod } from 'sveltekit-superforms/adapters';
+import { submitIPCRschema } from './utils/schemas/submit_ipcr_schema';
 import {
-	createSubCoreFunctionSchema,
-	deleteSubCoreFunctionSchema,
-	updateSubCoreFunctionSchema
-} from './utils/schemas/sub_core_function_schema';
-import {
-	createIndicatorSchema,
-	markIndicatorDoneSchema,
-	updateIndicatorSchema
-} from './utils/schemas/indicator_schema';
-import { universalDeleteSchema } from './utils/schemas/universal_delete_schema';
-import { submitIPCRschema } from './utils/schemas/submit-ipcr-schema';
-import { markIndicatorDone } from './utils/services/indicator-services';
+	getCoreFunctionForms,
+	getSubCoreFunctionForms,
+	getIndicatorForms,
+	getSupportFunctionForms
+} from './utils/super_form_loader';
+import { getCoreFunctions, getIPCR, getSupportFunctions } from './utils/layout_data_loader';
+
 export const load = (async ({ params, locals: { supabase, safeGetSession } }) => {
 	const ipcrId = params.ipcrid;
 	if (!ipcrId) {
@@ -27,58 +18,58 @@ export const load = (async ({ params, locals: { supabase, safeGetSession } }) =>
 			message: 'IPCR id is missing'
 		});
 	}
-	//core function forms
-	const createCoreFunctionForm = await superValidate(zod(createCoreFunctionSchema));
-	const deleteCoreFunctionForm = await superValidate(zod(deleteCoreFunctionSchema));
-	const updateCoreFunctionForm = await superValidate(zod(updateCoreFunctionSchema));
-	//sub core function forms
-	const createSubCoreFunctionForm = await superValidate(zod(createSubCoreFunctionSchema));
-	const deleteSubCoreFunctionForm = await superValidate(zod(deleteSubCoreFunctionSchema));
-	const updateSubCoreFunctionForm = await superValidate(zod(updateSubCoreFunctionSchema));
-	//indicator form
-	const createIndicatorForm = await superValidate(zod(createIndicatorSchema));
-	const deleteIndicatorForm = await superValidate(zod(universalDeleteSchema));
-	const updateIndicatorForm = await superValidate(zod(updateIndicatorSchema));
-	const markIndicatorDoneForm = await superValidate(zod(markIndicatorDoneSchema));
-	//submitIpcr Form
-	const submitIPCRForm = await superValidate(zod(submitIPCRschema));
-	//fetch Ipcr itself
-	const { data: IPCR, error: fetchingError } = await supabase
-		.from('ipcr')
-		.select()
-		.eq('id', ipcrId)
-		.single();
 
-	if (fetchingError) {
-		error(500, { message: 'Something went wrong, please contact the developer' });
-	}
+	try {
+		const [
+			coreForms,
+			subCoreForms,
+			indicatorForms,
+			supportForms,
+			submitIPCRForm,
+			IPCR,
+			coreFunctions,
+			supportFunctions
+		] = await Promise.all([
+			getCoreFunctionForms(),
+			getSubCoreFunctionForms(),
+			getIndicatorForms(),
+			getSupportFunctionForms(),
+			superValidate(zod(submitIPCRschema)),
+			getIPCR(supabase, ipcrId),
+			getCoreFunctions(supabase, ipcrId),
+			getSupportFunctions(supabase, ipcrId)
+		]);
 
-	// core function fetch
-	const { data: coreFunctions, error: coreFunctionError } = await supabase
-		.from('core_function')
-		.select()
-		.eq('ipcr_id', ipcrId)
-		.order('position');
-	if (coreFunctionError) {
-		error(500, { message: 'Something went wrong, please contact the developer' });
+		return {
+			IPCR,
+			data: { coreFunctions, supportFunctions },
+			coreForms: {
+				createCoreFunctionForm: coreForms.createForm,
+				deleteCoreFunctionForm: coreForms.deleteForm,
+				updateCoreFunctionForm: coreForms.updateForm
+			},
+			subCoreForms: {
+				createSubCoreFunctionForm: subCoreForms.createForm,
+				deleteSubCoreFunctionForm: subCoreForms.deleteForm,
+				updateSubCoreFunctionForm: subCoreForms.updateForm
+			},
+			supportForms: {
+				createSupportFunctionForm: supportForms.createForm,
+				deleteSupportFunctionForm: supportForms.deleteForm,
+				updateSupportFunctionForm: supportForms.updateForm
+			},
+			indicatorForm: {
+				createIndicatorForm: indicatorForms.createForm,
+				deleteIndicatorForm: indicatorForms.deleteForm,
+				updateIndicatorForm: indicatorForms.updateForm,
+				markIndicatorDoneForm: indicatorForms.markDoneForm
+			},
+			ipcrForm: {
+				submitIPCRForm
+			}
+		};
+	} catch (err) {
+		console.error('Unexpected error in load function:', err);
+		throw error(500, 'An unexpected error occurred while loading the page');
 	}
-	return {
-		IPCR,
-		data: { coreFunctions },
-		coreForms: { createCoreFunctionForm, deleteCoreFunctionForm, updateCoreFunctionForm },
-		subCoreForms: {
-			createSubCoreFunctionForm,
-			deleteSubCoreFunctionForm,
-			updateSubCoreFunctionForm
-		},
-		indicatorForm: {
-			createIndicatorForm,
-			deleteIndicatorForm,
-			updateIndicatorForm,
-			markIndicatorDoneForm
-		},
-		ipcrForm: {
-			submitIPCRForm
-		}
-	};
 }) satisfies LayoutServerLoad;

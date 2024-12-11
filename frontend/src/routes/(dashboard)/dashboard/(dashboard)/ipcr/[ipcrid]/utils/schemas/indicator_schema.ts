@@ -30,9 +30,5 @@ export const markIndicatorDoneSchema = z.object({
 });
 
 export type MarkIndicatorDoneSchema = typeof markIndicatorDoneSchema;
-export type MarkIndicatorDoneInput = z.infer<typeof markIndicatorDoneSchema>;
-// Export types
 export type CreateIndicatorSchema = typeof createIndicatorSchema;
-export type CreateIndicatorInput = z.infer<typeof createIndicatorSchema>;
 export type UpdateIndicatorSchema = typeof updateIndicatorSchema;
-export type UpdateIndicatorInput = z.infer<typeof updateIndicatorSchema>;

@@ -1,15 +1,17 @@
 import {
 	createSubCoreFunctionSchema,
-	deleteSubCoreFunctionSchema,
 	updateSubCoreFunctionSchema,
 	type CreateSubCoreFunctionSchema,
-	type DeleteSubCoreFunctionSchema,
 	type UpdateSubCoreFunctionSchema
 } from '../schemas/sub_core_function_schema';
 import { message, superValidate, type Infer } from 'sveltekit-superforms';
 import { titleCase } from 'title-case';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { zod } from 'sveltekit-superforms/adapters';
+import {
+	universalDeleteSchema,
+	type UniversalDeleteSchema
+} from '../schemas/universal_delete_schema';
 
 export async function createSubCoreFunction(request: Request, supabase: SupabaseClient) {
 	const form = await superValidate<Infer<CreateSubCoreFunctionSchema>, App.Superforms.Message>(
@@ -50,9 +52,9 @@ export async function createSubCoreFunction(request: Request, supabase: Supabase
 }
 
 export async function deleteSubCoreFunction(request: Request, supabase: SupabaseClient) {
-	const form = await superValidate<Infer<DeleteSubCoreFunctionSchema>, App.Superforms.Message>(
+	const form = await superValidate<Infer<UniversalDeleteSchema>, App.Superforms.Message>(
 		request,
-		zod(deleteSubCoreFunctionSchema)
+		zod(universalDeleteSchema)
 	);
 
 	if (!form.valid) {

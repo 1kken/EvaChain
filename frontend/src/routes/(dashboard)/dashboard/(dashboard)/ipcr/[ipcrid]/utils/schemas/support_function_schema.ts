@@ -1,17 +1,15 @@
 import { z } from 'zod';
 
 // Schema for creating a new core function
-export const createCoreFunctionSchema = z.object({
+export const createSupportFunctionSchema = z.object({
 	name: z.string().min(1, 'Name is required').max(1000, 'Name must be less than 1000 characters'),
-
 	ipcr_id: z.string().uuid('Invalid IPCR Teaching ID format'),
-
 	unit: z.number().multipleOf(0.01).min(1, 'Unit must be greater than zero').nullable(),
 	position: z.number().min(0),
 	reviewer_id: z.string().uuid('Invalid User').nullable()
 });
 
-export const updateCoreFunctionSchema = z
+export const updateSupportFunctionSchema = z
 	.object({
 		id: z.string(),
 		name: z
@@ -33,5 +31,5 @@ export const updateCoreFunctionSchema = z
 		message: 'At least one field must be provided for update'
 	});
 
-export type CreateCoreFunctionSchema = typeof createCoreFunctionSchema;
-export type UpdateCoreFunctionSchema = typeof updateCoreFunctionSchema;
+export type CreateSuppportFunctionSchema = typeof createSupportFunctionSchema;
+export type UpdateSupportFunctionSchema = typeof updateSupportFunctionSchema;

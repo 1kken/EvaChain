@@ -12,7 +12,7 @@
 	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';
 	import SubmitIpcrAction from '../SubmitIPCRAction.svelte';
 	import type { Infer, SuperValidated } from 'sveltekit-superforms';
-	import type { SubmitIPCRSchema } from '../../../utils/schemas/submit-ipcr-schema';
+	import type { SubmitIPCRSchema } from '../../../utils/schemas/submit_ipcr_schema';
 	import { getSingleIPCRStore, setSingleIPCRStore } from '../../(data)/(state)/ipcr-state.svelte';
 
 	type CoreFunction = Tables<'core_function'>;
@@ -95,10 +95,6 @@
 	// Initialize showSubmit based on initial conditions
 	$effect(() => {
 		const length = $currentCoreFunctions.length;
-
-		console.log('Can Edit:', $canEdit);
-		console.log('Core Functions Length:', length);
-
 		showSubmit = $canEdit && length > 0;
 	});
 </script>

@@ -8,10 +8,10 @@
 	import { LoaderCircle } from 'lucide-svelte';
 	import { TriangleAlert } from 'lucide-svelte';
 	import { Trash2 } from 'lucide-svelte';
-	import { deleteCoreFunctionSchema } from '../../../../../utils/schemas/core_function_schema';
 	import { getCoreFunctionStore } from '../../../../(data)/(state)/corefunctionstate.svelte';
 	import type { CoreFunctionFormResult } from '../../../../(data)/types';
 	import { getCoreFunctionFormContext } from '../../../../(data)/(forms)/core_function_form.svelte';
+	import { universalDeleteSchema } from '../../../../../utils/schemas/universal_delete_schema';
 	interface Props {
 		id: string;
 		isDrawerOpen: boolean;
@@ -21,7 +21,7 @@
 	let { id, isDrawerOpen = $bindable() }: Props = $props();
 	const { deleteCoreFunctionForm: data } = getCoreFunctionFormContext();
 	const form = superForm(data, {
-		validators: zodClient(deleteCoreFunctionSchema),
+		validators: zodClient(universalDeleteSchema),
 		multipleSubmits: 'prevent',
 		dataType: 'json',
 		onUpdate({ form, result }) {
@@ -45,7 +45,7 @@
 	let name = $state('');
 	if (currentCoreFunction) {
 		$formData.id = currentCoreFunction.id;
-		$formData.expectedTitle = currentCoreFunction.name;
+		$formData.expectedText = currentCoreFunction.name;
 		name = currentCoreFunction.name;
 	}
 </script>
@@ -68,14 +68,14 @@
 			</AlertDialog.Description>
 		</AlertDialog.Header>
 		<form method="POST" action="?/deletecorefunction" use:enhance>
-			<input hidden value={$formData.owner_id} name="owner_id" />
+			<Input name="expectedText" class="hidden" bind:value={$formData.expectedText} />
 			<Input name="id" class="hidden" bind:value={$formData.id} />
-			<Form.Field {form} name="confirmTitle">
+			<Form.Field {form} name="confirmText">
 				<Form.FieldErrors />
 				<Form.Control>
 					{#snippet children({ props })}
 						<Form.Label>Please Confirm</Form.Label>
-						<Input {...props} bind:value={$formData.confirmTitle} />
+						<Input {...props} bind:value={$formData.confirmText} />
 					{/snippet}
 				</Form.Control>
 				<Form.Description

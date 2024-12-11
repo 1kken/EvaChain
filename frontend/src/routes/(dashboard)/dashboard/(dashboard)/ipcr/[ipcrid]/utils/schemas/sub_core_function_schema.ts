@@ -21,19 +21,6 @@ export const updateSubCoreFunctionSchema = z
 		message: 'At least one field must be provided for update'
 	});
 
-// Schema for deleting a sub core function
-export const deleteSubCoreFunctionSchema = z
-	.object({
-		id: z.string().uuid('Invalid ID format'),
-		confirmTitle: z.string().min(1, 'Please fill in the necessary field'),
-		expectedTitle: z.string(),
-		owner_id: z.string()
-	})
-	.refine((data) => data.confirmTitle === data.expectedTitle, {
-		message: "The title doesn't match",
-		path: ['confirmTitle']
-	});
-
 // Schema for updating positions of multiple sub core functions
 export const updatePositionsSchema = z.array(
 	z.object({
@@ -44,13 +31,5 @@ export const updatePositionsSchema = z.array(
 
 // Export types
 export type CreateSubCoreFunctionSchema = typeof createSubCoreFunctionSchema;
-export type CreateSubCoreFunctionInput = z.infer<typeof createSubCoreFunctionSchema>;
-
 export type UpdateSubCoreFunctionSchema = typeof updateSubCoreFunctionSchema;
-export type UpdateSubCoreFunctionInput = z.infer<typeof updateSubCoreFunctionSchema>;
-
-export type DeleteSubCoreFunctionSchema = typeof deleteSubCoreFunctionSchema;
-export type DeleteSubCoreFunctionInput = z.infer<typeof deleteSubCoreFunctionSchema>;
-
 export type UpdatePositionsSchema = typeof updatePositionsSchema;
-export type UpdatePositionsInput = z.infer<typeof updatePositionsSchema>;

@@ -111,6 +111,8 @@ export type Database = {
           quality_rating: number | null
           status: Database["public"]["Enums"]["indicator_status"]
           sub_core_function_id: string | null
+          sub_support_function_id: string | null
+          support_function_id: string | null
           timeliness_rating: number | null
           updated_at: string
         }
@@ -128,6 +130,8 @@ export type Database = {
           quality_rating?: number | null
           status?: Database["public"]["Enums"]["indicator_status"]
           sub_core_function_id?: string | null
+          sub_support_function_id?: string | null
+          support_function_id?: string | null
           timeliness_rating?: number | null
           updated_at?: string
         }
@@ -145,6 +149,8 @@ export type Database = {
           quality_rating?: number | null
           status?: Database["public"]["Enums"]["indicator_status"]
           sub_core_function_id?: string | null
+          sub_support_function_id?: string | null
+          support_function_id?: string | null
           timeliness_rating?: number | null
           updated_at?: string
         }
@@ -161,6 +167,20 @@ export type Database = {
             columns: ["sub_core_function_id"]
             isOneToOne: false
             referencedRelation: "sub_core_function"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "indicator_sub_support_function_id_fkey"
+            columns: ["sub_support_function_id"]
+            isOneToOne: false
+            referencedRelation: "sub_support_function"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "indicator_support_function_id_fkey"
+            columns: ["support_function_id"]
+            isOneToOne: false
+            referencedRelation: "support_function"
             referencedColumns: ["id"]
           },
         ]
@@ -579,6 +599,82 @@ export type Database = {
           },
         ]
       }
+      sub_support_function: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          position: number
+          support_function_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          position: number
+          support_function_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          position?: number
+          support_function_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sub_support_function_support_function_id_fkey"
+            columns: ["support_function_id"]
+            isOneToOne: false
+            referencedRelation: "support_function"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      support_function: {
+        Row: {
+          created_at: string
+          id: string
+          ipcr_id: string
+          name: string
+          position: number
+          reviewer_id: string | null
+          unit: number | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          ipcr_id: string
+          name: string
+          position: number
+          reviewer_id?: string | null
+          unit?: number | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          ipcr_id?: string
+          name?: string
+          position?: number
+          reviewer_id?: string | null
+          unit?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "support_function_ipcr_id_fkey"
+            columns: ["ipcr_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       unit: {
         Row: {
           code: string
@@ -676,7 +772,12 @@ export type Database = {
       }
     }
     Enums: {
-      indicator_status: "draft" | "submitted" | "reviewing" | "approved"
+      indicator_status:
+        | "draft"
+        | "submitted"
+        | "reviewing"
+        | "revision"
+        | "approved"
       ipcr_status: "draft" | "submitted" | "reviewing" | "revision" | "approved"
       scope_type: "all" | "office" | "program" | "unit"
     }

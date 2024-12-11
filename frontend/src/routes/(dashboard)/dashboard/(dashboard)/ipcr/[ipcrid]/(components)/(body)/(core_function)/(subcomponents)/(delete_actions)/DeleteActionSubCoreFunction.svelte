@@ -10,8 +10,8 @@
 	import { Trash2 } from 'lucide-svelte';
 	import { getSubCoreFunctionStore } from '../../../../(data)/(state)/subcorefunctionstate.svelte';
 	import { getSubCoreFunctionFormContext } from '../../../../(data)/(forms)/sub_core_function_form.svelte';
-	import { deleteSubCoreFunctionSchema } from '../../../../../utils/schemas/sub_core_function_schema';
 	import type { SubCoreFunctionFormResult } from '../../../../(data)/types';
+	import { universalDeleteSchema } from '../../../../../utils/schemas/universal_delete_schema';
 
 	interface Props {
 		subCoreFunctionId: string;
@@ -21,7 +21,7 @@
 	const { deleteSubCoreFunctionForm: data } = getSubCoreFunctionFormContext();
 	let { subCoreFunctionId, isDrawerOpen = $bindable() }: Props = $props();
 	const form = superForm(data, {
-		validators: zodClient(deleteSubCoreFunctionSchema),
+		validators: zodClient(universalDeleteSchema),
 		multipleSubmits: 'prevent',
 		dataType: 'json',
 		onUpdate({ form, result }) {
@@ -40,7 +40,7 @@
 	let name = $state('');
 	if (currentSubCoreFunction) {
 		$formData.id = currentSubCoreFunction.id;
-		$formData.expectedTitle = currentSubCoreFunction.name;
+		$formData.expectedText = currentSubCoreFunction.name;
 		name = currentSubCoreFunction.name;
 	}
 </script>
@@ -63,14 +63,14 @@
 			</AlertDialog.Description>
 		</AlertDialog.Header>
 		<form method="POST" action="?/deletesubcorefunction" use:enhance>
-			<input hidden value={$formData.owner_id} name="owner_id" />
+			<Input name="expectedText" class="hidden" bind:value={$formData.expectedText} />
 			<Input name="id" class="hidden" bind:value={$formData.id} />
-			<Form.Field {form} name="confirmTitle">
+			<Form.Field {form} name="confirmText">
 				<Form.FieldErrors />
 				<Form.Control>
 					{#snippet children({ props })}
 						<Form.Label>Please Confirm</Form.Label>
-						<Input {...props} bind:value={$formData.confirmTitle} />
+						<Input {...props} bind:value={$formData.confirmText} />
 					{/snippet}
 				</Form.Control>
 				<Form.Description

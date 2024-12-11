@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
 	import { cn } from '$lib/utils';
-	import { ChevronDown, Plus, LoaderCircle } from 'lucide-svelte';
+	import { ChevronDown, LoaderCircle } from 'lucide-svelte';
 	import { dndzone } from 'svelte-dnd-action';
 	import type { DndEvent } from 'svelte-dnd-action';
 	import debounce from 'debounce';
@@ -12,7 +12,7 @@
 	import IndicatorComponent from '../../(indicator)/IndicatorComponent.svelte';
 	import { setIndicatorStore } from '../../(data)/(state)/indicator_state.svelte';
 	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';
-	import { fetchIndicatorsByParam } from '../../../utils/fetching-utils';
+	import { fetchIndicatorsByParam } from '../../../utils/fetching_utils';
 	import type { Tables } from '$lib/types/database.types';
 	import { getSingleIPCRStore } from '../../(data)/(state)/ipcr-state.svelte';
 

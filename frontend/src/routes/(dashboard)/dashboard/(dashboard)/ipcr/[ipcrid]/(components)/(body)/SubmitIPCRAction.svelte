@@ -9,7 +9,7 @@
 		type Infer,
 		type SuperValidated
 	} from 'sveltekit-superforms';
-	import { submitIPCRschema, type SubmitIPCRSchema } from '../../utils/schemas/submit-ipcr-schema';
+	import { submitIPCRschema, type SubmitIPCRSchema } from '../../utils/schemas/submit_ipcr_schema';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { getIPCRStore } from '../../../(data)/state.svelte';
 	import type { IPCRFormResult } from '../(data)/types';

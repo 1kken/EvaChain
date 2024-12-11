@@ -15,11 +15,11 @@
 	import CreateIndicatorDialog from '../../(indicator)/CreateIndicatorDialog.svelte';
 	import { setIndicatorStore } from '../../(data)/(state)/indicator_state.svelte';
 	import IndicatorComponent from '../../(indicator)/IndicatorComponent.svelte';
-	import { fetchIndicatorsByParam, fetchSubCoreFunctions } from '../../../utils/fetching-utils';
+	import { fetchIndicatorsByParam, fetchSubCoreFunctions } from '../../../utils/fetching_utils';
 	import {
 		updateIndicatorPositions,
 		updateSubCoreFunctionPositions
-	} from '../../../utils/position-update';
+	} from '../../../utils/position_update';
 	import { getSingleIPCRStore } from '../../(data)/(state)/ipcr-state.svelte';
 
 	let {
