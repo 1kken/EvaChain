@@ -7,7 +7,6 @@ const CORE_FUNCTION_STATE_KEY = Symbol('CORE_FUNCTION_STATE_KEY');
 type CoreFunctionState = {
 	currentCoreFunctions: Writable<Tables<'core_function'>[]>;
 	size: Writable<number>;
-	currentIPCRid: Writable<string | null>;
 	addCoreFunction: (coreFunction: Tables<'core_function'>) => void;
 	updateCoreFunction: (id: string, updates: Partial<Tables<'core_function'>>) => void;
 	removeCoreFunction: (id: string) => void;
@@ -39,7 +38,6 @@ function createCoreFunctionStore(initialData?: Tables<'core_function'>[]): CoreF
 
 	return {
 		currentCoreFunctions,
-		currentIPCRid,
 		size,
 		addCoreFunction,
 		updateCoreFunction,

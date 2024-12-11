@@ -1,7 +1,9 @@
 import {
 	createIndicatorSchema,
+	markIndicatorDoneSchema,
 	updateIndicatorSchema,
 	type CreateIndicatorSchema,
+	type MarkIndicatorDoneSchema,
 	type UpdateIndicatorSchema
 } from '../schemas/indicator_schema';
 import {
@@ -89,13 +91,43 @@ export async function updateIndicator(request: Request, supabase: SupabaseClient
 		});
 	}
 
-	const { id, indicator, accomplishment, accomplishment_date } = form.data;
-
-	console.log(id, indicator, accomplishment, accomplishment_date);
+	const { id, indicator } = form.data;
 
 	const { error: updateError, data: indicatorData } = await supabase
 		.from('indicator')
-		.update({ indicator, accomplishment, accomplishment_date })
+		.update({ indicator })
+		.eq('id', id)
+		.select()
+		.single();
+
+	if (updateError) {
+		console.log(updateError.message);
+		return message(form, {
+			status: 'error',
+			text: `Error saving IPCR ${updateError.message}`
+		});
+	}
+
+	return { form, indicatorData };
+}
+export async function markIndicatorDone(request: Request, supabase: SupabaseClient) {
+	const form = await superValidate<Infer<MarkIndicatorDoneSchema>, App.Superforms.Message>(
+		request,
+		zod(markIndicatorDoneSchema)
+	);
+
+	if (!form.valid) {
+		return message(form, {
+			status: 'error',
+			text: 'Unprocessable input!'
+		});
+	}
+
+	const { id, accomplishment, accomplishment_date } = form.data;
+
+	const { error: updateError, data: indicatorData } = await supabase
+		.from('indicator')
+		.update({ accomplishment, accomplishment_date, status: 'submitted' })
 		.eq('id', id)
 		.select()
 		.single();

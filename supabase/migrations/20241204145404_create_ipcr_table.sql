@@ -1,8 +1,8 @@
 -- Create status enum type
-CREATE TYPE ipcr_status AS ENUM ('draft', 'submitted', 'reviewing', 'approved');
+CREATE TYPE ipcr_status AS ENUM ('draft', 'submitted', 'reviewing','revision', 'approved');
 
 -- Create ipcr_teaching table with status
-CREATE TABLE ipcr_teaching (
+CREATE TABLE ipcr (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     title VARCHAR(255) NOT NULL,
     status ipcr_status DEFAULT 'draft' NOT NULL,
@@ -15,6 +15,6 @@ CREATE TABLE ipcr_teaching (
 );
 
 CREATE TRIGGER set_updated_at
-    BEFORE UPDATE ON ipcr_teaching
+    BEFORE UPDATE ON ipcr
     FOR EACH ROW
     EXECUTE FUNCTION fn_set_updated_at();

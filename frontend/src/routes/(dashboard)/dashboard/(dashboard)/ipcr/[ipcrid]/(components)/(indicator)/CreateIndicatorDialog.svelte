@@ -3,12 +3,12 @@
 	import * as Form from '$lib/components/ui/form/index.js';
 	import { superForm, type FormResult } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
-	import { getIndicatorFormContext } from '../(data)/indicator_form.svelte';
+	import { getIndicatorFormContext } from '../(data)/(forms)/indicator_form.svelte';
 	import { createIndicatorSchema } from '../../utils/schemas/indicator_schema';
 	import { buttonVariants } from '$lib/components/ui/button';
 	import { Plus } from 'lucide-svelte';
 	import IntelligentInput from '$lib/custom_components/IntelligentInput.svelte';
-	import { getIndicatorStore } from '../(data)/indicator_state.svelte';
+	import { getIndicatorStore } from '../(data)/(state)/indicator_state.svelte';
 	import type { indicatorFormResult } from '../(data)/types';
 	import { showSuccessToast } from '$lib/utils/toast';
 	import { handleIndicatorConfig } from './utils';

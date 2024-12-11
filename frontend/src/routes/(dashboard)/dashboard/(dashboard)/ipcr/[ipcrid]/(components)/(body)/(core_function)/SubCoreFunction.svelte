@@ -4,23 +4,23 @@
 	import { ChevronDown, Plus, LoaderCircle } from 'lucide-svelte';
 	import { dndzone } from 'svelte-dnd-action';
 	import type { DndEvent } from 'svelte-dnd-action';
-	import debounce from 'debounce';
 	import SubCoreFunctionCreateDialog from './(subcomponents)/(create_dialogs)/SubCoreFunctionCreateDialog.svelte';
 	import Indicator from './Indicator.svelte';
 	import DeleteActionCoreFunction from './(subcomponents)/(delete_actions)/DeleteActionCoreFunction.svelte';
-	import DropDownWrapper from '../../(helpers)/DropDownWrapper.svelte';
+	import DropDownWrapper from '../../(wrappers)/DropDownWrapper.svelte';
 	import CoreFunctionUpdateDialog from './(subcomponents)/(update_dialogs)/CoreFunctionUpdateDialog.svelte';
 	import { setSubCoreFunctionStore } from '../../(data)/(state)/subcorefunctionstate.svelte';
 	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';
 	import type { Tables } from '$lib/types/database.types';
 	import CreateIndicatorDialog from '../../(indicator)/CreateIndicatorDialog.svelte';
-	import { setIndicatorStore } from '../../(data)/indicator_state.svelte';
+	import { setIndicatorStore } from '../../(data)/(state)/indicator_state.svelte';
 	import IndicatorComponent from '../../(indicator)/IndicatorComponent.svelte';
 	import { fetchIndicatorsByParam, fetchSubCoreFunctions } from '../../../utils/fetching-utils';
 	import {
 		updateIndicatorPositions,
 		updateSubCoreFunctionPositions
 	} from '../../../utils/position-update';
+	import { getSingleIPCRStore } from '../../(data)/(state)/ipcr-state.svelte';
 
 	let {
 		name,
@@ -45,6 +45,9 @@
 	const store = setSubCoreFunctionStore();
 	const { currentSubCoreFunctions } = store;
 	const { currentIndicators } = setIndicatorStore();
+
+	//get Stores
+	const { canEdit } = getSingleIPCRStore();
 
 	// Combined fetch function
 	async function fetchData(): Promise<void> {
@@ -176,30 +179,32 @@
 				<p class="text-muted-foreground text-xs md:text-sm">({!units ? ' _' : units} units)</p>
 			</div>
 		</div>
-		{#snippet deleteAction()}
-			<DeleteActionCoreFunction id={coreFunctionId} bind:isDrawerOpen />
-		{/snippet}
-		{#snippet updateDialog()}
-			<CoreFunctionUpdateDialog {coreFunctionId} bind:isDrawerOpen />
-		{/snippet}
-		{#snippet createSubCoreFunction()}
-			<SubCoreFunctionCreateDialog {coreFunctionId} bind:isDrawerOpen={isAddDrawerOpen} />
-		{/snippet}
-		{#snippet createIndicatorDialog()}
-			<CreateIndicatorDialog
-				isDirectChild={true}
-				config={{ type: 'core_function', id: coreFunctionId }}
-				bind:isDrawerOpen={isAddDrawerOpen}
-			/>
-		{/snippet}
 		<div class="flex gap-4">
-			<DropDownWrapper
-				icon={ChevronDown}
-				text={'Add selections'}
-				childrens={[createSubCoreFunction, createIndicatorDialog]}
-				bind:isDrawerOpen={isAddDrawerOpen}
-			/>
-			<DropDownWrapper childrens={[updateDialog, deleteAction]} bind:isDrawerOpen />
+			{#if $canEdit}
+				{#snippet deleteAction()}
+					<DeleteActionCoreFunction id={coreFunctionId} bind:isDrawerOpen />
+				{/snippet}
+				{#snippet updateDialog()}
+					<CoreFunctionUpdateDialog {coreFunctionId} bind:isDrawerOpen />
+				{/snippet}
+				{#snippet createSubCoreFunction()}
+					<SubCoreFunctionCreateDialog {coreFunctionId} bind:isDrawerOpen={isAddDrawerOpen} />
+				{/snippet}
+				{#snippet createIndicatorDialog()}
+					<CreateIndicatorDialog
+						isDirectChild={true}
+						config={{ type: 'core_function', id: coreFunctionId }}
+						bind:isDrawerOpen={isAddDrawerOpen}
+					/>
+				{/snippet}
+				<DropDownWrapper
+					icon={ChevronDown}
+					text={'Add selections'}
+					childrens={[createSubCoreFunction, createIndicatorDialog]}
+					bind:isDrawerOpen={isAddDrawerOpen}
+				/>
+				<DropDownWrapper childrens={[updateDialog, deleteAction]} bind:isDrawerOpen />
+			{/if}
 		</div>
 	</div>
 

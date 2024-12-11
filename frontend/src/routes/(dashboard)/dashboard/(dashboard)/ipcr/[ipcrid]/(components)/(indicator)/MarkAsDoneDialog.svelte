@@ -2,18 +2,20 @@
 	import type { Tables } from '$lib/types/database.types';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { getIndicatorFormContext } from '../(data)/(forms)/indicator_form.svelte';
-	import { updateIndicatorSchema } from '../../utils/schemas/indicator_schema';
+	import {
+		markIndicatorDoneSchema,
+		updateIndicatorSchema
+	} from '../../utils/schemas/indicator_schema';
 	import SuperDebug, { superForm, type FormResult } from 'sveltekit-superforms';
 	import type { indicatorFormResult } from '../(data)/types';
 	import { getIndicatorStore } from '../(data)/(state)/indicator_state.svelte';
-	import { showSuccessToast } from '$lib/utils/toast';
+	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
-	import { Pencil } from 'lucide-svelte';
+	import { Grid2x2Check } from 'lucide-svelte';
 	import * as Form from '$lib/components/ui/form/index.js';
 	import IntelligentInput from '$lib/custom_components/IntelligentInput.svelte';
 	import CalendarIcon from 'lucide-svelte/icons/calendar';
 	import {
-		CalendarDate,
 		DateFormatter,
 		type DateValue,
 		getLocalTimeZone,
@@ -34,33 +36,41 @@
 	let { indicator, isDrawerOpen = $bindable() }: Props = $props();
 
 	// stores
-	const { updateIndicatorForm } = getIndicatorFormContext();
+	const { markIndicatorDoneForm } = getIndicatorFormContext();
 	const indicatorStore = getIndicatorStore();
 
 	// state
 	let isOpen = $state(false);
-	const form = superForm(updateIndicatorForm, {
-		validators: zodClient(updateIndicatorSchema),
+	const form = superForm(markIndicatorDoneForm, {
+		validators: zodClient(markIndicatorDoneSchema),
 		multipleSubmits: 'prevent',
 		onUpdate({ form, result }) {
 			const action = result.data as FormResult<indicatorFormResult>;
 			if (form.valid && action.indicatorData && indicatorStore) {
 				const indicator = action.indicatorData;
 				indicatorStore.updateIndicator(indicator.id, indicator);
-				showSuccessToast(`Successfully updated indicator!`);
+				showSuccessToast(`Indicator mark as done!`);
 				isOpen = false;
 				isDrawerOpen = false;
+				const { id, accomplishment, accomplishment_date } = indicator;
+				reset({
+					data: { id, accomplishment, accomplishment_date },
+					newState: { id, accomplishment, accomplishment_date }
+				});
 			}
 		}
 	});
 
-	const { form: formData, enhance, message, delayed } = form;
+	const { form: formData, enhance, message, delayed, reset } = form;
+	$effect(() => {
+		if ($message?.status === 'error') {
+			showErrorToast(`Error marking indicator as done ${$message.text}`);
+		}
+	});
 	const df = new DateFormatter('en-US', { dateStyle: 'long' });
 
 	// Initialize form data
 	$formData.id = indicator.id;
-	$formData.indicator = indicator.indicator;
-	// $formData.accomplishment = indicator.accomplishment ?? '';
 
 	// Initialize date value
 	let dateValue = $state<DateValue | undefined>();
@@ -71,10 +81,11 @@
 </script>
 
 <Dialog.Root bind:open={isOpen}>
-	<Dialog.Trigger class="focus-visible:outline-none">
-		<span class="flex items-center gap-3">
-			<Pencil size={16} />Edit
-		</span>
+	<Dialog.Trigger
+		class="flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-green-100 hover:text-green-700 focus-visible:outline-none"
+	>
+		<Grid2x2Check size={16} />
+		<span>Mark as Done</span>
 	</Dialog.Trigger>
 	<Dialog.Content class="w-[95vw] max-w-5xl">
 		<Dialog.Header>
@@ -83,23 +94,10 @@
 				Update the indicator details and accomplishment information
 			</Dialog.Description>
 		</Dialog.Header>
-		<form method="POST" action="?/updateindicator" use:enhance class="space-y-6">
+		<form method="POST" action="?/markindicatordone" use:enhance class="space-y-6">
 			<div class="grid grid-cols-1 gap-4">
 				<input hidden name="id" value={$formData.id} />
-				<Form.Field {form} name="indicator">
-					<Form.Control>
-						{#snippet children({ props })}
-							<Form.Label>Indicator</Form.Label>
-							<IntelligentInput
-								name="indicator"
-								placeholder={'Please type your indicator'}
-								bind:content={$formData.indicator}
-							/>
-						{/snippet}
-					</Form.Control>
-					<Form.FieldErrors />
-				</Form.Field>
-				<!-- <Form.Field {form} name="accomplishment">
+				<Form.Field {form} name="accomplishment">
 					<Form.Control>
 						{#snippet children({ props })}
 							<Form.Label>Accomplishment</Form.Label>
@@ -111,10 +109,10 @@
 						{/snippet}
 					</Form.Control>
 					<Form.FieldErrors />
-				</Form.Field> -->
+				</Form.Field>
 			</div>
 			<div class="grid grid-cols-1 gap-4">
-				<!-- <Form.Field {form} name="accomplishment_date">
+				<Form.Field {form} name="accomplishment_date">
 					<Form.Control>
 						{#snippet children({ props })}
 							<Form.Label>Accomplishment Date</Form.Label>
@@ -132,7 +130,7 @@
 								<Popover.Content class="w-auto p-0" side="top">
 									<Calendar
 										type="single"
-										value={dateValue}
+										value={dateValue as DateValue}
 										bind:placeholder
 										maxValue={today(getLocalTimeZone())}
 										calendarLabel="Accomplishment date"
@@ -141,7 +139,7 @@
 											if (v) {
 												$formData.accomplishment_date = v.toString();
 											} else {
-												$formData.accomplishment_date = null;
+												$formData.accomplishment_date = '';
 											}
 										}}
 									/>
@@ -151,11 +149,14 @@
 						{/snippet}
 					</Form.Control>
 					<Form.FieldErrors />
-				</Form.Field> -->
+				</Form.Field>
 			</div>
 			<div class="flex justify-end">
 				<Form.Button>Save</Form.Button>
 			</div>
 		</form>
+		{#if browser}
+			<SuperDebug data={$formData} />
+		{/if}
 	</Dialog.Content>
 </Dialog.Root>

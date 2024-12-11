@@ -24,12 +24,12 @@ export async function createCoreFunction(request: Request, supabase: SupabaseCli
 		});
 	}
 
-	let { name, ipcr_teaching_id, unit, reviewer_id, position } = form.data;
+	let { name, ipcr_id, unit, reviewer_id, position } = form.data;
 	name = titleCase(name.toLocaleLowerCase());
 
 	const { data: coreFunction, error: coreFunctionError } = await supabase
 		.from('core_function')
-		.insert({ name, ipcr_teaching_id, unit, reviewer_id, position })
+		.insert({ name, ipcr_id, unit, reviewer_id, position })
 		.select()
 		.single();
 

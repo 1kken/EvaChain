@@ -1,5 +1,5 @@
 -- Create status enum type
-CREATE TYPE indicator_status AS ENUM ('draft', 'submitted', 'reviewing', 'approved');
+CREATE TYPE indicator_status AS ENUM ('draft', 'submitted', 'reviewing', 'revision', 'approved');
 CREATE TABLE indicator (
    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
    status indicator_status DEFAULT 'draft' NOT NULL,

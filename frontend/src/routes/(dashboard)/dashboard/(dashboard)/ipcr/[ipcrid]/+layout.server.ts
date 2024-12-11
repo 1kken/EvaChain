@@ -12,8 +12,14 @@ import {
 	deleteSubCoreFunctionSchema,
 	updateSubCoreFunctionSchema
 } from './utils/schemas/sub_core_function_schema';
-import { createIndicatorSchema, updateIndicatorSchema } from './utils/schemas/indicator_schema';
+import {
+	createIndicatorSchema,
+	markIndicatorDoneSchema,
+	updateIndicatorSchema
+} from './utils/schemas/indicator_schema';
 import { universalDeleteSchema } from './utils/schemas/universal_delete_schema';
+import { submitIPCRschema } from './utils/schemas/submit-ipcr-schema';
+import { markIndicatorDone } from './utils/services/indicator-services';
 export const load = (async ({ params, locals: { supabase, safeGetSession } }) => {
 	const ipcrId = params.ipcrid;
 	if (!ipcrId) {
@@ -33,17 +39,31 @@ export const load = (async ({ params, locals: { supabase, safeGetSession } }) =>
 	const createIndicatorForm = await superValidate(zod(createIndicatorSchema));
 	const deleteIndicatorForm = await superValidate(zod(universalDeleteSchema));
 	const updateIndicatorForm = await superValidate(zod(updateIndicatorSchema));
+	const markIndicatorDoneForm = await superValidate(zod(markIndicatorDoneSchema));
+	//submitIpcr Form
+	const submitIPCRForm = await superValidate(zod(submitIPCRschema));
+	//fetch Ipcr itself
+	const { data: IPCR, error: fetchingError } = await supabase
+		.from('ipcr')
+		.select()
+		.eq('id', ipcrId)
+		.single();
+
+	if (fetchingError) {
+		error(500, { message: 'Something went wrong, please contact the developer' });
+	}
+
 	// core function fetch
 	const { data: coreFunctions, error: coreFunctionError } = await supabase
 		.from('core_function')
 		.select()
-		.eq('ipcr_teaching_id', ipcrId)
+		.eq('ipcr_id', ipcrId)
 		.order('position');
 	if (coreFunctionError) {
 		error(500, { message: 'Something went wrong, please contact the developer' });
 	}
 	return {
-		ipcrId,
+		IPCR,
 		data: { coreFunctions },
 		coreForms: { createCoreFunctionForm, deleteCoreFunctionForm, updateCoreFunctionForm },
 		subCoreForms: {
@@ -54,7 +74,11 @@ export const load = (async ({ params, locals: { supabase, safeGetSession } }) =>
 		indicatorForm: {
 			createIndicatorForm,
 			deleteIndicatorForm,
-			updateIndicatorForm
+			updateIndicatorForm,
+			markIndicatorDoneForm
+		},
+		ipcrForm: {
+			submitIPCRForm
 		}
 	};
 }) satisfies LayoutServerLoad;

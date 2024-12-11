@@ -57,7 +57,7 @@ export const actions: Actions = {
 		const title = `${lastName}_${currentYear}_January_June`;
 		//create the ipcr
 		const { data: ipcrData, error: ipcrError } = await supabase
-			.from('ipcr_teaching')
+			.from('ipcr')
 			.insert({ title, owner_id, unit_id, office_id, program_id })
 			.select()
 			.single();
@@ -86,7 +86,7 @@ export const actions: Actions = {
 		}
 
 		const { error: deleteError, data: deletedIPCR } = await supabase
-			.from('ipcr_teaching')
+			.from('ipcr')
 			.delete()
 			.eq('id', id)
 			.select()

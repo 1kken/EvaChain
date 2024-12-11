@@ -32,11 +32,11 @@
 				const coreFunction = action.coreFunction;
 				coreFunctionStore.addCoreFunction(coreFunction);
 				showSuccessToast(`Succesfully added core function ${coreFunction.name}`);
-				const ipcrId = $formData.ipcr_teaching_id; // Save ID before reset
+				const ipcrId = $formData.ipcr_id; // Save ID before reset
 				isOpen = false;
 				reset({
-					data: { ipcr_teaching_id: ipcrId, position: $size },
-					newState: { ipcr_teaching_id: ipcrId, position: $size }
+					data: { ipcr_id: ipcrId, position: $size },
+					newState: { ipcr_id: ipcrId, position: $size }
 				});
 				displayName = '';
 			}
@@ -49,7 +49,7 @@
 		const currentIpcr = $currentUserIPCR.find((c) => c.id === ipcrId);
 		$formData.position = $size;
 		if (currentIpcr) {
-			$formData.ipcr_teaching_id = currentIpcr.id;
+			$formData.ipcr_id = currentIpcr.id;
 		}
 		if ($message?.status === 'error') {
 			showErrorToast($message.text);
@@ -113,7 +113,7 @@
 		</Dialog.Header>
 		<form action="?/createcorefunction" method="POST" use:enhance class="space-y-6">
 			<input hidden name="position" value={$formData.position} />
-			<input hidden name="ipcr_teaching_id" value={$formData.ipcr_teaching_id} />
+			<input hidden name="ipcr_id" value={$formData.ipcr_id} />
 			<Form.Field {form} name="name">
 				<Form.Control>
 					{#snippet children({ props })}

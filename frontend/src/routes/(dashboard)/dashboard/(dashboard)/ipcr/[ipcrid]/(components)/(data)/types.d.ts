@@ -12,3 +12,8 @@ export type indicatorFormResult = {
 	form: any;
 	indicatorData: Tables<'sub_core_function'>;
 };
+
+export type IPCRFormResult = {
+	form: any;
+	IpcrData: Tables<'ipcr_teaching'>;
+};

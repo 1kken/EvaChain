@@ -4,3 +4,5 @@ import { z } from 'zod';
 export const submitIPCRschema = z.object({
 	ipcrID: z.string().uuid('invalid_uuid')
 });
+
+export type SubmitIPCRSchema = typeof submitIPCRschema;

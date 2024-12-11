@@ -5,7 +5,8 @@ export const createIndicatorSchema = z.object({
 	indicator: z
 		.string()
 		.min(1, 'Indicator is required')
-		.max(1000, 'Indicator must be less than 1000 characters'),
+		.max(1000, 'Indicator must be less than 1000 characters')
+		.optional(),
 	core_function_id: z.string().uuid('Invalid Core Function ID').nullable(),
 	sub_core_function_id: z.string().uuid('Invalid Core Function ID').nullable(),
 	position: z.number().min(0)
@@ -17,11 +18,19 @@ export const updateIndicatorSchema = z.object({
 	indicator: z
 		.string()
 		.min(1, 'Indicator is required')
-		.max(1000, 'Indicator must be less than 1000 characters'),
-	accomplishment: z.string().nullable(),
-	accomplishment_date: z.string().nullable()
+		.max(1000, 'Indicator must be less than 1000 characters')
+		.optional()
 });
 
+// First, define your schema (in schema file)
+export const markIndicatorDoneSchema = z.object({
+	id: z.string().uuid('Invalid Indicator ID'),
+	accomplishment: z.string().min(10, 'IPCR must have atleast 10 charactes'),
+	accomplishment_date: z.string().refine((v) => v, { message: 'Accomplishment date is required.' })
+});
+
+export type MarkIndicatorDoneSchema = typeof markIndicatorDoneSchema;
+export type MarkIndicatorDoneInput = z.infer<typeof markIndicatorDoneSchema>;
 // Export types
 export type CreateIndicatorSchema = typeof createIndicatorSchema;
 export type CreateIndicatorInput = z.infer<typeof createIndicatorSchema>;

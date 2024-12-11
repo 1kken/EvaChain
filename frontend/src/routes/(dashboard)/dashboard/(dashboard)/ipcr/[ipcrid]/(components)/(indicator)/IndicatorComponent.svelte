@@ -1,32 +1,39 @@
 <script lang="ts">
 	import type { Tables } from '$lib/types/database.types';
-	import DropDownWrapper from '../(helpers)/DropDownWrapper.svelte';
+	import { getSingleIPCRStore } from '../(data)/(state)/ipcr-state.svelte';
+	import DropDownWrapper from '../(wrappers)/DropDownWrapper.svelte';
 	import DeleteIndicatorAction from './DeleteIndicatorAction.svelte';
+	import MarkAsDoneDialog from './MarkAsDoneDialog.svelte';
+	import StatusIcon from './StatusIcon.svelte';
 	import UpdateIndicatorDialog from './UpdateIndicatorDialog.svelte';
-	import { getCoreFunctionStore } from '../(data)/(state)/corefunctionstate.svelte';
 
 	let { indicator }: { indicator: Tables<'indicator'> } = $props();
 	let isDrawerOpen = $state(false);
-	const { currentIPCRid } = getCoreFunctionStore();
+
+	const { canEdit } = getSingleIPCRStore();
 </script>
 
 <div class="rounded-lg border">
-	<div class="flex min-h-[3.5rem] items-center justify-between p-3">
-		<div class="flex items-center gap-2">
-			<h4 class=" text-base">{indicator.indicator}</h4>
+	<div class="flex flex-col space-y-2 p-3">
+		<div class="flex h-4 justify-start gap-2">
+			<StatusIcon status={indicator.status} />
+			{#if indicator.status !== 'submitted'}
+				<MarkAsDoneDialog {indicator} bind:isDrawerOpen />
+			{/if}
 		</div>
-		{#snippet deleteAction()}
-			<DeleteIndicatorAction {indicator} bind:isDrawerOpen />
-		{/snippet}
-		{#snippet updateDialog()}
-			<UpdateIndicatorDialog {indicator} bind:isDrawerOpen />
-		{/snippet}
-		<!-- {#snippet submitDialog()}
-			<span class="flex items-center gap-3 text-sm">
-				<Send size={16} />
-				Submit
-			</span>
-		{/snippet} -->
-		<DropDownWrapper childrens={[deleteAction, updateDialog]} bind:isDrawerOpen />
+		<div class="flex items-center justify-between">
+			<h4 class="text-base">{indicator.indicator}</h4>
+			<div>
+				{#if $canEdit}
+					{#snippet deleteAction()}
+						<DeleteIndicatorAction {indicator} bind:isDrawerOpen />
+					{/snippet}
+					{#snippet updateDialog()}
+						<UpdateIndicatorDialog {indicator} bind:isDrawerOpen />
+					{/snippet}
+					<DropDownWrapper childrens={[deleteAction, updateDialog]} bind:isDrawerOpen />
+				{/if}
+			</div>
+		</div>
 	</div>
 </div>

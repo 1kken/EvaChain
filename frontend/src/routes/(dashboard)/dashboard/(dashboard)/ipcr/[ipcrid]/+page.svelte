@@ -3,4 +3,4 @@
 	let { data } = $props();
 </script>
 
-<CoreFunction currentIpcrId={data.ipcrId} />
+<CoreFunction currentIpcr={data.IPCR} submitIPCRForm={data.ipcrForm.submitIPCRForm} />

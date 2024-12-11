@@ -10,18 +10,29 @@
 	import SubCoreFunction from './SubCoreFunction.svelte';
 	import { getCoreFunctionStore } from '../../(data)/(state)/corefunctionstate.svelte';
 	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';
-	import SubmitIpcrAction from '../../(helpers)/SubmitIPCRAction.svelte';
+	import SubmitIpcrAction from '../SubmitIPCRAction.svelte';
+	import type { Infer, SuperValidated } from 'sveltekit-superforms';
+	import type { SubmitIPCRSchema } from '../../../utils/schemas/submit-ipcr-schema';
+	import { getSingleIPCRStore, setSingleIPCRStore } from '../../(data)/(state)/ipcr-state.svelte';
 
 	type CoreFunction = Tables<'core_function'>;
 
-	const { currentCoreFunctions, currentIPCRid: currentIPCRidStore } = getCoreFunctionStore();
+	const { currentCoreFunctions } = getCoreFunctionStore();
+
+	interface Props {
+		currentIpcr: Tables<'ipcr'>;
+		submitIPCRForm: SuperValidated<Infer<SubmitIPCRSchema>>;
+	}
+	let { currentIpcr, submitIPCRForm }: Props = $props();
+
+	//set store
+	setSingleIPCRStore(currentIpcr);
+	const { currentIPCR: ipcr, canEdit } = getSingleIPCRStore();
+
 	let isExpanded = $state(false);
 	let isUpdating = $state(false);
 	let flipDurationMs = 300;
 	let dndItems = $state<CoreFunction[]>([]);
-
-	let { currentIpcrId }: { currentIpcrId: string } = $props();
-	$currentIPCRidStore = currentIpcrId;
 
 	// Sync dndItems with store
 	$effect(() => {
@@ -80,6 +91,16 @@
 	function toggleExpand() {
 		isExpanded = !isExpanded;
 	}
+	let showSubmit = $state(true);
+	// Initialize showSubmit based on initial conditions
+	$effect(() => {
+		const length = $currentCoreFunctions.length;
+
+		console.log('Can Edit:', $canEdit);
+		console.log('Core Functions Length:', length);
+
+		showSubmit = $canEdit && length > 0;
+	});
 </script>
 
 <div class="w-full">
@@ -96,8 +117,12 @@
 			<h2 class="text-base font-bold md:text-xl">CORE FUNCTIONS</h2>
 		</div>
 		<div class="flex items-center gap-5">
-			<SubmitIpcrAction ipcrId={currentIpcrId} />
-			<CoreFunctionCreateDialog ipcrId={currentIpcrId} />
+			{#if showSubmit}
+				<SubmitIpcrAction ipcrId={currentIpcr.id} {submitIPCRForm} />
+			{/if}
+			{#if $canEdit}
+				<CoreFunctionCreateDialog ipcrId={currentIpcr.id} />
+			{/if}
 		</div>
 	</header>
 </div>

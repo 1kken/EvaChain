@@ -6,14 +6,15 @@
 	import type { DndEvent } from 'svelte-dnd-action';
 	import debounce from 'debounce';
 	import DeleteActionSubCoreFunction from './(subcomponents)/(delete_actions)/DeleteActionSubCoreFunction.svelte';
-	import DropDownWrapper from '../../(helpers)/DropDownWrapper.svelte';
+	import DropDownWrapper from '../../(wrappers)/DropDownWrapper.svelte';
 	import SubCoreFunctionUpdateDialog from './(subcomponents)/(update_dialogs)/SubCoreFunctionUpdateDialog.svelte';
 	import CreateIndicatorDialog from '../../(indicator)/CreateIndicatorDialog.svelte';
 	import IndicatorComponent from '../../(indicator)/IndicatorComponent.svelte';
-	import { setIndicatorStore } from '../../(data)/indicator_state.svelte';
+	import { setIndicatorStore } from '../../(data)/(state)/indicator_state.svelte';
 	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';
 	import { fetchIndicatorsByParam } from '../../../utils/fetching-utils';
 	import type { Tables } from '$lib/types/database.types';
+	import { getSingleIPCRStore } from '../../(data)/(state)/ipcr-state.svelte';
 
 	type Indicator = Tables<'indicator'>;
 
@@ -33,14 +34,12 @@
 	let dndItems = $state<Indicator[]>([]);
 	const flipDurationMs = 300;
 
+	//store
+	const { canEdit } = getSingleIPCRStore();
+
 	// Initialize store when component mounts
 	const store = setIndicatorStore();
 	const { currentIndicators } = store;
-
-	interface IndicatorResponse {
-		data: Tables<'indicator'>[];
-		error?: string;
-	}
 
 	const updateIndicatorPositions = debounce(async (items: Indicator[]) => {
 		try {
@@ -144,17 +143,18 @@
 			</Button>
 			<h4 class="font-medium">{name}</h4>
 		</div>
-
-		{#snippet deleteAction()}
-			<DeleteActionSubCoreFunction subCoreFunctionId={sub_core_function_id} bind:isDrawerOpen />
-		{/snippet}
-		{#snippet updateDialog()}
-			<SubCoreFunctionUpdateDialog subCoreFunctionId={sub_core_function_id} bind:isDrawerOpen />
-		{/snippet}
-		<div class="flex gap-4">
-			<CreateIndicatorDialog config={{ type: 'sub_core_function', id: sub_core_function_id }} />
-			<DropDownWrapper childrens={[updateDialog, deleteAction]} bind:isDrawerOpen />
-		</div>
+		{#if $canEdit}
+			{#snippet deleteAction()}
+				<DeleteActionSubCoreFunction subCoreFunctionId={sub_core_function_id} bind:isDrawerOpen />
+			{/snippet}
+			{#snippet updateDialog()}
+				<SubCoreFunctionUpdateDialog subCoreFunctionId={sub_core_function_id} bind:isDrawerOpen />
+			{/snippet}
+			<div class="flex gap-4">
+				<CreateIndicatorDialog config={{ type: 'sub_core_function', id: sub_core_function_id }} />
+				<DropDownWrapper childrens={[updateDialog, deleteAction]} bind:isDrawerOpen />
+			</div>
+		{/if}
 	</div>
 
 	{#if isExpanded}

@@ -38,7 +38,7 @@ export type Database = {
         Row: {
           created_at: string
           id: string
-          ipcr_teaching_id: string
+          ipcr_id: string
           name: string
           position: number
           reviewer_id: string | null
@@ -48,7 +48,7 @@ export type Database = {
         Insert: {
           created_at?: string
           id?: string
-          ipcr_teaching_id: string
+          ipcr_id: string
           name: string
           position: number
           reviewer_id?: string | null
@@ -58,7 +58,7 @@ export type Database = {
         Update: {
           created_at?: string
           id?: string
-          ipcr_teaching_id?: string
+          ipcr_id?: string
           name?: string
           position?: number
           reviewer_id?: string | null
@@ -67,10 +67,10 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "core_function_ipcr_teaching_id_fkey"
-            columns: ["ipcr_teaching_id"]
+            foreignKeyName: "core_function_ipcr_id_fkey"
+            columns: ["ipcr_id"]
             isOneToOne: false
-            referencedRelation: "ipcr_teaching"
+            referencedRelation: "ipcr"
             referencedColumns: ["id"]
           },
         ]
@@ -165,7 +165,7 @@ export type Database = {
           },
         ]
       }
-      ipcr_teaching: {
+      ipcr: {
         Row: {
           created_at: string
           id: string
@@ -201,21 +201,21 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "ipcr_teaching_office_id_fkey"
+            foreignKeyName: "ipcr_office_id_fkey"
             columns: ["office_id"]
             isOneToOne: false
             referencedRelation: "office"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "ipcr_teaching_program_id_fkey"
+            foreignKeyName: "ipcr_program_id_fkey"
             columns: ["program_id"]
             isOneToOne: false
             referencedRelation: "program"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "ipcr_teaching_unit_id_fkey"
+            foreignKeyName: "ipcr_unit_id_fkey"
             columns: ["unit_id"]
             isOneToOne: false
             referencedRelation: "unit"
@@ -677,7 +677,7 @@ export type Database = {
     }
     Enums: {
       indicator_status: "draft" | "submitted" | "reviewing" | "approved"
-      ipcr_status: "draft" | "submitted" | "reviewing" | "approved"
+      ipcr_status: "draft" | "submitted" | "reviewing" | "revision" | "approved"
       scope_type: "all" | "office" | "program" | "unit"
     }
     CompositeTypes: {
