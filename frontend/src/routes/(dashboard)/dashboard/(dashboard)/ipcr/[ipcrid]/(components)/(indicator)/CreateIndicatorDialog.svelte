@@ -1,7 +1,7 @@
 <script lang="ts">
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
-	import SuperDebug, { superForm, type FormResult } from 'sveltekit-superforms';
+	import { superForm, type FormResult } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { getIndicatorFormContext } from '../(data)/(forms)/indicator_form.svelte';
 	import { createIndicatorSchema } from '../../utils/schemas/indicator_schema';
@@ -12,7 +12,6 @@
 	import type { indicatorFormResult } from '../(data)/types';
 	import { showSuccessToast } from '$lib/utils/toast';
 	import { handleIndicatorConfig } from './utils';
-	import { browser } from '$app/environment';
 
 	interface IndicatorConfig {
 		type:
@@ -148,8 +147,5 @@
 				<Form.Button>Submit</Form.Button>
 			</div>
 		</form>
-		{#if browser}
-			<SuperDebug data={$formData} />
-		{/if}
 	</Dialog.Content>
 </Dialog.Root>
