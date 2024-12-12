@@ -2,46 +2,56 @@
 	import * as Form from '$lib/components/ui/form';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
 	import { showWarningToast } from '$lib/utils/toast';
-	import { superForm, type FormResult, type SuperValidated } from 'sveltekit-superforms';
+	import { superForm, type FormResult } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { Input } from '$lib/components/ui/input';
 	import { LoaderCircle } from 'lucide-svelte';
 	import { TriangleAlert } from 'lucide-svelte';
 	import { Trash2 } from 'lucide-svelte';
-	import { getSubCoreFunctionStore } from '../../../../(data)/(state)/subcorefunctionstate.svelte';
-	import { getSubCoreFunctionFormContext } from '../../../../(data)/(forms)/sub_core_function_form.svelte';
-	import type { SubCoreFunctionFormResult } from '../../../../(data)/types';
+	import { getSubSupportFunctionFormContext } from '../../../../(data)/(forms)/sub_support_function_form.svelte';
+	import type {
+		SubSupportFunctionFormResult,
+		SupportFunctionFormResult
+	} from '../../../../(data)/types';
 	import { universalDeleteSchema } from '../../../../../utils/schemas/universal_delete_schema';
+	import { getSubSupportFunctionStore } from '../../../../(data)/(state)/sub_support_function_state.svelte';
+	import { getSupportFunctionStore } from '../../../../(data)/(state)/support_function_state.svelte';
 
 	interface Props {
-		subCoreFunctionId: string;
+		supportFunctionId: string;
 		isDrawerOpen: boolean;
 	}
-	const { currentSubCoreFunctions, removeSubCoreFunction } = getSubCoreFunctionStore();
-	const { deleteSubCoreFunctionForm: data } = getSubCoreFunctionFormContext();
-	let { subCoreFunctionId, isDrawerOpen = $bindable() }: Props = $props();
+
+	// const { currentSubSupportFunctions, removeSubSupportFunction } = getSubSupportFunctionStore();
+	const { currentSupportFunctions, removeSupportFunction } = getSupportFunctionStore();
+	const { deleteSubSupportFunctionForm: data } = getSubSupportFunctionFormContext();
+
+	let { supportFunctionId, isDrawerOpen = $bindable() }: Props = $props();
+
 	const form = superForm(data, {
 		validators: zodClient(universalDeleteSchema),
 		multipleSubmits: 'prevent',
-		dataType: 'json',
 		onUpdate({ form, result }) {
-			const action = result.data as FormResult<SubCoreFunctionFormResult>;
+			const action = result.data as FormResult<SupportFunctionFormResult>;
 			if (form.valid && action) {
-				const sub_core_function = action.sub_core_function;
-				removeSubCoreFunction(sub_core_function.id);
-				showWarningToast(`Succesfully deleted IPCR ${sub_core_function.name}`);
+				const support_function = action.support_function;
+				removeSupportFunction(support_function.id);
+				showWarningToast(`Successfully deleted support ${support_function.name} function`);
 				isDrawerOpen = false;
 			}
 		}
 	});
+
 	const { form: formData, enhance, delayed } = form;
+
 	let isOpen = $state(false);
-	const currentSubCoreFunction = $currentSubCoreFunctions.find((c) => c.id === subCoreFunctionId);
+	const currentSupportFunction = $currentSupportFunctions.find((c) => c.id === supportFunctionId);
 	let name = $state('');
-	if (currentSubCoreFunction) {
-		$formData.id = currentSubCoreFunction.id;
-		$formData.expectedText = currentSubCoreFunction.name;
-		name = currentSubCoreFunction.name;
+
+	if (currentSupportFunction) {
+		$formData.id = currentSupportFunction.id;
+		$formData.expectedText = currentSupportFunction.name;
+		name = currentSupportFunction.name;
 	}
 </script>
 
@@ -53,16 +63,16 @@
 	</AlertDialog.Trigger>
 	<AlertDialog.Content>
 		<AlertDialog.Header>
-			<AlertDialog.Title
-				><span class="flex items-center gap-4"
-					><TriangleAlert class="text-red-600" /> Are you absolutely sure?</span
-				></AlertDialog.Title
-			>
+			<AlertDialog.Title>
+				<span class="flex items-center gap-4">
+					<TriangleAlert class="text-red-600" /> Are you absolutely sure?
+				</span>
+			</AlertDialog.Title>
 			<AlertDialog.Description>
 				This action cannot be undone. This will permanently delete {name} and all its dependants.
 			</AlertDialog.Description>
 		</AlertDialog.Header>
-		<form method="POST" action="?/deletesubcorefunction" use:enhance>
+		<form method="POST" action="?/deletesupportfunction" use:enhance>
 			<Input name="expectedText" class="hidden" bind:value={$formData.expectedText} />
 			<Input name="id" class="hidden" bind:value={$formData.id} />
 			<Form.Field {form} name="confirmText">
@@ -73,8 +83,8 @@
 						<Input {...props} bind:value={$formData.confirmText} />
 					{/snippet}
 				</Form.Control>
-				<Form.Description
-					>Please type <span class=" font-bold">{name}</span> to proceed.
+				<Form.Description>
+					Please type <span class="font-bold">{name}</span> to proceed.
 				</Form.Description>
 			</Form.Field>
 			{#if $delayed}

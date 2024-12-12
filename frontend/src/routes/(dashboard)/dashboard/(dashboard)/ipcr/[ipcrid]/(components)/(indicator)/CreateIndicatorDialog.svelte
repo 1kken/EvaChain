@@ -1,7 +1,7 @@
 <script lang="ts">
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
-	import { superForm, type FormResult } from 'sveltekit-superforms';
+	import SuperDebug, { superForm, type FormResult } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { getIndicatorFormContext } from '../(data)/(forms)/indicator_form.svelte';
 	import { createIndicatorSchema } from '../../utils/schemas/indicator_schema';
@@ -12,9 +12,10 @@
 	import type { indicatorFormResult } from '../(data)/types';
 	import { showSuccessToast } from '$lib/utils/toast';
 	import { handleIndicatorConfig } from './utils';
+	import { browser } from '$app/environment';
 
 	interface IndicatorConfig {
-		type: 'core_function' | 'sub_core_function';
+		type: 'core_function' | 'sub_core_function' | 'support_function' | 'sub_support_function';
 		id: string;
 	}
 
@@ -66,11 +67,19 @@
 		$formData.sub_core_function_id = config.id;
 	}
 
-	// $formData.position = (size + 1) * 100;
+	if (configType === 'support_function') {
+		$formData.support_function_id = config.id;
+	}
+
+	if (configType === 'sub_support_function') {
+		$formData.sub_support_function_id = config.id;
+	}
 
 	function handleDialogOpenChange(open: boolean) {
 		isOpen = open;
 	}
+
+	$formData.indicator = '';
 </script>
 
 <Dialog.Root bind:open={isOpen} onOpenChange={handleDialogOpenChange}>
@@ -97,9 +106,10 @@
 			</Dialog.Description>
 		</Dialog.Header>
 		<form method="POST" action="?/createindicator" use:enhance class="space-y-6">
-			<input type="hidden" name="sub_core_function_id" value={$formData.sub_core_function_id} />
 			<input type="hidden" name="position" value={$formData.position} />
 			<input type="hidden" name="core_function_id" value={$formData.core_function_id} />
+			<input type="hidden" name="sub_core_function_id" value={$formData.sub_core_function_id} />
+			<input type="hidden" name="support_function_id" value={$formData.support_function_id} />
 
 			<Form.Field {form} name="indicator">
 				<Form.Control>
@@ -108,7 +118,7 @@
 						<IntelligentInput
 							name="indicator"
 							placeholder={'Please type your indicator'}
-							bind:content={$formData.indicator}
+							bind:content={$formData.indicator!}
 						/>
 						<Form.Description>Please fill up the following field.</Form.Description>
 					{/snippet}
@@ -119,5 +129,8 @@
 				<Form.Button>Submit</Form.Button>
 			</div>
 		</form>
+		{#if browser}
+			<SuperDebug data={$formData} />
+		{/if}
 	</Dialog.Content>
 </Dialog.Root>

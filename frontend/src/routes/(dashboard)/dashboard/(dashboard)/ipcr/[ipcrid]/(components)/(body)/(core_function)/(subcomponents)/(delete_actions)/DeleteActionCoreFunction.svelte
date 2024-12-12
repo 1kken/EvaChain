@@ -26,10 +26,10 @@
 		dataType: 'json',
 		onUpdate({ form, result }) {
 			const action = result.data as FormResult<CoreFunctionFormResult>;
-			if (form.valid && action) {
-				const core_function = action.coreFunction;
-				removeCoreFunction(core_function.id);
-				showWarningToast(`Succesfully deleted IPCR ${core_function.name}`);
+			if (form.valid && action.core_function) {
+				const coreFunction = action.core_function;
+				removeCoreFunction(coreFunction.id);
+				showWarningToast(`Succesfully deleted IPCR ${coreFunction.name}`);
 				isDrawerOpen = false;
 			}
 		}

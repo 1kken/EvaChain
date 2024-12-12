@@ -27,11 +27,24 @@ export async function createIndicator(request: Request, supabase: SupabaseClient
 		});
 	}
 
-	let { indicator, core_function_id, sub_core_function_id, position } = form.data;
-
+	let {
+		indicator,
+		core_function_id,
+		sub_core_function_id,
+		support_function_id,
+		sub_support_function_id,
+		position
+	} = form.data;
 	const { data: indicatorData, error: indicatorError } = await supabase
 		.from('indicator')
-		.insert({ indicator, core_function_id, sub_core_function_id, position })
+		.insert({
+			indicator,
+			core_function_id,
+			sub_core_function_id,
+			support_function_id,
+			sub_support_function_id,
+			position
+		})
 		.select()
 		.single();
 
@@ -133,6 +146,7 @@ export async function markIndicatorDone(request: Request, supabase: SupabaseClie
 		.single();
 
 	if (updateError) {
+		console.log('error here');
 		console.log(updateError.message);
 		return message(form, {
 			status: 'error',

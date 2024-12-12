@@ -30,8 +30,8 @@
 		multipleSubmits: 'prevent',
 		onUpdate({ form, result }) {
 			const action = result.data as FormResult<SubCoreFunctionFormResult>;
-			if (form.valid && action.subCoreFunction && subCoreFunctionStore) {
-				const subCoreFunction = action.subCoreFunction;
+			if (form.valid && action.sub_core_function && subCoreFunctionStore) {
+				const subCoreFunction = action.sub_core_function;
 				subCoreFunctionStore.updateSubCoreFunction(subCoreFunction.id, subCoreFunction);
 				showSuccessToast(`Succesfully added core function ${subCoreFunction.name}`);
 				const sub_core_function_id = $formData.id; // Save ID before reset

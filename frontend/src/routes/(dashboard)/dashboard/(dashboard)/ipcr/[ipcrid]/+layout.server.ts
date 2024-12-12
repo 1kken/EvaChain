@@ -7,7 +7,8 @@ import {
 	getCoreFunctionForms,
 	getSubCoreFunctionForms,
 	getIndicatorForms,
-	getSupportFunctionForms
+	getSupportFunctionForms,
+	getSubSupportFunctionForms
 } from './utils/super_form_loader';
 import { getCoreFunctions, getIPCR, getSupportFunctions } from './utils/layout_data_loader';
 
@@ -25,6 +26,7 @@ export const load = (async ({ params, locals: { supabase, safeGetSession } }) =>
 			subCoreForms,
 			indicatorForms,
 			supportForms,
+			subSupportForms,
 			submitIPCRForm,
 			IPCR,
 			coreFunctions,
@@ -34,6 +36,7 @@ export const load = (async ({ params, locals: { supabase, safeGetSession } }) =>
 			getSubCoreFunctionForms(),
 			getIndicatorForms(),
 			getSupportFunctionForms(),
+			getSubSupportFunctionForms(),
 			superValidate(zod(submitIPCRschema)),
 			getIPCR(supabase, ipcrId),
 			getCoreFunctions(supabase, ipcrId),
@@ -41,8 +44,7 @@ export const load = (async ({ params, locals: { supabase, safeGetSession } }) =>
 		]);
 
 		return {
-			IPCR,
-			data: { coreFunctions, supportFunctions },
+			data: { IPCR, coreFunctions, supportFunctions },
 			coreForms: {
 				createCoreFunctionForm: coreForms.createForm,
 				deleteCoreFunctionForm: coreForms.deleteForm,
@@ -57,6 +59,11 @@ export const load = (async ({ params, locals: { supabase, safeGetSession } }) =>
 				createSupportFunctionForm: supportForms.createForm,
 				deleteSupportFunctionForm: supportForms.deleteForm,
 				updateSupportFunctionForm: supportForms.updateForm
+			},
+			subSupportForms: {
+				createSubSupportFunctionForm: subSupportForms.createForm,
+				deleteSubSupportFunctionForm: subSupportForms.deleteForm,
+				updateSubSupportFunctionForm: subSupportForms.updateForm
 			},
 			indicatorForm: {
 				createIndicatorForm: indicatorForms.createForm,

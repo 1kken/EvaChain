@@ -1,6 +1,8 @@
 <script lang="ts">
 	import CoreFunction from './(components)/(body)/(core_function)/CoreFunction.svelte';
+	import SupportFunction from './(components)/(body)/(support_function)/SupportFunction.svelte';
 	let { data } = $props();
 </script>
 
-<CoreFunction currentIpcr={data.IPCR} submitIPCRForm={data.ipcrForm.submitIPCRForm} />
+<CoreFunction submitIPCRForm={data.ipcrForm.submitIPCRForm} />
+<SupportFunction />

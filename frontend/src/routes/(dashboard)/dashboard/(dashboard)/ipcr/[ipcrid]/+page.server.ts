@@ -16,30 +16,59 @@ import {
 	updateIndicator
 } from './utils/services/indicator-services';
 import { submitIpcrAction } from './utils/services/ipcr-services';
+import {
+	createSupportFunction,
+	deleteSupportFunction,
+	updateSupportFunction
+} from './utils/services/support-function-services';
+import {
+	createSubSupportFunction,
+	deleteSubSupportFunction,
+	updateSubSupportFunction
+} from './utils/services/sub_support_function_services';
 
 export const actions = {
+	//core function
 	createcorefunction: async ({ request, locals: { supabase, session } }) => {
 		return createCoreFunction(request, supabase);
 	},
-
 	deletecorefunction: async ({ request, locals: { supabase, session } }) => {
 		return deleteCoreFunction(request, supabase);
 	},
-
 	updatecorefunction: async ({ request, locals: { supabase, session } }) => {
 		return updateCoreFunction(request, supabase);
 	},
+	//sub core function
 	createsubcorefunction: async ({ request, locals: { supabase, session } }) => {
 		return createSubCoreFunction(request, supabase);
 	},
-
 	deletesubcorefunction: async ({ request, locals: { supabase, session } }) => {
 		return deleteSubCoreFunction(request, supabase);
 	},
-
 	updatesubcorefunction: async ({ request, locals: { supabase, session } }) => {
 		return updateSubCoreFunction(request, supabase);
 	},
+	//support function
+	createsupportfunction: async ({ request, locals: { supabase, session } }) => {
+		return createSupportFunction(request, supabase);
+	},
+	deletesupportfunction: async ({ request, locals: { supabase, session } }) => {
+		return deleteSupportFunction(request, supabase);
+	},
+	updatesupportfunction: async ({ request, locals: { supabase, session } }) => {
+		return updateSupportFunction(request, supabase);
+	},
+	//sub support function
+	createsubsupportfunction: async ({ request, locals: { supabase, session } }) => {
+		return createSubSupportFunction(request, supabase);
+	},
+	deletesubsupportfunction: async ({ request, locals: { supabase, session } }) => {
+		return deleteSubSupportFunction(request, supabase);
+	},
+	updatesubsupportfunction: async ({ request, locals: { supabase, session } }) => {
+		return updateSubSupportFunction(request, supabase);
+	},
+	//indicator
 	createindicator: async ({ request, locals: { supabase, session } }) => {
 		return createIndicator(request, supabase);
 	},
@@ -53,6 +82,7 @@ export const actions = {
 	updateindicator: async ({ request, locals: { supabase, session } }) => {
 		return updateIndicator(request, supabase);
 	},
+	//ipcr
 	submitipcr: async ({ request, locals: { supabase, session } }) => {
 		return submitIpcrAction(request, supabase);
 	}

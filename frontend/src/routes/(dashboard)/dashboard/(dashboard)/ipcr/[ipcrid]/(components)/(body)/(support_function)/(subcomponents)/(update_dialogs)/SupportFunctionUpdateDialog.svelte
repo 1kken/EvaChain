@@ -1,55 +1,58 @@
 <script lang="ts">
-	import { buttonVariants } from '$lib/components/ui/button/index.js';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
-	import { LoaderCircle } from 'lucide-svelte';
-	import { Plus } from 'lucide-svelte';
+	import { LoaderCircle, Pencil } from 'lucide-svelte';
 	import { getCoreFunctionFormContext } from '../../../../(data)/(forms)/core_function_form.svelte';
 	import { superForm, type FormResult } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
-	import { createCoreFunctionSchema } from '../../../../../utils/schemas/core_function_schema';
-	import { getIPCRStore } from '../../../../../../(data)/state.svelte';
+	import { updateCoreFunctionSchema } from '../../../../../utils/schemas/core_function_schema';
 	import Button from '$lib/components/ui/button/button.svelte';
-	import type { CoreFunctionFormResult } from '../../../../(data)/types';
+	import type { CoreFunctionFormResult, SupportFunctionFormResult } from '../../../../(data)/types';
 	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';
 	import { getCoreFunctionStore } from '../../../../(data)/(state)/corefunctionstate.svelte';
+	import { getSupportFunctionFormContext } from '../../../../(data)/(forms)/support_function_form.svelte';
+	import { getSupportFunctionStore } from '../../../../(data)/(state)/support_function_state.svelte';
+	import { updateSupportFunctionSchema } from '../../../../../utils/schemas/support_function_schema';
 
-	let { ipcrId }: { ipcrId: string } = $props();
+	let {
+		supportFunctionId,
+		isDrawerOpen = $bindable()
+	}: { supportFunctionId: string; isDrawerOpen: boolean } = $props();
 	let isOpen = $state(false);
 	let suggestions: { id: string; display: string }[] = $state([]);
 	let displayName = $state('');
-	const { createCoreFunctionForm: data } = getCoreFunctionFormContext();
-	const coreFunctionStore = getCoreFunctionStore();
-	const { size } = coreFunctionStore;
-	const form = superForm(data!, {
+
+	const { updateSupportFunctionForm } = getSupportFunctionFormContext();
+	const { currentSupportFunctions, updateSupportFunction } = getSupportFunctionStore();
+	const form = superForm(updateSupportFunctionForm, {
 		dataType: 'json',
-		validators: zodClient(createCoreFunctionSchema),
+		validators: zodClient(updateSupportFunctionSchema),
 		multipleSubmits: 'prevent',
 		onUpdate({ form, result }) {
-			const action = result.data as FormResult<CoreFunctionFormResult>;
-			if (form.valid && action.core_function && coreFunctionStore) {
-				const coreFunction = action.core_function;
-				coreFunctionStore.addCoreFunction(coreFunction);
-				showSuccessToast(`Succesfully added core function ${coreFunction.name}`);
-				const ipcrId = $formData.ipcr_id; // Save ID before reset
-				isOpen = false;
-				reset({
-					data: { ipcr_id: ipcrId, position: $size },
-					newState: { ipcr_id: ipcrId, position: $size }
-				});
+			const action = result.data as FormResult<SupportFunctionFormResult>;
+			if (form.valid && action.support_function && currentSupportFunctions) {
+				const supportFunction = action.support_function;
+				updateSupportFunction(supportFunction.id, supportFunction);
 				displayName = '';
+				isOpen = false;
+				isDrawerOpen = false;
+				showSuccessToast(`Succesfully added core function ${supportFunction.name}`);
 			}
 		}
 	});
 
-	const { currentUserIPCR } = getIPCRStore();
+	const currentSupportFunction = $currentSupportFunctions.find((c) => c.id === supportFunctionId);
 	const { form: formData, enhance, delayed, message, reset } = form;
 	$effect(() => {
-		const currentIpcr = $currentUserIPCR.find((c) => c.id === ipcrId);
-		$formData.position = $size;
-		if (currentIpcr) {
-			$formData.ipcr_id = currentIpcr.id;
+		if (currentSupportFunction) {
+			$formData.id = supportFunctionId;
+			$formData.name = currentSupportFunction.name;
+			$formData.unit = currentSupportFunction.unit;
+			$formData.reviewer_id = currentSupportFunction.reviewer_id ?? undefined;
+			if (currentSupportFunction.reviewer_id) {
+				fetchReviewer(currentSupportFunction.reviewer_id);
+			}
 		}
 		if ($message?.status === 'error') {
 			showErrorToast($message.text);
@@ -93,33 +96,51 @@
 			isLoading = false;
 		}
 	}
+
+	async function fetchReviewer(userId: string) {
+		try {
+			const response = await fetch(`/api/profiles?userId=${userId}`);
+			if (!response.ok) {
+				throw new Error('Failed to fetch reviewer');
+			}
+			const { profile } = await response.json();
+			displayName = [
+				profile.first_name,
+				profile.middle_name ? `${profile.middle_name.charAt(0)}.` : '',
+				profile.last_name
+			]
+				.filter(Boolean)
+				.join(' ');
+		} catch (error) {
+			console.error('Error fetching reviewer:', error);
+			displayName = '';
+		}
+	}
 </script>
 
 <Dialog.Root bind:open={isOpen}>
-	<Dialog.Trigger class={buttonVariants({ variant: 'outline' })}>
-		<span class="flex items-center gap-2">
-			<Plus class="h-5 w-5" />
-			<span class="hidden md:inline">Add Core Function</span>
+	<Dialog.Trigger class="focus-visible:outline-none">
+		<span class="flex items-center gap-3">
+			<Pencil size={16} />Edit
 		</span>
 	</Dialog.Trigger>
 	<Dialog.Content class="max-h-[85vh] overflow-y-auto sm:max-w-[800px]">
 		<Dialog.Header>
-			<Dialog.Title>Create Core Function</Dialog.Title>
+			<Dialog.Title>Create Support Function</Dialog.Title>
 			<Dialog.Description>
-				A core function is a main responsibility area in your role with an assigned weight (unit)
-				for performance evaluation. It represents primary duties that contribute to reaching
-				organizational goals.
+				A support function is a secondary responsibility area in your role with an assigned weight
+				(unit) for performance evaluation. It represents supplementary duties that assist in
+				achieving organizational goals.
 			</Dialog.Description>
 		</Dialog.Header>
-		<form action="?/createcorefunction" method="POST" use:enhance class="space-y-6">
-			<input hidden name="position" value={$formData.position} />
-			<input hidden name="ipcr_id" value={$formData.ipcr_id} />
+		<form action="?/updatesupportfunction" method="POST" use:enhance class="space-y-6">
+			<input name="id" value={$formData.id} hidden />
 			<Form.Field {form} name="name">
 				<Form.Control>
 					{#snippet children({ props })}
 						<Form.Label>Title</Form.Label>
 						<Input {...props} bind:value={$formData.name} />
-						<Form.Description>This is the title of the core function.</Form.Description>
+						<Form.Description>This is the title of the support function.</Form.Description>
 					{/snippet}
 				</Form.Control>
 				<Form.FieldErrors />
@@ -131,8 +152,8 @@
 							<Form.Label>Unit</Form.Label>
 							<Input type="number" step="0.1" {...props} bind:value={$formData.unit} />
 							<Form.Description
-								>A unit represents your credit allocation for each core function in your performance
-								evaluation.</Form.Description
+								>A unit represents your credit allocation for each support function in your
+								performance evaluation.</Form.Description
 							>
 						{/snippet}
 					</Form.Control>

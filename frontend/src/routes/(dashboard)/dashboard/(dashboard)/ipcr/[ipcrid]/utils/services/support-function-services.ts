@@ -1,22 +1,23 @@
-import { message, superValidate, type Infer } from 'sveltekit-superforms';
-import {
-	createCoreFunctionSchema,
-	updateCoreFunctionSchema,
-	type CreateCoreFunctionSchema,
-	type UpdateCoreFunctionSchema
-} from '../schemas/core_function_schema';
-import { titleCase } from 'title-case';
 import type { SupabaseClient } from '@supabase/supabase-js';
+import {
+	createSupportFunctionSchema,
+	updateSupportFunctionSchema,
+	type CreateSuppportFunctionSchema,
+	type UpdateSupportFunctionSchema
+} from '../schemas/support_function_schema';
+import { message, superValidate, type Infer } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
+import { titleCase } from 'title-case';
+import type { Database } from '$lib/types/database.types';
 import {
 	universalDeleteSchema,
 	type UniversalDeleteSchema
 } from '../schemas/universal_delete_schema';
 
-export async function createCoreFunction(request: Request, supabase: SupabaseClient) {
-	const form = await superValidate<Infer<CreateCoreFunctionSchema>, App.Superforms.Message>(
+export async function createSupportFunction(request: Request, supabase: SupabaseClient<Database>) {
+	const form = await superValidate<Infer<CreateSuppportFunctionSchema>, App.Superforms.Message>(
 		request,
-		zod(createCoreFunctionSchema)
+		zod(createSupportFunctionSchema)
 	);
 
 	if (!form.valid) {
@@ -29,29 +30,29 @@ export async function createCoreFunction(request: Request, supabase: SupabaseCli
 	let { name, ipcr_id, unit, reviewer_id, position } = form.data;
 	name = titleCase(name.toLocaleLowerCase());
 
-	const { data: core_function, error: coreFunctionError } = await supabase
-		.from('core_function')
+	const { data: support_function, error: createError } = await supabase
+		.from('support_function')
 		.insert({ name, ipcr_id, unit, reviewer_id, position })
 		.select()
 		.single();
 
-	if (coreFunctionError) {
-		if (coreFunctionError.code === '23505') {
+	if (createError) {
+		if (createError.code === '23505') {
 			return message(form, {
 				status: 'error',
-				text: `Cannot have the same name for core functions!`
+				text: `Cannot have the same title for support functions!`
 			});
 		}
 		return message(form, {
 			status: 'error',
-			text: `Error saving core function, ${coreFunctionError.message}`
+			text: `Error saving support function, ${createError.message}`
 		});
 	}
 
-	return { form, core_function };
+	return { form, support_function };
 }
 
-export async function deleteCoreFunction(request: Request, supabase: SupabaseClient) {
+export async function deleteSupportFunction(request: Request, supabase: SupabaseClient<Database>) {
 	const form = await superValidate<Infer<UniversalDeleteSchema>, App.Superforms.Message>(
 		request,
 		zod(universalDeleteSchema)
@@ -66,8 +67,8 @@ export async function deleteCoreFunction(request: Request, supabase: SupabaseCli
 
 	const { id } = form.data;
 
-	const { error: deleteError, data: core_function } = await supabase
-		.from('core_function')
+	const { error: deleteError, data: support_function } = await supabase
+		.from('support_function')
 		.delete()
 		.eq('id', id)
 		.select()
@@ -80,13 +81,12 @@ export async function deleteCoreFunction(request: Request, supabase: SupabaseCli
 		});
 	}
 
-	return { form, core_function };
+	return { form, support_function };
 }
-
-export async function updateCoreFunction(request: Request, supabase: SupabaseClient) {
-	const form = await superValidate<Infer<UpdateCoreFunctionSchema>, App.Superforms.Message>(
+export async function updateSupportFunction(request: Request, supabase: SupabaseClient<Database>) {
+	const form = await superValidate<Infer<UpdateSupportFunctionSchema>, App.Superforms.Message>(
 		request,
-		zod(updateCoreFunctionSchema)
+		zod(updateSupportFunctionSchema)
 	);
 
 	if (!form.valid) {
@@ -101,8 +101,8 @@ export async function updateCoreFunction(request: Request, supabase: SupabaseCli
 		name = titleCase(name.toLocaleLowerCase());
 	}
 
-	const { data: core_function, error: updateError } = await supabase
-		.from('core_function')
+	const { data: support_function, error: updateError } = await supabase
+		.from('support_function')
 		.update({ name, reviewer_id, unit })
 		.eq('id', id)
 		.select()
@@ -112,7 +112,7 @@ export async function updateCoreFunction(request: Request, supabase: SupabaseCli
 		if (updateError.code === '23505') {
 			return message(form, {
 				status: 'error',
-				text: `Cannot have the same name for core functions!`
+				text: `Cannot have the same name for support functions!`
 			});
 		}
 		return message(form, {
@@ -121,5 +121,5 @@ export async function updateCoreFunction(request: Request, supabase: SupabaseCli
 		});
 	}
 
-	return { form, core_function };
+	return { form, support_function };
 }

@@ -3,44 +3,43 @@
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Plus } from 'lucide-svelte';
 	import { LoaderCircle } from 'lucide-svelte';
-	import { getSubCoreFunctionFormContext } from '../../../../(data)/(forms)/sub_core_function_form.svelte';
-	import { getSubCoreFunctionStore } from '../../../../(data)/(state)/subcorefunctionstate.svelte';
 	import { superForm, type FormResult } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
-	import { createSubCoreFunctionSchema } from '../../../../../utils/schemas/sub_core_function_schema';
-	import type { SubCoreFunctionFormResult } from '../../../../(data)/types';
+	import type { SubSupportFunctionFormResult } from '../../../../(data)/types';
 	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';
 	import * as Form from '$lib/components/ui/form/index.js';
+	import { getSubSupportFunctionFormContext } from '../../../../(data)/(forms)/sub_support_function_form.svelte';
+	import { createSubSupportFunctionSchema } from '../../../../../utils/schemas/sub_support_function_schema';
+	import { getSubSupportFunctionStore } from '../../../../(data)/(state)/sub_support_function_state.svelte';
 	interface Props {
-		coreFunctionId: string;
+		subSupportId: string;
 		isDrawerOpen?: boolean;
 	}
-	let { coreFunctionId, isDrawerOpen = $bindable() }: Props = $props();
+	let { subSupportId, isDrawerOpen = $bindable() }: Props = $props();
 	let isOpen = $state(false);
-	const { createSubCoreFunctionForm: data } = getSubCoreFunctionFormContext();
+
 	// Get the complete store object
-	const subCoreFunctionStore = getSubCoreFunctionStore();
-
+	const { createSubSupportFunctionForm } = getSubSupportFunctionFormContext();
+	const subSupportFunctionStore = getSubSupportFunctionStore();
 	// Destructure specific properties
-	const { size } = subCoreFunctionStore;
-
-	const form = superForm(data!, {
-		id: coreFunctionId,
+	const { size, addSubSupportFunction } = subSupportFunctionStore;
+	const form = superForm(createSubSupportFunctionForm, {
+		id: subSupportId,
 		dataType: 'json',
-		validators: zodClient(createSubCoreFunctionSchema),
+		validators: zodClient(createSubSupportFunctionSchema),
 		multipleSubmits: 'prevent',
 		onUpdate({ form, result }) {
-			const action = result.data as FormResult<SubCoreFunctionFormResult>;
-			if (form.valid && action.sub_core_function && subCoreFunctionStore) {
-				const subCoreFunction = action.sub_core_function;
-				subCoreFunctionStore.addSubCoreFunction(subCoreFunction);
-				showSuccessToast(`Succesfully added core function ${subCoreFunction.name}`);
-				const core_function_id = $formData.core_function_id; // Save ID before reset
+			const action = result.data as FormResult<SubSupportFunctionFormResult>;
+			if (form.valid && action.sub_support_function && subSupportFunctionStore) {
+				const subSupportFunction = action.sub_support_function;
+				addSubSupportFunction(subSupportFunction);
+				showSuccessToast(`Succesfully added core function ${subSupportFunction.name}`);
+				const support_function_id = $formData.support_function_id; // Save ID before reset
 				isOpen = false;
 				isDrawerOpen = false;
 				reset({
-					data: { core_function_id: core_function_id, position: $size },
-					newState: { core_function_id: core_function_id, position: $size }
+					data: { support_function_id: support_function_id, position: $size },
+					newState: { support_function_id: support_function_id, position: $size }
 				});
 			}
 		}
@@ -51,8 +50,8 @@
 		if ($message?.status === 'error') {
 			showErrorToast($message.text);
 		}
-		if (coreFunctionId) {
-			$formData.core_function_id = coreFunctionId;
+		if (subSupportId) {
+			$formData.support_function_id = subSupportId;
 			$formData.position = $size;
 		}
 	});
@@ -73,9 +72,9 @@
 				actionable components for detailed performance evaluation.
 			</Dialog.Description>
 		</Dialog.Header>
-		<form action="?/createsubcorefunction" method="POST" use:enhance class="space-y-6">
+		<form action="?/createsubsupportfunction" method="POST" use:enhance class="space-y-6">
 			<input hidden name="position" value={$formData.position} />
-			<input hidden name="core_function_id" value={$formData.core_function_id} />
+			<input hidden name="core_function_id" value={$formData.support_function_id} />
 			<Form.Field {form} name="name">
 				<Form.Control>
 					{#snippet children({ props })}

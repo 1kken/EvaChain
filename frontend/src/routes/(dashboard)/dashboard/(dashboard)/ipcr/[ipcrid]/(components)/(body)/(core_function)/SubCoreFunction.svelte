@@ -5,9 +5,9 @@
 	import type { Tables } from '$lib/types/database.types';
 	import SubCoreFunctionCreateDialog from './(subcomponents)/(create_dialogs)/SubCoreFunctionCreateDialog.svelte';
 	import Indicator from './Indicator.svelte';
+	import CoreFunctionUpdateDialog from './(subcomponents)/(update_dialogs)/CoreFunctionUpdateDialog.svelte';
 	import DeleteActionCoreFunction from './(subcomponents)/(delete_actions)/DeleteActionCoreFunction.svelte';
 	import DropDownWrapper from '../../(wrappers)/DropDownWrapper.svelte';
-	import CoreFunctionUpdateDialog from './(subcomponents)/(update_dialogs)/CoreFunctionUpdateDialog.svelte';
 	import { setSubCoreFunctionStore } from '../../(data)/(state)/subcorefunctionstate.svelte';
 	import { setIndicatorStore } from '../../(data)/(state)/indicator_state.svelte';
 	import IndicatorComponent from '../../(indicator)/IndicatorComponent.svelte';

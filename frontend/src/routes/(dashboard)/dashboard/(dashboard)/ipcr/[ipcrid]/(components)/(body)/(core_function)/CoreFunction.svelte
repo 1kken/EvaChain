@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
-	import { ChevronDown, LoaderCircle } from 'lucide-svelte';
+	import { ChevronDown } from 'lucide-svelte';
 	import { cn } from '$lib/utils';
 	import type { Tables } from '$lib/types/database.types';
 	import CoreFunctionCreateDialog from './(subcomponents)/(create_dialogs)/CoreFunctionCreateDialog.svelte';
@@ -9,22 +9,19 @@
 	import SubmitIpcrAction from '../SubmitIPCRAction.svelte';
 	import type { Infer, SuperValidated } from 'sveltekit-superforms';
 	import type { SubmitIPCRSchema } from '../../../utils/schemas/submit_ipcr_schema';
-	import { getSingleIPCRStore, setSingleIPCRStore } from '../../(data)/(state)/ipcr-state.svelte';
+	import { getSingleIPCRStore } from '../../(data)/(state)/ipcr-state.svelte';
 	import DndContainer from '$lib/custom_components/dashboard/documents/DndContainer.svelte';
-	import { getSubCoreFunctionFormContext } from '../../(data)/(forms)/sub_core_function_form.svelte';
 
 	type CoreFunction = Tables<'core_function'>;
 
 	const { currentCoreFunctions } = getCoreFunctionStore();
 
 	interface Props {
-		currentIpcr: Tables<'ipcr'>;
 		submitIPCRForm: SuperValidated<Infer<SubmitIPCRSchema>>;
 	}
-	let { currentIpcr, submitIPCRForm }: Props = $props();
+	let { submitIPCRForm }: Props = $props();
 
-	//set store
-	setSingleIPCRStore(currentIpcr);
+	//get store
 	const { currentIPCR: ipcr, canEdit } = getSingleIPCRStore();
 
 	let isExpanded = $state(false);
@@ -80,11 +77,13 @@
 			<h2 class="text-base font-bold md:text-xl">CORE FUNCTIONS</h2>
 		</div>
 		<div class="flex items-center gap-5">
-			{#if showSubmit}
-				<SubmitIpcrAction ipcrId={currentIpcr.id} {submitIPCRForm} />
-			{/if}
-			{#if $canEdit}
-				<CoreFunctionCreateDialog ipcrId={currentIpcr.id} />
+			{#if $ipcr?.id}
+				{#if showSubmit}
+					<SubmitIpcrAction ipcrId={$ipcr.id} {submitIPCRForm} />
+				{/if}
+				{#if $canEdit}
+					<CoreFunctionCreateDialog ipcrId={$ipcr.id} />
+				{/if}
 			{/if}
 		</div>
 	</header>

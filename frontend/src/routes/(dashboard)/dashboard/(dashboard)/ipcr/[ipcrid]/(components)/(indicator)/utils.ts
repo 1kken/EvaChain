@@ -16,7 +16,7 @@ interface ConfigItem {
 }
 
 function handleIndicatorConfig(
-	configType: 'core_function' | 'sub_core_function',
+	configType: 'core_function' | 'sub_core_function' | 'support_function' | 'sub_support_function',
 	config: ConfigItem
 ): ResetConfig {
 	const resetObj: ResetConfig = {
@@ -30,6 +30,14 @@ function handleIndicatorConfig(
 			resetObj.newState.core_function_id = config.id;
 			break;
 		case 'sub_core_function':
+			resetObj.data.sub_core_function_id = config.id;
+			resetObj.newState.sub_core_function_id = config.id;
+			break;
+		case 'support_function':
+			resetObj.data.core_function_id = config.id;
+			resetObj.newState.core_function_id = config.id;
+			break;
+		case 'sub_support_function':
 			resetObj.data.sub_core_function_id = config.id;
 			resetObj.newState.sub_core_function_id = config.id;
 			break;

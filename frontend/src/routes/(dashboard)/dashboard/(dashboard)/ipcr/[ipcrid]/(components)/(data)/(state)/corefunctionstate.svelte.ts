@@ -15,7 +15,6 @@ type CoreFunctionState = {
 function createCoreFunctionStore(initialData?: Tables<'core_function'>[]): CoreFunctionState {
 	const currentCoreFunctions = writable<Tables<'core_function'>[]>(initialData || []);
 	const size = writable(initialData?.length || 0);
-	const currentIPCRid = writable<string | null>();
 
 	// Update size whenever currentCoreFunctions changes
 	currentCoreFunctions.subscribe((functions) => {

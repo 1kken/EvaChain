@@ -9,6 +9,8 @@ export const createIndicatorSchema = z.object({
 		.optional(),
 	core_function_id: z.string().uuid('Invalid Core Function ID').nullable(),
 	sub_core_function_id: z.string().uuid('Invalid Core Function ID').nullable(),
+	support_function_id: z.string().uuid('Invalid Core Function ID').nullable(),
+	sub_support_function_id: z.string().uuid('Invalid Core Function ID').nullable(),
 	position: z.number().min(0)
 });
 

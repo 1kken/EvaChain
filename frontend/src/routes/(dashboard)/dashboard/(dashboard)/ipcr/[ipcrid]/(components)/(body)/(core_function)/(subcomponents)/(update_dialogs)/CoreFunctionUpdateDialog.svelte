@@ -28,8 +28,8 @@
 		multipleSubmits: 'prevent',
 		onUpdate({ form, result }) {
 			const action = result.data as FormResult<CoreFunctionFormResult>;
-			if (form.valid && action.coreFunction && currentCoreFunction) {
-				const coreFunction = action.coreFunction;
+			if (form.valid && action.core_function && currentCoreFunction) {
+				const coreFunction = action.core_function;
 				updateCoreFunction(coreFunctionId, coreFunction);
 				displayName = '';
 				isOpen = false;

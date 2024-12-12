@@ -8,6 +8,24 @@ export const GET: RequestHandler = async ({ url, locals: { supabase } }) => {
 		const subCoreFunctionId = url.searchParams.get('sub_core_function_id');
 		// Get core_function_id from URL parameter
 		const coreFunctionId = url.searchParams.get('core_function_id');
+
+		const supportFunctionId = url.searchParams.get('support_function_id');
+
+		if (supportFunctionId) {
+			const { data: indicator, error } = await supabase
+				.from('indicator')
+				.select('*')
+				.eq('support_function_id', supportFunctionId)
+				.order('position');
+
+			if (error) {
+				console.error('Database error:', error);
+				return json({ error: 'Failed to fetch sub core functions' }, { status: 500 });
+			}
+
+			return json({ data: indicator });
+		}
+
 		if (subCoreFunctionId) {
 			const { data: indicator, error } = await supabase
 				.from('indicator')

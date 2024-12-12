@@ -16,6 +16,10 @@ import {
 	updateSupportFunctionSchema
 } from './schemas/support_function_schema';
 import { universalDeleteSchema } from './schemas/universal_delete_schema';
+import {
+	createSubSupportFunctionSchema,
+	updateSubSupportFunctionSchema
+} from './schemas/sub_support_function_schema';
 
 export async function getCoreFunctionForms() {
 	return {
@@ -46,6 +50,14 @@ export async function getSupportFunctionForms() {
 	return {
 		createForm: await superValidate(zod(createSupportFunctionSchema)),
 		updateForm: await superValidate(zod(updateSupportFunctionSchema)),
+		deleteForm: await superValidate(zod(universalDeleteSchema))
+	};
+}
+
+export async function getSubSupportFunctionForms() {
+	return {
+		createForm: await superValidate(zod(createSubSupportFunctionSchema)),
+		updateForm: await superValidate(zod(updateSubSupportFunctionSchema)),
 		deleteForm: await superValidate(zod(universalDeleteSchema))
 	};
 }
