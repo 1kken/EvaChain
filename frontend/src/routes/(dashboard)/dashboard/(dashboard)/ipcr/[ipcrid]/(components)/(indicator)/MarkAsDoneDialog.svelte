@@ -53,10 +53,12 @@
 				isOpen = false;
 				isDrawerOpen = false;
 				const { id, accomplishment, accomplishment_date } = indicator;
-				reset({
-					data: { id, accomplishment, accomplishment_date },
-					newState: { id, accomplishment, accomplishment_date }
-				});
+				if (accomplishment && accomplishment_date) {
+					reset({
+						data: { id, accomplishment, accomplishment_date },
+						newState: { id, accomplishment, accomplishment_date }
+					});
+				}
 			}
 		}
 	});
@@ -155,8 +157,5 @@
 				<Form.Button>Save</Form.Button>
 			</div>
 		</form>
-		{#if browser}
-			<SuperDebug data={$formData} />
-		{/if}
 	</Dialog.Content>
 </Dialog.Root>

@@ -26,6 +26,16 @@ import {
 	deleteSubSupportFunction,
 	updateSubSupportFunction
 } from './utils/services/sub_support_function_services';
+import {
+	createOtherFunction,
+	deleteOtherFunction,
+	updateOtherFunction
+} from './utils/services/other_function_services';
+import {
+	createSubOtherFunction,
+	deleteSubOtherFunction,
+	updateSubOtherFunction
+} from './utils/services/sub_other_function_services';
 
 export const actions = {
 	//core function
@@ -67,6 +77,26 @@ export const actions = {
 	},
 	updatesubsupportfunction: async ({ request, locals: { supabase, session } }) => {
 		return updateSubSupportFunction(request, supabase);
+	},
+	//other function
+	createotherfunction: async ({ request, locals: { supabase, session } }) => {
+		return createOtherFunction(request, supabase);
+	},
+	deleteotherfunction: async ({ request, locals: { supabase, session } }) => {
+		return deleteOtherFunction(request, supabase);
+	},
+	updateotherfunction: async ({ request, locals: { supabase, session } }) => {
+		return updateOtherFunction(request, supabase);
+	},
+	//sub other function
+	createsubotherfunction: async ({ request, locals: { supabase, session } }) => {
+		return createSubOtherFunction(request, supabase);
+	},
+	deletesubotherfunction: async ({ request, locals: { supabase, session } }) => {
+		return deleteSubOtherFunction(request, supabase);
+	},
+	updatesubotherfunction: async ({ request, locals: { supabase, session } }) => {
+		return updateSubOtherFunction(request, supabase);
 	},
 	//indicator
 	createindicator: async ({ request, locals: { supabase, session } }) => {

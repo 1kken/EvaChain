@@ -20,6 +20,16 @@ export type SubSupportFunctionFormResult = {
 	sub_support_function: Tables<'sub_support_function'>;
 };
 
+export type OtherFunctionFormResult = {
+	form: any;
+	other_function: Tables<'other_function'>;
+};
+
+export type SubOtherFunctionFormResult = {
+	form: any;
+	sub_other_function: Tables<'sub_other_function'>;
+};
+
 export type indicatorFormResult = {
 	form: any;
 	indicatorData: Tables<'indicator'>;

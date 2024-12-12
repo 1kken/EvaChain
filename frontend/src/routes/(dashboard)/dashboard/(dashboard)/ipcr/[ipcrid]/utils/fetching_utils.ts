@@ -1,4 +1,5 @@
 import type { Tables } from '$lib/types/database.types';
+import type OtherFunction from '../(components)/(body)/(other_function)/OtherFunction.svelte';
 
 interface IndicatorResponse {
 	data: Tables<'indicator'>[];
@@ -6,7 +7,13 @@ interface IndicatorResponse {
 }
 
 interface ParameterType {
-	url_params: 'core_function_id' | 'sub_core_function_id' | 'support_function_id';
+	url_params:
+		| 'core_function_id'
+		| 'sub_core_function_id'
+		| 'support_function_id'
+		| 'sub_support_function_id'
+		| 'other_function_id'
+		| 'sub_other_function_id';
 	id: string;
 }
 
@@ -65,6 +72,31 @@ export async function fetchSubSupportFunctions(id: string): Promise<SubSupportFu
 	try {
 		const response = await fetch(`/api/sub_support_function?support_function_id=${id}`);
 		const result: SubSupportFunctionResponse = await response.json();
+
+		if (!response.ok) {
+			throw new Error(result.error || 'Failed to fetch sub support functions');
+		}
+
+		return result;
+	} catch (error) {
+		console.error('Error fetching sub support functions:', error);
+		return {
+			data: [],
+			error: error instanceof Error ? error.message : 'An unknown error occurred'
+		};
+	}
+}
+
+//Other function
+interface SubOtherFunctionResponse {
+	data: Tables<'sub_other_function'>[];
+	error?: string;
+}
+
+export async function fetchSubOtherFunctions(id: string): Promise<SubOtherFunctionResponse> {
+	try {
+		const response = await fetch(`/api/sub_support_function?support_function_id=${id}`);
+		const result: SubOtherFunctionResponse = await response.json();
 
 		if (!response.ok) {
 			throw new Error(result.error || 'Failed to fetch sub support functions');

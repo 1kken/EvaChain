@@ -107,10 +107,12 @@ export type Database = {
           id: string
           indicator: string
           indicator_date: string | null
+          other_function_id: string | null
           position: number
           quality_rating: number | null
           status: Database["public"]["Enums"]["indicator_status"]
           sub_core_function_id: string | null
+          sub_other_function_id: string | null
           sub_support_function_id: string | null
           support_function_id: string | null
           timeliness_rating: number | null
@@ -126,10 +128,12 @@ export type Database = {
           id?: string
           indicator: string
           indicator_date?: string | null
+          other_function_id?: string | null
           position: number
           quality_rating?: number | null
           status?: Database["public"]["Enums"]["indicator_status"]
           sub_core_function_id?: string | null
+          sub_other_function_id?: string | null
           sub_support_function_id?: string | null
           support_function_id?: string | null
           timeliness_rating?: number | null
@@ -145,10 +149,12 @@ export type Database = {
           id?: string
           indicator?: string
           indicator_date?: string | null
+          other_function_id?: string | null
           position?: number
           quality_rating?: number | null
           status?: Database["public"]["Enums"]["indicator_status"]
           sub_core_function_id?: string | null
+          sub_other_function_id?: string | null
           sub_support_function_id?: string | null
           support_function_id?: string | null
           timeliness_rating?: number | null
@@ -163,10 +169,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "indicator_other_function_id_fkey"
+            columns: ["other_function_id"]
+            isOneToOne: false
+            referencedRelation: "other_function"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "indicator_sub_core_function_id_fkey"
             columns: ["sub_core_function_id"]
             isOneToOne: false
             referencedRelation: "sub_core_function"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "indicator_sub_other_function_id_fkey"
+            columns: ["sub_other_function_id"]
+            isOneToOne: false
+            referencedRelation: "sub_other_function"
             referencedColumns: ["id"]
           },
           {
@@ -295,6 +315,47 @@ export type Database = {
             columns: ["unit_id"]
             isOneToOne: false
             referencedRelation: "unit"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      other_function: {
+        Row: {
+          created_at: string
+          id: string
+          ipcr_id: string
+          name: string
+          position: number
+          reviewer_id: string | null
+          unit: number | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          ipcr_id: string
+          name: string
+          position: number
+          reviewer_id?: string | null
+          unit?: number | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          ipcr_id?: string
+          name?: string
+          position?: number
+          reviewer_id?: string | null
+          unit?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "other_function_ipcr_id_fkey"
+            columns: ["ipcr_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr"
             referencedColumns: ["id"]
           },
         ]
@@ -595,6 +656,41 @@ export type Database = {
             columns: ["core_function_id"]
             isOneToOne: false
             referencedRelation: "core_function"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sub_other_function: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          other_function_id: string
+          position: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          other_function_id: string
+          position: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          other_function_id?: string
+          position?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sub_other_function_other_function_id_fkey"
+            columns: ["other_function_id"]
+            isOneToOne: false
+            referencedRelation: "other_function"
             referencedColumns: ["id"]
           },
         ]

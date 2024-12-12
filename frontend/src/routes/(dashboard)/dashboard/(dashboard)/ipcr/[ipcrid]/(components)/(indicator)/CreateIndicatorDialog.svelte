@@ -15,7 +15,13 @@
 	import { browser } from '$app/environment';
 
 	interface IndicatorConfig {
-		type: 'core_function' | 'sub_core_function' | 'support_function' | 'sub_support_function';
+		type:
+			| 'core_function'
+			| 'sub_core_function'
+			| 'support_function'
+			| 'sub_support_function'
+			| 'other_function'
+			| 'sub_other_function';
 		id: string;
 	}
 
@@ -75,6 +81,14 @@
 		$formData.sub_support_function_id = config.id;
 	}
 
+	if (configType === 'other_function') {
+		$formData.other_function_id = config.id;
+	}
+
+	if (configType === 'sub_other_function') {
+		$formData.sub_other_function_id = config.id;
+	}
+
 	function handleDialogOpenChange(open: boolean) {
 		isOpen = open;
 	}
@@ -110,7 +124,12 @@
 			<input type="hidden" name="core_function_id" value={$formData.core_function_id} />
 			<input type="hidden" name="sub_core_function_id" value={$formData.sub_core_function_id} />
 			<input type="hidden" name="support_function_id" value={$formData.support_function_id} />
-
+			<input
+				type="hidden"
+				name="sub_support_function_id"
+				value={$formData.sub_support_function_id}
+			/>
+			<input type="hidden" name="other_function_id" value={$formData.other_function_id} />
 			<Form.Field {form} name="indicator">
 				<Form.Control>
 					{#snippet children({ props })}

@@ -33,7 +33,7 @@
 			if (form.valid && action.sub_support_function && subSupportFunctionStore) {
 				const subSupportFunction = action.sub_support_function;
 				addSubSupportFunction(subSupportFunction);
-				showSuccessToast(`Succesfully added core function ${subSupportFunction.name}`);
+				showSuccessToast(`Successfully added sub support function ${subSupportFunction.name}`);
 				const support_function_id = $formData.support_function_id; // Save ID before reset
 				isOpen = false;
 				isDrawerOpen = false;
@@ -60,27 +60,27 @@
 <Dialog.Root bind:open={isOpen}>
 	<Dialog.Trigger class="focus-visible:outline-none">
 		<span class="flex items-center gap-3">
-			<Plus size={16} /> Add Sub Core Function
+			<Plus size={16} /> Add Sub Support Function
 		</span>
 	</Dialog.Trigger>
 	<Dialog.Content class="sm:max-w-[425px]">
 		<Dialog.Header>
-			<Dialog.Title>Create Sub Core Function</Dialog.Title>
+			<Dialog.Title>Create Sub Support Function</Dialog.Title>
 			<Dialog.Description>
-				A sub-core function is a specific task or duty within a core function, supporting the
-				achievement of the primary responsibilities. It further breaks down core functions into
+				A sub-support function is a specific task or duty within a support function, aiding in the
+				execution of supplementary responsibilities. It further breaks down support functions into
 				actionable components for detailed performance evaluation.
 			</Dialog.Description>
 		</Dialog.Header>
 		<form action="?/createsubsupportfunction" method="POST" use:enhance class="space-y-6">
 			<input hidden name="position" value={$formData.position} />
-			<input hidden name="core_function_id" value={$formData.support_function_id} />
+			<input hidden name="support_function_id" value={$formData.support_function_id} />
 			<Form.Field {form} name="name">
 				<Form.Control>
 					{#snippet children({ props })}
 						<Form.Label>Title</Form.Label>
 						<Input {...props} bind:value={$formData.name} />
-						<Form.Description>This is the title of the sub core function.</Form.Description>
+						<Form.Description>This is the title of the sub support function.</Form.Description>
 					{/snippet}
 				</Form.Control>
 				<Form.FieldErrors />

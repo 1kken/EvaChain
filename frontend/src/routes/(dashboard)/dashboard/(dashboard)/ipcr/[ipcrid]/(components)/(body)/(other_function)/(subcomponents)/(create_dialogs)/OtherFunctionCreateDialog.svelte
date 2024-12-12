@@ -10,28 +10,28 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';
 	import { getSingleIPCRStore } from '../../../../(data)/(state)/ipcr-state.svelte';
-	import { getSupportFunctionFormContext } from '../../../../(data)/(forms)/support_function_form.svelte';
-	import { getSupportFunctionStore } from '../../../../(data)/(state)/support_function_state.svelte';
-	import { createSupportFunctionSchema } from '../../../../../utils/schemas/support_function_schema';
-	import type { SupportFunctionFormResult } from '../../../../(data)/types';
+	import { getOtherFunctionFormContext } from '../../../../(data)/(forms)/other_function_form.svelte';
+	import { getOtherFunctionStore } from '../../../../(data)/(state)/other_function_state.svelte';
+	import { createOtherFunctionSchema } from '../../../../../utils/schemas/other_function_schema';
+	import type { OtherFunctionFormResult } from '../../../../(data)/types';
 
 	const { currentIPCR } = getSingleIPCRStore();
 	let isOpen = $state(false);
 	let suggestions: { id: string; display: string }[] = $state([]);
 	let displayName = $state('');
-	const { createSupportFunctionForm } = getSupportFunctionFormContext();
-	const { addSupportFunction, size } = getSupportFunctionStore();
-	const form = superForm(createSupportFunctionForm!, {
+	const { createOtherFunctionForm } = getOtherFunctionFormContext();
+	const { addOtherFunction, size } = getOtherFunctionStore();
+	const form = superForm(createOtherFunctionForm, {
 		id: Date.now().toString(),
 		dataType: 'json',
-		validators: zodClient(createSupportFunctionSchema),
+		validators: zodClient(createOtherFunctionSchema),
 		multipleSubmits: 'prevent',
 		onUpdate({ form, result }) {
-			const action = result.data as FormResult<SupportFunctionFormResult>;
-			if (form.valid && action.support_function) {
-				const supportFunction = action.support_function;
-				addSupportFunction(supportFunction);
-				showSuccessToast(`Succesfully added support function ${supportFunction.name}`);
+			const action = result.data as FormResult<OtherFunctionFormResult>;
+			if (form.valid && action.other_function) {
+				const otherFunction = action.other_function;
+				addOtherFunction(otherFunction);
+				showSuccessToast(`Succesfully added support function ${otherFunction.name}`);
 				const ipcrId = $formData.ipcr_id; // Save ID before reset
 				isOpen = false;
 				reset({
@@ -97,19 +97,19 @@
 	<Dialog.Trigger class={buttonVariants({ variant: 'outline' })}>
 		<span class="flex items-center gap-2">
 			<Plus class="h-5 w-5" />
-			<span class="hidden md:inline">Add Support Function</span>
+			<span class="hidden md:inline">Add Other Plus Function</span>
 		</span>
 	</Dialog.Trigger>
 	<Dialog.Content class="max-h-[85vh] overflow-y-auto sm:max-w-[800px]">
 		<Dialog.Header>
-			<Dialog.Title>Create Support Function</Dialog.Title>
+			<Dialog.Title>Add Other Plus Function</Dialog.Title>
 			<Dialog.Description>
-				A support function is a secondary responsibility area in your role with an assigned weight
-				(unit) for performance evaluation. It represents supplementary duties that assist in
-				achieving organizational goals.
+				An "other plus" function is an additional responsibility area in your role with an assigned
+				weight (unit) for performance evaluation. It represents value-adding tasks or contributions
+				beyond primary and support duties that enhance organizational success.
 			</Dialog.Description>
 		</Dialog.Header>
-		<form action="?/createsupportfunction" method="POST" use:enhance class="space-y-6">
+		<form action="?/createotherfunction" method="POST" use:enhance class="space-y-6">
 			<input hidden name="position" value={$formData.position} />
 			<input hidden name="ipcr_id" value={$formData.ipcr_id} />
 			<Form.Field {form} name="name">
@@ -117,7 +117,7 @@
 					{#snippet children({ props })}
 						<Form.Label>Title</Form.Label>
 						<Input {...props} bind:value={$formData.name} />
-						<Form.Description>This is the title of the support function.</Form.Description>
+						<Form.Description>This is the title of the other function.</Form.Description>
 					{/snippet}
 				</Form.Control>
 				<Form.FieldErrors />

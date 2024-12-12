@@ -17,7 +17,7 @@
 	<div class="flex flex-col space-y-2 p-3">
 		<div class="flex h-4 justify-start gap-2">
 			<StatusIcon status={indicator.status} />
-			{#if indicator.status !== 'submitted'}
+			{#if indicator.status !== 'submitted' && !$canEdit}
 				<MarkAsDoneDialog {indicator} bind:isDrawerOpen />
 			{/if}
 		</div>
@@ -31,7 +31,7 @@
 					{#snippet updateDialog()}
 						<UpdateIndicatorDialog {indicator} bind:isDrawerOpen />
 					{/snippet}
-					<DropDownWrapper childrens={[deleteAction, updateDialog]} bind:isDrawerOpen />
+					<DropDownWrapper childrens={[updateDialog, deleteAction]} bind:isDrawerOpen />
 				{/if}
 			</div>
 		</div>

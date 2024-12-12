@@ -20,6 +20,14 @@ import {
 	createSubSupportFunctionSchema,
 	updateSubSupportFunctionSchema
 } from './schemas/sub_support_function_schema';
+import {
+	createOtherFunctionSchema,
+	updateOtherFunctionSchema
+} from './schemas/other_function_schema';
+import {
+	createSubOtherFunctionSchema,
+	updateSubOtherFunctionSchema
+} from './schemas/sub_other_function_schema';
 
 export async function getCoreFunctionForms() {
 	return {
@@ -58,6 +66,22 @@ export async function getSubSupportFunctionForms() {
 	return {
 		createForm: await superValidate(zod(createSubSupportFunctionSchema)),
 		updateForm: await superValidate(zod(updateSubSupportFunctionSchema)),
+		deleteForm: await superValidate(zod(universalDeleteSchema))
+	};
+}
+
+export async function getOtherFunctionForms() {
+	return {
+		createForm: await superValidate(zod(createOtherFunctionSchema)),
+		updateForm: await superValidate(zod(updateOtherFunctionSchema)),
+		deleteForm: await superValidate(zod(universalDeleteSchema))
+	};
+}
+
+export async function getSubOtherFunctionForms() {
+	return {
+		createForm: await superValidate(zod(createSubOtherFunctionSchema)),
+		updateForm: await superValidate(zod(updateSubOtherFunctionSchema)),
 		deleteForm: await superValidate(zod(universalDeleteSchema))
 	};
 }

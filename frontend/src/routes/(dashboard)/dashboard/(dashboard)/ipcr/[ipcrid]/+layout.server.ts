@@ -8,9 +8,16 @@ import {
 	getSubCoreFunctionForms,
 	getIndicatorForms,
 	getSupportFunctionForms,
-	getSubSupportFunctionForms
+	getSubSupportFunctionForms,
+	getOtherFunctionForms,
+	getSubOtherFunctionForms
 } from './utils/super_form_loader';
-import { getCoreFunctions, getIPCR, getSupportFunctions } from './utils/layout_data_loader';
+import {
+	getCoreFunctions,
+	getIPCR,
+	getOtherFunctions,
+	getSupportFunctions
+} from './utils/layout_data_loader';
 
 export const load = (async ({ params, locals: { supabase, safeGetSession } }) => {
 	const ipcrId = params.ipcrid;
@@ -27,24 +34,30 @@ export const load = (async ({ params, locals: { supabase, safeGetSession } }) =>
 			indicatorForms,
 			supportForms,
 			subSupportForms,
+			otherFunctionForms,
+			subOtherFunctionForms,
 			submitIPCRForm,
 			IPCR,
 			coreFunctions,
-			supportFunctions
+			supportFunctions,
+			otherFunctions
 		] = await Promise.all([
 			getCoreFunctionForms(),
 			getSubCoreFunctionForms(),
 			getIndicatorForms(),
 			getSupportFunctionForms(),
 			getSubSupportFunctionForms(),
+			getOtherFunctionForms(),
+			getSubOtherFunctionForms(),
 			superValidate(zod(submitIPCRschema)),
 			getIPCR(supabase, ipcrId),
 			getCoreFunctions(supabase, ipcrId),
-			getSupportFunctions(supabase, ipcrId)
+			getSupportFunctions(supabase, ipcrId),
+			getOtherFunctions(supabase, ipcrId)
 		]);
 
 		return {
-			data: { IPCR, coreFunctions, supportFunctions },
+			data: { IPCR, coreFunctions, supportFunctions, otherFunctions },
 			coreForms: {
 				createCoreFunctionForm: coreForms.createForm,
 				deleteCoreFunctionForm: coreForms.deleteForm,
@@ -64,6 +77,16 @@ export const load = (async ({ params, locals: { supabase, safeGetSession } }) =>
 				createSubSupportFunctionForm: subSupportForms.createForm,
 				deleteSubSupportFunctionForm: subSupportForms.deleteForm,
 				updateSubSupportFunctionForm: subSupportForms.updateForm
+			},
+			otherFunctionForms: {
+				createOtherFunctionForm: otherFunctionForms.createForm,
+				deleteOtherFunctionForm: otherFunctionForms.deleteForm,
+				updateOtherFunctionForm: otherFunctionForms.updateForm
+			},
+			subOtherFunctionForms: {
+				createSubOtherFunctionForm: subOtherFunctionForms.createForm,
+				deleteSubOtherFunctionForm: subOtherFunctionForms.deleteForm,
+				updateSubOtherFunctionForm: subOtherFunctionForms.updateForm
 			},
 			indicatorForm: {
 				createIndicatorForm: indicatorForms.createForm,

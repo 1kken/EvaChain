@@ -4,13 +4,15 @@ import type { Tables } from '$lib/types/database.types';
 
 export const GET: RequestHandler = async ({ url, locals: { supabase } }) => {
 	try {
-		// Get sub_core_function_id from URL parameter
+		// Get all possible function IDs from URL parameters
 		const subCoreFunctionId = url.searchParams.get('sub_core_function_id');
-		// Get core_function_id from URL parameter
 		const coreFunctionId = url.searchParams.get('core_function_id');
-
 		const supportFunctionId = url.searchParams.get('support_function_id');
+		const subSupportFunctionId = url.searchParams.get('sub_support_function_id');
+		const otherFunctionId = url.searchParams.get('other_function_id');
+		const subOtherFunctionId = url.searchParams.get('sub_other_function_id');
 
+		// Handle support function query
 		if (supportFunctionId) {
 			const { data: indicator, error } = await supabase
 				.from('indicator')
@@ -20,26 +22,29 @@ export const GET: RequestHandler = async ({ url, locals: { supabase } }) => {
 
 			if (error) {
 				console.error('Database error:', error);
-				return json({ error: 'Failed to fetch sub core functions' }, { status: 500 });
+				return json({ error: 'Failed to fetch indicators' }, { status: 500 });
 			}
 
 			return json({ data: indicator });
 		}
 
-		if (subCoreFunctionId) {
+		// Handle sub-support function query
+		if (subSupportFunctionId) {
 			const { data: indicator, error } = await supabase
 				.from('indicator')
 				.select('*')
-				.eq('sub_core_function_id', subCoreFunctionId)
+				.eq('sub_support_function_id', subSupportFunctionId)
 				.order('position');
 
 			if (error) {
 				console.error('Database error:', error);
-				return json({ error: 'Failed to fetch sub core functions' }, { status: 500 });
+				return json({ error: 'Failed to fetch indicators' }, { status: 500 });
 			}
 
 			return json({ data: indicator });
 		}
+
+		// Handle core function query
 		if (coreFunctionId) {
 			const { data: indicator, error } = await supabase
 				.from('indicator')
@@ -49,11 +54,60 @@ export const GET: RequestHandler = async ({ url, locals: { supabase } }) => {
 
 			if (error) {
 				console.error('Database error:', error);
-				return json({ error: 'Failed to fetch sub core functions' }, { status: 500 });
+				return json({ error: 'Failed to fetch indicators' }, { status: 500 });
 			}
 
 			return json({ data: indicator });
 		}
+
+		// Handle sub-core function query
+		if (subCoreFunctionId) {
+			const { data: indicator, error } = await supabase
+				.from('indicator')
+				.select('*')
+				.eq('sub_core_function_id', subCoreFunctionId)
+				.order('position');
+
+			if (error) {
+				console.error('Database error:', error);
+				return json({ error: 'Failed to fetch indicators' }, { status: 500 });
+			}
+
+			return json({ data: indicator });
+		}
+
+		// Handle other function query
+		if (otherFunctionId) {
+			const { data: indicator, error } = await supabase
+				.from('indicator')
+				.select('*')
+				.eq('other_function_id', otherFunctionId)
+				.order('position');
+
+			if (error) {
+				console.error('Database error:', error);
+				return json({ error: 'Failed to fetch indicators' }, { status: 500 });
+			}
+
+			return json({ data: indicator });
+		}
+
+		// Handle sub-other function query
+		if (subOtherFunctionId) {
+			const { data: indicator, error } = await supabase
+				.from('indicator')
+				.select('*')
+				.eq('sub_other_function_id', subOtherFunctionId)
+				.order('position');
+
+			if (error) {
+				console.error('Database error:', error);
+				return json({ error: 'Failed to fetch indicators' }, { status: 500 });
+			}
+
+			return json({ data: indicator });
+		}
+
 		return json({ error: 'Unprocessable input!' }, { status: 422 });
 	} catch (err) {
 		console.error('Server error:', err);

@@ -11,18 +11,20 @@
 	import type { Tables } from '$lib/types/database.types';
 	import { getSingleIPCRStore } from '../../(data)/(state)/ipcr-state.svelte';
 	import DndContainer from '$lib/custom_components/dashboard/documents/DndContainer.svelte';
-	import SubSupportDeleteAction from './(subcomponents)/(delete_actions)/SubSupportDeleteAction.svelte';
-	import SubSupportUpdateDialog from './(subcomponents)/(update_dialogs)/SubSupportUpdateDialog.svelte';
+	import SubOtherFunctionDeleteAction from './(subcomponents)/(delete_actions)/SubOtherFunctionDeleteAction.svelte';
+	import SubOtherFunctionUpdateDialog from './(subcomponents)/(update_dialogs)/SubOtherFunctionUpdateDialog.svelte';
+	// import SubSupportDeleteAction from './(subcomponents)/(delete_actions)/SubSupportDeleteAction.svelte';
+	// import SubSupportUpdateDialog from './(subcomponents)/(update_dialogs)/SubSupportUpdateDialog.svelte';
 
 	type Indicator = Tables<'indicator'>;
 
 	interface Props {
 		name: string;
-		sub_support_function_id: string;
+		sub_other_function_id: string;
 	}
 
 	// Props
-	let { name, sub_support_function_id }: Props = $props();
+	let { name, sub_other_function_id }: Props = $props();
 
 	// States
 	let isExpanded = $state(false);
@@ -55,8 +57,8 @@
 		try {
 			isLoading = true;
 			const result = await fetchIndicatorsByParam({
-				url_params: 'sub_support_function_id',
-				id: sub_support_function_id
+				url_params: 'sub_other_function_id',
+				id: sub_other_function_id
 			});
 
 			if (result.error) {
@@ -103,15 +105,19 @@
 		</div>
 		{#if $canEdit}
 			{#snippet deleteAction()}
-				<SubSupportDeleteAction subSupportFunctionId={sub_support_function_id} bind:isDrawerOpen />
+				<SubOtherFunctionDeleteAction
+					subOtherFunctionId={sub_other_function_id}
+					bind:isDrawerOpen
+				/>
 			{/snippet}
 			{#snippet updateDialog()}
-				<SubSupportUpdateDialog subSupportFunctionId={sub_support_function_id} bind:isDrawerOpen />
+				<SubOtherFunctionUpdateDialog
+					subOtherFunctionId={sub_other_function_id}
+					bind:isDrawerOpen
+				/>
 			{/snippet}
 			<div class="flex gap-4">
-				<CreateIndicatorDialog
-					config={{ type: 'sub_support_function', id: sub_support_function_id }}
-				/>
+				<CreateIndicatorDialog config={{ type: 'sub_other_function', id: sub_other_function_id }} />
 				<DropDownWrapper childrens={[updateDialog, deleteAction]} bind:isDrawerOpen />
 			</div>
 		{/if}

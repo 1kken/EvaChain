@@ -62,3 +62,11 @@ export async function getSupportFunctions(supabase: SupabaseClient<Database>, ip
 		{ errorMessage: 'Failed to fetch support functions' }
 	);
 }
+
+export async function getOtherFunctions(supabase: SupabaseClient<Database>, ipcrId: string) {
+	return safeQuery<Tables<'other_function'>[]>(
+		supabase,
+		(client) => client.from('other_function').select().eq('ipcr_id', ipcrId).order('position'),
+		{ errorMessage: 'Failed to fetch other functions' }
+	);
+}

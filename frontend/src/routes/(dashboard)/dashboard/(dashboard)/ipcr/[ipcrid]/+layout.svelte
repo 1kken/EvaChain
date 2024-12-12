@@ -9,9 +9,12 @@
 	import { setSingleIPCRStore } from './(components)/(data)/(state)/ipcr-state.svelte';
 	import { setSupportFunctionFormContext } from './(components)/(data)/(forms)/support_function_form.svelte';
 	import { setSubSupportFunctionFormContext } from './(components)/(data)/(forms)/sub_support_function_form.svelte';
+	import { setOtherFunctionFormContext } from './(components)/(data)/(forms)/other_function_form.svelte';
+	import { setSubOtherFunctionFormContext } from './(components)/(data)/(forms)/sub_other_function_form.svelte';
+	import { setOtherFunctionStore } from './(components)/(data)/(state)/other_function_state.svelte';
 
 	let { data, children }: { data: LayoutData; children: Snippet } = $props();
-	const { IPCR, coreFunctions, supportFunctions } = data.data;
+	const { IPCR, coreFunctions, supportFunctions, otherFunctions } = data.data;
 	const { createCoreFunctionForm, deleteCoreFunctionForm, updateCoreFunctionForm } = data.coreForms;
 	const { createSubCoreFunctionForm, deleteSubCoreFunctionForm, updateSubCoreFunctionForm } =
 		data.subCoreForms;
@@ -24,9 +27,15 @@
 		updateSubSupportFunctionForm,
 		deleteSubSupportFunctionForm
 	} = data.subSupportForms;
+	const { createOtherFunctionForm, updateOtherFunctionForm, deleteOtherFunctionForm } =
+		data.otherFunctionForms;
+	const { createSubOtherFunctionForm, updateSubOtherFunctionForm, deleteSubOtherFunctionForm } =
+		data.subOtherFunctionForms;
+
 	//states
 	setCoreFunctionStore(coreFunctions);
 	setSupportFunctionStore(supportFunctions);
+	setOtherFunctionStore(otherFunctions);
 	setSingleIPCRStore(IPCR);
 
 	//forms
@@ -55,6 +64,16 @@
 		updateSubSupportFunctionForm,
 		createSubSupportFunctionForm,
 		deleteSubSupportFunctionForm
+	});
+	setOtherFunctionFormContext({
+		updateOtherFunctionForm,
+		createOtherFunctionForm,
+		deleteOtherFunctionForm
+	});
+	setSubOtherFunctionFormContext({
+		updateSubOtherFunctionForm,
+		createSubOtherFunctionForm,
+		deleteSubOtherFunctionForm
 	});
 </script>
 
