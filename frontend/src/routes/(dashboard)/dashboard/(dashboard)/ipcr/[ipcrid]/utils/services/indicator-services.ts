@@ -11,9 +11,11 @@ import {
 	type UniversalDeleteSchema
 } from '../schemas/universal_delete_schema';
 
-import { message, superValidate, type Infer } from 'sveltekit-superforms';
+import { message, superValidate, withFiles, type Infer } from 'sveltekit-superforms';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { zod } from 'sveltekit-superforms/adapters';
+import { saveIndicatorEvidence, uploadEvidence } from './indicator_evidence_services';
+import { error } from '@sveltejs/kit';
 export async function createIndicator(request: Request, supabase: SupabaseClient) {
 	const form = await superValidate<Infer<CreateIndicatorSchema>, App.Superforms.Message>(
 		request,
@@ -124,7 +126,14 @@ export async function updateIndicator(request: Request, supabase: SupabaseClient
 	return { form, indicatorData };
 }
 export async function markIndicatorDone(request: Request, supabase: SupabaseClient) {
-	const form = await superValidate<Infer<MarkIndicatorDoneSchema>, App.Superforms.Message>(
+	const {
+		data: { user }
+	} = await supabase.auth.getUser();
+	if (!user) {
+		return error(401, 'Unauthorized');
+	}
+	const user_id = user.id;
+	let form = await superValidate<Infer<MarkIndicatorDoneSchema>, App.Superforms.Message>(
 		request,
 		zod(markIndicatorDoneSchema)
 	);
@@ -136,8 +145,44 @@ export async function markIndicatorDone(request: Request, supabase: SupabaseClie
 		});
 	}
 
-	const { id, accomplishment, accomplishment_date } = form.data;
+	const { id, accomplishment, accomplishment_date, pdf_evidence } = form.data;
 
+	if (!pdf_evidence) {
+		return message(form, {
+			status: 'error',
+			text: 'Please upload a file'
+		});
+	}
+
+	// upload evidence
+	const { data: uploadEvidenceData, error: uploadEvidenceError } = await uploadEvidence(
+		id,
+		user_id,
+		pdf_evidence,
+		supabase
+	);
+
+	if (uploadEvidenceError) {
+		return message(form, {
+			status: 'error',
+			text: `Error saving IPCR ${uploadEvidenceError.message}`
+		});
+	}
+	if (!uploadEvidenceData) {
+		return message(form, {
+			status: 'error',
+			text: `Error saving IPCR`
+		});
+	}
+	// save to evidence indicator evidence
+	const { error: saveIndicatorEvidenceError, data: saveIndicatorEvidenceData } =
+		await saveIndicatorEvidence(id, uploadEvidenceData?.fullPath, supabase);
+	if (saveIndicatorEvidenceError) {
+		return message(form, {
+			status: 'error',
+			text: `Error saving IPCR ${saveIndicatorEvidenceError.message}`
+		});
+	}
 	const { error: updateError, data: indicatorData } = await supabase
 		.from('indicator')
 		.update({ accomplishment, accomplishment_date, status: 'submitted' })
@@ -154,5 +199,5 @@ export async function markIndicatorDone(request: Request, supabase: SupabaseClie
 		});
 	}
 
-	return { form, indicatorData };
+	return withFiles({ form, indicatorData });
 }

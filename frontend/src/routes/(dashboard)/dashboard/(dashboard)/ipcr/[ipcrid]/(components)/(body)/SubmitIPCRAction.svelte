@@ -30,7 +30,7 @@
 		async onUpdate({ form, result }) {
 			const action = result.data as FormResult<IPCRFormResult>;
 			if (form.valid && action && ipcrStore) {
-				const ipcrData = action.IPCRData;
+				const ipcrData = action.IpcrData;
 				ipcrStore.updateIPCR(ipcrId, ipcrData);
 				await goto('/dashboard/ipcr');
 			}
@@ -55,7 +55,7 @@
 				Please review everything thoroughly before submission.
 			</AlertDialog.Description>
 		</AlertDialog.Header>
-		<form method="POST" action="?/submitipcr" use:enhance>
+		<form method="POST" action="?/submitipcr" id="submit-ipcr" use:enhance>
 			<Form.Field {form} name="ipcrID">
 				<Form.Control>
 					{#snippet children({ props })}
@@ -64,10 +64,10 @@
 				</Form.Control>
 				<Form.FieldErrors />
 			</Form.Field>
-			<AlertDialog.Footer>
-				<AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
-				<AlertDialog.Action>Continue</AlertDialog.Action>
-			</AlertDialog.Footer>
 		</form>
+		<AlertDialog.Footer>
+			<AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
+			<AlertDialog.Action type="submit" form="submit-ipcr">Continue</AlertDialog.Action>
+		</AlertDialog.Footer>
 	</AlertDialog.Content>
 </AlertDialog.Root>

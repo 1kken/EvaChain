@@ -4,7 +4,6 @@
 	import DropDownWrapper from '../(wrappers)/DropDownWrapper.svelte';
 	import DeleteIndicatorAction from './DeleteIndicatorAction.svelte';
 	import MarkAsDoneDialog from './MarkAsDoneDialog.svelte';
-	import StatusIcon from './StatusIcon.svelte';
 	import UpdateIndicatorDialog from './UpdateIndicatorDialog.svelte';
 
 	let { indicator }: { indicator: Tables<'indicator'> } = $props();
@@ -15,8 +14,7 @@
 
 <div class="rounded-lg border">
 	<div class="flex flex-col space-y-2 p-3">
-		<div class="flex h-4 justify-start gap-2">
-			<StatusIcon status={indicator.status} />
+		<div class="w-full sm:w-auto">
 			{#if indicator.status !== 'submitted' && !$canEdit}
 				<MarkAsDoneDialog {indicator} bind:isDrawerOpen />
 			{/if}

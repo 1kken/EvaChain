@@ -3,7 +3,7 @@
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { getIndicatorFormContext } from '../(data)/(forms)/indicator_form.svelte';
 	import { updateIndicatorSchema } from '../../utils/schemas/indicator_schema';
-	import SuperDebug, { superForm, type FormResult } from 'sveltekit-superforms';
+	import { superForm, type FormResult } from 'sveltekit-superforms';
 	import type { indicatorFormResult } from '../(data)/types';
 	import { getIndicatorStore } from '../(data)/(state)/indicator_state.svelte';
 	import { showSuccessToast } from '$lib/utils/toast';
@@ -11,20 +11,7 @@
 	import { Pencil } from 'lucide-svelte';
 	import * as Form from '$lib/components/ui/form/index.js';
 	import IntelligentInput from '$lib/custom_components/IntelligentInput.svelte';
-	import CalendarIcon from 'lucide-svelte/icons/calendar';
-	import {
-		CalendarDate,
-		DateFormatter,
-		type DateValue,
-		getLocalTimeZone,
-		parseDate,
-		today
-	} from '@internationalized/date';
-	import { Calendar } from '$lib/components/ui/calendar';
-	import * as Popover from '$lib/components/ui/popover';
-	import { cn } from '$lib/utils';
-	import { buttonVariants } from '$lib/components/ui/button';
-	import { browser } from '$app/environment';
+	import { DateFormatter, type DateValue, parseDate } from '@internationalized/date';
 
 	interface Props {
 		indicator: Tables<'indicator'>;
@@ -57,17 +44,14 @@
 	const { form: formData, enhance, message, delayed } = form;
 	const df = new DateFormatter('en-US', { dateStyle: 'long' });
 
-	// Initialize form data
 	$formData.id = indicator.id;
-	$formData.indicator = indicator.indicator;
-	// $formData.accomplishment = indicator.accomplishment ?? '';
+	$formData.indicator = indicator.indicator ?? '';
 
 	// Initialize date value
 	let dateValue = $state<DateValue | undefined>();
 	if (indicator.accomplishment_date) {
 		dateValue = parseDate(indicator.accomplishment_date);
 	}
-	let placeholder = $state<DateValue>(today(getLocalTimeZone()));
 </script>
 
 <Dialog.Root bind:open={isOpen}>
@@ -93,66 +77,14 @@
 							<IntelligentInput
 								name="indicator"
 								placeholder={'Please type your indicator'}
-								bind:content={$formData.indicator}
+								bind:content={$formData.indicator!}
 							/>
 						{/snippet}
 					</Form.Control>
 					<Form.FieldErrors />
 				</Form.Field>
-				<!-- <Form.Field {form} name="accomplishment">
-					<Form.Control>
-						{#snippet children({ props })}
-							<Form.Label>Accomplishment</Form.Label>
-							<IntelligentInput
-								name="accomplishment"
-								placeholder={'Please type your accomplishment'}
-								bind:content={$formData.accomplishment!}
-							/>
-						{/snippet}
-					</Form.Control>
-					<Form.FieldErrors />
-				</Form.Field> -->
 			</div>
-			<div class="grid grid-cols-1 gap-4">
-				<!-- <Form.Field {form} name="accomplishment_date">
-					<Form.Control>
-						{#snippet children({ props })}
-							<Form.Label>Accomplishment Date</Form.Label>
-							<Popover.Root>
-								<Popover.Trigger
-									class={cn(
-										buttonVariants({ variant: 'outline' }),
-										'w-full justify-start pl-4 text-left font-normal',
-										!dateValue && 'text-muted-foreground'
-									)}
-								>
-									{dateValue ? df.format(dateValue.toDate(getLocalTimeZone())) : 'Pick a date'}
-									<CalendarIcon class="ml-auto size-4 opacity-50" />
-								</Popover.Trigger>
-								<Popover.Content class="w-auto p-0" side="top">
-									<Calendar
-										type="single"
-										value={dateValue}
-										bind:placeholder
-										maxValue={today(getLocalTimeZone())}
-										calendarLabel="Accomplishment date"
-										onValueChange={(v) => {
-											dateValue = v;
-											if (v) {
-												$formData.accomplishment_date = v.toString();
-											} else {
-												$formData.accomplishment_date = null;
-											}
-										}}
-									/>
-								</Popover.Content>
-							</Popover.Root>
-							<input hidden value={$formData.accomplishment_date} name={props.name} />
-						{/snippet}
-					</Form.Control>
-					<Form.FieldErrors />
-				</Form.Field> -->
-			</div>
+			<div class="grid grid-cols-1 gap-4"></div>
 			<div class="flex justify-end">
 				<Form.Button>Save</Form.Button>
 			</div>

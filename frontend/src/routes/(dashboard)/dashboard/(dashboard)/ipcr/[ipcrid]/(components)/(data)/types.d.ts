@@ -37,5 +37,5 @@ export type indicatorFormResult = {
 
 export type IPCRFormResult = {
 	form: any;
-	IpcrData: Tables<'ipcr_teaching'>;
+	IpcrData: Tables<'ipcr'>;
 };

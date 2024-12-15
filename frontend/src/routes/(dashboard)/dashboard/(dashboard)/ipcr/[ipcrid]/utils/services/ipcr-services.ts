@@ -17,7 +17,7 @@ export async function submitIpcrAction(request: Request, supabase: SupabaseClien
 
 	const { ipcrID } = form.data;
 
-	const { data: IPCRData, error: updateError } = await supabase
+	const { data: IpcrData, error: updateError } = await supabase
 		.from('ipcr')
 		.update({ status: 'submitted' })
 		.eq('id', ipcrID)
@@ -30,5 +30,5 @@ export async function submitIpcrAction(request: Request, supabase: SupabaseClien
 		});
 	}
 
-	return { form, IPCRData };
+	return { form, IpcrData };
 }

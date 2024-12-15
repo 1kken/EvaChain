@@ -1,5 +1,7 @@
 import { z } from 'zod';
-
+// 45000000 bytes = 45MB
+const MAX_FILE_SIZE = 45000000;
+const ACCEPTED_FILES = ['application/pdf'];
 // Schema for creating a new indicator
 export const createIndicatorSchema = z.object({
 	indicator: z
@@ -30,7 +32,10 @@ export const updateIndicatorSchema = z.object({
 export const markIndicatorDoneSchema = z.object({
 	id: z.string().uuid('Invalid Indicator ID'),
 	accomplishment: z.string().min(10, 'IPCR must have atleast 10 charactes'),
-	accomplishment_date: z.string().refine((v) => v, { message: 'Accomplishment date is required.' })
+	accomplishment_date: z.string().refine((v) => v, { message: 'Accomplishment date is required.' }),
+	pdf_evidence: z
+		.instanceof(File, { message: 'Please upload a file.' })
+		.refine((f) => f.size < MAX_FILE_SIZE, 'Max 45mb upload size.')
 });
 
 export type MarkIndicatorDoneSchema = typeof markIndicatorDoneSchema;

@@ -205,6 +205,38 @@ export type Database = {
           },
         ]
       }
+      indicator_evidence: {
+        Row: {
+          created_at: string
+          file_path: string
+          id: string
+          indicator_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          file_path: string
+          id?: string
+          indicator_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          file_path?: string
+          id?: string
+          indicator_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "indicator_evidence_indicator_id_fkey"
+            columns: ["indicator_id"]
+            isOneToOne: false
+            referencedRelation: "indicator"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ipcr: {
         Row: {
           created_at: string

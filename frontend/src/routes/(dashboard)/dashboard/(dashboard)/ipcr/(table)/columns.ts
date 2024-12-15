@@ -7,8 +7,10 @@ import DataTableActions from './data-table-actions.svelte';
 import type { SuperValidated } from 'sveltekit-superforms';
 import type { Tables } from '$lib/types/database.types';
 import type { DeleteIPCRSchema } from '../(data)/schema';
+import { cellAround } from '@tiptap/pm/tables';
+import DataLink from './data-link.svelte';
 
-export type IPCR = Tables<'ipcr_teaching'>;
+export type IPCR = Tables<'ipcr'>;
 
 export const createColumns = (deleteForm: SuperValidated<DeleteIPCRSchema>): ColumnDef<IPCR>[] => [
 	{
@@ -18,7 +20,13 @@ export const createColumns = (deleteForm: SuperValidated<DeleteIPCRSchema>): Col
 				text: 'Title',
 				arrangement: column.getIsSorted(),
 				onclick: () => column.toggleSorting(column.getIsSorted() === 'asc')
-			})
+			}),
+		cell: ({ getValue, row }) => {
+			//display a link to the IPCR  wiht id
+			const title = getValue<string>();
+			const id = row.original.id;
+			return renderComponent(DataLink, { id, name: title });
+		}
 	},
 	{
 		accessorKey: 'status',
