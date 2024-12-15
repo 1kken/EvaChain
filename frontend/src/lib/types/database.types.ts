@@ -898,6 +898,12 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: boolean
       }
+      validate_ipcr: {
+        Args: {
+          p_ipcr_id: string
+        }
+        Returns: Database["public"]["CompositeTypes"]["validation_result"]
+      }
     }
     Enums: {
       indicator_status:
@@ -910,7 +916,10 @@ export type Database = {
       scope_type: "all" | "office" | "program" | "unit"
     }
     CompositeTypes: {
-      [_ in never]: never
+      validation_result: {
+        is_valid: boolean | null
+        validation_message: string | null
+      }
     }
   }
 }

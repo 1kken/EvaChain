@@ -15,6 +15,7 @@
 	import type { IPCRFormResult } from '../(data)/types';
 	import { Input } from '$lib/components/ui/input';
 	import { goto } from '$app/navigation';
+	import { showErrorToast } from '$lib/utils/toast';
 	interface Props {
 		ipcrId: string;
 		submitIPCRForm: SuperValidated<Infer<SubmitIPCRSchema>>;
@@ -22,6 +23,7 @@
 
 	let { ipcrId, submitIPCRForm }: Props = $props();
 	const ipcrStore = getIPCRStore();
+	let isOpen = $state(false);
 
 	const form = superForm(submitIPCRForm, {
 		validators: zodClient(submitIPCRschema),
@@ -29,7 +31,7 @@
 		dataType: 'json',
 		async onUpdate({ form, result }) {
 			const action = result.data as FormResult<IPCRFormResult>;
-			if (form.valid && action && ipcrStore) {
+			if (form.valid && action.IpcrData && ipcrStore) {
 				const ipcrData = action.IpcrData;
 				ipcrStore.updateIPCR(ipcrId, ipcrData);
 				await goto('/dashboard/ipcr');
@@ -39,9 +41,16 @@
 
 	const { form: formData, message, enhance, delayed } = form;
 	$formData.ipcrID = ipcrId;
+
+	$effect(() => {
+		if ($message?.status === 'error') {
+			showErrorToast($message.text);
+			isOpen = false;
+		}
+	});
 </script>
 
-<AlertDialog.Root>
+<AlertDialog.Root bind:open={isOpen}>
 	<AlertDialog.Trigger class={`${buttonVariants({ variant: 'default' })} `}>
 		<span class="flex items-center gap-2">
 			<Send size={16} /> Submit IPCR

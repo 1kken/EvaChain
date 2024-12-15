@@ -7,28 +7,20 @@
 	// import DeleteActionSupportFunction from './(subcomponents)/(delete_actions)/SupportDeleteAction.svelte';
 	import DropDownWrapper from '../../(wrappers)/DropDownWrapper.svelte';
 	import { setIndicatorStore } from '../../(data)/(state)/indicator_state.svelte';
-	import {
-		fetchIndicatorsByParam,
-		fetchSubOtherFunctions,
-		fetchSubSupportFunctions
-	} from '../../../utils/fetching_utils';
+	import { fetchIndicatorsByParam, fetchSubOtherFunctions } from '../../../utils/fetching_utils';
 	import {
 		updateIndicatorPositions,
-		updateSubOtherFunctionPositions,
-		updateSubSupportFunctionPositions
+		updateSubOtherFunctionPositions
 	} from '../../../utils/position_update';
 	import { getSingleIPCRStore } from '../../(data)/(state)/ipcr-state.svelte';
 	import CreateIndicatorDialog from '../../(indicator)/CreateIndicatorDialog.svelte';
 	import DndContainer from '$lib/custom_components/dashboard/documents/DndContainer.svelte';
 	import { showErrorToast } from '$lib/utils/toast';
 	// import SupportFunctionUpdateDialog from './(subcomponents)/(update_dialogs)/SupportFunctionUpdateDialog.svelte';
-	import { setSubSupportFunctionStore } from '../../(data)/(state)/sub_support_function_state.svelte';
 	import IndicatorComponent from '../../(indicator)/IndicatorComponent.svelte';
 	import { setSubOtherFunctionStore } from '../../(data)/(state)/sub_other_function_state.svelte';
 	import OtherFunctionDeleteAction from './(subcomponents)/(delete_actions)/OtherFunctionDeleteAction.svelte';
-	import OtherFunction from './OtherFunction.svelte';
 	import OtherFunctionUpdateDialog from './(subcomponents)/(update_dialogs)/OtherFunctionUpdateDialog.svelte';
-	import OtherFunctionCreateDialog from './(subcomponents)/(create_dialogs)/OtherFunctionCreateDialog.svelte';
 	import SubOtherFunctionCreateDialog from './(subcomponents)/(create_dialogs)/SubOtherFunctionCreateDialog.svelte';
 	// import Indicator from './Indicator.svelte';
 

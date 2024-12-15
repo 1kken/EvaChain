@@ -26,7 +26,6 @@
 
 	let isExpanded = $state(false);
 	let isLoading = $state(false);
-	let showSubmit = $state(true);
 	let dndItems = $state<CoreFunction[]>([]);
 
 	$effect(() => {
@@ -57,10 +56,6 @@
 	function toggleExpand() {
 		isExpanded = !isExpanded;
 	}
-	$effect(() => {
-		const length = $currentCoreFunctions.length;
-		showSubmit = $canEdit && length > 0;
-	});
 </script>
 
 <div class="w-full">
@@ -78,10 +73,8 @@
 		</div>
 		<div class="flex items-center gap-5">
 			{#if $ipcr?.id}
-				{#if showSubmit}
-					<SubmitIpcrAction ipcrId={$ipcr.id} {submitIPCRForm} />
-				{/if}
 				{#if $canEdit}
+					<SubmitIpcrAction ipcrId={$ipcr.id} {submitIPCRForm} />
 					<CoreFunctionCreateDialog ipcrId={$ipcr.id} />
 				{/if}
 			{/if}
