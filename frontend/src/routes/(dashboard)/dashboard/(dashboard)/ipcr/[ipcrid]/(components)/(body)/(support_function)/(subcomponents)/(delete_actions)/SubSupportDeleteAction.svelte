@@ -44,7 +44,6 @@
 	const currentSubSupportFunction = $currentSubSupportFunctions.find(
 		(c) => c.id === subSupportFunctionId
 	);
-	console.log(currentSubSupportFunction?.id);
 	let name = $state('');
 
 	if (currentSubSupportFunction) {

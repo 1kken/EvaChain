@@ -39,12 +39,18 @@
 		}
 	});
 
-	const { form: formData, message, enhance, delayed } = form;
+	const { form: formData, message, enhance, delayed, reset } = form;
 	$formData.ipcrID = ipcrId;
 
 	$effect(() => {
 		if ($message?.status === 'error') {
 			showErrorToast($message.text);
+			reset({
+				data: {
+					ipcrID: ipcrId
+				},
+				newState: { ipcrID: ipcrId }
+			});
 			isOpen = false;
 		}
 	});

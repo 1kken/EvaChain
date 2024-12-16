@@ -25,7 +25,6 @@
 	const { size } = subCoreFunctionStore;
 
 	const form = superForm(data!, {
-		id: coreFunctionId,
 		dataType: 'json',
 		validators: zodClient(createSubCoreFunctionSchema),
 		multipleSubmits: 'prevent',

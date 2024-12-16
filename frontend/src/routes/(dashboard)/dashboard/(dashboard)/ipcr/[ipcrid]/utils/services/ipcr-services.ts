@@ -28,10 +28,11 @@ export async function submitIpcrAction(request: Request, supabase: SupabaseClien
 		});
 	}
 
-	if (!data?.is_valid) {
+	// data will contain both is_valid and validation_message as properties
+	if (!data.is_valid) {
 		return message(form, {
 			status: 'error',
-			text: `IPCR incomplete ${data.validation_message}`
+			text: `IPCR incomplete: ${data.validation_message}`
 		});
 	}
 

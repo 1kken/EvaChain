@@ -22,6 +22,7 @@
 	import OtherFunctionDeleteAction from './(subcomponents)/(delete_actions)/OtherFunctionDeleteAction.svelte';
 	import OtherFunctionUpdateDialog from './(subcomponents)/(update_dialogs)/OtherFunctionUpdateDialog.svelte';
 	import SubOtherFunctionCreateDialog from './(subcomponents)/(create_dialogs)/SubOtherFunctionCreateDialog.svelte';
+	import Indicator from './Indicator.svelte';
 	// import Indicator from './Indicator.svelte';
 
 	let { otherFunction }: { otherFunction: Tables<'other_function'> } = $props();
@@ -53,7 +54,7 @@
 			const [subFunctionsResult, indicatorsResult] = await Promise.all([
 				fetchSubOtherFunctions(otherFunction.id),
 				fetchIndicatorsByParam({
-					url_params: 'support_function_id',
+					url_params: 'other_function_id',
 					id: otherFunction.id
 				})
 			]);
@@ -189,7 +190,7 @@
 			{#snippet dndItem(item: DndItem)}
 				<div class="py-2">
 					{#if item.itemType === 'sub_function'}
-						<!-- <Indicator name={item.name} sub_support_function_id={item.id} /> -->
+						<Indicator name={item.name} sub_other_function_id={item.id} />
 					{:else}
 						<IndicatorComponent indicator={item} />
 					{/if}

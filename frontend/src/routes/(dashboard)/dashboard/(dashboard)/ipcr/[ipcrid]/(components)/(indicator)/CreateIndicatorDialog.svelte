@@ -1,7 +1,7 @@
 <script lang="ts">
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
-	import { superForm, type FormResult } from 'sveltekit-superforms';
+	import SuperDebug, { superForm, type FormResult } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { getIndicatorFormContext } from '../(data)/(forms)/indicator_form.svelte';
 	import { createIndicatorSchema } from '../../utils/schemas/indicator_schema';
@@ -31,7 +31,6 @@
 		isDrawerOpen = $bindable()
 	}: { config: IndicatorConfig; isDirectChild?: boolean; isDrawerOpen?: boolean } = $props();
 	let isOpen = $state(false);
-
 	//stores
 	const indicatorStore = getIndicatorStore();
 	const { currentIndicators } = indicatorStore;
@@ -40,7 +39,7 @@
 	const form = superForm(data, {
 		validators: zodClient(createIndicatorSchema),
 		multipleSubmits: 'prevent',
-		id: Date.now().toString(),
+		id: crypto.randomUUID(),
 		onUpdate({ form, result }) {
 			const action = result.data as FormResult<indicatorFormResult>;
 			if (form.valid && action.indicatorData && indicatorStore) {
@@ -64,29 +63,12 @@
 	$formData.position = (size + 1) * 100;
 
 	const configType = config.type;
-	if (configType === 'core_function') {
-		$formData.core_function_id = config.id;
-	}
-
-	if (configType === 'sub_core_function') {
-		$formData.sub_core_function_id = config.id;
-	}
-
-	if (configType === 'support_function') {
-		$formData.support_function_id = config.id;
-	}
-
-	if (configType === 'sub_support_function') {
-		$formData.sub_support_function_id = config.id;
-	}
-
-	if (configType === 'other_function') {
-		$formData.other_function_id = config.id;
-	}
-
-	if (configType === 'sub_other_function') {
-		$formData.sub_other_function_id = config.id;
-	}
+	$formData.core_function_id = configType === 'core_function' ? config.id : null;
+	$formData.sub_core_function_id = configType === 'sub_core_function' ? config.id : null;
+	$formData.support_function_id = configType === 'support_function' ? config.id : null;
+	$formData.sub_support_function_id = configType === 'sub_support_function' ? config.id : null;
+	$formData.other_function_id = configType === 'other_function' ? config.id : null;
+	$formData.sub_other_function_id = configType === 'sub_other_function' ? config.id : null;
 
 	function handleDialogOpenChange(open: boolean) {
 		isOpen = open;
@@ -129,6 +111,7 @@
 				value={$formData.sub_support_function_id}
 			/>
 			<input type="hidden" name="other_function_id" value={$formData.other_function_id} />
+			<input type="hidden" name="sub_other_function_id" value={$formData.sub_other_function_id} />
 			<Form.Field {form} name="indicator">
 				<Form.Control>
 					{#snippet children({ props })}

@@ -27,7 +27,9 @@ export const updateOtherFunctionSchema = z
 			.optional()
 			.nullable(),
 
-		reviewer_id: z.string().uuid('Invalid User').optional()
+		reviewer_id: z
+			.string({ required_error: 'User Not found, please check if the name is correct' })
+			.uuid('Invalid User')
 	})
 	.refine((data) => Object.keys(data).length > 0, {
 		message: 'At least one field must be provided for update'

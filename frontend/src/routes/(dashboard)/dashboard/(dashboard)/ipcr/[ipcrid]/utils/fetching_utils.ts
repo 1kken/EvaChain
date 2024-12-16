@@ -25,7 +25,6 @@ export async function fetchIndicatorsByParam(params: ParameterType): Promise<Ind
 			const result: IndicatorResponse = await response.json();
 			throw new Error(result.error || 'Failed to fetch indicators');
 		}
-
 		const result: IndicatorResponse = await response.json();
 		return result;
 	} catch (error) {
@@ -95,7 +94,7 @@ interface SubOtherFunctionResponse {
 
 export async function fetchSubOtherFunctions(id: string): Promise<SubOtherFunctionResponse> {
 	try {
-		const response = await fetch(`/api/sub_support_function?support_function_id=${id}`);
+		const response = await fetch(`/api/sub_other_function?other_function_id=${id}`);
 		const result: SubOtherFunctionResponse = await response.json();
 
 		if (!response.ok) {

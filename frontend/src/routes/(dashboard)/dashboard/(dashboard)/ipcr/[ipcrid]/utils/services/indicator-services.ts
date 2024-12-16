@@ -29,12 +29,15 @@ export async function createIndicator(request: Request, supabase: SupabaseClient
 		});
 	}
 
+	const indicator_date = new Date(Date.now()).toISOString();
 	let {
 		indicator,
 		core_function_id,
 		sub_core_function_id,
 		support_function_id,
 		sub_support_function_id,
+		other_function_id,
+		sub_other_function_id,
 		position
 	} = form.data;
 	const { data: indicatorData, error: indicatorError } = await supabase
@@ -45,7 +48,10 @@ export async function createIndicator(request: Request, supabase: SupabaseClient
 			sub_core_function_id,
 			support_function_id,
 			sub_support_function_id,
-			position
+			other_function_id,
+			sub_other_function_id,
+			position,
+			indicator_date
 		})
 		.select()
 		.single();

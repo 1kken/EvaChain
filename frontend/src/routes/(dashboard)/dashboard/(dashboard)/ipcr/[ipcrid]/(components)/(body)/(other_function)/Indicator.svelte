@@ -13,8 +13,6 @@
 	import DndContainer from '$lib/custom_components/dashboard/documents/DndContainer.svelte';
 	import SubOtherFunctionDeleteAction from './(subcomponents)/(delete_actions)/SubOtherFunctionDeleteAction.svelte';
 	import SubOtherFunctionUpdateDialog from './(subcomponents)/(update_dialogs)/SubOtherFunctionUpdateDialog.svelte';
-	// import SubSupportDeleteAction from './(subcomponents)/(delete_actions)/SubSupportDeleteAction.svelte';
-	// import SubSupportUpdateDialog from './(subcomponents)/(update_dialogs)/SubSupportUpdateDialog.svelte';
 
 	type Indicator = Tables<'indicator'>;
 
