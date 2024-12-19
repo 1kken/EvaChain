@@ -1,4 +1,4 @@
 export type IPCRFormResult = {
 	form: any;
-	ipcrData: Tables<'ipcr_teaching'>;
+	ipcrData: Tables<'ipcr'>;
 };

@@ -45,16 +45,14 @@
 		dataType: 'json',
 		onUpdate({ form, result }) {
 			const action = result.data as FormResult<ProfileResultForm>;
-			if (form.valid && action) {
+			if (form.valid && action.profile) {
 				const profile = action.profile;
 				$currentProfile = {
 					...$currentProfile,
 					...profile
 				};
+				showSuccessToast(`Sucessfully update profile!`);
 			}
-		},
-		onUpdated({ form }) {
-			showSuccessToast('Successfully update the profile!');
 		}
 	});
 

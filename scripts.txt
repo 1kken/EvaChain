@@ -12,7 +12,7 @@ npx supabase db reset --linked
 npx supabase gen types --lang=typescript --local > frontend/src/lib/types/database.types.ts
 
 //generate summary
-npx ai-digest -i EvaChain/ai-digest -o EvaChain/project_summary.md --whitespace-removal
+npx ai-digest -i EvaChain/supabase/migrations -o EvaChain/project_summary.md --whitespace-removal
 
 //run docker
 docker run -d --restart always -p 127.0.0.1:8010:8010 -e langtool_languageModel=/ngrams -v /root/ngrams:/ngrams:ro erikvl87/languagetool

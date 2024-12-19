@@ -8,6 +8,7 @@
 		placeholder?: string;
 		content: string;
 		name: string;
+		textAreaWidth?: string;
 	}
 
 	interface GrammarError {
@@ -21,7 +22,8 @@
 	let {
 		placeholder = 'Start typing to check grammar...',
 		content = $bindable(),
-		name
+		name,
+		textAreaWidth = '200'
 	}: Iprops = $props();
 	let isFetching = $state(false);
 	let errors = $state<GrammarError[]>([]);
@@ -94,7 +96,7 @@
 		bind:value={content}
 		{placeholder}
 		oninput={handleInput}
-		class="min-h-[120px] resize-none"
+		class={`min-h-[100px] w-${textAreaWidth} resize-none`}
 	/>
 
 	{#if isFetching}

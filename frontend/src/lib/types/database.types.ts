@@ -351,6 +351,214 @@ export type Database = {
           },
         ]
       }
+      op_header: {
+        Row: {
+          created_at: string
+          id: string
+          operational_plan_id: string
+          position: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          operational_plan_id: string
+          position: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          operational_plan_id?: string
+          position?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "op_header_operational_plan_id_fkey"
+            columns: ["operational_plan_id"]
+            isOneToOne: false
+            referencedRelation: "operational_plan"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      op_objectives: {
+        Row: {
+          activity: string
+          amount: string | null
+          created_at: string
+          desired_state: string
+          entity_responsible: string
+          former_state: string
+          fund_source: string | null
+          id: string
+          indicator: string
+          item: string | null
+          objective: string
+          op_program_project_id: string
+          position: number
+          q1: boolean
+          q2: boolean
+          q3: boolean
+          q4: boolean
+          qty: string | null
+          unit: string | null
+          unit_cost: string | null
+          updated_at: string
+        }
+        Insert: {
+          activity: string
+          amount?: string | null
+          created_at?: string
+          desired_state: string
+          entity_responsible: string
+          former_state: string
+          fund_source?: string | null
+          id?: string
+          indicator: string
+          item?: string | null
+          objective: string
+          op_program_project_id: string
+          position: number
+          q1?: boolean
+          q2?: boolean
+          q3?: boolean
+          q4?: boolean
+          qty?: string | null
+          unit?: string | null
+          unit_cost?: string | null
+          updated_at?: string
+        }
+        Update: {
+          activity?: string
+          amount?: string | null
+          created_at?: string
+          desired_state?: string
+          entity_responsible?: string
+          former_state?: string
+          fund_source?: string | null
+          id?: string
+          indicator?: string
+          item?: string | null
+          objective?: string
+          op_program_project_id?: string
+          position?: number
+          q1?: boolean
+          q2?: boolean
+          q3?: boolean
+          q4?: boolean
+          qty?: string | null
+          unit?: string | null
+          unit_cost?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "op_objectives_op_program_project_id_fkey"
+            columns: ["op_program_project_id"]
+            isOneToOne: false
+            referencedRelation: "op_program_project"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      op_program_project: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          op_header_id: string
+          position: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          id?: string
+          op_header_id: string
+          position: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          op_header_id?: string
+          position?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "op_program_project_op_header_id_fkey"
+            columns: ["op_header_id"]
+            isOneToOne: false
+            referencedRelation: "op_header"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      operational_plan: {
+        Row: {
+          created_at: string
+          creator_id: string
+          id: string
+          implementing_unit: string
+          office_id: number
+          program_id: number
+          title: string
+          unit_id: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          creator_id: string
+          id?: string
+          implementing_unit: string
+          office_id: number
+          program_id: number
+          title: string
+          unit_id: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          creator_id?: string
+          id?: string
+          implementing_unit?: string
+          office_id?: number
+          program_id?: number
+          title?: string
+          unit_id?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "operational_plan_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "office"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "operational_plan_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "program"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "operational_plan_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "unit"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       other_function: {
         Row: {
           created_at: string

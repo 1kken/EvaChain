@@ -1,0 +1,34 @@
+-- Create op_objectives table
+CREATE TABLE op_objectives (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    op_program_project_id UUID REFERENCES op_program_project(id) ON DELETE CASCADE NOT NULL,
+    objective TEXT NOT NULL,
+    activity TEXT NOT NULL,
+    indicator TEXT NOT NULL,
+    former_state VARCHAR(255) NOT NULL,
+    desired_state VARCHAR(255) NOT NULL,
+    q1 BOOLEAN DEFAULT false NOT NULL,
+    q2 BOOLEAN DEFAULT false NOT NULL,
+    q3 BOOLEAN DEFAULT false NOT NULL,
+    q4 BOOLEAN DEFAULT false NOT NULL,
+    item TEXT,
+    qty TEXT,
+    unit TEXT,
+    unit_cost TEXT,
+    amount TEXT,
+    fund_source TEXT,
+    entity_responsible TEXT NOT NULL,
+    position INTEGER NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
+);
+
+-- Add indexes for better query performance
+CREATE INDEX idx_op_objectives_program_project_id ON op_objectives(op_program_project_id);
+CREATE INDEX idx_op_objectives_position ON op_objectives(position, op_program_project_id);
+
+-- Add trigger for updating timestamps
+CREATE TRIGGER set_updated_at 
+    BEFORE UPDATE ON op_objectives 
+    FOR EACH ROW 
+    EXECUTE FUNCTION fn_set_updated_at();

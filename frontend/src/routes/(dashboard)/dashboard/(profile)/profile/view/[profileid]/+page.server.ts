@@ -113,7 +113,7 @@ export const actions: Actions = {
 		if (error) {
 			return message(form, {
 				status: 'error',
-				text: 'Something went wrong on update!'
+				text: `Something went wrong on update! ${error.message}`
 			});
 		}
 
