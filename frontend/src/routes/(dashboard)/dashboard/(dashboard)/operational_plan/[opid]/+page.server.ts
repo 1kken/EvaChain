@@ -1,8 +1,7 @@
-import type { Database } from '$lib/types/database.types';
-import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Actions, PageServerLoad } from './$types';
 import { createOpHeader, deleteOpHeader, updateOpHeader } from './services/op_header_services';
 import {
+	getOpActivityForms,
 	getOperationalPlan,
 	getOpHeaderForms,
 	getOpHeaders,
@@ -19,6 +18,11 @@ import {
 	deleteOpObjectives,
 	updateOpObjectives
 } from './services/op_objective_services';
+import {
+	createOpActivity,
+	deleteOpActivity,
+	updateOpActivity
+} from './services/op_activity_services';
 
 export const load = (async ({ params, locals: { supabase, session } }) => {
 	const { opid } = params;
@@ -27,12 +31,14 @@ export const load = (async ({ params, locals: { supabase, session } }) => {
 	const opHeaderForms = await getOpHeaderForms();
 	const opProgramProjectForms = await getOpProgramProjectForms();
 	const opProgramObjectiveForms = await getOpObjectiveForms();
+	const opActivityForms = await getOpActivityForms();
 	return {
 		operationalPlan,
 		opHeaders,
 		opHeaderForms,
 		opProgramProjectForms,
-		opProgramObjectiveForms
+		opProgramObjectiveForms,
+		opActivityForms
 	};
 }) satisfies PageServerLoad;
 
@@ -65,5 +71,15 @@ export const actions = {
 	},
 	deleteopobjectives: async ({ request, locals: { supabase, session } }) => {
 		return deleteOpObjectives(request, supabase);
+	},
+	//activities
+	createopactivity: async ({ request, locals: { supabase, session } }) => {
+		return createOpActivity(request, supabase);
+	},
+	updateopactivity: async ({ request, locals: { supabase, session } }) => {
+		return updateOpActivity(request, supabase);
+	},
+	deleteopactivity: async ({ request, locals: { supabase, session } }) => {
+		return deleteOpActivity(request, supabase);
 	}
 } satisfies Actions;

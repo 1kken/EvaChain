@@ -1,15 +1,12 @@
 <script lang="ts">
 	import { Textarea } from '$lib/components/ui/textarea';
 	import { Button } from '$lib/components/ui/button';
+	import { Alert, AlertDescription } from '$lib/components/ui/alert';
+	import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
+	import { Loader2, CheckCircle, AlertCircle } from 'lucide-svelte';
+	import { fade } from 'svelte/transition';
+	import { cn } from '$lib/utils';
 	import debounce from 'debounce';
-	import { Loader2 } from 'lucide-svelte';
-
-	interface Iprops {
-		placeholder?: string;
-		content: string;
-		name: string;
-		textAreaWidth?: string;
-	}
 
 	interface GrammarError {
 		message: string;
@@ -17,23 +14,24 @@
 		replacements: { value: string }[];
 		offset: number;
 		length: number;
+		type: 'grammar' | 'spelling';
 	}
 
 	let {
 		placeholder = 'Start typing to check grammar...',
-		content = $bindable(),
+		content = $bindable(''),
 		name,
-		textAreaWidth = '200'
-	}: Iprops = $props();
+		textAreaWidth = 'fit'
+	} = $props();
+
 	let isFetching = $state(false);
 	let errors = $state<GrammarError[]>([]);
 
-	// Function to build corrected text
+	// Function to get corrected text
 	function getCorrectedText() {
-		if (!errors.length) return null;
+		if (!errors.length) return content;
 
 		let correctedText = content;
-		// Sort errors by offset in reverse order to avoid position shifts
 		const sortedErrors = [...errors].sort((a, b) => b.offset - a.offset);
 
 		for (const error of sortedErrors) {
@@ -47,16 +45,38 @@
 		return correctedText;
 	}
 
-	// Function to apply all corrections
-	function applyCorrections() {
-		const correctedText = getCorrectedText();
-		if (correctedText) {
-			content = correctedText;
-			errors = [];
+	// Apply individual correction
+	function applyCorrection(error: GrammarError) {
+		if (error.replacements.length > 0) {
+			content =
+				content.substring(0, error.offset) +
+				error.replacements[0].value +
+				content.substring(error.offset + error.length);
+			errors = errors.filter((e) => e !== error);
 		}
 	}
 
-	const debouncedFetchGrammar = debounce(async (text: string) => {
+	// Apply all corrections at once
+	function applyAllCorrections() {
+		content = getCorrectedText();
+		errors = [];
+	}
+	// First define the API response type
+	interface LangToolError {
+		message: string;
+		shortMessage: string;
+		replacements: { value: string }[];
+		offset: number;
+		length: number;
+	}
+
+	// Then define the extended error type with the 'type' field
+	interface GrammarError extends LangToolError {
+		type: 'grammar' | 'spelling';
+	}
+
+	// Update the function with proper typing
+	const checkGrammar = debounce(async (text: string) => {
 		if (!text.trim()) {
 			isFetching = false;
 			errors = [];
@@ -66,17 +86,19 @@
 		try {
 			const response = await fetch('/api/lang_tool', {
 				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
+				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ content: text })
 			});
 
-			if (!response.ok) {
-				throw new Error('Grammar check failed');
-			}
+			if (!response.ok) throw new Error('Grammar check failed');
 
-			errors = await response.json();
+			const newErrors: LangToolError[] = await response.json();
+			errors = newErrors.map(
+				(error): GrammarError => ({
+					...error,
+					type: error.message.toLowerCase().includes('spelling') ? 'spelling' : 'grammar'
+				})
+			);
 		} catch (err) {
 			console.error('Grammar check error:', err);
 		} finally {
@@ -86,32 +108,36 @@
 
 	function handleInput() {
 		isFetching = true;
-		debouncedFetchGrammar(content);
+		checkGrammar(content);
 	}
 </script>
 
-<div class="space-y-4">
+<div class="w-full">
 	<Textarea
 		{name}
 		bind:value={content}
 		{placeholder}
 		oninput={handleInput}
-		class={`min-h-[100px] w-${textAreaWidth} resize-none`}
+		class={cn(
+			'min-h-[100px] resize-none',
+			`max-w-${textAreaWidth}`,
+			'whitespace-pre-wrap break-words', // Ensure wrapping for long text and spaces
+			errors.length > 0 && 'focus:ring-yellow-500/50'
+		)}
+		rows={4}
+		wrap="soft"
 	/>
 
 	{#if isFetching}
-		<div class="text-muted-foreground flex items-center gap-2 text-sm">
+		<div class="text-muted-foreground flex items-center gap-2 text-xs">
 			<Loader2 class="h-3 w-3 animate-spin" />
-			<span>Checking grammar and spelling...</span>
+			<span>Checking...</span>
 		</div>
-	{:else if errors.length > 0}
-		<div class="bg-muted/50 space-y-2 rounded-md border p-4">
-			<h3 class="font-medium">Grammar/Spelling errors detected</h3>
-			<p class="text-muted-foreground text-sm">Suggested correction:</p>
-			<p class="text-sm font-medium">{getCorrectedText()}</p>
-			<Button variant="secondary" size="sm" onclick={applyCorrections}>
-				Click to apply corrections
-			</Button>
+	{/if}
+
+	{#if errors.length > 0}
+		<div class="w-full space-y-1.5" transition:fade>
+			<!-- Rest of your error display code -->
 		</div>
 	{/if}
 </div>

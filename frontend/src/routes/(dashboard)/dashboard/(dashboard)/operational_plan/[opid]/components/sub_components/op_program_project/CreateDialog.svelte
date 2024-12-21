@@ -3,7 +3,7 @@
 	import * as Form from '$lib/components/ui/form/index.js';
 	import { LoaderCircle } from 'lucide-svelte';
 	import { Plus } from 'lucide-svelte';
-	import { setError, superForm, type FormResult } from 'sveltekit-superforms';
+	import SuperDebug, { setError, superForm, type FormResult } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';
 	import type { OpProgramProjectFormResult } from '../../../utils/type';
@@ -11,12 +11,15 @@
 	import { getOpProgramProjectStore } from '../../../states/op_program_project_state';
 	import { createOpProgramProjectSchema } from '../../../schema/op_project_program_schema';
 	import IntelligentInput from '$lib/custom_components/IntelligentInput.svelte';
+	import { browser } from '$app/environment';
 
 	//props
 	interface Iprops {
 		opHeaderId: string;
+		isExpanded: boolean;
+		onToggle: () => Promise<void>;
 	}
-	let { opHeaderId }: Iprops = $props();
+	let { opHeaderId, onToggle, isExpanded = $bindable() }: Iprops = $props();
 
 	//stores
 	const { createForm } = getOpProgramProjectFormContext();
@@ -45,6 +48,7 @@
 				addOpProgramProject(opProgramProject);
 				showSuccessToast(`Succesfully added Program/Project to the header`);
 				isOpen = false;
+				isExpanded = true;
 				reset({
 					data: { op_header_id: opProgramProject.op_header_id, position: $size + 1 },
 					newState: { op_header_id: opProgramProject.op_header_id, position: $size + 1 }
@@ -70,7 +74,7 @@
 	});
 </script>
 
-<Dialog.Root bind:open={isOpen}>
+<Dialog.Root bind:open={isOpen} onOpenChange={onToggle}>
 	<Dialog.Trigger class="focus-visible:outline-none" id="nav-2">
 		<span class="flex items-center gap-2">
 			<Plus class="h-5 w-5" />
@@ -110,5 +114,8 @@
 				{/if}
 			</div>
 		</form>
+		{#if browser}
+			<SuperDebug data={$formData} />
+		{/if}
 	</Dialog.Content>
 </Dialog.Root>

@@ -34,7 +34,7 @@ export async function createOpHeader(request: Request, supabase: SupabaseClient<
 	if (opHeaderError) {
 		return message(form, {
 			status: 'error',
-			text: `Error saving core function, ${opHeaderError.message}`
+			text: `Error saving header , ${opHeaderError.message}`
 		});
 	}
 
@@ -63,7 +63,7 @@ export async function deleteOpHeader(request: Request, supabase: SupabaseClient<
 	if (opHeaderError) {
 		return message(form, {
 			status: 'error',
-			text: `Error saving core function, ${opHeaderError.message}`
+			text: `Error updating header, ${opHeaderError.message}`
 		});
 	}
 
@@ -94,7 +94,7 @@ export async function updateOpHeader(request: Request, supabase: SupabaseClient<
 	if (opHeaderError) {
 		return message(form, {
 			status: 'error',
-			text: `Error saving core function, ${opHeaderError.message}`
+			text: `Error deleteing header ${opHeaderError.message}`
 		});
 	}
 

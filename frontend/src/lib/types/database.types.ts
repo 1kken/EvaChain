@@ -351,6 +351,83 @@ export type Database = {
           },
         ]
       }
+      op_activity: {
+        Row: {
+          activity: string
+          amount: string | null
+          created_at: string
+          desired_state: string
+          entity_responsible: string
+          former_state: string
+          fund_source: string | null
+          id: string
+          indicator: string
+          item: string | null
+          op_objective_id: string
+          position: number
+          q1: boolean
+          q2: boolean
+          q3: boolean
+          q4: boolean
+          qty: string | null
+          unit: string | null
+          unit_cost: string | null
+          updated_at: string
+        }
+        Insert: {
+          activity: string
+          amount?: string | null
+          created_at?: string
+          desired_state: string
+          entity_responsible: string
+          former_state: string
+          fund_source?: string | null
+          id?: string
+          indicator: string
+          item?: string | null
+          op_objective_id: string
+          position: number
+          q1?: boolean
+          q2?: boolean
+          q3?: boolean
+          q4?: boolean
+          qty?: string | null
+          unit?: string | null
+          unit_cost?: string | null
+          updated_at?: string
+        }
+        Update: {
+          activity?: string
+          amount?: string | null
+          created_at?: string
+          desired_state?: string
+          entity_responsible?: string
+          former_state?: string
+          fund_source?: string | null
+          id?: string
+          indicator?: string
+          item?: string | null
+          op_objective_id?: string
+          position?: number
+          q1?: boolean
+          q2?: boolean
+          q3?: boolean
+          q4?: boolean
+          qty?: string | null
+          unit?: string | null
+          unit_cost?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "op_activity_op_objective_id_fkey"
+            columns: ["op_objective_id"]
+            isOneToOne: false
+            referencedRelation: "op_objective"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       op_header: {
         Row: {
           created_at: string
@@ -386,79 +463,34 @@ export type Database = {
           },
         ]
       }
-      op_objectives: {
+      op_objective: {
         Row: {
-          activity: string
-          amount: string | null
           created_at: string
-          desired_state: string
-          entity_responsible: string
-          former_state: string
-          fund_source: string | null
           id: string
-          indicator: string
-          item: string | null
           objective: string
           op_program_project_id: string
           position: number
-          q1: boolean
-          q2: boolean
-          q3: boolean
-          q4: boolean
-          qty: string | null
-          unit: string | null
-          unit_cost: string | null
           updated_at: string
         }
         Insert: {
-          activity: string
-          amount?: string | null
           created_at?: string
-          desired_state: string
-          entity_responsible: string
-          former_state: string
-          fund_source?: string | null
           id?: string
-          indicator: string
-          item?: string | null
           objective: string
           op_program_project_id: string
           position: number
-          q1?: boolean
-          q2?: boolean
-          q3?: boolean
-          q4?: boolean
-          qty?: string | null
-          unit?: string | null
-          unit_cost?: string | null
           updated_at?: string
         }
         Update: {
-          activity?: string
-          amount?: string | null
           created_at?: string
-          desired_state?: string
-          entity_responsible?: string
-          former_state?: string
-          fund_source?: string | null
           id?: string
-          indicator?: string
-          item?: string | null
           objective?: string
           op_program_project_id?: string
           position?: number
-          q1?: boolean
-          q2?: boolean
-          q3?: boolean
-          q4?: boolean
-          qty?: string | null
-          unit?: string | null
-          unit_cost?: string | null
           updated_at?: string
         }
         Relationships: [
           {
-            foreignKeyName: "op_objectives_op_program_project_id_fkey"
+            foreignKeyName: "op_objective_op_program_project_id_fkey"
             columns: ["op_program_project_id"]
             isOneToOne: false
             referencedRelation: "op_program_project"

@@ -12,5 +12,10 @@ export type OpProgramProjectFormResult = {
 
 export type OpObjectiveFormResult = {
 	form: any;
-	opObjective: Tables<'op_objectives'>;
+	opObjective: Tables<'op_objective'>;
+};
+
+export type OpActivityFormResult = {
+	form: any;
+	opActivity: Tables<'op_activity'>;
 };

@@ -34,7 +34,7 @@ export async function createOpProgramProject(request: Request, supabase: Supabas
 	if (opProgramProjectError) {
 		return message(form, {
 			status: 'error',
-			text: `Error saving core function, ${opProgramProjectError.message}`
+			text: `Error saving  program/project , ${opProgramProjectError.message}`
 		});
 	}
 
@@ -65,7 +65,7 @@ export async function updateOpProgramProject(request: Request, supabase: Supabas
 	if (opProgramProjectError) {
 		return message(form, {
 			status: 'error',
-			text: `Error saving core function, ${opProgramProjectError.message}`
+			text: `Error updating program/project, ${opProgramProjectError.message}`
 		});
 	}
 
@@ -96,7 +96,7 @@ export async function deleteOpProgramProject(request: Request, supabase: Supabas
 	if (opProgramProjectError) {
 		return message(form, {
 			status: 'error',
-			text: `Error saving core function, ${opProgramProjectError.message}`
+			text: `Error deleting program/project, ${opProgramProjectError.message}`
 		});
 	}
 

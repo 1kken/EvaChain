@@ -8,7 +8,6 @@ import {
 	type UpdateOpObjectiveSchema
 } from '../schema/op_objective_schema';
 import { zod } from 'sveltekit-superforms/adapters';
-import type UniversalDeleteAction from '$lib/custom_components/UniversalDeleteAction.svelte';
 import {
 	universalDeleteSchema,
 	type UniversalDeleteSchema
@@ -27,14 +26,14 @@ export async function createOpObjectives(request: Request, supabase: SupabaseCli
 	}
 
 	const { data: opObjective, error: opObjectiveError } = await supabase
-		.from('op_objectives')
+		.from('op_objective')
 		.insert({ ...form.data })
 		.select()
 		.single();
 	if (opObjectiveError) {
 		return message(form, {
 			status: 'error',
-			text: `Error saving core function, ${opObjectiveError.message}`
+			text: `Error saving objective , ${opObjectiveError.message}`
 		});
 	}
 
@@ -55,7 +54,7 @@ export async function deleteOpObjectives(request: Request, supabase: SupabaseCli
 	}
 
 	const { data: opObjective, error: opObjectiveError } = await supabase
-		.from('op_objectives')
+		.from('op_objective')
 		.delete()
 		.eq('id', form.data.id)
 		.select()
@@ -64,7 +63,7 @@ export async function deleteOpObjectives(request: Request, supabase: SupabaseCli
 	if (opObjectiveError) {
 		return message(form, {
 			status: 'error',
-			text: `Error saving core function, ${opObjectiveError.message}`
+			text: `Error saving objective function, ${opObjectiveError.message}`
 		});
 	}
 
@@ -85,7 +84,7 @@ export async function updateOpObjectives(request: Request, supabase: SupabaseCli
 	}
 
 	const { data: opObjective, error: opObjectiveError } = await supabase
-		.from('op_objectives')
+		.from('op_objective')
 		.update({ ...form.data })
 		.eq('id', form.data.id)
 		.select()
@@ -94,7 +93,7 @@ export async function updateOpObjectives(request: Request, supabase: SupabaseCli
 	if (opObjectiveError) {
 		return message(form, {
 			status: 'error',
-			text: `Error saving core function, ${opObjectiveError.message}`
+			text: `Error saving objective function, ${opObjectiveError.message}`
 		});
 	}
 

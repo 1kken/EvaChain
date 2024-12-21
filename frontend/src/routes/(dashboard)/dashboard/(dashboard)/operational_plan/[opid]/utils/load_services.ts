@@ -10,6 +10,7 @@ import {
 	updateOpProgramProjectSchema
 } from '../schema/op_project_program_schema';
 import { createOpObjectiveSchema, updateOpObjectiveSchema } from '../schema/op_objective_schema';
+import { createOpActivitySchema, updateOpActivitySchema } from '../schema/op_activity_schema';
 
 export async function getOperationalPlan(opid: string, supabase: SupabaseClient<Database>) {
 	const { data: operational_plan, error: fetchOpError } = await supabase
@@ -59,6 +60,14 @@ export async function getOpObjectiveForms() {
 	return {
 		createForm: await superValidate(zod(createOpObjectiveSchema)),
 		updateForm: await superValidate(zod(updateOpObjectiveSchema)),
+		deleteForm: await superValidate(zod(universalDeleteSchema))
+	};
+}
+
+export async function getOpActivityForms() {
+	return {
+		createForm: await superValidate(zod(createOpActivitySchema)),
+		updateForm: await superValidate(zod(updateOpActivitySchema)),
 		deleteForm: await superValidate(zod(universalDeleteSchema))
 	};
 }

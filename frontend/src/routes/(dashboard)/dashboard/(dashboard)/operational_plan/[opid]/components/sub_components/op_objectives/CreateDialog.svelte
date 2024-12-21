@@ -11,17 +11,15 @@
 	import { getOpObjectiveStore } from '../../../states/op_objective_state';
 	import { getOpObjectiveFormContext } from '../../../states/op_objective_form_state';
 	import { createOpObjectiveSchema } from '../../../schema/op_objective_schema';
-	import FormSection from './FormSection.svelte';
-	import { Input } from '$lib/components/ui/input';
-	import { Checkbox } from '$lib/components/ui/checkbox';
-	import { Label } from '$lib/components/ui/label';
 	import { browser } from '$app/environment';
 
 	//props
 	interface Iprops {
 		opProgramProjectId: string;
+		isExpanded: boolean;
+		onToggle: () => Promise<void>;
 	}
-	let { opProgramProjectId }: Iprops = $props();
+	let { opProgramProjectId, onToggle, isExpanded = $bindable() }: Iprops = $props();
 
 	//stores
 	const { createForm } = getOpObjectiveFormContext();
@@ -48,6 +46,7 @@
 				addOpObjective(opObjective);
 				showSuccessToast(`successfully added Objective to the Program/Project`);
 				isOpen = false;
+				isExpanded = true;
 				reset({
 					data: { op_program_project_id: opObjective.op_program_project_id, position: $size + 1 },
 					newState: {
@@ -74,11 +73,9 @@
 			showErrorToast(`Error adding operational header: ${$message.text}`);
 		}
 	});
-
-	let items = ['Q1', 'Q2', 'Q3', 'Q4'];
 </script>
 
-<Dialog.Root bind:open={isOpen}>
+<Dialog.Root bind:open={isOpen} onOpenChange={onToggle}>
 	<Dialog.Trigger class="focus-visible:outline-none" id="nav-2">
 		<span class="flex items-center gap-2">
 			<Plus class="h-5 w-5" />
@@ -96,244 +93,25 @@
 		<form action="?/createopobjectives" method="POST" use:enhance class="space-y-6">
 			<input hidden name="position" value={$formData.position} />
 			<input hidden name="operational_plan_id" value={$formData.op_program_project_id} />
-			<FormSection title={'Basic Information'} required={true}>
-				<div class="grid gap-4 md:grid-cols-3">
-					<Form.Field {form} name="objective">
-						<Form.Control>
-							{#snippet children({ props })}
-								<Form.Label>Objective</Form.Label>
-								<IntelligentInput
-									textAreaWidth={'full'}
-									placeholder="Enter the objective for the program/project."
-									bind:content={$formData.objective}
-									name={props.name}
-								/>
-							{/snippet}
-						</Form.Control>
-						<Form.FieldErrors />
-					</Form.Field>
-					<Form.Field {form} name="activity">
-						<Form.Control>
-							{#snippet children({ props })}
-								<Form.Label>Activity</Form.Label>
-								<IntelligentInput
-									textAreaWidth={'full'}
-									placeholder="Enter the activity for the program/project."
-									bind:content={$formData.activity}
-									name={props.name}
-								/>
-							{/snippet}
-						</Form.Control>
-						<Form.FieldErrors />
-					</Form.Field>
-					<Form.Field {form} name="activity">
-						<Form.Control>
-							{#snippet children({ props })}
-								<Form.Label>Performance Indicator</Form.Label>
-								<IntelligentInput
-									textAreaWidth={'full'}
-									placeholder="Enter the performance indicator for the program/project."
-									bind:content={$formData.indicator}
-									name={props.name}
-								/>
-							{/snippet}
-						</Form.Control>
-						<Form.FieldErrors />
-					</Form.Field>
-				</div>
-			</FormSection>
-			<!--State information & Implementation Quarters-->
-			<FormSection title="State Information & Implementation Quarters" required={true}>
-				<div class="grid gap-6 md:grid-cols-3">
-					<Form.Field {form} name="former_state">
-						<Form.Control>
-							{#snippet children({ props })}
-								<Form.Label>Former State</Form.Label>
-								<Input
-									{...props}
-									bind:value={$formData.former_state}
-									placeholder="Enter former state..."
-								/>
-							{/snippet}
-						</Form.Control>
-						<Form.FieldErrors />
-					</Form.Field>
-					<Form.Field {form} name="desired_state">
-						<Form.Control>
-							{#snippet children({ props })}
-								<Form.Label>Desired State</Form.Label>
-								<Input
-									{...props}
-									bind:value={$formData.desired_state}
-									placeholder="Enter desired state..."
-								/>
-							{/snippet}
-						</Form.Control>
-						<Form.FieldErrors />
-					</Form.Field>
-					<div class="space-y-2">
-						<Label class="required mb-3 block">Implementation Quarters</Label>
-						<div class="grid grid-cols-2 gap-4">
-							<Form.Field {form} name="q1">
-								<Form.Control>
-									{#snippet children({ props })}
-										<span class="flex items-center gap-2">
-											<Checkbox {...props} bind:checked={$formData.q1} />
-											<Label>Q1</Label>
-										</span>
-									{/snippet}
-								</Form.Control>
-							</Form.Field>
-							<Form.Field {form} name="q2">
-								<Form.Control>
-									{#snippet children({ props })}
-										<span class="flex items-center gap-2">
-											<Checkbox {...props} bind:checked={$formData.q2} />
-											<Label>Q2</Label>
-										</span>
-									{/snippet}
-								</Form.Control>
-							</Form.Field>
-							<Form.Field {form} name="q3">
-								<Form.Control>
-									{#snippet children({ props })}
-										<span class="flex items-center gap-2">
-											<Checkbox {...props} bind:checked={$formData.q3} />
-											<Label>Q3</Label>
-										</span>
-									{/snippet}
-								</Form.Control>
-							</Form.Field>
-							<Form.Field {form} name="q4">
-								<Form.Control>
-									{#snippet children({ props })}
-										<span class="flex items-center gap-2">
-											<Checkbox {...props} bind:checked={$formData.q4} />
-											<Label>Q4</Label>
-										</span>
-									{/snippet}
-								</Form.Control>
-							</Form.Field>
-						</div>
-					</div>
-				</div>
-			</FormSection>
-			<FormSection title="Financial Information" required={true}>
-				<div class="grid gap-4 md:grid-cols-2">
-					<div class="space-y-2">
-						<Form.Field {form} name="former_state">
-							<Form.Control>
-								{#snippet children({ props })}
-									<Form.Label>Item</Form.Label>
-									<Input {...props} bind:value={$formData.item} placeholder="Enter item state..." />
-								{/snippet}
-							</Form.Control>
-							<Form.FieldErrors />
-						</Form.Field>
-					</div>
-
-					<div class="space-y-2">
-						<Form.Field {form} name="qty">
-							<Form.Control>
-								{#snippet children({ props })}
-									<Form.Label>Quantity</Form.Label>
-									<Input
-										{...props}
-										bind:value={$formData.qty}
-										placeholder="Enter quantity state..."
-									/>
-								{/snippet}
-							</Form.Control>
-							<Form.FieldErrors />
-						</Form.Field>
-					</div>
-
-					<div class="space-y-2">
-						<Form.Field {form} name="unit">
-							<Form.Control>
-								{#snippet children({ props })}
-									<Form.Label>Unit</Form.Label>
-									<Input {...props} bind:value={$formData.unit} placeholder="Enter unit..." />
-								{/snippet}
-							</Form.Control>
-							<Form.FieldErrors />
-						</Form.Field>
-					</div>
-
-					<div class="space-y-2">
-						<Form.Field {form} name="unit_cost">
-							<Form.Control>
-								{#snippet children({ props })}
-									<Form.Label>Unit Cost</Form.Label>
-									<Input
-										{...props}
-										bind:value={$formData.unit_cost}
-										placeholder="Enter unit cost..."
-									/>
-								{/snippet}
-							</Form.Control>
-							<Form.FieldErrors />
-						</Form.Field>
-					</div>
-					<div class="w-full flex-1 md:col-span-2">
-						<Form.Field {form} name="amount">
-							<Form.Control>
-								{#snippet children({ props })}
-									<Form.Label>Total Amount</Form.Label>
-									<Input
-										{...props}
-										bind:value={$formData.amount}
-										placeholder="Enter total amount..."
-									/>
-								{/snippet}
-							</Form.Control>
-							<Form.FieldErrors />
-						</Form.Field>
-					</div>
-				</div>
-			</FormSection>
-			<FormSection title="Additional Information">
-				<div class="grid gap-4 md:grid-cols-2">
-					<div class="space-y-2">
-						<Form.Field {form} name="fund_source">
-							<Form.Control>
-								{#snippet children({ props })}
-									<Form.Label>Fund Source</Form.Label>
-									<Input
-										{...props}
-										bind:value={$formData.fund_source}
-										placeholder="Enter fund source..."
-									/>
-								{/snippet}
-							</Form.Control>
-							<Form.FieldErrors />
-						</Form.Field>
-					</div>
-
-					<div class="space-y-2">
-						<Form.Field {form} name="entity_responsible">
-							<Form.Control>
-								{#snippet children({ props })}
-									<Form.Label>Entity Responsible</Form.Label>
-									<Input
-										{...props}
-										bind:value={$formData.entity_responsible}
-										placeholder="Enter entity responsible..."
-									/>
-								{/snippet}
-							</Form.Control>
-							<Form.FieldErrors />
-						</Form.Field>
-					</div>
-				</div>
-			</FormSection>
-			<div class="flex w-full justify-end">
-				{#if $delayed}
-					<Form.Button disabled><LoaderCircle class="animate-spin" />Processing...</Form.Button>
-				{:else}
-					<Form.Button>Submit</Form.Button>
-				{/if}
-			</div>
+			<Form.Field {form} name="objective">
+				<Form.Control>
+					{#snippet children({ props })}
+						<Form.Label>Objective</Form.Label>
+						<IntelligentInput
+							textAreaWidth={'full'}
+							placeholder="Enter the objective for the program/project."
+							bind:content={$formData.objective}
+							name={props.name}
+						/>
+					{/snippet}
+				</Form.Control>
+				<Form.FieldErrors />
+			</Form.Field>
+			{#if $delayed}
+				<Form.Button disabled><LoaderCircle class="animate-spin" />Processing...</Form.Button>
+			{:else}
+				<Form.Button>Submit</Form.Button>
+			{/if}
 		</form>
 		{#if browser}
 			<SuperDebug data={$formData} />

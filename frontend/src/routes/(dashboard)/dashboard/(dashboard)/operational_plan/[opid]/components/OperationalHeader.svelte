@@ -15,7 +15,7 @@
 	import DndContainer from '$lib/custom_components/dashboard/documents/DndContainer.svelte';
 	import { setOpProgramProjectStore } from '../states/op_program_project_state';
 	import CreateDialogProgramProject from './sub_components/op_program_project/CreateDialog.svelte';
-	import { onMount } from 'svelte';
+	import { slide } from 'svelte/transition';
 
 	//props
 	interface Iprops {
@@ -64,32 +64,35 @@
 	$effect(() => {
 		dndItems = $currentOpProgramProjects;
 	});
-	onMount(() => {
-		toggleExpand();
-	});
 
+	// Separate fetch function
+	async function fetchData() {
+		isLoading = true;
+		error = null;
+
+		try {
+			const result = await fetchOpProgramProjects(opHeader.id);
+			if (result.error) {
+				error = result.error;
+				showErrorToast(result.error);
+				return;
+			}
+			dndItems = result.data;
+			$currentOpProgramProjects = result.data;
+		} catch (e) {
+			error = e instanceof Error ? e.message : 'An unknown error occurred';
+			showErrorToast(error);
+		} finally {
+			isLoading = false;
+		}
+	}
+
+	// Simplified toggle function
 	async function toggleExpand() {
 		isExpanded = !isExpanded;
 
 		if (isExpanded && dndItems.length === 0) {
-			isLoading = true;
-			error = null;
-
-			try {
-				const result = await fetchOpProgramProjects(opHeader.id);
-				if (result.error) {
-					error = result.error;
-					showErrorToast(result.error);
-					return;
-				}
-				dndItems = result.data;
-				$currentOpProgramProjects = result.data;
-			} catch (e) {
-				error = e instanceof Error ? e.message : 'An unknown error occurred';
-				showErrorToast(error);
-			} finally {
-				isLoading = false;
-			}
+			await fetchData();
 		}
 	}
 </script>
@@ -121,14 +124,14 @@
 				<UpdateDialog bind:isDrawerOpen {opHeader} />
 			{/snippet}
 			<div class="flex gap-4">
-				<CreateDialogProgramProject opHeaderId={opHeader.id} />
+				<CreateDialogProgramProject opHeaderId={opHeader.id} onToggle={fetchData} bind:isExpanded />
 				<DropDownWrapper bind:isDrawerOpen childrens={[updateAction, deleteAction]} />
 			</div>
 		</div>
 	</header>
 
 	{#if isExpanded}
-		<div class="p-4">
+		<div class="p-4" transition:slide={{ duration: 300 }}>
 			{#if isLoading}
 				<div class="flex justify-center">Loading program projects...</div>
 			{:else if error}
