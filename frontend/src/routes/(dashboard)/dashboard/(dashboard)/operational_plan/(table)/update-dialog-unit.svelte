@@ -38,11 +38,11 @@
 				showSuccessToast(`Succesfully updated operational plan ${opData.title}`);
 				closeAllTabs();
 				reset({
-					data: { id: opData.id, title: opData.title, implimenting_unit: opData.implimenting_unit },
+					data: { id: opData.id, title: opData.title, implementing_unit: opData.implementing_unit },
 					newState: {
 						id: opData.id,
 						title: opData.title,
-						implimenting_unit: opData.implimenting_unit
+						implementing_unit: opData.implementing_unit
 					}
 				});
 			}
@@ -53,7 +53,7 @@
 	const currentOperationalPlan = $currentOperationalPlans.find((op) => op.id === id);
 	$formData.id = id;
 	$formData.title = currentOperationalPlan?.title ?? 'error';
-	$formData.implimenting_unit = currentOperationalPlan?.implimenting_unit ?? 'error';
+	$formData.implementing_unit = currentOperationalPlan?.implementing_unit ?? 'error';
 
 	function closeAllTabs() {
 		isOpen = false;
@@ -100,11 +100,11 @@
 				>
 				<Form.FieldErrors />
 			</Form.Field>
-			<Form.Field {form} name="implimenting_unit">
+			<Form.Field {form} name="implementing_unit">
 				<Form.Control>
 					{#snippet children({ props })}
 						<Form.Label>Implimenting Unit</Form.Label>
-						<Input {...props} bind:value={$formData.implimenting_unit} />
+						<Input {...props} bind:value={$formData.implementing_unit} />
 					{/snippet}
 				</Form.Control>
 				<Form.Description

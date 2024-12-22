@@ -539,8 +539,8 @@ export type Database = {
           creator_id: string
           id: string
           implementing_unit: string
-          office_id: number
-          program_id: number
+          office_id: number | null
+          program_id: number | null
           title: string
           unit_id: number
           updated_at: string
@@ -550,8 +550,8 @@ export type Database = {
           creator_id: string
           id?: string
           implementing_unit: string
-          office_id: number
-          program_id: number
+          office_id?: number | null
+          program_id?: number | null
           title: string
           unit_id: number
           updated_at?: string
@@ -561,8 +561,8 @@ export type Database = {
           creator_id?: string
           id?: string
           implementing_unit?: string
-          office_id?: number
-          program_id?: number
+          office_id?: number | null
+          program_id?: number | null
           title?: string
           unit_id?: number
           updated_at?: string

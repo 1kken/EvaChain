@@ -31,12 +31,6 @@ export async function createOperationalPlan(
 		});
 	}
 
-	//check if already exist
-	const result = await checkIfOperationalPlanExists(supabase);
-	if (result.error) {
-		return message(form, result.message);
-	}
-
 	//get current user id
 	const creator_id = session.user.id;
 	//fetch profile details and get the unit,office,program
@@ -48,9 +42,15 @@ export async function createOperationalPlan(
 		return message(form, { status: 'error', text: `Error fetching profile details` });
 	}
 
+	//check if already exist
+	const result = await checkIfOperationalPlanExists(supabase, profileData);
+	if (result.error) {
+		return message(form, result.message);
+	}
+
 	//get the unit,office,program
 	const { unit_id, office_id, program_id } = profileData;
-	if (!unit_id || !office_id || !program_id) {
+	if (!unit_id) {
 		return message(form, { status: 'error', text: `Error fetching profile details` });
 	}
 	//get the form data
