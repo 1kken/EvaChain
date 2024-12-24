@@ -90,7 +90,9 @@
 						<Input {...props} bind:value={$formData.confirmText} />
 					{/snippet}
 				</Form.Control>
-				<Form.Description>Please type {$formData.expectedText} to proceed.</Form.Description>
+				<Form.Description
+					>Please type <span class=" font-bold">{$formData.expectedText} </span> to proceed.</Form.Description
+				>
 			</Form.Field>
 			{#if $delayed}
 				<div class="flex justify-between">

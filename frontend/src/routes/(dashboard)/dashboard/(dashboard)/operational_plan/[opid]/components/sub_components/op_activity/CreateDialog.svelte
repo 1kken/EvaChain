@@ -39,7 +39,11 @@
 		validators: zodClient(createOpActivitySchema),
 		multipleSubmits: 'prevent',
 		onUpdate({ form, result }) {
-			if ($currentOpActivities.some((opActivity) => opActivity.activity === form.data.activity)) {
+			if (
+				$currentOpActivities.some(
+					(opActivity) => opActivity.activity.toLowerCase() === form.data.activity.toLowerCase()
+				)
+			) {
 				setError(form, 'activity', 'Activity already exists');
 			}
 			const action = result.data as FormResult<OpActivityFormResult>;
@@ -320,8 +324,5 @@
 				{/if}
 			</div>
 		</form>
-		{#if browser}
-			<SuperDebug data={$formData} />
-		{/if}
 	</Dialog.Content>
 </Dialog.Root>

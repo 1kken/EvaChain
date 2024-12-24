@@ -21,7 +21,6 @@ export const GET: RequestHandler = async ({ url, locals: { supabase } }) => {
 			console.error('Database error:', error);
 			return json({ error: 'Failed to fetch objectives' }, { status: 500 });
 		}
-		console.log('objectives:', objectives);
 		return json({ data: objectives });
 	} catch (err) {
 		console.error('Server error:', err);

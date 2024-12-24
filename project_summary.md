@@ -142,94 +142,10 @@ ALTER TABLE position ENABLE ROW LEVEL SECURITY; -- Create policies for position 
 ALTER TABLE employee_status ENABLE ROW LEVEL SECURITY; CREATE POLICY "Enable read access for all users on employee_status" ON employee_status FOR SELECT TO authenticated USING (true); CREATE POLICY "Enable insert for system admin on employee_status" ON employee_status FOR INSERT TO authenticated WITH CHECK (is_system_admin()); CREATE POLICY "Enable update for system admin on employee_status" ON employee_status FOR UPDATE TO authenticated USING (is_system_admin()) WITH CHECK (is_system_admin()); CREATE POLICY "Enable delete for system admin on employee_status" ON employee_status FOR DELETE TO authenticated USING (is_system_admin());
 ```
 
-# 20241204145404_create_ipcr_table.sql
-
-```sql
--- Create status enum type CREATE TYPE ipcr_status AS ENUM ('draft', 'submitted', 'reviewing','revision', 'approved'); -- Create ipcr_teaching table with status CREATE TABLE ipcr ( id UUID PRIMARY KEY DEFAULT uuid_generate_v4(), title VARCHAR(255) NOT NULL, status ipcr_status DEFAULT 'draft' NOT NULL, owner_id UUID REFERENCES auth.users(id) ON DELETE CASCADE, unit_id INTEGER REFERENCES unit(id) ON DELETE CASCADE, office_id INTEGER REFERENCES office(id) ON DELETE CASCADE, program_id INTEGER REFERENCES program(id) ON DELETE CASCADE, created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL, updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL ); CREATE TRIGGER set_updated_at BEFORE UPDATE ON ipcr FOR EACH ROW EXECUTE FUNCTION fn_set_updated_at();
-```
-
-# 20241204145806_create_core_function_table.sql
-
-```sql
--- Create core_function table CREATE TABLE core_function ( id UUID PRIMARY KEY DEFAULT uuid_generate_v4(), name TEXT NOT NULL, ipcr_id UUID REFERENCES ipcr(id) ON DELETE CASCADE NOT NULL, unit NUMERIC(4,2), reviewer_id UUID REFERENCES auth.users(id), position SMALLINT NOT NULL, created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL, updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL, UNIQUE(name, ipcr_id) ); -- Add index for better query performance when ordering by position CREATE INDEX idx_core_function_position ON core_function(position, ipcr_id); -- Trigger for updating the updated_at timestamp CREATE TRIGGER set_updated_at BEFORE UPDATE ON core_function FOR EACH ROW EXECUTE FUNCTION fn_set_updated_at();
-```
-
-# 20241204145908_create_sub_core_function_table.sql
-
-```sql
-CREATE TABLE sub_core_function ( id UUID PRIMARY KEY DEFAULT uuid_generate_v4(), core_function_id UUID REFERENCES core_function(id) ON DELETE CASCADE NOT NULL, name TEXT NOT NULL, position INTEGER NOT NULL, created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL, updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL, UNIQUE(core_function_id, name) ); -- Add an index on position and core_function_id for better performance when sorting CREATE INDEX idx_sub_core_function_position ON sub_core_function(core_function_id, position); CREATE TRIGGER set_updated_at BEFORE UPDATE ON sub_core_function FOR EACH ROW EXECUTE FUNCTION fn_set_updated_at();
-```
-
-# 20241204150054_indicator_table.sql
-
-```sql
--- Create status enum type CREATE TYPE indicator_status AS ENUM ('draft', 'submitted', 'reviewing', 'revision', 'approved'); CREATE TABLE indicator ( id UUID PRIMARY KEY DEFAULT uuid_generate_v4(), status indicator_status DEFAULT 'draft' NOT NULL, indicator TEXT NOT NULL, indicator_date DATE, accomplishment TEXT, accomplishment_date DATE, quality_rating NUMERIC(3,2), efficiency_rating NUMERIC(3,2), timeliness_rating NUMERIC(3,2), average_rating NUMERIC(3,2), core_function_id UUID REFERENCES core_function(id) ON DELETE CASCADE, sub_core_function_id UUID REFERENCES sub_core_function(id) ON DELETE CASCADE, position INTEGER NOT NULL, created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL, updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL ); -- Add an index for better query performance when ordering by position CREATE INDEX idx__indicator_position ON indicator(position, core_function_id); CREATE TRIGGER set_updated_at BEFORE UPDATE ON indicator FOR EACH ROW EXECUTE FUNCTION fn_set_updated_at();
-```
-
-# 20241211113611_create_support_function.sql
-
-```sql
--- Create support_function table CREATE TABLE support_function ( id UUID PRIMARY KEY DEFAULT uuid_generate_v4(), name TEXT NOT NULL, ipcr_id UUID REFERENCES ipcr(id) ON DELETE CASCADE NOT NULL, unit NUMERIC(4,2), reviewer_id UUID REFERENCES auth.users(id), position SMALLINT NOT NULL, created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL, updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL, UNIQUE(name, ipcr_id) ); -- Add index for better query performance when ordering by position CREATE INDEX idx_support_function_position ON support_function(position, ipcr_id); -- Trigger for updating the updated_at timestamp CREATE TRIGGER set_updated_at BEFORE UPDATE ON support_function FOR EACH ROW EXECUTE FUNCTION fn_set_updated_at();
-```
-
-# 20241211113904_create_sub_support_function.sql
-
-```sql
-CREATE TABLE sub_support_function ( id UUID PRIMARY KEY DEFAULT uuid_generate_v4(), support_function_id UUID REFERENCES support_function(id) ON DELETE CASCADE NOT NULL, name TEXT NOT NULL, position INTEGER NOT NULL, created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL, updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL, UNIQUE(support_function_id, name) ); -- Add an index on position and support_function_id for better performance when sorting CREATE INDEX idx_sub_support_function_position ON sub_support_function(support_function_id, position); CREATE TRIGGER set_updated_at BEFORE UPDATE ON sub_support_function FOR EACH ROW EXECUTE FUNCTION fn_set_updated_at();
-```
-
-# 20241211114649_alter_indicator_add_support_functions.sql
-
-```sql
-ALTER TABLE indicator ADD COLUMN support_function_id UUID REFERENCES support_function(id) ON DELETE CASCADE, ADD COLUMN sub_support_function_id UUID REFERENCES sub_support_function(id) ON DELETE CASCADE;
-```
-
-# 20241212100049_create_other_function.sql
-
-```sql
--- Create other_function table CREATE TABLE other_function ( id UUID PRIMARY KEY DEFAULT uuid_generate_v4(), name TEXT NOT NULL, ipcr_id UUID REFERENCES ipcr(id) ON DELETE CASCADE NOT NULL, unit NUMERIC(4,2), reviewer_id UUID REFERENCES auth.users(id), position SMALLINT NOT NULL, created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL, updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL, UNIQUE(name, ipcr_id) ); -- Add index for better query performance when ordering by position CREATE INDEX idx_other_function_position ON other_function(position, ipcr_id); -- Trigger for updating the updated_at timestamp CREATE TRIGGER set_updated_at BEFORE UPDATE ON other_function FOR EACH ROW EXECUTE FUNCTION fn_set_updated_at();
-```
-
-# 20241212100058_create_sub_other_function.sql
-
-```sql
-CREATE TABLE sub_other_function ( id UUID PRIMARY KEY DEFAULT uuid_generate_v4(), other_function_id UUID REFERENCES other_function(id) ON DELETE CASCADE NOT NULL, name TEXT NOT NULL, position INTEGER NOT NULL, created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL, updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL, UNIQUE(other_function_id, name) ); -- Add an index on position and other_function_id for better performance when sorting CREATE INDEX idx_sub_other_function_position ON sub_other_function(other_function_id, position); CREATE TRIGGER set_updated_at BEFORE UPDATE ON sub_other_function FOR EACH ROW EXECUTE FUNCTION fn_set_updated_at();
-```
-
-# 20241212101127_create_subother_function.sql
-
-```sql
-
-```
-
-# 20241212103421_alter_indicator_add_othe_function.sql
-
-```sql
-ALTER TABLE indicator ADD COLUMN other_function_id UUID REFERENCES other_function(id) ON DELETE CASCADE, ADD COLUMN sub_other_function_id UUID REFERENCES sub_other_function(id) ON DELETE CASCADE;
-```
-
-# 20241215053527_make_evidence_bucket.sql
-
-```sql
--- Create a new storage bucket for evidence files insert into storage.buckets (id, name, public) values ('indicator_evidence', 'indicator_evidence', false); -- CREATE POLICY "User can read their own evidence files" -- ON storage.objects FOR SELECT USING ( -- bucket_id = 'indicator_evidence' -- AND auth.uid()::text = (storage.foldername(name))[1] -- ); CREATE POLICY "User can upload their own evidence files" ON storage.objects FOR INSERT WITH CHECK ( bucket_id = 'indicator_evidence' AND auth.uid()::text = (storage.foldername(name))[1] ); -- CREATE POLICY "User can delete their own evidence files" -- ON storage.objects FOR DELETE USING ( -- bucket_id = 'indicator_evidence' -- AND auth.uid()::text = (storage.foldername(name))[1] -- );
-```
-
-# 20241215080245_make_indicator_evidence_table.sql
-
-```sql
--- Create evidence table CREATE TABLE indicator_evidence ( id UUID PRIMARY KEY DEFAULT uuid_generate_v4(), indicator_id UUID REFERENCES indicator(id) ON DELETE CASCADE NOT NULL, file_path TEXT NOT NULL, created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL, updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL ); -- Create index for better query performance CREATE INDEX idx_indicator_evidence_indicator_id ON indicator_evidence(indicator_id);
-```
-
-# 20241215125239_create_ipcr_checker_complete.sql
-
-```sql
--- First create the type DROP TYPE IF EXISTS validation_result CASCADE; CREATE TYPE validation_result AS ( is_valid boolean, validation_message text ); CREATE OR REPLACE FUNCTION validate_ipcr(p_ipcr_id UUID) RETURNS validation_result LANGUAGE plpgsql AS $$ DECLARE result validation_result; invalid_function RECORD; has_core boolean; has_support boolean; has_other boolean; BEGIN -- Check if IPCR has required function types SELECT EXISTS(SELECT 1 FROM core_function WHERE ipcr_id = p_ipcr_id) as has_core, EXISTS(SELECT 1 FROM support_function WHERE ipcr_id = p_ipcr_id) as has_support, EXISTS(SELECT 1 FROM other_function WHERE ipcr_id = p_ipcr_id) as has_other INTO has_core, has_support, has_other; -- Check for missing function types IF NOT has_core THEN result := (false, 'Core Function: Missing Core Functions'); RETURN result; END IF; IF NOT has_support THEN result := (false, 'Support Function: Missing Support Functions'); RETURN result; END IF; IF NOT has_other THEN result := (false, 'Other Function: Missing Other Functions'); RETURN result; END IF; -- Check core functions SELECT cf.id, cf.name, 'Core' as function_type, CASE WHEN cf.unit IS NULL AND cf.reviewer_id IS NULL THEN 'Missing Fields: Unit and Reviewer' WHEN cf.unit IS NULL THEN 'Missing Field: Unit' WHEN cf.reviewer_id IS NULL THEN 'Missing Field: Reviewer' WHEN EXISTS ( SELECT 1 FROM indicator i WHERE i.core_function_id = cf.id AND i.sub_core_function_id IS NULL AND ( i.indicator IS NULL OR i.indicator_date IS NULL ) ) OR EXISTS ( SELECT 1 FROM sub_core_function scf JOIN indicator i ON i.sub_core_function_id = scf.id WHERE scf.core_function_id = cf.id AND ( i.indicator IS NULL OR i.indicator_date IS NULL ) ) THEN 'Missing Fields: Indicator Description or Target Date' WHEN NOT EXISTS ( SELECT 1 FROM indicator i WHERE i.core_function_id = cf.id AND i.sub_core_function_id IS NULL UNION SELECT 1 FROM sub_core_function scf JOIN indicator i ON i.sub_core_function_id = scf.id WHERE scf.core_function_id = cf.id ) THEN 'No Indicators Found' END as missing_field INTO invalid_function FROM core_function cf WHERE cf.ipcr_id = p_ipcr_id AND ( cf.unit IS NULL OR cf.reviewer_id IS NULL OR EXISTS ( SELECT 1 FROM indicator i WHERE i.core_function_id = cf.id AND i.sub_core_function_id IS NULL AND ( i.indicator IS NULL OR i.indicator_date IS NULL ) ) OR EXISTS ( SELECT 1 FROM sub_core_function scf JOIN indicator i ON i.sub_core_function_id = scf.id WHERE scf.core_function_id = cf.id AND ( i.indicator IS NULL OR i.indicator_date IS NULL ) ) OR NOT EXISTS ( SELECT 1 FROM indicator i WHERE i.core_function_id = cf.id AND i.sub_core_function_id IS NULL UNION SELECT 1 FROM sub_core_function scf JOIN indicator i ON i.sub_core_function_id = scf.id WHERE scf.core_function_id = cf.id ) ) LIMIT 1; IF FOUND THEN result := (false, format('%s Function "%s": %s', invalid_function.function_type, invalid_function.name, invalid_function.missing_field)); RETURN result; END IF; -- Check support functions SELECT sf.id, sf.name, 'Support' as function_type, CASE WHEN sf.unit IS NULL AND sf.reviewer_id IS NULL THEN 'Missing Fields: Unit and Reviewer' WHEN sf.unit IS NULL THEN 'Missing Field: Unit' WHEN sf.reviewer_id IS NULL THEN 'Missing Field: Reviewer' WHEN EXISTS ( SELECT 1 FROM indicator i WHERE i.support_function_id = sf.id AND i.sub_support_function_id IS NULL AND ( i.indicator IS NULL OR i.indicator_date IS NULL ) ) OR EXISTS ( SELECT 1 FROM sub_support_function ssf JOIN indicator i ON i.sub_support_function_id = ssf.id WHERE ssf.support_function_id = sf.id AND ( i.indicator IS NULL OR i.indicator_date IS NULL ) ) THEN 'Missing Fields: Indicator Description or Target Date' WHEN NOT EXISTS ( SELECT 1 FROM indicator i WHERE i.support_function_id = sf.id AND i.sub_support_function_id IS NULL UNION SELECT 1 FROM sub_support_function ssf JOIN indicator i ON i.sub_support_function_id = ssf.id WHERE ssf.support_function_id = sf.id ) THEN 'No Indicators Found' END as missing_field INTO invalid_function FROM support_function sf WHERE sf.ipcr_id = p_ipcr_id AND ( sf.unit IS NULL OR sf.reviewer_id IS NULL OR EXISTS ( SELECT 1 FROM indicator i WHERE i.support_function_id = sf.id AND i.sub_support_function_id IS NULL AND ( i.indicator IS NULL OR i.indicator_date IS NULL ) ) OR EXISTS ( SELECT 1 FROM sub_support_function ssf JOIN indicator i ON i.sub_support_function_id = ssf.id WHERE ssf.support_function_id = sf.id AND ( i.indicator IS NULL OR i.indicator_date IS NULL ) ) OR NOT EXISTS ( SELECT 1 FROM indicator i WHERE i.support_function_id = sf.id AND i.sub_support_function_id IS NULL UNION SELECT 1 FROM sub_support_function ssf JOIN indicator i ON i.sub_support_function_id = ssf.id WHERE ssf.support_function_id = sf.id ) ) LIMIT 1; IF FOUND THEN result := (false, format('%s Function "%s": %s', invalid_function.function_type, invalid_function.name, invalid_function.missing_field)); RETURN result; END IF; -- Check other functions SELECT of.id, of.name, 'Other' as function_type, CASE WHEN of.unit IS NULL AND of.reviewer_id IS NULL THEN 'Missing Fields: Unit and Reviewer' WHEN of.unit IS NULL THEN 'Missing Field: Unit' WHEN of.reviewer_id IS NULL THEN 'Missing Field: Reviewer' WHEN EXISTS ( SELECT 1 FROM indicator i WHERE i.other_function_id = of.id AND i.sub_other_function_id IS NULL AND ( i.indicator IS NULL OR i.indicator_date IS NULL ) ) OR EXISTS ( SELECT 1 FROM sub_other_function sof JOIN indicator i ON i.sub_other_function_id = sof.id WHERE sof.other_function_id = of.id AND ( i.indicator IS NULL OR i.indicator_date IS NULL ) ) THEN 'Missing Fields: Indicator Description or Target Date' WHEN NOT EXISTS ( SELECT 1 FROM indicator i WHERE i.other_function_id = of.id AND i.sub_other_function_id IS NULL UNION SELECT 1 FROM sub_other_function sof JOIN indicator i ON i.sub_other_function_id = sof.id WHERE sof.other_function_id = of.id ) THEN 'No Indicators Found' END as missing_field INTO invalid_function FROM other_function of WHERE of.ipcr_id = p_ipcr_id AND ( of.unit IS NULL OR of.reviewer_id IS NULL OR EXISTS ( SELECT 1 FROM indicator i WHERE i.other_function_id = of.id AND i.sub_other_function_id IS NULL AND ( i.indicator IS NULL OR i.indicator_date IS NULL ) ) OR EXISTS ( SELECT 1 FROM sub_other_function sof JOIN indicator i ON i.sub_other_function_id = sof.id WHERE sof.other_function_id = of.id AND ( i.indicator IS NULL OR i.indicator_date IS NULL ) ) OR NOT EXISTS ( SELECT 1 FROM indicator i WHERE i.other_function_id = of.id AND i.sub_other_function_id IS NULL UNION SELECT 1 FROM sub_other_function sof JOIN indicator i ON i.sub_other_function_id = sof.id WHERE sof.other_function_id = of.id ) ) LIMIT 1; IF FOUND THEN result := (false, format('%s Function "%s": %s', invalid_function.function_type, invalid_function.name, invalid_function.missing_field)); RETURN result; END IF; -- If we get here, everything is valid result := (true, 'IPCR is complete and valid'); RETURN result; END; $$;
-```
-
 # 20241216163511_create_table_operational_plan.sql
 
 ```sql
--- Create operational_plan table CREATE TABLE operational_plan ( id UUID PRIMARY KEY DEFAULT uuid_generate_v4(), creator_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL, unit_id INTEGER REFERENCES unit(id) ON DELETE CASCADE NOT NULL, office_id INTEGER REFERENCES office(id) ON DELETE CASCADE NOT NULL, program_id INTEGER REFERENCES program(id) ON DELETE CASCADE NOT NULL, title TEXT NOT NULL, implementing_unit TEXT NOT NULL, created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL, updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL ); CREATE INDEX idx_operational_plan_unit_id ON operational_plan(unit_id); CREATE INDEX idx_operational_plan_office_id ON operational_plan(office_id); CREATE INDEX idx_operational_plan_program_id ON operational_plan(program_id); -- Add trigger for updating timestamps CREATE TRIGGER set_updated_at BEFORE UPDATE ON operational_plan FOR EACH ROW EXECUTE FUNCTION fn_set_updated_at();
+-- Create operational_plan table CREATE TABLE operational_plan ( id UUID PRIMARY KEY DEFAULT uuid_generate_v4(), creator_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL, unit_id INTEGER REFERENCES unit(id) ON DELETE CASCADE NOT NULL, office_id INTEGER REFERENCES office(id) ON DELETE CASCADE, program_id INTEGER REFERENCES program(id) ON DELETE CASCADE, title TEXT NOT NULL, implementing_unit TEXT NOT NULL, created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL, updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL ); CREATE INDEX idx_operational_plan_unit_id ON operational_plan(unit_id); CREATE INDEX idx_operational_plan_office_id ON operational_plan(office_id); CREATE INDEX idx_operational_plan_program_id ON operational_plan(program_id); -- Add trigger for updating timestamps CREATE TRIGGER set_updated_at BEFORE UPDATE ON operational_plan FOR EACH ROW EXECUTE FUNCTION fn_set_updated_at();
 ```
 
 # 20241218095055_create_op_header_table.sql
@@ -254,5 +170,35 @@ ALTER TABLE indicator ADD COLUMN other_function_id UUID REFERENCES other_functio
 
 ```sql
 -- Create op_activity table CREATE TABLE op_activity ( id UUID PRIMARY KEY DEFAULT uuid_generate_v4(), op_objective_id UUID REFERENCES op_objective(id) ON DELETE CASCADE NOT NULL, activity TEXT NOT NULL, indicator TEXT NOT NULL, former_state VARCHAR(255) NOT NULL, desired_state VARCHAR(255) NOT NULL, q1 BOOLEAN DEFAULT false NOT NULL, q2 BOOLEAN DEFAULT false NOT NULL, q3 BOOLEAN DEFAULT false NOT NULL, q4 BOOLEAN DEFAULT false NOT NULL, item TEXT, qty TEXT, unit TEXT, unit_cost TEXT, amount TEXT, fund_source TEXT, entity_responsible TEXT NOT NULL, position INTEGER NOT NULL, created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL, updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL ); -- Add indexes for better query performance CREATE INDEX idx_op_activity_objective_id ON op_activity(op_objective_id); CREATE INDEX idx_op_activity_position ON op_activity(position, op_objective_id); -- Add trigger for updating timestamps CREATE TRIGGER set_updated_at BEFORE UPDATE ON op_activity FOR EACH ROW EXECUTE FUNCTION fn_set_updated_at();
+```
+
+# 20241223034318_create_ipcr_table.sql
+
+```sql
+-- Create status enum type CREATE TYPE ipcr_status AS ENUM ('draft', 'submitted', 'reviewing','revision', 'approved'); -- Create ipcr_teaching table with status CREATE TABLE ipcr ( id UUID PRIMARY KEY DEFAULT uuid_generate_v4(), title VARCHAR(255) NOT NULL, status ipcr_status DEFAULT 'draft' NOT NULL, owner_id UUID REFERENCES auth.users(id) ON DELETE CASCADE, unit_id INTEGER REFERENCES unit(id) ON DELETE CASCADE, office_id INTEGER REFERENCES office(id) ON DELETE CASCADE, program_id INTEGER REFERENCES program(id) ON DELETE CASCADE, created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL, updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL ); CREATE TRIGGER set_updated_at BEFORE UPDATE ON ipcr FOR EACH ROW EXECUTE FUNCTION fn_set_updated_at();
+```
+
+# 20241223075628_create_ipcr_function_table.sql
+
+```sql
+-- Create ipcr_function table CREATE TABLE ipcr_function ( id UUID PRIMARY KEY DEFAULT uuid_generate_v4(), title VARCHAR(255) NOT NULL, ipcr_id UUID REFERENCES ipcr(id) ON DELETE CASCADE NOT NULL, position INTEGER NOT NULL, created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL, updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL, UNIQUE(ipcr_id, title) ); -- Add index for better query performance when ordering by position CREATE INDEX idx_ipcr_function_position ON ipcr_function(position, ipcr_id); -- Add index for foreign key CREATE INDEX idx_ipcr_function_ipcr_id ON ipcr_function(ipcr_id); -- Add trigger for updating the updated_at timestamp CREATE TRIGGER set_updated_at BEFORE UPDATE ON ipcr_function FOR EACH ROW EXECUTE FUNCTION fn_set_updated_at();
+```
+
+# 20241223175944_create_ipcr_category_table.sql
+
+```sql
+-- Create ipcr_function_category table CREATE TABLE ipcr_function_category ( id UUID PRIMARY KEY DEFAULT uuid_generate_v4(), ipcr_function_id UUID REFERENCES ipcr_function(id) ON DELETE CASCADE NOT NULL, category VARCHAR(255) NOT NULL, unit NUMERIC(4,2), immediate_supervisor_id UUID REFERENCES auth.users(id), position SMALLINT NOT NULL, created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL, updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL, UNIQUE(category, ipcr_function_id) ); -- Add index for foreign key references and position ordering CREATE INDEX idx_ipcr_function_category_function_id ON ipcr_function_category(ipcr_function_id); CREATE INDEX idx_ipcr_function_category_position ON ipcr_function_category(position, ipcr_function_id); CREATE INDEX idx_ipcr_function_category_supervisor_id ON ipcr_function_category(immediate_supervisor_id); -- Add trigger for updating timestamps CREATE TRIGGER set_updated_at BEFORE UPDATE ON ipcr_function_category FOR EACH ROW EXECUTE FUNCTION fn_set_updated_at();
+```
+
+# 20241224134050_create_ipcr_sub_category_table.sql
+
+```sql
+-- Create ipcr_function_sub_category table CREATE TABLE ipcr_function_sub_category ( id UUID PRIMARY KEY DEFAULT uuid_generate_v4(), ipcr_function_category_id UUID REFERENCES ipcr_function_category(id) ON DELETE CASCADE NOT NULL, sub_category VARCHAR(255) NOT NULL, position INTEGER NOT NULL, created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL, updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL ); -- Add indexes for better query performance CREATE INDEX idx_ipcr_function_sub_category_category_id ON ipcr_function_sub_category(ipcr_function_category_id); CREATE INDEX idx_ipcr_function_sub_category_position ON ipcr_function_sub_category(position, ipcr_function_category_id); -- Add trigger for updating timestamps CREATE TRIGGER set_updated_at BEFORE UPDATE ON ipcr_function_sub_category FOR EACH ROW EXECUTE FUNCTION fn_set_updated_at();
+```
+
+# 20241224140105_create_ipcr_iindicator_table.sql
+
+```sql
+-- Create status enum type CREATE TYPE ipcr_indicator_status AS ENUM ('draft', 'submitted', 'reviewing','revision', 'approved'); -- Create ipcr_indicator table CREATE TABLE ipcr_indicator ( id UUID PRIMARY KEY DEFAULT uuid_generate_v4(), status ipcr_indicator_status DEFAULT 'draft' NOT NULL, ipcr_function_id UUID REFERENCES ipcr_function(id) ON DELETE CASCADE, ipcr_function_sub_category_id UUID REFERENCES ipcr_function_sub_category(id) ON DELETE CASCADE, ipcr_function_category_id UUID REFERENCES ipcr_function_category(id) ON DELETE CASCADE, final_output TEXT NOT NULL, success_indicator TEXT NOT NULL, indicator_date DATE NOT NULL, actual_accomplishments TEXT, accomplishment_date DATE, op_activity_id UUID REFERENCES op_activity(id) ON DELETE SET NULL, quality_rating NUMERIC(3,2), efficiency_rating NUMERIC(3,2), timeliness_rating NUMERIC(3,2), average_rating NUMERIC(3,2), remarks TEXT, position SMALLINT NOT NULL, immediate_supervisor UUID REFERENCES auth.users(id) ON DELETE SET NULL, units NUMERIC(4,2), created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL, updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL ); -- Add indexes for foreign key relationships and common query patterns CREATE INDEX idx_ipcr_indicator_function_id ON ipcr_indicator(ipcr_function_id); CREATE INDEX idx_ipcr_indicator_sub_category_id ON ipcr_indicator(ipcr_function_sub_category_id); CREATE INDEX idx_ipcr_indicator_category_id ON ipcr_indicator(ipcr_function_category_id); CREATE INDEX idx_ipcr_indicator_op_activity_id ON ipcr_indicator(op_activity_id); CREATE INDEX idx_ipcr_indicator_immediate_supervisor ON ipcr_indicator(immediate_supervisor); -- Add composite index for position ordering within categories CREATE INDEX idx_ipcr_indicator_position ON ipcr_indicator(position, ipcr_function_category_id); -- Add index for date-based queries CREATE INDEX idx_ipcr_indicator_dates ON ipcr_indicator(indicator_date, accomplishment_date); -- Add trigger for updating timestamps CREATE TRIGGER set_updated_at BEFORE UPDATE ON ipcr_indicator FOR EACH ROW EXECUTE FUNCTION fn_set_updated_at();
 ```
 

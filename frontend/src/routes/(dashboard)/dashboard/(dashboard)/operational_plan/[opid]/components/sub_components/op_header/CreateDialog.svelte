@@ -29,7 +29,11 @@
 		validators: zodClient(createOpHeaderSchema),
 		multipleSubmits: 'prevent',
 		onUpdate({ form, result }) {
-			if ($currentOpHeaders.some((opHeader) => opHeader.title === form.data.title)) {
+			if (
+				$currentOpHeaders.some(
+					(opHeader) => opHeader.title.toLowerCase() === form.data.title.toLowerCase()
+				)
+			) {
 				setError(form, 'title', 'Title already exists');
 			}
 			const action = result.data as FormResult<OpHeaderFormResult>;

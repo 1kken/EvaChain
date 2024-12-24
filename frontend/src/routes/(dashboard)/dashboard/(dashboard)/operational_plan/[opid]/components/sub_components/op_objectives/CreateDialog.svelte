@@ -36,7 +36,10 @@
 		multipleSubmits: 'prevent',
 		onUpdate({ form, result }) {
 			if (
-				$currentOpObjectives.some((opObjective) => opObjective.objective === form.data.objective)
+				$currentOpObjectives.some(
+					(opObjective) =>
+						opObjective.objective.toLocaleLowerCase() === form.data.objective.toLowerCase()
+				)
 			) {
 				setError(form, 'objective', 'Objective already exists');
 			}

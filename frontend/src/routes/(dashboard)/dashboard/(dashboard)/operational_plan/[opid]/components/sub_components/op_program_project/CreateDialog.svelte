@@ -37,7 +37,8 @@
 		onUpdate({ form, result }) {
 			if (
 				$currentOpProgramProjects.some(
-					(opProgramProject) => opProgramProject.description === form.data.description
+					(opProgramProject) =>
+						opProgramProject.description.toLowerCase() === form.data.description.toLowerCase()
 				)
 			) {
 				setError(form, 'description', 'Description already exists');
@@ -114,8 +115,5 @@
 				{/if}
 			</div>
 		</form>
-		{#if browser}
-			<SuperDebug data={$formData} />
-		{/if}
 	</Dialog.Content>
 </Dialog.Root>

@@ -42,7 +42,8 @@
 			if (
 				$currentOpActivities.some(
 					(opActivity) =>
-						opActivity.activity === form.data.activity && opActivity.id !== form.data.id // Changed from activity to id
+						opActivity.activity.toLowerCase() === form.data.activity?.toLowerCase() &&
+						opActivity.id !== form.data.id // Changed from activity to id
 				)
 			) {
 				setError(form, 'activity', 'Activity already exists');
@@ -332,8 +333,5 @@
 				{/if}
 			</div>
 		</form>
-		{#if browser}
-			<SuperDebug data={$formData} />
-		{/if}
 	</Dialog.Content>
 </Dialog.Root>

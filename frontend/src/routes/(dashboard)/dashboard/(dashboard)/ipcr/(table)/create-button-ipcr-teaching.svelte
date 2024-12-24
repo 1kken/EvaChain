@@ -25,10 +25,19 @@
 				ipcrStore.addIPCR(ipcrData);
 				showSuccessToast(`Succesfully added IPCR ${ipcrData.title}`);
 			}
+			reset({
+				newState: {
+					owner_id: $currentProfile?.id
+				},
+
+				data: {
+					owner_id: $currentProfile?.id
+				}
+			});
 		}
 	});
 
-	const { form: formData, enhance, message, delayed } = form;
+	const { form: formData, enhance, message, delayed, reset } = form;
 	let completeProfile = $state(true);
 	let errorMessage = $state<string | null>();
 	$effect(() => {

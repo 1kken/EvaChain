@@ -1,10 +1,37 @@
 <script lang="ts">
-	import CoreFunction from './(components)/(body)/(core_function)/CoreFunction.svelte';
-	import OtherFunction from './(components)/(body)/(other_function)/OtherFunction.svelte';
-	import SupportFunction from './(components)/(body)/(support_function)/SupportFunction.svelte';
-	let { data } = $props();
+	import { setIPCRStore } from '../(data)/state.svelte';
+	import Header from '../../components/Header.svelte';
+	import type { PageData } from './$types';
+	import IndexComponent from './components/IndexComponent.svelte';
+	import NavButton from './components/NavButton.svelte';
+	import { setIpcrStore } from './states/current_ipcr_state';
+	import { setIpcrFunctionCategoryFormContext } from './states/ipcr_category_form_state';
+	import { setIpcrFunctionFormContext } from './states/ipcr_function_form_state';
+	import { setIpcrFunctionStore } from './states/ipcr_function_state';
+	import { setIpcrIndicatorFormContext } from './states/ipcr_indicator_form_state';
+
+	let { data }: { data: PageData } = $props();
+	//states
+	setIpcrStore(data.currentIpcr);
+	setIpcrFunctionStore(data.ipcrFunction);
+	//forms states
+	setIpcrFunctionFormContext(data.ipcrFunctionForm);
+	setIpcrFunctionCategoryFormContext(data.ipcrFunctionCategoryForm);
+	setIpcrIndicatorFormContext(data.ipcrIndicatorForm);
 </script>
 
-<CoreFunction submitIPCRForm={data.ipcrForm.submitIPCRForm} />
-<SupportFunction />
-<OtherFunction />
+<div class="relative min-h-screen pb-24">
+	<!-- Main content -->
+	<div class="h-full w-full">
+		<Header
+			title={'Individual Performance Commitment and Review'}
+			description={'View and manage your IPCR here.'}
+		/>
+		<IndexComponent />
+	</div>
+
+	<!-- Navigation dock -->
+	<div class="fixed bottom-6 left-0 right-0 z-50 flex justify-center">
+		<NavButton />
+	</div>
+</div>

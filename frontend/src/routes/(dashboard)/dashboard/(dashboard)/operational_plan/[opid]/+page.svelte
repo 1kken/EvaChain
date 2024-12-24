@@ -8,7 +8,7 @@
 	import { setOpProgramProjectFormContext } from './states/op_program_project_form_state';
 	import { setOpObjectiveFormContext } from './states/op_objective_form_state';
 	import { setOpActivityFormContext } from './states/op_activity_form_state';
-	import Header from './components/Header.svelte';
+	import Header from '../../components/Header.svelte';
 
 	let { data }: { data: PageData } = $props();
 
@@ -29,7 +29,10 @@
 <div class="relative min-h-screen pb-24">
 	<!-- Main content -->
 	<div class="h-full w-full">
-		<Header />
+		<Header
+			title={'Operational Plan'}
+			description={'Manage objective,activities, budget management, and quarterly assignment'}
+		/>
 		<IndexComponent />
 	</div>
 
