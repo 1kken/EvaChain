@@ -132,27 +132,18 @@
 
 	{#if isExpanded}
 		<div class="border-t p-4" transition:slide={{ duration: 300 }}>
-			{#if isLoading}
-				<div class="flex justify-center">Loading activities...</div>
-			{:else if error}
-				<div class="text-destructive text-center">
-					{error}
-				</div>
-			{:else if dndItems.length === 0}
-				<div class="text-muted-foreground text-center">No activities found</div>
-			{:else}
-				<DndContainer
-					bind:items={dndItems}
-					onPositionsUpdate={updateOpActivityPosition}
-					emptyMessage="No activities found"
-					successMessage="Updated positions successfully"
-					errorMessage="Failed to update order. Please try again."
-				>
-					{#each dndItems as item (item.id)}
-						<OperationalActivity opActivity={item} />
-					{/each}
-				</DndContainer>
-			{/if}
+			<DndContainer
+				{isLoading}
+				bind:items={dndItems}
+				onPositionsUpdate={updateOpActivityPosition}
+				emptyMessage="No activities found"
+				successMessage="Updated positions successfully"
+				errorMessage="Failed to update order. Please try again."
+			>
+				{#each dndItems as item (item.id)}
+					<OperationalActivity opActivity={item} />
+				{/each}
+			</DndContainer>
 		</div>
 	{/if}
 </div>

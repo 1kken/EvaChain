@@ -11,8 +11,14 @@ import {
 } from '../schema/ipcr_category_schema';
 import {
 	createIpcrIndicatorSchema,
+	markIndicatorDoneSchema,
 	updateIpcrIndicatorSchema
 } from '../schema/ipcr_indicator_schema';
+import {
+	createIpcrFunctionSubCategorySchema,
+	updateIpcrFunctionSubCategorySchema
+} from '../schema/ipcr_sub_category_schema';
+import { submitIPCRschema } from '../schema/ipcr_submit_schema';
 
 //fetch functions
 export async function getCurrentIPCRFunction(ipcrId: string, supabase: SupabaseClient<Database>) {
@@ -56,10 +62,25 @@ export async function getIPCRFunctionCategoryForms() {
 	};
 }
 
+export async function getIPCRFunctionSubCategoryForms() {
+	return {
+		createForm: await superValidate(zod(createIpcrFunctionSubCategorySchema)),
+		updateForm: await superValidate(zod(updateIpcrFunctionSubCategorySchema)),
+		deleteForm: await superValidate(zod(universalDeleteSchema))
+	};
+}
+
 export async function getIPCRIndicatorForms() {
 	return {
 		createForm: await superValidate(zod(createIpcrIndicatorSchema)),
 		updateForm: await superValidate(zod(updateIpcrIndicatorSchema)),
+		markDoneForm: await superValidate(zod(markIndicatorDoneSchema)),
 		deleteForm: await superValidate(zod(universalDeleteSchema))
+	};
+}
+
+export async function getIPCRSubmitForm() {
+	return {
+		submitForm: await superValidate(zod(submitIPCRschema))
 	};
 }

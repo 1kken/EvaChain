@@ -1,6 +1,7 @@
 import type { Infer, SuperValidated } from 'sveltekit-superforms';
 import type {
 	CreateIpcrIndicatorSchema,
+	MarkIndicatorDoneSchema,
 	UpdateIpcrIndicatorSchema
 } from '../schema/ipcr_indicator_schema';
 import { getContext, setContext } from 'svelte';
@@ -11,6 +12,7 @@ const IPCR_INDICATOR_FORM_KEY = Symbol('IPCR_INDICATOR_FORM_KEY');
 type IpcrIndicatorForm = {
 	updateForm: SuperValidated<Infer<UpdateIpcrIndicatorSchema>>;
 	deleteForm: SuperValidated<Infer<UniversalDeleteSchema>>;
+	markDoneForm: SuperValidated<Infer<MarkIndicatorDoneSchema>>;
 	createForm: SuperValidated<Infer<CreateIpcrIndicatorSchema>>;
 };
 

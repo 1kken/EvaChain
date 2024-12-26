@@ -1,7 +1,7 @@
 <script lang="ts">
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
-	import { LoaderCircle } from 'lucide-svelte';
+	import { LoaderCircle, Pencil } from 'lucide-svelte';
 	import { Plus } from 'lucide-svelte';
 	import { setError, superForm, type FormResult } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
@@ -11,69 +11,68 @@
 	import AutoCompleteOnlineInput from '$lib/custom_components/AutoCompleteOnlineInput.svelte';
 	import {
 		fetchOperationalPlanActivities,
+		fetchOperationalPlanActivityById,
+		fetchProfileById,
 		fetchProfileByname
 	} from '../../../utils/page_loader_services';
 	import { getIpcrIndicatorFormContext } from '../../../states/ipcr_indicator_form_state';
 	import { getIpcrIndicatorStore } from '../../../states/ipcr_indicator_state';
-	import { createIpcrIndicatorSchema } from '../../../schema/ipcr_indicator_schema';
+	import {
+		createIpcrIndicatorSchema,
+		updateIpcrIndicatorSchema
+	} from '../../../schema/ipcr_indicator_schema';
 	import IntelligentInput from '$lib/custom_components/IntelligentInput.svelte';
+	import type { Tables } from '$lib/types/database.types';
 
 	//props
 	interface Iprops {
-		ipcrFunctionId?: string;
-		ipcrFunctionCategoryId?: string;
-		ipcrFunctionSubCategoryId?: string;
+		ipcrFunctionIndicator: Tables<'ipcr_indicator'>;
 		isDrawerOpen: boolean;
 	}
 
-	let {
-		ipcrFunctionId,
-		ipcrFunctionCategoryId,
-		ipcrFunctionSubCategoryId,
-		isDrawerOpen = $bindable()
-	}: Iprops = $props();
+	let { ipcrFunctionIndicator, isDrawerOpen = $bindable() }: Iprops = $props();
 
 	//stores
-	const { createForm } = getIpcrIndicatorFormContext();
-	const { currentIpcrIndicators, addIpcrIndicator, size } = getIpcrIndicatorStore();
+	const { updateForm } = getIpcrIndicatorFormContext();
+	const { currentIpcrIndicators, updateIpcrIndicator } = getIpcrIndicatorStore();
 
 	//states
 	let isOpen = $state(false);
 
 	//form
-	const form = superForm(createForm, {
+	const form = superForm(updateForm, {
 		id: crypto.randomUUID(),
 		dataType: 'json',
-		validators: zodClient(createIpcrIndicatorSchema),
+		validators: zodClient(updateIpcrIndicatorSchema),
 		multipleSubmits: 'prevent',
 		onUpdate({ form, result }) {
-			if ($currentIpcrIndicators.some((ind) => ind.final_output === form.data.final_output)) {
+			if (
+				$currentIpcrIndicators.some((ind) => {
+					return ind.final_output === form.data.final_output && ind.id !== form.data.id;
+				})
+			) {
 				setError(form, 'final_output', 'Output already exists');
 			}
 			if (
-				$currentIpcrIndicators.some((ind) => ind.success_indicator === form.data.success_indicator)
+				$currentIpcrIndicators.some((ind) => {
+					return ind.success_indicator === form.data.success_indicator && ind.id !== form.data.id;
+				})
 			) {
 				setError(form, 'success_indicator', 'Success Indicator already exists');
 			}
 			const action = result.data as FormResult<IPCRFunctionIndicatorFormResult>;
 			if (form.valid && action.ipcrFunctionIndicator) {
 				const ipcrFunctionIndicator = action.ipcrFunctionIndicator;
-				addIpcrIndicator(ipcrFunctionIndicator);
-				showSuccessToast(`Succesfully added ipcr function indicator `);
+				updateIpcrIndicator(ipcrFunctionIndicator.id, ipcrFunctionIndicator);
+				showSuccessToast(`Succesfully updated ipcr function indicator `);
 				isOpen = false;
 				isDrawerOpen = false;
 				reset({
 					data: {
-						ipcr_function_id: ipcrFunctionId,
-						ipcr_function_category_id: ipcrFunctionCategoryId,
-						ipcr_function_sub_category_id: ipcrFunctionSubCategoryId,
-						position: $size + 1
+						...ipcrFunctionIndicator
 					},
 					newState: {
-						ipcr_function_id: ipcrFunctionId,
-						ipcr_function_category_id: ipcrFunctionCategoryId,
-						ipcr_function_sub_category_id: ipcrFunctionSubCategoryId,
-						position: $size + 1
+						...ipcrFunctionIndicator
 					}
 				});
 			}
@@ -82,25 +81,12 @@
 
 	const { form: formData, enhance, delayed, message, reset } = form;
 	//set data that is needed
-	if (ipcrFunctionId) {
-		$formData.ipcr_function_id = ipcrFunctionId;
-		//set to null the others
-		$formData.ipcr_function_category_id = null;
-		$formData.ipcr_function_sub_category_id = null;
-	}
-	if (ipcrFunctionCategoryId) {
-		$formData.ipcr_function_category_id = ipcrFunctionCategoryId;
-		//set to null the others
-		$formData.ipcr_function_sub_category_id = null;
-		$formData.ipcr_function_id = null;
-	}
-	if (ipcrFunctionSubCategoryId) {
-		$formData.ipcr_function_sub_category_id = ipcrFunctionSubCategoryId;
-		//set to null the others
-		$formData.ipcr_function_category_id = null;
-		$formData.ipcr_function_id = null;
-	}
-	$formData.position = $size + 1;
+	$formData.id = ipcrFunctionIndicator.id;
+	$formData.final_output = ipcrFunctionIndicator.final_output;
+	$formData.success_indicator = ipcrFunctionIndicator.success_indicator;
+	$formData.op_activity_id = ipcrFunctionIndicator.op_activity_id;
+	$formData.immediate_supervisor_id = ipcrFunctionIndicator.immediate_supervisor_id;
+	$formData.units = ipcrFunctionIndicator.units;
 
 	//effect for message
 	$effect(() => {
@@ -111,23 +97,21 @@
 </script>
 
 <Dialog.Root bind:open={isOpen}>
-	<Dialog.Trigger class="focus-visible:outline-none" id="nav-2">
-		<span class="flex items-center gap-2">
-			<Plus class="h-5 w-5" />
-			<span class=" md:inline">Add IPCR Indicator</span>
+	<Dialog.Trigger class="focus-visible:outline-none">
+		<span class="flex items-center gap-3">
+			<Pencil size={16} />Edit
 		</span>
 	</Dialog.Trigger>
 	<Dialog.Content class="max-h-[85vh] overflow-y-auto sm:max-w-[800px]">
 		<Dialog.Header>
-			<Dialog.Title>Add IPCR Indicator</Dialog.Title>
+			<Dialog.Title>Add IPCR Function Indicator</Dialog.Title>
 			<Dialog.Description>
 				An indicator is a measurable criterion used to assess the performance and success of a
 				specific task or objective, aligning efforts with organizational goals.
 			</Dialog.Description>
 		</Dialog.Header>
-		<form action="?/createipcrindicator" method="POST" use:enhance class="space-y-6">
-			<input hidden name="position" value={$formData.position} />
-			<input hidden name="ipcr_function_id" value={$formData.ipcr_function_id} />
+		<form action="?/updateipcrindicator" method="POST" use:enhance class="space-y-6">
+			<input hidden name="id" value={$formData.id} />
 			<div class=" grid gap-2 md:grid-cols-2">
 				<Form.Field {form} name="final_output">
 					<Form.Control>
@@ -167,12 +151,13 @@
 							name={props.name}
 							placeholder={'Type Operational Plan Activity here'}
 							onSearch={fetchOperationalPlanActivities}
+							onFetchById={fetchOperationalPlanActivityById}
 						/>
 					{/snippet}
 				</Form.Control>
 				<Form.FieldErrors />
 			</Form.Field>
-			{#if ipcrFunctionId}
+			{#if ipcrFunctionIndicator.ipcr_function_id}
 				<data class="grid grid-cols-2 gap-2">
 					<Form.Field {form} name="immediate_supervisor_id">
 						<Form.Control>
@@ -183,6 +168,7 @@
 									name={props.name}
 									placeholder={'Type Immediate Supervisor here'}
 									onSearch={fetchProfileByname}
+									onFetchById={fetchProfileById}
 								/>
 							{/snippet}
 						</Form.Control>

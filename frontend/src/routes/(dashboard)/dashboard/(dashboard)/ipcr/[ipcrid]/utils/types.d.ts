@@ -10,7 +10,17 @@ export type IPCRFunctionCategoryFormResult = {
 	ipcrFunctionCategory: Tables<'ipcr_function_category'>;
 };
 
+export type IPCRFunctionSubCategoryFormResult = {
+	form: any;
+	ipcrFunctionSubCategory: Tables<'ipcr_function_sub_category'>;
+};
+
 export type IPCRFunctionIndicatorFormResult = {
 	form: any;
 	ipcrFunctionIndicator: Tables<'ipcr_indicator'>;
+};
+
+export type IPCRFormResult = {
+	form: any;
+	IpcrData: Tables<'ipcr'>;
 };

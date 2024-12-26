@@ -5,7 +5,9 @@ import {
 	getCurrentIPCRFunction,
 	getIPCRFunctionCategoryForms,
 	getIPCRFunctionForms,
-	getIPCRIndicatorForms
+	getIPCRFunctionSubCategoryForms,
+	getIPCRIndicatorForms,
+	getIPCRSubmitForm
 } from './utils/loader_services';
 import {
 	createIpcrFunction,
@@ -17,7 +19,18 @@ import {
 	deleteIpcrFunctionCategory,
 	updateIpcrFunctionCategory
 } from './services/ipcr_category_services';
-import { createIpcrIndicator } from './services/ipcr_indicator_services';
+import {
+	createIpcrIndicator,
+	deleteIpcrIndicator,
+	markIpcrIndicatorDone,
+	updateIpcrIndicator
+} from './services/ipcr_indicator_services';
+import {
+	createIpcrFunctionSubCategory,
+	deleteIpcrFunctionSubCategory,
+	updateIpcrFunctionSubCategory
+} from './services/ipcr_sub_category_services';
+import { submitIpcr } from './services/ipcr_submit_services';
 
 export const load = (async ({ params, locals: { supabase } }) => {
 	//states
@@ -27,14 +40,18 @@ export const load = (async ({ params, locals: { supabase } }) => {
 	//forms
 	const ipcrFunctionForm = await getIPCRFunctionForms();
 	const ipcrFunctionCategoryForm = await getIPCRFunctionCategoryForms();
+	const ipcrFunctionSubCategoryForm = await getIPCRFunctionSubCategoryForms();
 	const ipcrIndicatorForm = await getIPCRIndicatorForms();
+	const ipcrSubmitForm = await getIPCRSubmitForm();
 
 	return {
 		currentIpcr,
 		ipcrFunction,
 		ipcrFunctionForm,
 		ipcrFunctionCategoryForm,
-		ipcrIndicatorForm
+		ipcrFunctionSubCategoryForm,
+		ipcrIndicatorForm,
+		ipcrSubmitForm
 	};
 }) satisfies PageServerLoad;
 
@@ -59,8 +76,31 @@ export const actions = {
 	deleteipcrfunctioncategory: async ({ request, locals: { supabase } }) => {
 		return await deleteIpcrFunctionCategory(request, supabase);
 	},
+	//ipcr function sub category
+	createipcrfunctionsubcategory: async ({ request, locals: { supabase } }) => {
+		return await createIpcrFunctionSubCategory(request, supabase);
+	},
+	updateipcrfunctionsubcategory: async ({ request, locals: { supabase } }) => {
+		return await updateIpcrFunctionSubCategory(request, supabase);
+	},
+	deleteipcrfunctionsubcategory: async ({ request, locals: { supabase } }) => {
+		return await deleteIpcrFunctionSubCategory(request, supabase);
+	},
 	//indicator
 	createipcrindicator: async ({ request, locals: { supabase } }) => {
 		return await createIpcrIndicator(request, supabase);
+	},
+	updateipcrindicator: async ({ request, locals: { supabase } }) => {
+		return await updateIpcrIndicator(request, supabase);
+	},
+	deleteipcrindicator: async ({ request, locals: { supabase } }) => {
+		return await deleteIpcrIndicator(request, supabase);
+	},
+	markipcrindicatordone: async ({ request, locals: { supabase } }) => {
+		return await markIpcrIndicatorDone(request, supabase);
+	},
+	//ipcr
+	submitipcr: async ({ request, locals: { supabase } }) => {
+		return submitIpcr(request, supabase);
 	}
 } satisfies Actions;

@@ -42,10 +42,14 @@
 		multipleSubmits: 'prevent',
 		onUpdate({ form, result }) {
 			if (
-				$currentIpcrFunctionCategories.some(
-					(cat) => cat.category.toLowerCase() === form.data.category.toLowerCase()
-				)
+				$currentIpcrFunctionCategories.some((cat) => {
+					return (
+						cat.category.toLowerCase() === form.data.category.toLowerCase() &&
+						cat.id !== form.data.id
+					);
+				})
 			) {
+				console.log(form.data.id);
 				setError(form, 'category', 'Category already exists');
 			}
 			const action = result.data as FormResult<IPCRFunctionCategoryFormResult>;
@@ -116,7 +120,7 @@
 				tasks.
 			</Dialog.Description>
 		</Dialog.Header>
-		<form action="?/createipcrfunctioncategory" method="POST" use:enhance class="space-y-6">
+		<form action="?/updateipcrfunctioncategory" method="POST" use:enhance class="space-y-6">
 			<input hidden name="id" value={$formData.id} />
 			<div class=" grid gap-2 md:grid-cols-2">
 				<Form.Field {form} name="category">

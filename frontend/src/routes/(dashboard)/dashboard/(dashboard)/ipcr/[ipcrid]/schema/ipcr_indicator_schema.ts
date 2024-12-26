@@ -1,4 +1,5 @@
 import { z } from 'zod';
+const MAX_FILE_SIZE = 45 * 1024 * 1024;
 
 // Enum for IPCR indicator status
 const ipcrIndicatorStatusEnum = z.enum(['draft', 'submitted', 'reviewing', 'revision', 'approved']);
@@ -29,43 +30,37 @@ export const createIpcrIndicatorSchema = z.object({
 // Schema for updating an IPCR indicator
 export const updateIpcrIndicatorSchema = z
 	.object({
-		id: z.string().uuid('Invalid IPCR Indicator ID'),
-		status: ipcrIndicatorStatusEnum.optional(),
-		actual_accomplishments: z.string().nullable().optional(),
-		accomplishment_date: z.coerce.date().nullable().optional(),
-		quality_rating: z
+		id: z.string().uuid('Invalid ID'),
+		final_output: z.string().min(1, 'Final output is required'),
+		success_indicator: z.string().min(1, 'Success indicator is required'),
+		op_activity_id: z.string().uuid('Invalid OP Activity ID'),
+		immediate_supervisor_id: z.string().uuid('Invalid supervisor ID').nullable(),
+		units: z
 			.number()
-			.min(1, 'Quality rating must be at least 1')
-			.max(5, 'Quality rating cannot exceed 5')
+			.min(0.01, 'Units must be greater than 0')
+			.max(99.99, 'Units cannot exceed 99.99')
 			.nullable()
-			.optional(),
-		efficiency_rating: z
-			.number()
-			.min(1, 'Efficiency rating must be at least 1')
-			.max(5, 'Efficiency rating cannot exceed 5')
-			.nullable()
-			.optional(),
-		timeliness_rating: z
-			.number()
-			.min(1, 'Timeliness rating must be at least 1')
-			.max(5, 'Timeliness rating cannot exceed 5')
-			.nullable()
-			.optional(),
-		average_rating: z
-			.number()
-			.min(1, 'Average rating must be at least 1')
-			.max(5, 'Average rating cannot exceed 5')
-			.nullable()
-			.optional(),
-		remarks: z.string().nullable().optional()
 	})
 	.refine((data) => Object.keys(data).length > 1, {
 		message: 'At least one field must be provided for update besides id'
 	});
 
+export const ipcrIndicatorDoneSchema = z.object({
+	id: z.string().uuid('Invalid ID')
+});
+
+export const markIndicatorDoneSchema = z.object({
+	id: z.string().uuid('Invalid Indicator ID'),
+	actual_accomplishments: z.string().min(10, 'IPCR must have at least 10 characters'),
+	accomplishment_date: z.string().refine((v) => v, { message: 'Accomplishment date is required.' }),
+	pdf_evidence: z
+		.instanceof(File, { message: 'Please upload a file.' })
+		.refine((f) => f.size < MAX_FILE_SIZE, 'Max 45mb upload size.')
+});
+
 // Type exports
 export type CreateIpcrIndicatorSchema = typeof createIpcrIndicatorSchema;
 export type UpdateIpcrIndicatorSchema = typeof updateIpcrIndicatorSchema;
-
+export type MarkIndicatorDoneSchema = typeof markIndicatorDoneSchema;
 // Helper type for the status enum
 export type IpcrIndicatorStatus = z.infer<typeof ipcrIndicatorStatusEnum>;

@@ -11,6 +11,19 @@
 	import { getIpcrFunctionCategoryStore } from '../states/ipcr_category_state';
 	import { getIpcrFunctionCategoryFormContext } from '../states/ipcr_category_form_state';
 	import UpdateDialog from './sub_components/ipcr_category/UpdateDialog.svelte';
+	import { setIpcrIndicatorStore } from '../states/ipcr_indicator_state';
+	import {
+		fetchIpcrFunctionIndicators,
+		fetchIpcrFunctionSubCategories,
+		updateIndicatorPosition,
+		updateSubCategoryPosition
+	} from '../utils/page_loader_services';
+	import { setIpcrFunctionSubCategoryStore } from '../states/ipcr_sub_category_state';
+	import IpcrSubCategory from './IPCRSubCategory.svelte';
+	import IpcrIndicator from './IPCRIndicator.svelte';
+	import CreateDialog from './sub_components/ipcr_sub_category/CreateDialog.svelte';
+	import CreateIndicatorDialog from './sub_components/ipcr_indicator/CreateDialog.svelte';
+	import { getIpcrStore } from '../states/current_ipcr_state';
 
 	//props
 	interface Iprops {
@@ -18,52 +31,106 @@
 	}
 	let { ipcrFunctionCategory }: Iprops = $props();
 
-	//states
-	let isExpanded = $state(false);
-	let isDrawerOpen = $state(false);
-	let isLoading = $state(false);
-	let error = $state<string | null>(null);
-	let dndItems: Tables<'ipcr_function_category'>[] = $state([]);
-
 	//stores
 	const { removeIpcrFunctionCategory } = getIpcrFunctionCategoryStore();
 	const { deleteForm } = getIpcrFunctionCategoryFormContext();
-	// const { currentOpActivities } = setOpActivityStore();
+	const { currentIpcrFunctionSubCategories } = setIpcrFunctionSubCategoryStore();
+	const { currentIpcrIndicators } = setIpcrIndicatorStore();
+	const { canEdit } = getIpcrStore();
 
-	// Separate fetch function
-	// async function fetchData() {
-	// 	isLoading = true;
-	// 	error = null;
+	//states
+	type DndItem =
+		| (Tables<'ipcr_function_sub_category'> & { itemType: 'sub_category' })
+		| (Tables<'ipcr_indicator'> & { itemType: 'indicator' });
+	let dndItems: DndItem[] = $state([]);
+	let isLoading = $state(false);
+	let isExpanded = $state(false);
+	let isDrawerOpen = $state(false);
+	let isAddDrawerOpen = $state(false);
 
-	// 	try {
-	// 		const result = await fetchOpActivities(opObjective.id);
-	// 		if (result.error) {
-	// 			error = result.error;
-	// 			showErrorToast(result.error);
-	// 			return;
-	// 		}
-	// 		dndItems = result.data;
-	// 		$currentOpActivities = result.data;
-	// 	} catch (e) {
-	// 		error = e instanceof Error ? e.message : 'An unknown error occurred';
-	// 		showErrorToast(error);
-	// 	} finally {
-	// 		isLoading = false;
-	// 	}
-	// }
+	// API BASED
+	async function fetchData() {
+		isLoading = true;
 
-	//sync with store
-	// $effect(() => {
-	// 	dndItems = $currentOpActivities;
-	// });
+		try {
+			const [ipcrSubCategoryResult, ipcrIndicatorResult] = await Promise.all([
+				fetchIpcrFunctionSubCategories(ipcrFunctionCategory.id),
+				fetchIpcrFunctionIndicators('ipcr_category_id', ipcrFunctionCategory.id)
+			]);
+
+			if (ipcrSubCategoryResult.error || ipcrIndicatorResult.error) {
+				throw new Error('Failed to fetch data');
+			}
+			const subCategoryItems = ipcrSubCategoryResult.data.map((item) => ({
+				...item,
+				itemType: 'sub_category' as const
+			}));
+			const indicatorItems = ipcrIndicatorResult.data.map((item) => ({
+				...item,
+				itemType: 'indicator' as const
+			}));
+			dndItems = [...subCategoryItems, ...indicatorItems].sort((a, b) => a.position - b.position);
+			$currentIpcrFunctionSubCategories = subCategoryItems;
+			$currentIpcrIndicators = indicatorItems;
+		} catch (error) {
+			console.error('Error fetching data:', error);
+			showErrorToast('Failed to load data');
+		} finally {
+			isLoading = false;
+		}
+	}
+
+	async function handlePositionsUpdate(updatedItems: DndItem[]): Promise<void> {
+		const ipcrSubCategory = updatedItems.filter(
+			(item): item is Tables<'ipcr_function_sub_category'> & { itemType: 'sub_category' } =>
+				item.itemType === 'sub_category'
+		);
+		const ipcrIndicators = updatedItems.filter(
+			(item): item is Tables<'ipcr_indicator'> & { itemType: 'indicator' } =>
+				item.itemType === 'indicator'
+		);
+		await Promise.all([
+			updateSubCategoryPosition(ipcrSubCategory),
+			updateIndicatorPosition(ipcrIndicators)
+		]);
+
+		$currentIpcrFunctionSubCategories = ipcrSubCategory;
+		$currentIpcrIndicators = ipcrIndicators;
+	}
+
+	//REACTIVITY
+	$effect(() => {
+		// Only run when these stores change
+		const subCategories = $currentIpcrFunctionSubCategories;
+		const indicators = $currentIpcrIndicators;
+
+		if (!isLoading) {
+			const functionItems = subCategories.map((item) => ({
+				...item,
+				itemType: 'sub_category' as const
+			}));
+
+			const indicatorItems = indicators.map((item) => ({
+				...item,
+				itemType: 'indicator' as const
+			}));
+
+			const newItems = [...functionItems, ...indicatorItems].sort(
+				(a, b) => a.position - b.position
+			);
+
+			// Only update if the items have actually changed
+			dndItems = newItems;
+		}
+	});
 
 	// Clean toggle function
 	async function toggleExpand() {
 		isExpanded = !isExpanded;
 
-		// if (isExpanded && dndItems.length === 0) {
-		// 	await fetchData();
-		// }
+		if (isExpanded && dndItems.length === 0) {
+			await fetchData();
+		}
 	}
 
 	//functions
@@ -74,24 +141,6 @@
 			showWarningToast(`Successfully deleted ${ipcrFunctionCategory.objective}`);
 		}
 	}
-
-	// const updateOpActivityPosition = async (
-	// 	items: Tables<'ipcr_function_category'>[]
-	// ): Promise<void> => {
-	// 	const response = await fetch('/api/ipcr_function_category', {
-	// 		method: 'POST',
-	// 		headers: {
-	// 			'Content-Type': 'application/json'
-	// 		},
-	// 		body: JSON.stringify(items)
-	// 	});
-
-	// 	if (!response.ok) {
-	// 		throw new Error('Failed to update positions');
-	// 	}
-
-	// 	$ = items;
-	// };
 </script>
 
 <div class="rounded-lg border">
@@ -107,50 +156,71 @@
 			</Button>
 			<div>
 				<h1 class="text-sm">{ipcrFunctionCategory.category}</h1>
+				<p class="text-xs text-gray-500">{ipcrFunctionCategory.unit ?? '_'} units</p>
 			</div>
 		</div>
 		<div class="flex items-center gap-5">
-			{#snippet deleteAction()}
-				<UniversalDeleteAction
-					id={ipcrFunctionCategory.id}
-					action="?/deleteipcrfunctioncategory"
-					data={deleteForm}
-					onDelete={handleDelete}
-				/>
-			{/snippet}
-			{#snippet updateAction()}
-				<UpdateDialog bind:isDrawerOpen {ipcrFunctionCategory} />
-			{/snippet}
-			<div class="flex gap-4">
-				<!-- <CreateDialog opObjectiveId={opObjective.id} onToggle={fetchData} bind:isExpanded /> -->
-				<DropDownWrapper bind:isDrawerOpen childrens={[updateAction, deleteAction]} />
-			</div>
+			{#if $canEdit}
+				{#snippet createDialog()}
+					<CreateDialog
+						bind:isDrawerOpen={isAddDrawerOpen}
+						ipcrCategoryId={ipcrFunctionCategory.id}
+					/>
+				{/snippet}
+				{#snippet createIndicatorDialog()}
+					<CreateIndicatorDialog
+						bind:isDrawerOpen={isAddDrawerOpen}
+						ipcrFunctionCategoryId={ipcrFunctionCategory.id}
+					/>
+				{/snippet}
+				{#snippet deleteAction()}
+					<UniversalDeleteAction
+						id={ipcrFunctionCategory.id}
+						action="?/deleteipcrfunctioncategory"
+						data={deleteForm}
+						onDelete={handleDelete}
+					/>
+				{/snippet}
+				{#snippet updateAction()}
+					<UpdateDialog bind:isDrawerOpen {ipcrFunctionCategory} />
+				{/snippet}
+				<div class="flex gap-4">
+					<DropDownWrapper
+						icon={ChevronDown}
+						text={'Add options'}
+						childrens={[createDialog, createIndicatorDialog]}
+						bind:isDrawerOpen={isAddDrawerOpen}
+					/>
+					<DropDownWrapper bind:isDrawerOpen childrens={[updateAction, deleteAction]} />
+				</div>
+			{/if}
 		</div>
 	</div>
 
-	<!-- {#if isExpanded}
-		<div class="border-t p-4" transition:slide={{ duration: 300 }}>
-			{#if isLoading}
-				<div class="flex justify-center">Loading activities...</div>
-			{:else if error}
-				<div class="text-destructive text-center">
-					{error}
-				</div>
-			{:else if dndItems.length === 0}
-				<div class="text-muted-foreground text-center">No activities found</div>
-			{:else}
+	{#if isExpanded}
+		<div class="p-4" transition:slide={{ duration: 300 }}>
+			<div class="border-t p-4" transition:slide={{ duration: 300 }}>
+				{#snippet dndItem(item: DndItem)}
+					{#if item.itemType === 'sub_category'}
+						<IpcrSubCategory ipcrSubCategory={item} />
+					{:else}
+						<IpcrIndicator ipcrFunctionIndicator={item} />
+					{/if}
+				{/snippet}
+
 				<DndContainer
 					bind:items={dndItems}
-					onPositionsUpdate={updateOpActivityPosition}
-					emptyMessage="No activities found"
+					{isLoading}
+					onPositionsUpdate={handlePositionsUpdate}
+					emptyMessage="No items found"
 					successMessage="Updated positions successfully"
 					errorMessage="Failed to update order. Please try again."
 				>
 					{#each dndItems as item (item.id)}
-						<OperationalActivity opActivity={item} />
+						{@render dndItem(item)}
 					{/each}
 				</DndContainer>
-			{/if}
+			</div>
 		</div>
-	{/if} -->
+	{/if}
 </div>

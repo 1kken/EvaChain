@@ -36,7 +36,7 @@
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Content>
 		<DropdownMenu.Group>
-			<DropdownMenu.GroupHeading>Add Selections</DropdownMenu.GroupHeading>
+			<DropdownMenu.GroupHeading>Actions</DropdownMenu.GroupHeading>
 			<DropdownMenu.Separator />
 			{#each childrens as children}
 				<DropdownMenu.Item
