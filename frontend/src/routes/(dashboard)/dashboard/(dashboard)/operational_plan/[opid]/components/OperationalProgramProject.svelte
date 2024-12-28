@@ -15,6 +15,7 @@
 	import DndContainer from '$lib/custom_components/dashboard/documents/DndContainer.svelte';
 	import CreateDialog from './sub_components/op_objectives/CreateDialog.svelte';
 	import { slide } from 'svelte/transition';
+	import Badge from '$lib/components/ui/badge/badge.svelte';
 
 	//props
 	interface Iprops {
@@ -94,7 +95,7 @@
 </script>
 
 <div class="rounded-lg border">
-	<div class="flex min-h-[4rem] items-center justify-between p-4">
+	<div class="flex h-10 items-center justify-between p-4">
 		<div class="flex items-center gap-2">
 			<Button variant="ghost" size="icon" onclick={toggleExpand}>
 				<ChevronDown
@@ -104,7 +105,8 @@
 					)}
 				/>
 			</Button>
-			<div>
+			<div class="flex flex-row space-x-2">
+				<Badge variant={'secondary'} class="h-5 text-xs">Prorgam/Project</Badge>
 				<h1 class="text-sm">{opProgramProject.description}</h1>
 			</div>
 		</div>

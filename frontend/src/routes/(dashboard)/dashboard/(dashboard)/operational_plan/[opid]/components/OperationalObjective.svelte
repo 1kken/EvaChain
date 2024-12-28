@@ -15,6 +15,7 @@
 	import UpdateDialog from './sub_components/op_objectives/UpdateDialog.svelte';
 	import OperationalActivity from './OperationalActivity.svelte';
 	import CreateDialog from './sub_components/op_activity/CreateDialog.svelte';
+	import Badge from '$lib/components/ui/badge/badge.svelte';
 
 	//props
 	interface Iprops {
@@ -97,7 +98,7 @@
 </script>
 
 <div class="rounded-lg border">
-	<div class="flex min-h-[4rem] items-center justify-between p-4">
+	<div class="flex h-10 items-center justify-between p-4">
 		<div class="flex items-center gap-2">
 			<Button variant="ghost" size="icon" onclick={toggleExpand}>
 				<ChevronDown
@@ -107,7 +108,8 @@
 					)}
 				/>
 			</Button>
-			<div>
+			<div class="flex items-center gap-2">
+				<Badge variant={'secondary'} class="h-5 text-xs">Objective</Badge>
 				<h1 class="text-sm">{opObjective.objective}</h1>
 			</div>
 		</div>

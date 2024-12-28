@@ -87,7 +87,7 @@
 	<Dialog.Trigger class="items-center focus-visible:outline-none" id="nav-2">
 		<span class="flex items-center gap-2">
 			<Plus class="h-5 w-5" />
-			<span class="md:inline">Add Function Category</span>
+			<span class="md:inline">Add Category</span>
 		</span>
 	</Dialog.Trigger>
 	<Dialog.Content class="max-h-[85vh] overflow-y-auto sm:max-w-[800px]">

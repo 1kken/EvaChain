@@ -19,6 +19,7 @@
 	import DropDownWrapper from '$lib/custom_components/DropDownWrapper.svelte';
 	import CreateIndicatorDialog from './sub_components/ipcr_indicator/CreateDialog.svelte';
 	import { getIpcrStore } from '../states/current_ipcr_state';
+	import Badge from '$lib/components/ui/badge/badge.svelte';
 
 	interface Iprops {
 		ipcrSubCategory: Tables<'ipcr_function_sub_category'>;
@@ -92,7 +93,7 @@
 </script>
 
 <div class="rounded-lg border">
-	<div class="flex min-h-[3.5rem] items-center justify-between p-3">
+	<div class="flex h-10 items-center justify-between p-3">
 		<div class="flex items-center gap-2">
 			<Button variant="ghost" size="icon" class="md:flex" onclick={toggleExpand}>
 				<ChevronDown
@@ -102,7 +103,10 @@
 					)}
 				/>
 			</Button>
-			<h1 class="text-sm">{ipcrSubCategory.sub_category}</h1>
+			<div class="flex items-center gap-2">
+				<Badge variant={'secondary'} class="h-5 text-xs">Sub-Category</Badge>
+				<h1 class="text-sm">{ipcrSubCategory.sub_category}</h1>
+			</div>
 		</div>
 		{#if $canEdit}
 			{#snippet deleteAction()}

@@ -24,6 +24,7 @@
 	import CreateDialog from './sub_components/ipcr_sub_category/CreateDialog.svelte';
 	import CreateIndicatorDialog from './sub_components/ipcr_indicator/CreateDialog.svelte';
 	import { getIpcrStore } from '../states/current_ipcr_state';
+	import Badge from '$lib/components/ui/badge/badge.svelte';
 
 	//props
 	interface Iprops {
@@ -144,7 +145,7 @@
 </script>
 
 <div class="rounded-lg border">
-	<div class="flex min-h-[4rem] items-center justify-between p-4">
+	<div class="flex h-10 items-center justify-between p-4">
 		<div class="flex items-center gap-2">
 			<Button variant="ghost" size="icon" onclick={toggleExpand}>
 				<ChevronDown
@@ -154,7 +155,8 @@
 					)}
 				/>
 			</Button>
-			<div>
+			<div class="flex items-center gap-2">
+				<Badge variant={'secondary'} class="h-5 text-xs">Category</Badge>
 				<h1 class="text-sm">{ipcrFunctionCategory.category}</h1>
 				<p class="text-xs text-gray-500">{ipcrFunctionCategory.unit ?? '_'} units</p>
 			</div>

@@ -98,7 +98,7 @@
 </script>
 
 <div class="w-full">
-	<header class="sticky top-0 flex h-16 items-center justify-between border-b px-4 md:px-10">
+	<header class="sticky top-0 flex h-10 items-center justify-between border-b px-4 md:px-10">
 		<div class="flex items-center gap-2">
 			<Button variant="ghost" size="icon" onclick={toggleExpand}>
 				<ChevronDown
