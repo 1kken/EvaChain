@@ -10,11 +10,7 @@
 	import type { IPCRFunctionIndicatorFormResult } from '../utils/types';
 	import MarkAsDone from './sub_components/ipcr_indicator/MarkAsDone.svelte';
 	import UpdateDialog from './sub_components/ipcr_indicator/UpdateDialog.svelte';
-	// import { getSingleIPCRStore } from '../(data)/(state)/ipcr-state.svelte';
-	// import DropDownWrapper from '../(wrappers)/DropDownWrapper.svelte';
-	// import DeleteIndicatorAction from './DeleteIndicatorAction.svelte';
-	// import MarkAsDoneDialog from './MarkAsDoneDialog.svelte';
-	// import UpdateIndicatorDialog from './UpdateIndicatorDialog.svelte';
+	import ViewIndicator from './ViewIndicator.svelte';
 
 	let { ipcrFunctionIndicator }: { ipcrFunctionIndicator: Tables<'ipcr_indicator'> } = $props();
 	let isDrawerOpen = $state(false);
@@ -42,7 +38,7 @@
 		<div class="flex items-center justify-between">
 			<div class="flex items-center space-x-2">
 				<Badge variant={'secondary'} class="h-5 text-xs">Indicator</Badge>
-				<h4 class="text-sm">{ipcrFunctionIndicator.success_indicator}</h4>
+				<ViewIndicator ipcrId={ipcrFunctionIndicator.id} />
 			</div>
 			<div>
 				{#if $canEdit}
