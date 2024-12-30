@@ -59,7 +59,7 @@
 
 <Dialog.Root>
 	<Dialog.Trigger class="focus-visible:outline-none">
-		<span class="hover:underline">
+		<span class=" text-sm hover:underline">
 			{currentActivity.activity}
 		</span>
 	</Dialog.Trigger>

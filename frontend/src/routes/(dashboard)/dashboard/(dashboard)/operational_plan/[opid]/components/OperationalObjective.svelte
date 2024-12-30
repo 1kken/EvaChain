@@ -16,6 +16,7 @@
 	import OperationalActivity from './OperationalActivity.svelte';
 	import CreateDialog from './sub_components/op_activity/CreateDialog.svelte';
 	import Badge from '$lib/components/ui/badge/badge.svelte';
+	import TruncatedDiv from '../../../components/TruncatedDiv.svelte';
 
 	//props
 	interface Iprops {
@@ -98,9 +99,9 @@
 </script>
 
 <div class="rounded-lg border">
-	<div class="flex h-10 items-center justify-between p-4">
-		<div class="flex items-center gap-2">
-			<Button variant="ghost" size="icon" onclick={toggleExpand}>
+	<div class="flex h-10 items-center justify-between p-7 {isExpanded ? 'h-auto min-h-10' : ''}">
+		<div class="flex items-center gap-2 {isExpanded ? 'items-start' : ''}">
+			<Button variant="ghost" size="icon" onclick={toggleExpand} class={isExpanded ? 'mt-0.5' : ''}>
 				<ChevronDown
 					class={cn(
 						'h-5 w-5 text-gray-500 transition-transform duration-200',
@@ -109,11 +110,13 @@
 				/>
 			</Button>
 			<div class="flex items-center gap-2">
-				<Badge variant={'secondary'} class="h-5 text-xs">Objective</Badge>
-				<h1 class="text-sm">{opObjective.objective}</h1>
+				<Badge variant={'secondary'} class="h-5 flex-shrink-0 text-xs">Objective</Badge>
+				<div class="min-w-0 flex-1">
+					<TruncatedDiv text={opObjective.objective} maxLength={50} />
+				</div>
 			</div>
 		</div>
-		<div class="flex items-center gap-5">
+		<div class="ml-4 flex flex-shrink-0 items-center gap-5">
 			{#snippet deleteAction()}
 				<UniversalDeleteAction
 					id={opObjective.id}

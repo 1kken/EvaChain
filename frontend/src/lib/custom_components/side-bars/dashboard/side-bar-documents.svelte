@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
-	import { NotebookPen, ScrollText } from 'lucide-svelte';
+	import { NotebookPen, ScrollText, ClipboardCheck } from 'lucide-svelte';
 
 	const items = [
 		{
@@ -14,6 +14,11 @@
 			title: 'Operational Plan',
 			url: `/dashboard/operational_plan`,
 			icon: NotebookPen
+		},
+		{
+			title: 'Accomplishment Report',
+			url: `/dashboard/accomplishment_report`,
+			icon: ClipboardCheck
 		}
 	];
 	function isActive(itemUrl: string) {

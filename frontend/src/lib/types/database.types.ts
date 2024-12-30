@@ -34,6 +34,209 @@ export type Database = {
   }
   public: {
     Tables: {
+      accomplishment_category: {
+        Row: {
+          accomplishment_report_id: string
+          category: string
+          created_at: string
+          id: string
+          position: number
+          updated_at: string
+        }
+        Insert: {
+          accomplishment_report_id: string
+          category: string
+          created_at?: string
+          id?: string
+          position: number
+          updated_at?: string
+        }
+        Update: {
+          accomplishment_report_id?: string
+          category?: string
+          created_at?: string
+          id?: string
+          position?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "accomplishment_category_accomplishment_report_id_fkey"
+            columns: ["accomplishment_report_id"]
+            isOneToOne: false
+            referencedRelation: "accomplishment_report"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      accomplishment_category_project_program: {
+        Row: {
+          accomplishment_category_id: string
+          created_at: string
+          id: string
+          position: number
+          sub_category: string
+          updated_at: string
+        }
+        Insert: {
+          accomplishment_category_id: string
+          created_at?: string
+          id?: string
+          position: number
+          sub_category: string
+          updated_at?: string
+        }
+        Update: {
+          accomplishment_category_id?: string
+          created_at?: string
+          id?: string
+          position?: number
+          sub_category?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "accomplishment_category_project_accomplishment_category_id_fkey"
+            columns: ["accomplishment_category_id"]
+            isOneToOne: false
+            referencedRelation: "accomplishment_category"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      accomplishment_metrics: {
+        Row: {
+          accomplishment_category_id: string | null
+          accomplishment_category_project_program_id: string | null
+          annual_target: string | null
+          created_at: string
+          former_state: string | null
+          id: string
+          metrics: string
+          position: number
+          quarter_1_accomplishment: string | null
+          quarter_2_accomplishment: string | null
+          quarter_3_accomplishment: string | null
+          quarter_4_accomplishment: string | null
+          remarks: string | null
+          total_accomplishment: string | null
+          updated_at: string
+          variance: string | null
+        }
+        Insert: {
+          accomplishment_category_id?: string | null
+          accomplishment_category_project_program_id?: string | null
+          annual_target?: string | null
+          created_at?: string
+          former_state?: string | null
+          id?: string
+          metrics: string
+          position: number
+          quarter_1_accomplishment?: string | null
+          quarter_2_accomplishment?: string | null
+          quarter_3_accomplishment?: string | null
+          quarter_4_accomplishment?: string | null
+          remarks?: string | null
+          total_accomplishment?: string | null
+          updated_at?: string
+          variance?: string | null
+        }
+        Update: {
+          accomplishment_category_id?: string | null
+          accomplishment_category_project_program_id?: string | null
+          annual_target?: string | null
+          created_at?: string
+          former_state?: string | null
+          id?: string
+          metrics?: string
+          position?: number
+          quarter_1_accomplishment?: string | null
+          quarter_2_accomplishment?: string | null
+          quarter_3_accomplishment?: string | null
+          quarter_4_accomplishment?: string | null
+          remarks?: string | null
+          total_accomplishment?: string | null
+          updated_at?: string
+          variance?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "accomplishment_metrics_accomplishment_category_id_fkey"
+            columns: ["accomplishment_category_id"]
+            isOneToOne: false
+            referencedRelation: "accomplishment_category"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "accomplishment_metrics_accomplishment_category_project_pro_fkey"
+            columns: ["accomplishment_category_project_program_id"]
+            isOneToOne: false
+            referencedRelation: "accomplishment_category_project_program"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      accomplishment_report: {
+        Row: {
+          created_at: string
+          id: string
+          implementing_unit: string
+          office_id: number | null
+          owner_id: string | null
+          program_id: number | null
+          status: Database["public"]["Enums"]["accomplishment_status"]
+          title: string
+          unit_id: number | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          implementing_unit: string
+          office_id?: number | null
+          owner_id?: string | null
+          program_id?: number | null
+          status?: Database["public"]["Enums"]["accomplishment_status"]
+          title: string
+          unit_id?: number | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          implementing_unit?: string
+          office_id?: number | null
+          owner_id?: string | null
+          program_id?: number | null
+          status?: Database["public"]["Enums"]["accomplishment_status"]
+          title?: string
+          unit_id?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "accomplishment_report_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "office"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "accomplishment_report_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "program"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "accomplishment_report_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "unit"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       employee_status: {
         Row: {
           created_at: string
@@ -326,6 +529,38 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "operational_plan_activities"
             referencedColumns: ["activity_id"]
+          },
+        ]
+      }
+      ipcr_indicator_evidence: {
+        Row: {
+          created_at: string
+          file_path: string
+          id: string
+          ipcr_indicator_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          file_path: string
+          id?: string
+          ipcr_indicator_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          file_path?: string
+          id?: string
+          ipcr_indicator_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ipcr_indicator_evidence_ipcr_indicator_id_fkey"
+            columns: ["ipcr_indicator_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_indicator"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -1083,6 +1318,12 @@ export type Database = {
       }
     }
     Enums: {
+      accomplishment_status:
+        | "draft"
+        | "submitted"
+        | "reviewing"
+        | "revision"
+        | "approved"
       ipcr_indicator_status:
         | "draft"
         | "submitted"

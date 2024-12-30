@@ -16,6 +16,7 @@
 	import CreateDialog from './sub_components/op_objectives/CreateDialog.svelte';
 	import { slide } from 'svelte/transition';
 	import Badge from '$lib/components/ui/badge/badge.svelte';
+	import TruncatedDiv from '../../../components/TruncatedDiv.svelte';
 
 	//props
 	interface Iprops {
@@ -95,9 +96,13 @@
 </script>
 
 <div class="rounded-lg border">
-	<div class="flex h-10 items-center justify-between p-4">
-		<div class="flex items-center gap-2">
-			<Button variant="ghost" size="icon" onclick={toggleExpand}>
+	<div
+		class="flex h-10 items-center justify-between p-7 {isExpanded
+			? 'h-auto min-h-10 items-start'
+			: ''}"
+	>
+		<div class="flex items-center gap-2 {isExpanded ? 'items-start' : ''}">
+			<Button variant="ghost" size="icon" onclick={toggleExpand} class={isExpanded ? 'mt-0.5' : ''}>
 				<ChevronDown
 					class={cn(
 						'h-5 w-5 text-gray-500 transition-transform duration-200',
@@ -105,12 +110,14 @@
 					)}
 				/>
 			</Button>
-			<div class="flex flex-row space-x-2">
-				<Badge variant={'secondary'} class="h-5 text-xs">Prorgam/Project</Badge>
-				<h1 class="text-sm">{opProgramProject.description}</h1>
+			<div class="flex items-center gap-2">
+				<Badge variant={'secondary'} class="h-5 w-fit text-xs">Prorgam/Project</Badge>
+				<div class="pr-4">
+					<TruncatedDiv text={opProgramProject.description} maxLength={50} />
+				</div>
 			</div>
 		</div>
-		<div class="flex items-center gap-5">
+		<div class="flex flex-shrink-0 items-center gap-5">
 			{#snippet deleteAction()}
 				<UniversalDeleteAction
 					id={opProgramProject.id}
@@ -134,8 +141,8 @@
 	</div>
 
 	{#if isExpanded}
-		<div class="p-4" transition:slide={{ duration: 300 }}>
-			<div class="border-t p-4">
+		<div class="p-1" transition:slide={{ duration: 300 }}>
+			<div class="border-t p-2">
 				{#snippet dndItem(opObjective: Tables<'op_objective'>)}
 					<OperationalObjective {opObjective} />
 				{/snippet}

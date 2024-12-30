@@ -82,7 +82,7 @@
 </script>
 
 <Dialog.Root bind:open={isOpen}>
-	<Dialog.Trigger class="focus-visible:outline-none" id="nav-2">
+	<Dialog.Trigger class=" focus-visible:outline-none" id="nav-2">
 		<span class="flex items-center gap-2">
 			<Plus class="h-5 w-5" />
 			<span class="hidden md:inline">Add Activity</span>
