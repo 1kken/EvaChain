@@ -13,6 +13,7 @@ export async function fetchProfileDetails(
 	const { data, error } = await supabase.from('profiles').select('*').eq('id', id).single();
 	return { data, error };
 }
+
 export async function checkIfOperationalPlanExists(
 	supabase: SupabaseClient<Database>,
 	userProfile: Tables<'profiles'>

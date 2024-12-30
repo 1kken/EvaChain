@@ -5,15 +5,14 @@
 	import { superForm, type FormResult, type SuperValidated } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { Input } from '$lib/components/ui/input';
-	import { LoaderCircle } from 'lucide-svelte';
-	import { TriangleAlert } from 'lucide-svelte';
-	import { Trash2 } from 'lucide-svelte';
+	import { LoaderCircle, TriangleAlert, Trash2 } from 'lucide-svelte';
 	import {
 		universalDeleteSchema,
 		type UniversalDeleteInput
 	} from '$lib/schemas/universal_delete_schema';
-	import { getOperationalPlanStore } from '../(data)/operational_plan_state.svelte';
-	import type { OPFormResult } from '../(data)/types';
+	import { getAccomplishmentReportStore } from '../(data)/accomp_state';
+	import type { AccFormResult } from '../(data)/types';
+
 	interface Props {
 		deleteForm: SuperValidated<UniversalDeleteInput>;
 		id: string;
@@ -21,17 +20,19 @@
 	}
 
 	let { deleteForm, id, dropDownOpen = $bindable() }: Props = $props();
-	const { removeOperationalPlan, currentOperationalPlans } = getOperationalPlanStore();
+	const { removeAccomplishmentReport, currentUserAccomplishmentReport } =
+		getAccomplishmentReportStore();
+
 	const form = superForm(deleteForm, {
 		validators: zodClient(universalDeleteSchema),
 		multipleSubmits: 'prevent',
 		dataType: 'json',
 		onUpdate({ form, result }) {
-			const action = result.data as FormResult<OPFormResult>;
-			if (form.valid && action.opData) {
-				const opData = action.opData;
-				removeOperationalPlan(opData.id);
-				showWarningToast(`Succesfully deleted IPCR ${opData.title}`);
+			const action = result.data as FormResult<AccFormResult>;
+			if (form.valid && action.accData) {
+				const accData = action.accData;
+				removeAccomplishmentReport(accData.id);
+				showWarningToast(`Successfully deleted Accomplishment Report ${accData.title}`);
 				closeAllTabs();
 			}
 		}
@@ -43,6 +44,7 @@
 		isOpen = false;
 		dropDownOpen = false;
 	}
+
 	$effect(() => {
 		if ($message?.status == 'error') {
 			showErrorToast($message.text);
@@ -55,32 +57,32 @@
 		}
 	});
 
-	const currentOperationalPlan = $currentOperationalPlans.find((op) => op.id === id);
+	const currentAccReport = $currentUserAccomplishmentReport.find((acc) => acc.id === id);
 
 	$formData.id = id.toString();
-	$formData.expectedText = currentOperationalPlan?.title ?? 'error';
+	$formData.expectedText = currentAccReport?.title ?? 'error';
 	let isOpen = $state(false);
 </script>
 
 <AlertDialog.Root bind:open={isOpen}>
-	<AlertDialog.Trigger class=" focus-visible:outline-none">
+	<AlertDialog.Trigger class="focus-visible:outline-none">
 		<span class="flex items-center gap-3">
 			<Trash2 size={16} />Delete
 		</span>
 	</AlertDialog.Trigger>
 	<AlertDialog.Content>
 		<AlertDialog.Header>
-			<AlertDialog.Title
-				><span class="flex items-center gap-4"
-					><TriangleAlert class="text-red-600" /> Are you absolutely sure?</span
-				></AlertDialog.Title
-			>
+			<AlertDialog.Title>
+				<span class="flex items-center gap-4">
+					<TriangleAlert class="text-red-600" /> Are you absolutely sure?
+				</span>
+			</AlertDialog.Title>
 			<AlertDialog.Description>
 				This action cannot be undone. This will permanently delete {$formData.expectedText} and all its
-				dependants.
+				dependents.
 			</AlertDialog.Description>
 		</AlertDialog.Header>
-		<form method="POST" action="?/deleteop" use:enhance>
+		<form method="POST" action="?/deleteaccreport" use:enhance>
 			<Input name="id" class="hidden" bind:value={$formData.id} />
 			<Form.Field {form} name="confirmText">
 				<Form.FieldErrors />
@@ -90,9 +92,9 @@
 						<Input {...props} bind:value={$formData.confirmText} />
 					{/snippet}
 				</Form.Control>
-				<Form.Description
-					>Please type <span class=" font-bold">{$formData.expectedText} </span> to proceed.</Form.Description
-				>
+				<Form.Description>
+					Please type <span class="font-bold">{$formData.expectedText}</span> to proceed.
+				</Form.Description>
 			</Form.Field>
 			{#if $delayed}
 				<div class="flex justify-between">

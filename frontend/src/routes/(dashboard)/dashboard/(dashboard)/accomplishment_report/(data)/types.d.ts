@@ -1,6 +1,5 @@
 import { Tables } from '$lib/types/database.types';
-
-export type OPFormResult = {
+export type AccFormResult = {
 	form: any;
-	opData: Tables<'operational_plan'>;
+	accData: Tables<'accomplishment_report'>;
 };

@@ -34,84 +34,14 @@ export type Database = {
   }
   public: {
     Tables: {
-      accomplishment_category: {
-        Row: {
-          accomplishment_report_id: string
-          category: string
-          created_at: string
-          id: string
-          position: number
-          updated_at: string
-        }
-        Insert: {
-          accomplishment_report_id: string
-          category: string
-          created_at?: string
-          id?: string
-          position: number
-          updated_at?: string
-        }
-        Update: {
-          accomplishment_report_id?: string
-          category?: string
-          created_at?: string
-          id?: string
-          position?: number
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "accomplishment_category_accomplishment_report_id_fkey"
-            columns: ["accomplishment_report_id"]
-            isOneToOne: false
-            referencedRelation: "accomplishment_report"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      accomplishment_category_project_program: {
-        Row: {
-          accomplishment_category_id: string
-          created_at: string
-          id: string
-          position: number
-          sub_category: string
-          updated_at: string
-        }
-        Insert: {
-          accomplishment_category_id: string
-          created_at?: string
-          id?: string
-          position: number
-          sub_category: string
-          updated_at?: string
-        }
-        Update: {
-          accomplishment_category_id?: string
-          created_at?: string
-          id?: string
-          position?: number
-          sub_category?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "accomplishment_category_project_accomplishment_category_id_fkey"
-            columns: ["accomplishment_category_id"]
-            isOneToOne: false
-            referencedRelation: "accomplishment_category"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       accomplishment_metrics: {
         Row: {
-          accomplishment_category_id: string | null
-          accomplishment_category_project_program_id: string | null
+          accomplishment_program_project_id: string
           annual_target: string | null
           created_at: string
           former_state: string | null
           id: string
+          is_included: boolean
           metrics: string
           position: number
           quarter_1_accomplishment: string | null
@@ -124,12 +54,12 @@ export type Database = {
           variance: string | null
         }
         Insert: {
-          accomplishment_category_id?: string | null
-          accomplishment_category_project_program_id?: string | null
+          accomplishment_program_project_id: string
           annual_target?: string | null
           created_at?: string
           former_state?: string | null
           id?: string
+          is_included?: boolean
           metrics: string
           position: number
           quarter_1_accomplishment?: string | null
@@ -142,12 +72,12 @@ export type Database = {
           variance?: string | null
         }
         Update: {
-          accomplishment_category_id?: string | null
-          accomplishment_category_project_program_id?: string | null
+          accomplishment_program_project_id?: string
           annual_target?: string | null
           created_at?: string
           former_state?: string | null
           id?: string
+          is_included?: boolean
           metrics?: string
           position?: number
           quarter_1_accomplishment?: string | null
@@ -161,17 +91,48 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "accomplishment_metrics_accomplishment_category_id_fkey"
-            columns: ["accomplishment_category_id"]
+            foreignKeyName: "accomplishment_metrics_accomplishment_program_project_id_fkey"
+            columns: ["accomplishment_program_project_id"]
             isOneToOne: false
-            referencedRelation: "accomplishment_category"
+            referencedRelation: "accomplishment_program_project"
             referencedColumns: ["id"]
           },
+        ]
+      }
+      accomplishment_program_project: {
+        Row: {
+          accomplishment_report_id: string
+          created_at: string
+          id: string
+          is_included: boolean
+          position: number
+          program_project: string
+          updated_at: string
+        }
+        Insert: {
+          accomplishment_report_id: string
+          created_at?: string
+          id?: string
+          is_included?: boolean
+          position: number
+          program_project: string
+          updated_at?: string
+        }
+        Update: {
+          accomplishment_report_id?: string
+          created_at?: string
+          id?: string
+          is_included?: boolean
+          position?: number
+          program_project?: string
+          updated_at?: string
+        }
+        Relationships: [
           {
-            foreignKeyName: "accomplishment_metrics_accomplishment_category_project_pro_fkey"
-            columns: ["accomplishment_category_project_program_id"]
+            foreignKeyName: "accomplishment_program_project_accomplishment_report_id_fkey"
+            columns: ["accomplishment_report_id"]
             isOneToOne: false
-            referencedRelation: "accomplishment_category_project_program"
+            referencedRelation: "accomplishment_report"
             referencedColumns: ["id"]
           },
         ]
@@ -188,6 +149,7 @@ export type Database = {
           title: string
           unit_id: number | null
           updated_at: string
+          using_template: boolean
         }
         Insert: {
           created_at?: string
@@ -200,6 +162,7 @@ export type Database = {
           title: string
           unit_id?: number | null
           updated_at?: string
+          using_template?: boolean
         }
         Update: {
           created_at?: string
@@ -212,6 +175,7 @@ export type Database = {
           title?: string
           unit_id?: number | null
           updated_at?: string
+          using_template?: boolean
         }
         Relationships: [
           {

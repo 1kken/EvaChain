@@ -2,16 +2,16 @@
 	import Ellipsis from 'lucide-svelte/icons/ellipsis';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
-	import DeleteActionUnit from './delete-action-unit.svelte';
+	import DeleteActionUnit from './Delete.svelte';
 	import type { SuperValidated } from 'sveltekit-superforms';
 	import type { UniversalDeleteInput } from '$lib/schemas/universal_delete_schema';
-	import type { UpdateOperationalPlanInput } from '../(data)/operational_plan_schema';
-	import UpdateDialogUnit from './update-dialog-unit.svelte';
+	import UpdateDialogUnit from './Update.svelte';
 	import { SquareArrowOutUpRight } from 'lucide-svelte';
+	import type { UpdateAccomplishmentReportInput } from '../(data)/accomp_schema';
 
 	interface Props {
 		deleteForm: SuperValidated<UniversalDeleteInput>;
-		updateForm: SuperValidated<UpdateOperationalPlanInput>;
+		updateForm: SuperValidated<UpdateAccomplishmentReportInput>;
 		id: string;
 	}
 

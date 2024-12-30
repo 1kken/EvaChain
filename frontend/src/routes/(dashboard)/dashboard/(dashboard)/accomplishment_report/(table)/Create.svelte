@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { buttonVariants } from '$lib/components/ui/button/index.js';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
-	import { Plus } from 'lucide-svelte';
-	import { LoaderCircle } from 'lucide-svelte';
+	import { Plus, LoaderCircle } from 'lucide-svelte';
 	import * as Form from '$lib/components/ui/form/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import {
@@ -13,31 +12,32 @@
 	} from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';
-	import {
-		createOperationalPlanSchema,
-		type CreateOperationalPlanSchema
-	} from '../(data)/operational_plan_schema';
-	import { getOperationalPlanStore } from '../(data)/operational_plan_state.svelte';
-	import type { OPFormResult } from '../(data)/types';
+	import type { AccFormResult } from '../(data)/types';
 	import { getAuthStore } from '$lib/utils/authStore';
 	import { checkProfileCompletion } from '$lib/utils/missingDetailsToast';
-	import IncompleteProfileDialog from './incomplete-profile-dialog.svelte';
+	import IncompleteProfileDialog from './Incomplete.svelte';
+	import { getAccomplishmentReportStore } from '../(data)/accomp_state';
+	import {
+		createAccomplishmentReportSchema,
+		type CreateAccomplishmentReportSchema
+	} from '../(data)/accomp_schema';
 
-	let { data }: { data: SuperValidated<Infer<CreateOperationalPlanSchema>> } = $props();
+	let { data }: { data: SuperValidated<Infer<CreateAccomplishmentReportSchema>> } = $props();
 
-	const { addOperationalPlan } = getOperationalPlanStore();
+	const { currentUserAccomplishmentReport, addAccomplishmentReport } =
+		getAccomplishmentReportStore();
 	const { currentProfile } = getAuthStore();
 
 	let isOpen = $state(false);
 	const form = superForm(data, {
-		validators: zodClient(createOperationalPlanSchema),
+		validators: zodClient(createAccomplishmentReportSchema),
 		multipleSubmits: 'prevent',
 		onUpdate({ form, result }) {
-			const action = result.data as FormResult<OPFormResult>;
-			if (form.valid && action.opData) {
-				const operationalPlan = action.opData;
-				addOperationalPlan(operationalPlan);
-				showSuccessToast(`Succesfully added core function ${operationalPlan.title}`);
+			const action = result.data as FormResult<AccFormResult>;
+			if (form.valid && action.accData) {
+				const accData = action.accData;
+				addAccomplishmentReport(accData);
+				showSuccessToast(`Successfully added accomplishment report ${accData.title}`);
 				isOpen = false;
 			}
 		}
@@ -47,6 +47,7 @@
 	const year = new Date().getFullYear();
 	let completeProfile = $state(true);
 	let errorMessage = $state<string | null>();
+
 	$effect(() => {
 		if ($currentProfile === null) return;
 		const errormessage = checkProfileCompletion($currentProfile);
@@ -61,20 +62,21 @@
 			showSuccessToast($message.text);
 			isOpen = false;
 			reset({
-				data: { title: `Operational Plan ${year}`, implementing_unit: '' },
-				newState: { title: `Operational Plan ${year}`, implementing_unit: '' }
+				data: { title: `Accomplishment Report ${year}`, implementing_unit: '' },
+				newState: { title: `Accomplishment Report ${year}`, implementing_unit: '' }
 			});
 		}
 
 		if ($message?.status == 'error') {
 			showErrorToast($message.text);
 			reset({
-				data: { title: `Operational Plan ${year}`, implementing_unit: '' },
-				newState: { title: `Operational Plan ${year}`, implementing_unit: '' }
+				data: { title: `Accomplishment Report ${year}`, implementing_unit: '' },
+				newState: { title: `Accomplishment Report ${year}`, implementing_unit: '' }
 			});
 		}
 	});
-	$formData.title = `Operational Plan ${year}`;
+
+	$formData.title = `Accomplishment Report ${year}`;
 </script>
 
 {#if !completeProfile}
@@ -82,18 +84,17 @@
 {:else}
 	<Dialog.Root bind:open={isOpen}>
 		<Dialog.Trigger class={buttonVariants({ variant: 'default' })}
-			><Plus /> Create Operational Plan</Dialog.Trigger
+			><Plus /> Create Accomplishment Report</Dialog.Trigger
 		>
 		<Dialog.Content class="sm:max-w-auto">
 			<Dialog.Header>
-				<Dialog.Title>Operational Plan</Dialog.Title>
+				<Dialog.Title>Accomplishment Report</Dialog.Title>
 				<Dialog.Description>
-					A detailed document outlining the specific actions, activities, timelines, and resources
-					required to achieve the goals and objectives of an organization within a defined period,
-					typically aligned with its strategic plan.
+					An Accomplishment Report documents achievements, outcomes, and progress made during a
+					specific period, highlighting key performance indicators and successful initiatives.
 				</Dialog.Description>
 			</Dialog.Header>
-			<form action="?/createop" method="POST" use:enhance>
+			<form action="?/createaccreport" method="POST" use:enhance>
 				<Form.Field {form} name="title">
 					<Form.Control>
 						{#snippet children({ props })}
@@ -101,10 +102,10 @@
 							<Input {...props} bind:value={$formData.title} />
 						{/snippet}
 					</Form.Control>
-					<Form.Description
-						>A descriptive name automatically inferred from the year of creation, typically
-						reflecting the plan's timeframe (e.g., "Operational Plan 2024").</Form.Description
-					>
+					<Form.Description>
+						A descriptive name automatically inferred from the year of creation, typically
+						reflecting the reporting period (e.g., "Accomplishment Report 2024").
+					</Form.Description>
 					<Form.FieldErrors />
 				</Form.Field>
 				<Form.Field {form} name="implementing_unit">
@@ -114,10 +115,10 @@
 							<Input {...props} bind:value={$formData.implementing_unit} />
 						{/snippet}
 					</Form.Control>
-					<Form.Description
-						>A division or entity responsible for executing and managing the activities outlined in
-						an operational plan to achieve organizational goals.</Form.Description
-					>
+					<Form.Description>
+						The unit, department, or division responsible for the activities and achievements being
+						reported.
+					</Form.Description>
 					<Form.FieldErrors />
 				</Form.Field>
 				{#if $delayed}

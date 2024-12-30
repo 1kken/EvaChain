@@ -4,6 +4,7 @@ CREATE TYPE accomplishment_status AS ENUM ('draft', 'submitted', 'reviewing', 'r
 -- Create accomplishment_report table
 CREATE TABLE accomplishment_report (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    using_template BOOLEAN DEFAULT FALSE NOT NULL,
     implementing_unit TEXT NOT NULL,
     title VARCHAR(255) NOT NULL,
     status accomplishment_status DEFAULT 'draft' NOT NULL,

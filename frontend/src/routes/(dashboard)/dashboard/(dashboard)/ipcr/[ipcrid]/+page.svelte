@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { setIPCRStore } from '../(data)/state.svelte';
 	import Header from '../../components/Header.svelte';
 	import type { PageData } from './$types';
 	import IndexComponent from './components/IndexComponent.svelte';

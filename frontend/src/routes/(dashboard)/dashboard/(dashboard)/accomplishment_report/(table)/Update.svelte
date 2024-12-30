@@ -7,42 +7,48 @@
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { showErrorToast, showSuccessToast, showWarningToast } from '$lib/utils/toast';
 	import { Pencil } from 'lucide-svelte';
+	import { getAccomplishmentReportStore } from '../(data)/accomp_state';
 	import {
-		updateOperationalPlanSchema,
-		type UpdateOperationalPlanInput
-	} from '../(data)/operational_plan_schema';
-	import { getOperationalPlanStore } from '../(data)/operational_plan_state.svelte';
-	import type { OPFormResult } from '../(data)/types';
+		updateAccomplishmentReportSchema,
+		type UpdateAccomplishmentReportInput
+	} from '../(data)/accomp_schema';
+	import type { AccFormResult } from '../(data)/types';
 
 	let {
 		updateForm,
 		id,
 		dropDownOpen = $bindable()
 	}: {
-		updateForm: SuperValidated<UpdateOperationalPlanInput>;
+		updateForm: SuperValidated<UpdateAccomplishmentReportInput>;
 		id: string;
 		dropDownOpen?: boolean;
 	} = $props();
-	const { updateOperationalPlan, currentOperationalPlans } = getOperationalPlanStore();
+
+	const { updateAccomplishmentReport, currentUserAccomplishmentReport } =
+		getAccomplishmentReportStore();
 
 	let isOpen = $state(false);
 	const form = superForm(updateForm, {
-		validators: zodClient(updateOperationalPlanSchema),
+		validators: zodClient(updateAccomplishmentReportSchema),
 		multipleSubmits: 'prevent',
 		dataType: 'json',
 		onUpdate({ form, result }) {
-			const action = result.data as FormResult<OPFormResult>;
-			if (form.valid && action.opData) {
-				const opData = action.opData;
-				updateOperationalPlan(opData.id, opData);
-				showSuccessToast(`Succesfully updated operational plan ${opData.title}`);
+			const action = result.data as FormResult<AccFormResult>;
+			if (form.valid && action.accData) {
+				const accData = action.accData;
+				updateAccomplishmentReport(accData.id, accData);
+				showSuccessToast(`Successfully updated accomplishment report ${accData.title}`);
 				closeAllTabs();
 				reset({
-					data: { id: opData.id, title: opData.title, implementing_unit: opData.implementing_unit },
+					data: {
+						id: accData.id,
+						title: accData.title,
+						implementing_unit: accData.implementing_unit
+					},
 					newState: {
-						id: opData.id,
-						title: opData.title,
-						implementing_unit: opData.implementing_unit
+						id: accData.id,
+						title: accData.title,
+						implementing_unit: accData.implementing_unit
 					}
 				});
 			}
@@ -50,15 +56,16 @@
 	});
 
 	const { form: formData, enhance, message, delayed, reset } = form;
-	const currentOperationalPlan = $currentOperationalPlans.find((op) => op.id === id);
+	const currentAccReport = $currentUserAccomplishmentReport.find((acc) => acc.id === id);
 	$formData.id = id;
-	$formData.title = currentOperationalPlan?.title ?? 'error';
-	$formData.implementing_unit = currentOperationalPlan?.implementing_unit ?? 'error';
+	$formData.title = currentAccReport?.title ?? 'error';
+	$formData.implementing_unit = currentAccReport?.implementing_unit ?? 'error';
 
 	function closeAllTabs() {
 		isOpen = false;
 		dropDownOpen = false;
 	}
+
 	$effect(() => {
 		if ($message?.status == 'error') {
 			showErrorToast($message.text);
@@ -73,20 +80,20 @@
 </script>
 
 <Dialog.Root bind:open={isOpen}>
-	<Dialog.Trigger class=" focus-visible:outline-none">
+	<Dialog.Trigger class="focus-visible:outline-none">
 		<span class="flex items-center gap-3">
 			<Pencil size={16} /> Edit
 		</span>
 	</Dialog.Trigger>
 	<Dialog.Content class="sm:max-w-auto">
 		<Dialog.Header>
-			<Dialog.Title>Update Unit</Dialog.Title>
+			<Dialog.Title>Update Accomplishment Report</Dialog.Title>
 			<Dialog.Description>
-				An operating in DMMMSU is a distinct section that performs specific functions to achieve
-				university goals.
+				Edit the details of your accomplishment report to accurately reflect your unit's
+				achievements and progress.
 			</Dialog.Description>
 		</Dialog.Header>
-		<form action="?/updateop" method="POST" use:enhance>
+		<form action="?/updateaccreport" method="POST" use:enhance>
 			<Form.Field {form} name="title">
 				<Form.Control>
 					{#snippet children({ props })}
@@ -94,23 +101,23 @@
 						<Input {...props} bind:value={$formData.title} />
 					{/snippet}
 				</Form.Control>
-				<Form.Description
-					>A descriptive name automatically inferred from the year of creation, typically reflecting
-					the plan's timeframe (e.g., "Operational Plan 2024").</Form.Description
-				>
+				<Form.Description>
+					A descriptive name for your accomplishment report, typically including the reporting
+					period (e.g., "Accomplishment Report 2024").
+				</Form.Description>
 				<Form.FieldErrors />
 			</Form.Field>
 			<Form.Field {form} name="implementing_unit">
 				<Form.Control>
 					{#snippet children({ props })}
-						<Form.Label>Implimenting Unit</Form.Label>
+						<Form.Label>Implementing Unit</Form.Label>
 						<Input {...props} bind:value={$formData.implementing_unit} />
 					{/snippet}
 				</Form.Control>
-				<Form.Description
-					>A division or entity responsible for executing and managing the activities outlined in an
-					operational plan to achieve organizational goals.</Form.Description
-				>
+				<Form.Description>
+					The unit or department responsible for the activities and achievements detailed in this
+					report.
+				</Form.Description>
 				<Form.FieldErrors />
 			</Form.Field>
 			{#if $delayed}

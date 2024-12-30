@@ -1,8 +1,8 @@
 -- Create accomplishment_metrics table
 CREATE TABLE accomplishment_metrics (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    accomplishment_category_id UUID REFERENCES accomplishment_category(id) ON DELETE CASCADE,
-    accomplishment_category_project_program_id UUID REFERENCES accomplishment_category_project_program(id) ON DELETE CASCADE,
+    is_included BOOLEAN DEFAULT TRUE NOT NULL,
+    accomplishment_program_project_id UUID REFERENCES accomplishment_program_project(id) ON DELETE CASCADE NOT NULL,
     metrics TEXT NOT NULL,
     former_state TEXT,
     annual_target TEXT,
@@ -19,17 +19,11 @@ CREATE TABLE accomplishment_metrics (
 );
 
 -- Add indexes for better query performance
-CREATE INDEX idx_accomplishment_metrics_category_id 
-    ON accomplishment_metrics(accomplishment_category_id);
-
-CREATE INDEX idx_accomplishment_metrics_project_program_id 
-    ON accomplishment_metrics(accomplishment_category_project_program_id);
+CREATE INDEX idx_accomplishment_metrics_program_project_id 
+    ON accomplishment_metrics(accomplishment_program_project_id);
 
 CREATE INDEX idx_accomplishment_metrics_position 
-    ON accomplishment_metrics(position, accomplishment_category_id);
-
-CREATE INDEX idx_accomplishment_metrics_position_prog 
-    ON accomplishment_metrics(position, accomplishment_category_project_program_id);
+    ON accomplishment_metrics(position, accomplishment_program_project_id);
 
 -- Add trigger for updating timestamps
 CREATE TRIGGER set_updated_at 

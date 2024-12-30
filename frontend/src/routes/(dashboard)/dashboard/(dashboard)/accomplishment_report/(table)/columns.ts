@@ -1,11 +1,12 @@
 import { renderComponent, renderSnippet } from '$lib/components/ui/data-table';
 import type { ColumnDef } from '@tanstack/table-core';
-import DataTableActions from './data-table-actions.svelte';
 import DataTableSortButton from '$lib/custom_components/data-table/data-table-sort-button.svelte';
-import DateCell from './date-cell.svelte';
-import type { UniversalDeleteInput } from '$lib/schemas/universal_delete_schema';
+import DateCell from './Date.svelte';
+import DataLink from './Link.svelte';
 import type { SuperValidated } from 'sveltekit-superforms';
-import DataLink from './data-link.svelte';
+import type { UniversalDeleteInput } from '$lib/schemas/universal_delete_schema';
+import type { UpdateAccomplishmentReportInput } from '../(data)/accomp_schema';
+import Actions from './Actions.svelte';
 // This type is used to define the shape of our data.
 export type Accomplishment = {
 	id: string;
@@ -14,9 +15,10 @@ export type Accomplishment = {
 	created_at: string;
 };
 
-export const createColumns = () // deleteForm: SuperValidated<UniversalDeleteInput>,
-// updateForm: SuperValidated<UpdateOperationalPlanInput>
-: ColumnDef<Accomplishment>[] => [
+export const createColumns = (
+	deleteForm: SuperValidated<UniversalDeleteInput>,
+	updateForm: SuperValidated<UpdateAccomplishmentReportInput>
+): ColumnDef<Accomplishment>[] => [
 	{
 		accessorKey: 'title',
 		header: ({ column }) =>
@@ -65,14 +67,14 @@ export const createColumns = () // deleteForm: SuperValidated<UniversalDeleteInp
 			const dateValue = getValue<string>();
 			return renderComponent(DateCell, { date: dateValue });
 		}
+	},
+	{
+		id: 'actions',
+		header: 'Actions',
+		cell: ({ row }) => {
+			const id = row.original.id;
+			// You can pass whatever you need from `row.original` to the component
+			return renderComponent(Actions, { deleteForm, updateForm, id });
+		}
 	}
-	// {
-	// 	id: 'actions',
-	// 	header: 'Actions',
-	// 	cell: ({ row }) => {
-	// 		const id = row.original.id;
-	// 		// You can pass whatever you need from `row.original` to the component
-	// 		return renderComponent(DataTableActions, { deleteForm, updateForm, id });
-	// 	}
-	// }
 ];
