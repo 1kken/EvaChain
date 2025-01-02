@@ -4,6 +4,7 @@
 	import Index from './components/Index.svelte';
 	import NavButton from './components/NavButton.svelte';
 	import { setCurrentAccomplishmentReportStore } from './states/current_accomplishment_report_state';
+	import { setAccomplishmentMetricFormContext } from './states/metrics_form_state';
 	import { setAccomplishmentProgramProjectFormContext } from './states/program_project_form_state';
 	import { setAccomplishmentProgramProjectStore } from './states/program_project_state';
 
@@ -11,6 +12,7 @@
 	setCurrentAccomplishmentReportStore(data.accomplishmentReport);
 	setAccomplishmentProgramProjectStore(data.programProjects);
 	setAccomplishmentProgramProjectFormContext(data.programProjectForms);
+	setAccomplishmentMetricFormContext(data.metricsForms);
 </script>
 
 <!-- Main wrapper -->

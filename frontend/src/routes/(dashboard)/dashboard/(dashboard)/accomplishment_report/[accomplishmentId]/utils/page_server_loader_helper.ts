@@ -7,6 +7,10 @@ import {
 	updateAccomplishmentProgramProjectSchema
 } from '../schema/program_project_schema';
 import { universalDeleteSchema } from '$lib/schemas/universal_delete_schema';
+import {
+	createAccomplishmentMetricSchema,
+	updateAccomplishmentMetricSchema
+} from '../schema/metrics_schema';
 
 //load data
 export async function getCurrentAccomplishmentReport(
@@ -48,6 +52,14 @@ export async function getAccomplishmentProgramProjectForms() {
 	return {
 		createForm: await superValidate(zod(createAccomplishmentProgramProjectSchema)),
 		updateForm: await superValidate(zod(updateAccomplishmentProgramProjectSchema)),
+		deleteForm: await superValidate(zod(universalDeleteSchema))
+	};
+}
+
+export async function getAccomplismentMetricsForms() {
+	return {
+		createForm: await superValidate(zod(createAccomplishmentMetricSchema)),
+		updateForm: await superValidate(zod(updateAccomplishmentMetricSchema)),
 		deleteForm: await superValidate(zod(universalDeleteSchema))
 	};
 }

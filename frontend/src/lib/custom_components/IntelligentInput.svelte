@@ -1,8 +1,5 @@
 <script lang="ts">
 	import { Textarea } from '$lib/components/ui/textarea';
-	import { Button } from '$lib/components/ui/button';
-	import { Alert, AlertDescription } from '$lib/components/ui/alert';
-	import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
 	import { Loader2, CheckCircle, AlertCircle } from 'lucide-svelte';
 	import { fade } from 'svelte/transition';
 	import { cn } from '$lib/utils';
@@ -19,10 +16,15 @@
 
 	let {
 		placeholder = 'Start typing to check grammar...',
-		content = $bindable(''),
+		content = $bindable<string | null>(''),
 		name,
 		textAreaWidth = 'fit'
-	} = $props();
+	} = $props<{
+		placeholder?: string;
+		content?: string | null;
+		name?: string;
+		textAreaWidth?: string;
+	}>();
 
 	let isFetching = $state(false);
 	let errors = $state<GrammarError[]>([]);
