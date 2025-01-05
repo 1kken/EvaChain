@@ -4,6 +4,7 @@
 	import SideBarFooter from '$lib/custom_components/side-bars/side-bar-footer.svelte';
 	import SideBarEntities from './side-bar-entities.svelte';
 	import SideBarAttributes from './side-bar-attributes.svelte';
+	import SideBarTemplates from './side-bar-templates.svelte';
 
 	let { sidebarOpen = $bindable() } = $props();
 
@@ -40,6 +41,12 @@
 		<Sidebar.Group>
 			<Sidebar.GroupLabel>Role Management</Sidebar.GroupLabel>
 			<Sidebar.GroupContent></Sidebar.GroupContent>
+		</Sidebar.Group>
+		<Sidebar.Group>
+			<Sidebar.GroupLabel>Document Management</Sidebar.GroupLabel>
+			<Sidebar.GroupContent>
+				<SideBarTemplates />
+			</Sidebar.GroupContent>
 		</Sidebar.Group>
 	</Sidebar.Content>
 	<SideBarFooter bind:isDrawerOpen />

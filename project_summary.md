@@ -244,3 +244,21 @@ ALTER TABLE employee_status ENABLE ROW LEVEL SECURITY; CREATE POLICY "Enable rea
 -- Create accomplishment_metrics table CREATE TABLE accomplishment_metrics ( id UUID PRIMARY KEY DEFAULT uuid_generate_v4(), is_included BOOLEAN DEFAULT TRUE NOT NULL, accomplishment_program_project_id UUID REFERENCES accomplishment_program_project(id) ON DELETE CASCADE NOT NULL, metrics TEXT NOT NULL, former_state TEXT, annual_target TEXT, quarter_1_accomplishment TEXT, quarter_2_accomplishment TEXT, quarter_3_accomplishment TEXT, quarter_4_accomplishment TEXT, total_accomplishment TEXT, variance TEXT, remarks TEXT, position SMALLINT NOT NULL, created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL, updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL ); -- Add indexes for better query performance CREATE INDEX idx_accomplishment_metrics_program_project_id ON accomplishment_metrics(accomplishment_program_project_id); CREATE INDEX idx_accomplishment_metrics_position ON accomplishment_metrics(position, accomplishment_program_project_id); -- Add trigger for updating timestamps CREATE TRIGGER set_updated_at BEFORE UPDATE ON accomplishment_metrics FOR EACH ROW EXECUTE FUNCTION fn_set_updated_at();
 ```
 
+# 20250105163140_create_table_accomplishment_report_template.sql
+
+```sql
+-- Create accomplishment_report_template table CREATE TABLE accomplishment_report_template ( id UUID PRIMARY KEY DEFAULT uuid_generate_v4(), is_published BOOLEAN DEFAULT FALSE NOT NULL, created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL, updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL ); -- Add trigger for updating timestamps CREATE TRIGGER set_updated_at BEFORE UPDATE ON accomplishment_report_template FOR EACH ROW EXECUTE FUNCTION fn_set_updated_at();
+```
+
+# 20250105163158_create_table_accomplishment_program_project_template.sql
+
+```sql
+-- Create accomplishment_template_program_project table CREATE TABLE accomplishment_template_program_project ( id UUID PRIMARY KEY DEFAULT uuid_generate_v4(), accomplishment_report_template_id UUID REFERENCES accomplishment_report_template(id) ON DELETE CASCADE NOT NULL, position INTEGER NOT NULL, program_project TEXT NOT NULL, created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL, updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL ); -- Add indexes for better query performance CREATE INDEX idx_accomplishment_template_program_project_template_id ON accomplishment_template_program_project(accomplishment_report_template_id); CREATE INDEX idx_accomplishment_template_program_project_position ON accomplishment_template_program_project(position, accomplishment_report_template_id); -- Add trigger for updating timestamps CREATE TRIGGER set_updated_at BEFORE UPDATE ON accomplishment_template_program_project FOR EACH ROW EXECUTE FUNCTION fn_set_updated_at();
+```
+
+# 20250105163300_create_table_accomplishment_metrics_template.sql
+
+```sql
+-- Create accomplishment_template_metrics table CREATE TABLE accomplishment_template_metrics ( id UUID PRIMARY KEY DEFAULT uuid_generate_v4(), accomplishment_template_program_project_id UUID REFERENCES accomplishment_template_program_project(id) ON DELETE CASCADE NOT NULL, metrics TEXT NOT NULL, former_state TEXT, annual_target TEXT, position INTEGER NOT NULL, created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL, updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL ); -- Add indexes for better query performance CREATE INDEX idx_accomplishment_template_metrics_program_project_id ON accomplishment_template_metrics(accomplishment_template_program_project_id); CREATE INDEX idx_accomplishment_template_metrics_position ON accomplishment_template_metrics(position, accomplishment_template_program_project_id); -- Add trigger for updating timestamps CREATE TRIGGER set_updated_at BEFORE UPDATE ON accomplishment_template_metrics FOR EACH ROW EXECUTE FUNCTION fn_set_updated_at();
+```
+

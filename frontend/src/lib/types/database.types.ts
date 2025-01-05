@@ -201,6 +201,103 @@ export type Database = {
           },
         ]
       }
+      accomplishment_report_template: {
+        Row: {
+          created_at: string
+          id: string
+          is_published: boolean
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_published?: boolean
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_published?: boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      accomplishment_template_metrics: {
+        Row: {
+          accomplishment_template_program_project_id: string
+          annual_target: string | null
+          created_at: string
+          former_state: string | null
+          id: string
+          metrics: string
+          position: number
+          updated_at: string
+        }
+        Insert: {
+          accomplishment_template_program_project_id: string
+          annual_target?: string | null
+          created_at?: string
+          former_state?: string | null
+          id?: string
+          metrics: string
+          position: number
+          updated_at?: string
+        }
+        Update: {
+          accomplishment_template_program_project_id?: string
+          annual_target?: string | null
+          created_at?: string
+          former_state?: string | null
+          id?: string
+          metrics?: string
+          position?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "accomplishment_template_metri_accomplishment_template_prog_fkey"
+            columns: ["accomplishment_template_program_project_id"]
+            isOneToOne: false
+            referencedRelation: "accomplishment_template_program_project"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      accomplishment_template_program_project: {
+        Row: {
+          accomplishment_report_template_id: string
+          created_at: string
+          id: string
+          position: number
+          program_project: string
+          updated_at: string
+        }
+        Insert: {
+          accomplishment_report_template_id: string
+          created_at?: string
+          id?: string
+          position: number
+          program_project: string
+          updated_at?: string
+        }
+        Update: {
+          accomplishment_report_template_id?: string
+          created_at?: string
+          id?: string
+          position?: number
+          program_project?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "accomplishment_template_progr_accomplishment_report_templa_fkey"
+            columns: ["accomplishment_report_template_id"]
+            isOneToOne: false
+            referencedRelation: "accomplishment_report_template"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       employee_status: {
         Row: {
           created_at: string
