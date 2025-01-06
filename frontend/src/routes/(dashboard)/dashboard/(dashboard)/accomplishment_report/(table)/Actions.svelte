@@ -43,7 +43,7 @@
 			><DeleteActionUnit {deleteForm} {id} bind:dropDownOpen /></DropdownMenu.Item
 		>
 		<DropdownMenu.Item onSelect={(e) => e.preventDefault()}>
-			<a href={`/dashboard/operational_plan/${id}`}>
+			<a href={`/dashboard/accomplishment_report/${id}`}>
 				<span class="flex items-center gap-3">
 					<SquareArrowOutUpRight size={16} /> Open
 				</span>
