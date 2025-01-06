@@ -6,6 +6,7 @@ import {
 	updateAccomplishmentReport
 } from './(data)/accomp_services';
 import { getAccReportForms } from './(data)/services_helper';
+import { getAccomplishmentReport } from './(data)/utils';
 
 export const load = (async ({ locals: { supabase, session } }) => {
 	try {
@@ -14,14 +15,10 @@ export const load = (async ({ locals: { supabase, session } }) => {
 			throw error(401, 'Unauthorized');
 		}
 
-		const [{ data: accReport, error: accError }, accReportForm] = await Promise.all([
-			supabase.from('accomplishment_report').select('*').eq('owner_id', user_id),
+		const [accReport, accReportForm] = await Promise.all([
+			getAccomplishmentReport(supabase, user_id),
 			getAccReportForms()
 		]);
-
-		if (accError) {
-			throw error(500, accError.message);
-		}
 
 		return {
 			accReport,
