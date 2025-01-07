@@ -16,6 +16,7 @@
 	import { fetchMetrics } from '../utils/page_client_loader';
 	import Update from './sub_components/program_project/Update.svelte';
 	import Create from './sub_components/metrics/Create.svelte';
+	import { getCurrentAccomplishmentReportTemplateStore } from '../states/accomplishment_report_state';
 
 	//props
 	interface Iprops {
@@ -28,6 +29,7 @@
 	const { removeAccomplishmentProgramProjectTemplate } =
 		getAccomplishmentProgramProjectTemplateStore();
 	const { currentAccomplishmentMetricsTemplate } = setAccomplishmentMetricsTemplateStore();
+	const { canEdit } = getCurrentAccomplishmentReportTemplateStore();
 
 	//states
 	let dndItems = $state<Tables<'accomplishment_template_metrics'>[]>([]);
@@ -125,10 +127,12 @@
 			{#snippet updateAction()}
 				<Update bind:isDrawerOpen {programProject} />
 			{/snippet}
-			<div class="flex gap-4">
-				<Create programProjectId={programProject.id} />
-				<DropDownWrapper bind:isDrawerOpen childrens={[updateAction, deleteAction]} />
-			</div>
+			{#if $canEdit}
+				<div class="flex gap-4">
+					<Create programProjectId={programProject.id} />
+					<DropDownWrapper bind:isDrawerOpen childrens={[updateAction, deleteAction]} />
+				</div>
+			{/if}
 		</div>
 	</header>
 

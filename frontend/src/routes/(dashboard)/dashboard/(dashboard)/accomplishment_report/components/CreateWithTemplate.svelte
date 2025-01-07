@@ -15,12 +15,12 @@
 	import type { AccFormResult } from '../(data)/types';
 	import { getAuthStore } from '$lib/utils/authStore';
 	import { checkProfileCompletion } from '$lib/utils/missingDetailsToast';
-	import IncompleteProfileDialog from './Incomplete.svelte';
 	import { getAccomplishmentReportStore } from '../(data)/accomp_state';
 	import {
 		createAccomplishmentReportSchema,
 		type CreateAccomplishmentReportSchema
 	} from '../(data)/accomp_schema';
+	import IncompleteProfileDialog from '../../operational_plan/(table)/incomplete-profile-dialog.svelte';
 
 	let { data }: { data: SuperValidated<Infer<CreateAccomplishmentReportSchema>> } = $props();
 
@@ -84,17 +84,17 @@
 {:else}
 	<Dialog.Root bind:open={isOpen}>
 		<Dialog.Trigger class={buttonVariants({ variant: 'ghost' })}
-			><Plus /> Without Template</Dialog.Trigger
+			><Plus /> Use Template</Dialog.Trigger
 		>
 		<Dialog.Content class="sm:max-w-auto">
 			<Dialog.Header>
-				<Dialog.Title>Accomplishment Report</Dialog.Title>
+				<Dialog.Title>Accomplishment Report W/ Template</Dialog.Title>
 				<Dialog.Description>
 					An Accomplishment Report documents achievements, outcomes, and progress made during a
 					specific period, highlighting key performance indicators and successful initiatives.
 				</Dialog.Description>
 			</Dialog.Header>
-			<form action="?/createaccreport" method="POST" use:enhance>
+			<form action="?/createaccreportwithtemplate" method="POST" use:enhance>
 				<Form.Field {form} name="title">
 					<Form.Control>
 						{#snippet children({ props })}

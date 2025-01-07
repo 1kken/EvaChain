@@ -11,6 +11,7 @@ import {
 	createAccomplishmentMetricSchemaTemplate,
 	updateAccomplishmentMetricSchemaTemplate
 } from '../schema/metrics_schema';
+import { templatePublishSchema } from '../schema/accomplishment_template_schema';
 
 export async function getTemplateProgramProjects(supabase: SupabaseClient<Database>) {
 	const { data, error } = await supabase.from('accomplishment_template_program_project').select();
@@ -50,5 +51,11 @@ export async function getAccomplishmentMetricsTemplateForms() {
 		createForm: await superValidate(zod(createAccomplishmentMetricSchemaTemplate)),
 		updateForm: await superValidate(zod(updateAccomplishmentMetricSchemaTemplate)),
 		deleteForm: await superValidate(zod(universalDeleteSchema))
+	};
+}
+
+export async function getAccomplishmentTemplatePublishActionsForms() {
+	return {
+		publishForm: await superValidate(zod(templatePublishSchema))
 	};
 }

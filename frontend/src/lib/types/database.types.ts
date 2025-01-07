@@ -1360,6 +1360,17 @@ export type Database = {
         }
         Returns: boolean
       }
+      create_accomplishment_report_from_template: {
+        Args: {
+          p_implementing_unit: string
+          p_title: string
+          p_owner_id: string
+          p_unit_id: number
+          p_office_id?: number
+          p_program_id?: number
+        }
+        Returns: string
+      }
       get_user_role: {
         Args: Record<PropertyKey, never>
         Returns: {

@@ -78,6 +78,71 @@ export async function createAccomplishmentReport(
 	return { form, accData };
 }
 
+export async function createAccomplishmentReportWithTemplate(
+	request: Request,
+	session: Session,
+	supabase: SupabaseClient<Database>
+) {
+	const form = await superValidate<Infer<CreateAccomplishmentReportSchema>, App.Superforms.Message>(
+		request,
+		zod(createAccomplishmentReportSchema)
+	);
+
+	if (!form.valid) {
+		return message(form, { status: 'error', text: 'Unprocessable input!' });
+	}
+
+	const owner_id = session.user.id;
+	const { data: profileData, error: profileError } = await fetchProfileDetails(owner_id, supabase);
+
+	if (profileError || !profileData) {
+		return message(form, { status: 'error', text: `Error fetching profile details` });
+	}
+
+	const result = await checkIfAccomplishmentReportExists(supabase, profileData);
+	if (result.error) {
+		return message(form, result.message);
+	}
+
+	const { unit_id, office_id, program_id } = profileData;
+	if (!unit_id) {
+		return message(form, { status: 'error', text: `Error fetching profile details` });
+	}
+
+	const { title, implementing_unit } = form.data;
+
+	const { data: reportId, error: rpcError } = await supabase.rpc(
+		'create_accomplishment_report_from_template',
+		{
+			p_implementing_unit: implementing_unit,
+			p_title: title,
+			p_owner_id: owner_id,
+			p_unit_id: unit_id,
+			p_office_id: office_id === null ? undefined : office_id,
+			p_program_id: program_id === null ? undefined : program_id
+		}
+	);
+
+	if (rpcError) {
+		return message(form, {
+			status: 'error',
+			text: `Error creating Accomplishment Report ${rpcError.message}`
+		});
+	}
+
+	const { data: accData, error: fetchError } = await supabase
+		.from('accomplishment_report')
+		.select()
+		.eq('id', reportId)
+		.single();
+
+	if (fetchError) {
+		return message(form, { status: 'error', text: `Error fetching created report` });
+	}
+
+	return { form, accData };
+}
+
 export async function deleteAccomplishmentReport(
 	request: Request,
 	supabase: SupabaseClient<Database>

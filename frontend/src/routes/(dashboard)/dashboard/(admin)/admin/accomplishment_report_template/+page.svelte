@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { setAccomplishmentProgramProjectFormContext } from '../../../(dashboard)/accomplishment_report/[accomplishmentId]/states/program_project_form_state';
 	import Header from '../components/Header.svelte';
 	import type { PageData } from './$types';
 	import Index from './components/Index.svelte';
@@ -10,9 +9,10 @@
 	import { setAccomplishmentProgramProjectTemplateStore } from './states/program_project_state';
 	let { data }: { data: PageData } = $props();
 
+	const publishActionForm = data.forms.publishActionsForm.publishForm;
 	//states
 	setAccomplishmentProgramProjectTemplateStore(data.programProjects);
-	setCurrentAccomplishmentReportTemplateStore(data.accomplishmentReport);
+	const { canEdit } = setCurrentAccomplishmentReportTemplateStore(data.accomplishmentReport);
 	//form states
 	setAccomplishmentProgramProjectTemplateFormContext(data.forms.programProjectForms);
 	setAccomplishmentMetricTemplateFormContext(data.forms.metricForms);
@@ -25,12 +25,14 @@
 		<Header
 			title={'Accomplishment Report Template'}
 			description={'Create and manage the accomplishment report template'}
+			showBadge={true}
+			badgeText={$canEdit ? 'Unpublished' : 'Published'}
 		/>
 		<Index />
 	</div>
 
 	<!-- Navigation dock -->
 	<div class="fixed bottom-6 left-0 right-0 z-50 flex justify-center">
-		<NavButton />
+		<NavButton {publishActionForm} />
 	</div>
 </div>

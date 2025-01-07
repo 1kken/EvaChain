@@ -1,7 +1,7 @@
 <script lang="ts">
 	import * as AlertDialog from '$lib/components/ui/alert-dialog';
 	import { buttonVariants } from '$lib/components/ui/button';
-	import { Send, LoaderCircle } from 'lucide-svelte';
+	import { Undo, LoaderCircle } from 'lucide-svelte';
 	import { getCurrentAccomplishmentReportTemplateStore } from '../states/accomplishment_report_state';
 	import { superForm, type SuperValidated } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
@@ -21,7 +21,7 @@
 	let isOpen = $state(false);
 
 	//stores
-	const { currentAccomplishmentReportTemplate, updateAccomplishmentReportTemplate, canEdit } =
+	const { currentAccomplishmentReportTemplate, updateAccomplishmentReportTemplate } =
 		getCurrentAccomplishmentReportTemplateStore();
 
 	//form
@@ -34,7 +34,7 @@
 			const action = result.data as FormResult<AccomplishmentReportTemplateFormResult>;
 			if (form.valid && action.template) {
 				updateAccomplishmentReportTemplate(action.template);
-				showSuccessToast('Template published successfully');
+				showSuccessToast('Template unpublished successfully');
 				isOpen = false;
 			}
 		}
@@ -50,7 +50,7 @@
 	//effect for message
 	$effect(() => {
 		if ($message?.status === 'error') {
-			showErrorToast(`Error publishing template: ${$message.text}`);
+			showErrorToast(`Error unpublishing template: ${$message.text}`);
 		}
 	});
 </script>
@@ -58,31 +58,31 @@
 <AlertDialog.Root bind:open={isOpen}>
 	<AlertDialog.Trigger class="focus-visible:outline-none" id="nav-3">
 		<span class="flex items-center gap-2">
-			<Send class="h-5 w-5" />
-			<span class="hidden md:inline">Publish Template</span>
+			<Undo class="h-5 w-5" />
+			<span class="hidden md:inline">Unpublish Template</span>
 		</span>
 	</AlertDialog.Trigger>
 
 	<AlertDialog.Content>
 		<AlertDialog.Header>
-			<AlertDialog.Title>Publish Template</AlertDialog.Title>
+			<AlertDialog.Title>Unpublish Template</AlertDialog.Title>
 			<AlertDialog.Description>
-				Are you sure you want to publish this template? Once published, it will be available for all
-				users to create accomplishment reports.
+				Are you sure you want to unpublish this template? Once unpublished, it will no longer be
+				available for users to create new accomplishment reports.
 			</AlertDialog.Description>
 		</AlertDialog.Header>
 
 		<AlertDialog.Footer>
 			<AlertDialog.Cancel disabled={$delayed}>Cancel</AlertDialog.Cancel>
 
-			<form action="?/publishaccomplishmenttemplate" method="POST" use:enhance>
+			<form action="?/unpublishaccomplishmenttemplate" method="POST" use:enhance>
 				<input hidden name="template_id" value={$formData.template_id} />
 				<AlertDialog.Action type="submit" disabled={$delayed} class={buttonVariants()}>
 					{#if $delayed}
 						<LoaderCircle class="mr-2 animate-spin" />
-						Publishing...
+						Unpublishing...
 					{:else}
-						Publish
+						Unpublish
 					{/if}
 				</AlertDialog.Action>
 			</form>

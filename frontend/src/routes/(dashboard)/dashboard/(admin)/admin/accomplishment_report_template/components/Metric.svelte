@@ -4,6 +4,7 @@
 	import UniversalDeleteAction from '$lib/custom_components/UniversalDeleteAction.svelte';
 	import type { Tables } from '$lib/types/database.types';
 	import { showWarningToast } from '$lib/utils/toast';
+	import { getCurrentAccomplishmentReportTemplateStore } from '../states/accomplishment_report_state';
 	import { getAccomplishmentMetricTemplateFormContext } from '../states/metrics_form_state';
 	import { getAccomplishmentMetricsTemplateStore } from '../states/metrics_state';
 	import Update from './sub_components/metrics/Update.svelte';
@@ -15,6 +16,7 @@
 	//store
 	const { removeAccomplishmentMetricTemplate } = getAccomplishmentMetricsTemplateStore();
 	const { deleteForm } = getAccomplishmentMetricTemplateFormContext();
+	const { canEdit } = getCurrentAccomplishmentReportTemplateStore();
 
 	//functions
 	function handleDelete(result: { type: string; data: any }) {
@@ -44,9 +46,11 @@
 			{#snippet updateAction()}
 				<Update {metric} />
 			{/snippet}
-			<div class="flex gap-4">
-				<DropDownWrapper bind:isDrawerOpen childrens={[updateAction, deleteAction]} />
-			</div>
+			{#if $canEdit}
+				<div class="flex gap-4">
+					<DropDownWrapper bind:isDrawerOpen childrens={[updateAction, deleteAction]} />
+				</div>
+			{/if}
 		</div>
 	</header>
 </div>

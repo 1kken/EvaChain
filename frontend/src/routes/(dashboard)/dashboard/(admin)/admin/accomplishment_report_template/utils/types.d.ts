@@ -9,3 +9,8 @@ export type MetricsFormResult = {
 	form: any;
 	metrics: Tables<'accomplishment_template_metrics'>;
 };
+
+export type AccomplishmentReportTemplateFormResult = {
+	form: any;
+	template: Tables<'accomplishment_report_template'>;
+};

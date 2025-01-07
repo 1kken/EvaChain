@@ -3,6 +3,7 @@ import { error, type Actions } from '@sveltejs/kit';
 import {
 	getAccomplishmentMetricsTemplateForms,
 	getAccomplishmentProgramProjectTemplateForms,
+	getAccomplishmentTemplatePublishActionsForms,
 	getTemplateAccReport,
 	getTemplateProgramProjects
 } from './utils/page_server_loader';
@@ -16,21 +17,32 @@ import {
 	deleteAccomplishmentMetricTemplate,
 	updateAccomplishmentMetricTemplate
 } from './services/metrics_services';
+import {
+	publishAccomplishmentReportTemplate,
+	unpublishAccomplishmentReportTemplate
+} from './services/accomplishment_report_services';
 
 export const load = (async ({ locals: { supabase } }) => {
 	try {
-		const [programProjects, accomplishmentReport, programProjectForms, metricForms] =
-			await Promise.all([
-				getTemplateProgramProjects(supabase),
-				getTemplateAccReport(supabase),
-				getAccomplishmentProgramProjectTemplateForms(),
-				getAccomplishmentMetricsTemplateForms()
-			]);
+		const [
+			programProjects,
+			accomplishmentReport,
+			programProjectForms,
+			metricForms,
+			publishActionsForm
+		] = await Promise.all([
+			getTemplateProgramProjects(supabase),
+			getTemplateAccReport(supabase),
+			getAccomplishmentProgramProjectTemplateForms(),
+			getAccomplishmentMetricsTemplateForms(),
+			getAccomplishmentTemplatePublishActionsForms()
+		]);
 
 		return {
 			programProjects,
 			accomplishmentReport,
 			forms: {
+				publishActionsForm,
 				programProjectForms: programProjectForms,
 				metricForms: metricForms
 			}
@@ -58,5 +70,11 @@ export const actions = {
 	},
 	updatemetric: async ({ request, locals: { supabase } }) => {
 		return updateAccomplishmentMetricTemplate(request, supabase);
+	},
+	publishaccomplishmenttemplate: async ({ request, locals: { supabase } }) => {
+		return publishAccomplishmentReportTemplate(request, supabase);
+	},
+	unpublishaccomplishmenttemplate: async ({ request, locals: { supabase } }) => {
+		return unpublishAccomplishmentReportTemplate(request, supabase);
 	}
 } satisfies Actions;
