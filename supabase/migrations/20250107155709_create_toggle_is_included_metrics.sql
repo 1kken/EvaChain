@@ -1,4 +1,3 @@
--- Create function to toggle metrics inclusion
 CREATE OR REPLACE FUNCTION toggle_metrics_inclusion(metrics_id uuid)
 RETURNS TABLE (
   id uuid,
@@ -21,7 +20,21 @@ RETURNS TABLE (
 LANGUAGE plpgsql
 SECURITY DEFINER
 AS $$
+DECLARE
+  program_project_included boolean;
 BEGIN
+  -- Check if the parent program/project is included
+  SELECT app.is_included INTO program_project_included
+  FROM accomplishment_metrics am
+  JOIN accomplishment_program_project app ON app.id = am.accomplishment_program_project_id
+  WHERE am.id = toggle_metrics_inclusion.metrics_id;
+
+  -- If program/project is not included, raise an error
+  IF NOT program_project_included THEN
+    RAISE EXCEPTION 'Cannot include metric: Parent program/project is not included. Please include the program/project first.';
+  END IF;
+
+  -- If we get here, we can proceed with the toggle
   RETURN QUERY
   UPDATE accomplishment_metrics am
   SET is_included = NOT am.is_included
