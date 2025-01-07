@@ -2,11 +2,13 @@ import type { Actions, PageServerLoad } from './$types';
 import {
 	createAccomplishmentMetric,
 	deleteAccomplishmentMetric,
+	toggleIsIncludeMetrics,
 	updateAccomplishmentMetric
 } from './services/metrics_services';
 import {
 	createAccomplishmentProgramProject,
 	deleteAccomplishmentProgramProject,
+	toggleIsIncludeProgramProject,
 	updateAccomplishmentProgramProject
 } from './services/program_project_services';
 import {
@@ -52,5 +54,12 @@ export const actions = {
 	},
 	updatemetric: async ({ request, locals: { supabase } }) => {
 		return updateAccomplishmentMetric(request, supabase);
+	},
+	toggleisincludedmetrics: async ({ request, locals: { supabase } }) => {
+		return toggleIsIncludeMetrics(request, supabase);
+	},
+	toggleisincludeprogramproject: async ({ request, locals: { supabase } }) => {
+		console.log('test');
+		return toggleIsIncludeProgramProject(request, supabase);
 	}
 } satisfies Actions;

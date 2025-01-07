@@ -35,5 +35,24 @@ export const updateAccomplishmentMetricSchema = z
 		message: 'At least one field must be provided for update besides id'
 	});
 
+export const toggleIsIncludeMetricsSchema = z.object({
+	id: z.string().uuid('Invalid Metric ID format')
+});
+
+export const updateAccomplishmentMetricWithTemplateSchema = z
+	.object({
+		id: z.string().uuid('Invalid Metric ID format'),
+		quarter_1_accomplishment: z.string().nullable().optional(),
+		quarter_2_accomplishment: z.string().nullable().optional(),
+		quarter_3_accomplishment: z.string().nullable().optional(),
+		quarter_4_accomplishment: z.string().nullable().optional(),
+		total_accomplishment: z.string().nullable().optional(),
+		variance: z.string().nullable().optional(),
+		remarks: z.string().nullable().optional()
+	})
+	.refine((data) => Object.keys(data).length > 1, {
+		message: 'At least one field must be provided for update besides id'
+	});
+export type ToggleIsIncludeMetricsSchema = typeof toggleIsIncludeMetricsSchema;
 export type CreateAccomplishmentMetricSchema = typeof createAccomplishmentMetricSchema;
 export type UpdateAccomplishmentMetricSchema = typeof updateAccomplishmentMetricSchema;

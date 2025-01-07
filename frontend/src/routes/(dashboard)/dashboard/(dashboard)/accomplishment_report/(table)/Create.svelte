@@ -22,7 +22,11 @@
 		type CreateAccomplishmentReportSchema
 	} from '../(data)/accomp_schema';
 
-	let { data }: { data: SuperValidated<Infer<CreateAccomplishmentReportSchema>> } = $props();
+	let {
+		data,
+		isAddDrawerOpen = $bindable()
+	}: { data: SuperValidated<Infer<CreateAccomplishmentReportSchema>>; isAddDrawerOpen: boolean } =
+		$props();
 
 	const { currentUserAccomplishmentReport, addAccomplishmentReport } =
 		getAccomplishmentReportStore();
@@ -39,6 +43,7 @@
 				addAccomplishmentReport(accData);
 				showSuccessToast(`Successfully added accomplishment report ${accData.title}`);
 				isOpen = false;
+				isAddDrawerOpen = false;
 			}
 		}
 	});

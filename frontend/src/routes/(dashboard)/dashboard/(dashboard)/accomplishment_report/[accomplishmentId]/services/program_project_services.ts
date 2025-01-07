@@ -3,8 +3,10 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import { message, superValidate, type Infer } from 'sveltekit-superforms';
 import {
 	createAccomplishmentProgramProjectSchema,
+	toggleIsIncludeProgramProjectSchema,
 	updateAccomplishmentProgramProjectSchema,
 	type CreateAccomplishmentProgramProjectSchema,
+	type ToggleIsIncludeProgramProjectSchema,
 	type UpdateAccomplishmentProgramProjectSchema
 } from '../schema/program_project_schema';
 import { zod } from 'sveltekit-superforms/adapters';
@@ -111,6 +113,38 @@ export async function deleteAccomplishmentProgramProject(
 		return message(form, {
 			status: 'error',
 			text: `Error deleting program/project, ${programProjectError.message}`
+		});
+	}
+
+	return { form, programProject };
+}
+
+export async function toggleIsIncludeProgramProject(
+	request: Request,
+	supabase: SupabaseClient<Database>
+) {
+	const form = await superValidate<
+		Infer<ToggleIsIncludeProgramProjectSchema>,
+		App.Superforms.Message
+	>(request, zod(toggleIsIncludeProgramProjectSchema));
+
+	if (!form.valid) {
+		return message(form, {
+			status: 'error',
+			text: 'Unprocessable input!'
+		});
+	}
+
+	const { id } = form.data;
+
+	const { data: programProject, error: toggleError } = await supabase
+		.rpc('toggle_program_project_inclusion', { program_project_id: id })
+		.single();
+
+	if (toggleError) {
+		return message(form, {
+			status: 'error',
+			text: `Error toggling program inclusion: ${toggleError.message}`
 		});
 	}
 

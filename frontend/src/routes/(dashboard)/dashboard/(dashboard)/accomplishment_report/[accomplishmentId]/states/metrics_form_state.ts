@@ -1,6 +1,7 @@
 import type { Infer, SuperValidated } from 'sveltekit-superforms';
 import type {
 	CreateAccomplishmentMetricSchema,
+	ToggleIsIncludeMetricsSchema,
 	UpdateAccomplishmentMetricSchema
 } from '../schema/metrics_schema';
 
@@ -13,6 +14,7 @@ type AccomplishmentMetricForm = {
 	updateForm: SuperValidated<Infer<UpdateAccomplishmentMetricSchema>>;
 	deleteForm: SuperValidated<Infer<UniversalDeleteSchema>>;
 	createForm: SuperValidated<Infer<CreateAccomplishmentMetricSchema>>;
+	toggleIsIncludeForm: SuperValidated<Infer<ToggleIsIncludeMetricsSchema>>;
 };
 
 export function setAccomplishmentMetricFormContext(forms: AccomplishmentMetricForm) {

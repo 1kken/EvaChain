@@ -21,8 +21,13 @@
 		type CreateAccomplishmentReportSchema
 	} from '../(data)/accomp_schema';
 	import IncompleteProfileDialog from '../../operational_plan/(table)/incomplete-profile-dialog.svelte';
+	import { boolean } from 'zod';
 
-	let { data }: { data: SuperValidated<Infer<CreateAccomplishmentReportSchema>> } = $props();
+	let {
+		data,
+		isAddDrawerOpen = $bindable()
+	}: { data: SuperValidated<Infer<CreateAccomplishmentReportSchema>>; isAddDrawerOpen: boolean } =
+		$props();
 
 	const { currentUserAccomplishmentReport, addAccomplishmentReport } =
 		getAccomplishmentReportStore();
@@ -39,6 +44,7 @@
 				addAccomplishmentReport(accData);
 				showSuccessToast(`Successfully added accomplishment report ${accData.title}`);
 				isOpen = false;
+				isAddDrawerOpen = false;
 			}
 		}
 	});

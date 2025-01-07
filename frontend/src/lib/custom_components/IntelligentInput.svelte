@@ -4,6 +4,7 @@
 	import { fade } from 'svelte/transition';
 	import { cn } from '$lib/utils';
 	import debounce from 'debounce';
+	import { flattenBy } from '@tanstack/table-core';
 
 	interface GrammarError {
 		message: string;
@@ -18,8 +19,10 @@
 		placeholder = 'Start typing to check grammar...',
 		content = $bindable<string | null>(''),
 		name,
-		textAreaWidth = 'fit'
+		textAreaWidth = 'fit',
+		disabled = false
 	} = $props<{
+		disabled?: boolean;
 		placeholder?: string;
 		content?: string | null;
 		name?: string;
@@ -120,6 +123,7 @@
 		bind:value={content}
 		{placeholder}
 		oninput={handleInput}
+		{disabled}
 		class={cn(
 			'min-h-[100px] resize-none',
 			`max-w-${textAreaWidth}`,

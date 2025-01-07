@@ -1,6 +1,7 @@
 import type { Infer, SuperValidated } from 'sveltekit-superforms';
 import type {
 	CreateAccomplishmentProgramProjectSchema,
+	ToggleIsIncludeProgramProjectSchema,
 	UpdateAccomplishmentProgramProjectSchema
 } from '../schema/program_project_schema';
 
@@ -13,6 +14,7 @@ type AccomplishmentProgramProjectForm = {
 	updateForm: SuperValidated<Infer<UpdateAccomplishmentProgramProjectSchema>>;
 	deleteForm: SuperValidated<Infer<UniversalDeleteSchema>>;
 	createForm: SuperValidated<Infer<CreateAccomplishmentProgramProjectSchema>>;
+	toggleIsIncludeForm: SuperValidated<Infer<ToggleIsIncludeProgramProjectSchema>>;
 };
 
 export function setAccomplishmentProgramProjectFormContext(

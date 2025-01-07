@@ -19,6 +19,8 @@
 	import { fetchMetrics } from '../utils/page_loader';
 	import Create from './sub_components/metrics/Create.svelte';
 	import Metric from './Metric.svelte';
+	import { getCurrentAccomplishmentReportStore } from '../states/current_accomplishment_report_state';
+	import ToggleInclude from './sub_components/program_project/ToggleInclude.svelte';
 
 	//props
 	interface Iprops {
@@ -30,6 +32,7 @@
 	const { deleteForm } = getAccomplishmentProgramProjectFormContext();
 	const { removeAccomplishmentProgramProject } = getAccomplishmentProgramProjectStore();
 	const { currentAccomplishmentMetrics } = setAccomplishmentMetricsStore();
+	const { isUsingTemplate } = getCurrentAccomplishmentReportStore();
 
 	//states
 	let dndItems = $state<Tables<'accomplishment_metrics'>[]>([]);
@@ -111,7 +114,13 @@
 					)}
 				/>
 			</Button>
-			<h2 class="text-md md:text-md text-base font-bold">{programProject.program_project}</h2>
+			<h2
+				class={cn('text-md md:text-md text-base font-bold', {
+					'line-through': !programProject.is_included
+				})}
+			>
+				{programProject.program_project}
+			</h2>
 		</div>
 		<div class="flex items-center gap-5">
 			{#snippet deleteAction()}
@@ -126,10 +135,14 @@
 			{#snippet updateAction()}
 				<Update bind:isDrawerOpen {programProject} />
 			{/snippet}
-			<div class="flex gap-4">
-				<Create programProjectId={programProject.id} />
-				<DropDownWrapper bind:isDrawerOpen childrens={[updateAction, deleteAction]} />
-			</div>
+			{#if !$isUsingTemplate}
+				<div class="flex gap-4">
+					<Create programProjectId={programProject.id} />
+					<DropDownWrapper bind:isDrawerOpen childrens={[updateAction, deleteAction]} />
+				</div>
+			{:else}
+				<ToggleInclude {programProject} />
+			{/if}
 		</div>
 	</header>
 

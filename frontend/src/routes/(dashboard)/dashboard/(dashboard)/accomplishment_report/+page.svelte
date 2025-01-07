@@ -22,11 +22,11 @@
 </script>
 
 {#snippet createWithoutTemplate()}
-	<Create data={createForm} />
+	<Create bind:isAddDrawerOpen data={createForm} />
 {/snippet}
 
 {#snippet createWithTemplate()}
-	<CreateWithTemplate data={createForm} />
+	<CreateWithTemplate bind:isAddDrawerOpen data={createForm} />
 {/snippet}
 
 <DataTable

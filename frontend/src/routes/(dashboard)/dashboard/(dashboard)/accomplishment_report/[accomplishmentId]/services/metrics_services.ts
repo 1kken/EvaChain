@@ -3,8 +3,10 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import { message, superValidate, type Infer } from 'sveltekit-superforms';
 import {
 	createAccomplishmentMetricSchema,
+	toggleIsIncludeMetricsSchema,
 	updateAccomplishmentMetricSchema,
 	type CreateAccomplishmentMetricSchema,
+	type ToggleIsIncludeMetricsSchema,
 	type UpdateAccomplishmentMetricSchema
 } from '../schema/metrics_schema';
 import { zod } from 'sveltekit-superforms/adapters';
@@ -109,6 +111,35 @@ export async function deleteAccomplishmentMetric(
 		return message(form, {
 			status: 'error',
 			text: `Error deleting metrics, ${metricsError.message}`
+		});
+	}
+
+	return { form, metrics };
+}
+
+export async function toggleIsIncludeMetrics(request: Request, supabase: SupabaseClient<Database>) {
+	const form = await superValidate<Infer<ToggleIsIncludeMetricsSchema>, App.Superforms.Message>(
+		request,
+		zod(toggleIsIncludeMetricsSchema)
+	);
+
+	if (!form.valid) {
+		return message(form, {
+			status: 'error',
+			text: 'Unprocessable input!'
+		});
+	}
+
+	const { id } = form.data;
+
+	const { data: metrics, error: toggleError } = await supabase
+		.rpc('toggle_metrics_inclusion', { metrics_id: id })
+		.single();
+
+	if (toggleError) {
+		return message(form, {
+			status: 'error',
+			text: `Error toggling metrics: ${toggleError.message}`
 		});
 	}
 

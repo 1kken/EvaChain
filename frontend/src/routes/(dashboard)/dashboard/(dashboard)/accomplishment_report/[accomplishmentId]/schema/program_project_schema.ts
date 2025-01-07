@@ -17,6 +17,11 @@ export const updateAccomplishmentProgramProjectSchema = z
 		message: 'At least one field must be provided for update besides id'
 	});
 
+export const toggleIsIncludeProgramProjectSchema = z.object({
+	id: z.string().uuid('Invalid Metric ID format')
+});
+
+export type ToggleIsIncludeProgramProjectSchema = typeof toggleIsIncludeProgramProjectSchema;
 export type CreateAccomplishmentProgramProjectSchema =
 	typeof createAccomplishmentProgramProjectSchema;
 export type UpdateAccomplishmentProgramProjectSchema =
