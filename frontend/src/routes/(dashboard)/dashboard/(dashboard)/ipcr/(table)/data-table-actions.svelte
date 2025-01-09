@@ -5,7 +5,8 @@
 	import DeleteActionUnit from './delete-action-unit.svelte';
 	import type { SuperValidated } from 'sveltekit-superforms';
 	import type { DeleteIPCRSchema } from '../(data)/schema';
-	import { SquareArrowOutUpRight } from 'lucide-svelte';
+	import { Download, SquareArrowOutUpRight } from 'lucide-svelte';
+	import { enhance } from '$app/forms';
 
 	interface Props {
 		deleteForm: SuperValidated<DeleteIPCRSchema>;
@@ -14,6 +15,11 @@
 
 	let { deleteForm, id }: Props = $props();
 	let dropDownOpen = $state(false);
+
+	function handleDownload(e: { preventDefault: () => void }) {
+		// Prevent DropdownMenu from closing
+		e.preventDefault();
+	}
 </script>
 
 <DropdownMenu.Root bind:open={dropDownOpen}>
@@ -40,6 +46,22 @@
 					<SquareArrowOutUpRight size={16} /> Open
 				</span>
 			</a>
+		</DropdownMenu.Item>
+		<DropdownMenu.Item onselect={handleDownload}>
+			<form action={`/api/ipcr/pdfDownload?id=${id}`} method="POST" class="w-full">
+				<button type="submit" class="flex w-full items-center gap-3">
+					<Download size={16} />
+					Download PDF
+				</button>
+			</form>
+		</DropdownMenu.Item>
+		<DropdownMenu.Item onselect={handleDownload}>
+			<form action={`/api/ipcr/excelDownload?id=${id}`} method="POST" class="w-full">
+				<button type="submit" class="flex w-full items-center gap-3">
+					<Download size={16} />
+					Download Excel
+				</button>
+			</form>
 		</DropdownMenu.Item>
 	</DropdownMenu.Content>
 </DropdownMenu.Root>
