@@ -7,7 +7,7 @@ import {
 	type DeleteIPCRSchemanType
 } from './(data)/schema.js';
 import { error, type Actions } from '@sveltejs/kit';
-import { createIPCR, deleteIPCR, downloadIPCRExcel } from './(data)/ipcr_services.js';
+import { createIPCR, deleteIPCR } from './(data)/ipcr_services.js';
 
 export const load = async ({ params, locals: { supabase, session } }) => {
 	const createIPCRForm = await superValidate(zod(createIPCRSchema));
@@ -25,8 +25,8 @@ export const actions: Actions = {
 	},
 	deleteipcr: async ({ request, locals: { supabase, session } }) => {
 		return deleteIPCR(request, supabase);
-	},
-	downloadIPCRexcel: async ({ request, locals: { supabase, session } }) => {
-		return downloadIPCRExcel(request, supabase);
 	}
+	// downloadIPCRexcel: async ({ request, locals: { supabase, session } }) => {
+	// 	return downloadIPCRExcel(request, supabase);
+	// }
 };

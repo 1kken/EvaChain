@@ -139,8 +139,3 @@ export async function deleteIPCR(request: Request, supabase: SupabaseClient<Data
 	}
 	return { form, deletedIPCR };
 }
-//delete ipcr
-// export async deleteIPCRSchema(request: Request, supabase: SupabaseClient<Database>) {
-// }
-
-//download excel
