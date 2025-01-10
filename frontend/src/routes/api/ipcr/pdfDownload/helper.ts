@@ -1,11 +1,12 @@
 import type { PostgrestError, SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from 'lucide-svelte';
 import type { TDocumentDefinitions, TFontDictionary } from 'pdfmake/interfaces';
-import PdfPrinter from 'pdfmake';
+import dmmmsuLogo from '$lib/assets/pdf/images/dmmmsu-logo.png';
 
+import PdfPrinter from 'pdfmake';
 // Configure fonts
-const TrebuchetMS = process.cwd() + '/src/lib/fonts/TrebuchetMS.ttf';
-const TrebuchetMSBold = process.cwd() + '/src/lib/fonts/TrebuchetMSBold.ttf';
+const TrebuchetMS = process.cwd() + '/src/lib/assets/pdf/fonts/TrebuchetMS.ttf';
+const TrebuchetMSBold = process.cwd() + '/src/lib/assets/pdf/fonts/TrebuchetMSBold.ttf';
 const fonts: TFontDictionary = {
 	TrebuchetMS: {
 		normal: TrebuchetMS,
@@ -22,7 +23,7 @@ export async function generatePDF(
 	supabase: SupabaseClient<Database>,
 	ipcrId: string
 ): Promise<Blob> {
-	const logo = await read('/static/dmmmsu-logo.png').arrayBuffer();
+	const logo = await read(dmmmsuLogo).arrayBuffer();
 	const buffer = Buffer.from(logo);
 	const logoBase64 = buffer.toString('base64');
 
