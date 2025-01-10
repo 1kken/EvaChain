@@ -5,24 +5,27 @@ import PdfPrinter from 'pdfmake';
 
 // Configure fonts
 const fonts: TFontDictionary = {
-	Trebuchet: {
-		normal: 'static/fonts/TrebuchetMS.ttf',
-		bold: 'static/fonts/TrebuchetMSBold.ttf'
+	Times: {
+		normal: 'Times-Roman',
+		bold: 'Times-Bold',
+		italics: 'Times-Italic',
+		bolditalics: 'Times-BoldItalic'
 	}
 };
 
 const printer = new PdfPrinter(fonts);
-import fs from 'fs';
 import type { Tables } from '$lib/types/database.types';
 import { titleCase } from 'title-case';
-// First, read and convert the image
-const logoPath = 'static/dmmmsu-logo.png';
-const logoBase64 = fs.readFileSync(logoPath).toString('base64');
+import { read } from '$app/server';
 
 export async function generatePDF(
 	supabase: SupabaseClient<Database>,
 	ipcrId: string
 ): Promise<Blob> {
+	const logo = await read('/static/dmmmsu-logo.png').arrayBuffer();
+	const buffer = Buffer.from(logo);
+	const logoBase64 = buffer.toString('base64');
+
 	//fetch ipcr
 	const { ipcr, ipcrError } = await fetchIPCR(ipcrId, supabase);
 	if (ipcrError) {
@@ -86,7 +89,7 @@ export async function generatePDF(
 			}
 		},
 		defaultStyle: {
-			font: 'Trebuchet'
+			font: 'Times'
 		}
 	};
 
