@@ -4,15 +4,15 @@ import type { TDocumentDefinitions, TFontDictionary } from 'pdfmake/interfaces';
 import PdfPrinter from 'pdfmake';
 
 // Configure fonts
+const TrebuchetMS = process.cwd() + '/src/lib/fonts/TrebuchetMS.ttf';
+const TrebuchetMSBold = process.cwd() + '/src/lib/fonts/TrebuchetMSBold.ttf';
 const fonts: TFontDictionary = {
-	Times: {
-		normal: 'Times-Roman',
-		bold: 'Times-Bold',
-		italics: 'Times-Italic',
-		bolditalics: 'Times-BoldItalic'
+	TrebuchetMS: {
+		normal: TrebuchetMS,
+		bold: TrebuchetMSBold
 	}
 };
-
+console.log();
 const printer = new PdfPrinter(fonts);
 import type { Tables } from '$lib/types/database.types';
 import { titleCase } from 'title-case';
@@ -89,7 +89,7 @@ export async function generatePDF(
 			}
 		},
 		defaultStyle: {
-			font: 'Times'
+			font: 'TrebuchetMS'
 		}
 	};
 
