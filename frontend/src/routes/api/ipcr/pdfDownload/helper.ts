@@ -5,12 +5,12 @@ import dmmmsuLogo from '$lib/assets/pdf/images/dmmmsu-logo.png';
 
 import PdfPrinter from 'pdfmake';
 // Configure fonts
-const TrebuchetMS = process.cwd() + '/src/lib/assets/pdf/fonts/TrebuchetMS.ttf';
-const TrebuchetMSBold = process.cwd() + '/src/lib/assets/pdf/fonts/TrebuchetMSBold.ttf';
 const fonts: TFontDictionary = {
-	TrebuchetMS: {
-		normal: TrebuchetMS,
-		bold: TrebuchetMSBold
+	Helvetica: {
+		normal: 'Helvetica',
+		bold: 'Helvetica-Bold',
+		italics: 'Helvetica-Oblique',
+		bolditalics: 'Helvetica-BoldOblique'
 	}
 };
 console.log();
@@ -90,7 +90,8 @@ export async function generatePDF(
 			}
 		},
 		defaultStyle: {
-			font: 'TrebuchetMS'
+			font: 'Helvetica',
+			lineHeight: 1.5
 		}
 	};
 
