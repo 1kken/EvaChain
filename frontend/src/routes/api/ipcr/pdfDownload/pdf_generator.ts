@@ -5,7 +5,6 @@ import type { Database } from '$lib/types/database.types';
 import type { TDocumentDefinitions, TFontDictionary } from 'pdfmake/interfaces';
 import PdfPrinter from 'pdfmake';
 import {
-	createSignatureBlock,
 	fetchIPCR,
 	fetchIPCRImmediateSupervisors,
 	fetchProfile,
@@ -13,6 +12,8 @@ import {
 	generateFullName
 } from './helper';
 import { titleCase } from 'title-case';
+import { CenteredLayout } from '$lib/assets/pdf/helper/centerLayout';
+import { createSignatureBlock } from './pdf_gen_helper';
 
 // Configure fonts
 const fonts: TFontDictionary = {
@@ -67,42 +68,42 @@ export async function generatePDF(
 	// Define the document definition
 	const docDefinition: TDocumentDefinitions = {
 		pageOrientation: 'landscape',
-		pageSize: 'LEGAL',
+		pageMargins: [40, 20, 40, 40],
+		pageSize: 'A4',
 		content: [
 			//ulo ulo hahahahaha
 			{
 				table: {
 					headerRows: 1,
 					widths: ['*', 'auto'],
-					heights: [75, 75],
+					heights: [30, 30],
 					body: [
 						[
 							{
 								image: `data:image/png;base64,${logoBase64}`,
-								width: 104,
-								height: 95
+								width: 70,
+								height: 65
 							},
 							{
 								text: 'INDIVIDUAL PERFORMANCE COMMITMENT AND REVIEW (IPCR)',
-								bold: true,
-								margin: [0, 40]
+								bold: true
 							}
 						]
 					]
 				},
+				layout: CenteredLayout,
 				style: 'header'
 			},
 			//panunumpa
 			{
 				text: [
-					{ text: '\u200B\tI, ', fontSize: 12, bold: true },
+					{ text: '\u200B\tI, ', bold: true },
 					//name
-					{ text: fullName + ', ', bold: true, fontSize: 12, decoration: 'underline' },
+					{ text: fullName + ', ', bold: true, decoration: 'underline' },
 					//position
 					{
 						text: titleCase(profile.position.name),
 						bold: true,
-						fontSize: 12,
 						decoration: 'underline'
 					},
 					{ text: '\u0020of the ', fontSize: 12 },
@@ -110,28 +111,27 @@ export async function generatePDF(
 					{
 						text: profile.program.name ?? profile.office.name,
 						bold: true,
-						fontSize: 12,
 						decoration: 'underline'
 					},
 					{
 						text: ', Don Mariano Marcos Memorial State University - ' + profile.unit.name,
 						bold: true,
-						fontSize: 12,
 						decoration: 'underline'
 					},
 					{
-						text: ' commit to deliver and agree to be rated on the attainment of the following targets in accordance with the indicated measures for the period ',
-						fontSize: 12
+						text: ' commit to deliver and agree to be rated on the attainment of the following targets in accordance with the indicated measures for the period '
 					},
 					{
 						text: formatSemesterRange(ipcr.created_at),
 						bold: true,
-						fontSize: 12,
 						decoration: 'underline'
 					},
-					{ text: '.', fontSize: 12 }
+					{ text: '.' }
 				],
-				margin: [0, 20]
+				style: {
+					fontSize: 10
+				},
+				margin: [0, 10]
 			},
 			//Ratings Range Adjectival & prepared by
 			{
@@ -169,7 +169,7 @@ export async function generatePDF(
 					},
 					{
 						table: {
-							widths: [80, 'auto', '*', '*'],
+							widths: [50, 'auto', '*', '*'],
 							body: [
 								[{ text: 'Prepared by:', colSpan: 4, alignment: 'left' }, {}, {}, {}],
 								[
@@ -226,7 +226,7 @@ export async function generatePDF(
 							]
 						},
 						style: {
-							fontSize: 11
+							fontSize: 8
 						},
 						layout: {
 							defaultBorder: false,
@@ -239,37 +239,148 @@ export async function generatePDF(
 						}
 					}
 				],
-				columnGap: 100
+				columnGap: 50
 			},
+			// margin: [left, top, right, bottom]
+			{ text: 'Reviewed by:', alignment: 'left', margin: [0, 10, 0, 0] },
 			//supervisors
 			{
 				columns: [
-					...immediateSupervisors.map((supervisor) => {
+					...immediateSupervisors.map((supervisor, index) => {
 						return createSignatureBlock(supervisor);
 					})
 				],
 				columnGap: 10,
-				margin: [0, 20]
+				//horizontal,vertical
+				margin: [0, 5]
+			},
+			//start of ipcr
+			{
+				table: {
+					widths: ['*', '*', '*', '*', '*'],
+					headerRows: 1,
+					body: [
+						[
+							[
+								{ text: 'Major Final Output \n', bold: true, alignment: 'center' },
+								{ text: '(Workload Units)', alignment: 'center', italics: true }
+							],
+							[
+								{ text: 'Success Indicators', bold: true, alignment: 'center' },
+								{ text: '(Targets + Measures)', alignment: 'center', italics: true }
+							],
+							{ text: 'Actual Accomplishments', bold: true, alignment: 'center' },
+							[
+								{ text: 'Rating', bold: true, alignment: 'center' },
+								{
+									table: {
+										widths: ['*', '*', '*', '*'],
+										body: [
+											[
+												{
+													text: [
+														{ text: 'Q', style: 'normalText' },
+														{ text: '1', sup: true }
+													],
+													alignment: 'center',
+													border: [false, true, true, true]
+												},
+												{
+													text: [
+														{ text: 'E', style: 'normalText' },
+														{ text: '2', sup: true }
+													],
+													alignment: 'center'
+												},
+												{
+													text: [
+														{ text: 'T', style: 'normalText' },
+														{ text: '3', sup: true }
+													],
+													alignment: 'center'
+												},
+												{
+													text: [
+														{ text: 'A', style: 'normalText' },
+														{ text: '4', sup: true }
+													],
+													alignment: 'center',
+													border: [true, true, false, true]
+												}
+											]
+										],
+										margin: [0, 0, 0, 0],
+										layout: {
+											hLineWidth: function () {
+												return 1;
+											},
+											vLineWidth: function () {
+												return 1;
+											},
+											paddingLeft: function () {
+												return 0;
+											},
+											paddingRight: function () {
+												return 0;
+											},
+											paddingTop: function () {
+												return 0;
+											},
+											paddingBottom: function () {
+												return 0;
+											}
+										}
+									}
+								}
+							],
+							{ text: 'Remarks', bold: true, alignment: 'center' }
+						]
+					]
+				},
+				style: {
+					fontSize: 8
+				},
+				margin: [0, 5, 0, 0],
+				layout: {
+					...CenteredLayout,
+					paddingLeft: function (i, node) {
+						const cell = node.table.body[0][i];
+						console.log(cell);
+						return typeof cell === 'object' && 'table' in cell ? 0 : 4;
+					},
+					paddingRight: function (i, node) {
+						const cell = node.table.body[0][i];
+						return typeof cell === 'object' && 'table' in cell ? 0 : 4;
+					},
+					paddingTop: function (i, node) {
+						const cell = node.table.body[0][i];
+						return typeof cell === 'object' && 'table' in cell ? 0 : 4;
+					},
+					paddingBottom: function (i, node) {
+						const cell = node.table.body[0][i];
+						return typeof cell === 'object' && 'table' in cell ? 0 : 4;
+					}
+				}
 			}
 		],
 
 		styles: {
 			header: {
-				fontSize: 14,
+				fontSize: 12,
 				bold: true,
 				alignment: 'center' as const,
 				margin: [0, 0]
 			},
 			ratings: {
-				fontSize: 11,
+				fontSize: 9,
 				alignment: 'center' as const,
 				margin: [0, 0]
 			}
 		},
 		defaultStyle: {
 			font: 'Helvetica',
-			lineHeight: 1.5,
-			fontSize: 12
+			lineHeight: 1.2,
+			fontSize: 9
 		}
 	};
 

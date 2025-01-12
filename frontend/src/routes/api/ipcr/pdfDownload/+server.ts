@@ -1,5 +1,5 @@
 import { error, type RequestHandler } from '@sveltejs/kit';
-import { generatePDF } from './pdfGenerator';
+import { generatePDF } from './pdf_generator';
 export const POST: RequestHandler = async ({ url, locals: { supabase } }) => {
 	const id = url.searchParams.get('id');
 	if (!id) throw error(400, 'IPCR ID is required');

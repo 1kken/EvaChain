@@ -2,6 +2,7 @@ import type { PostgrestError, SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from 'lucide-svelte';
 import type { Tables } from '$lib/types/database.types';
 import { titleCase } from 'title-case';
+import { CenteredLayout } from '$lib/assets/pdf/helper/centerLayout';
 
 //UTILS
 interface ProfileResult {
@@ -108,82 +109,4 @@ export async function fetchIPCRImmediateSupervisors(
 		fullName: supervisor.full_name,
 		position: supervisor.position
 	}));
-}
-interface SignatureBlockProps {
-	fullName: string;
-	position: string | null;
-	label?: string;
-}
-
-export function createSignatureBlock({
-	fullName,
-	position,
-	label = 'Reviewed by:'
-}: SignatureBlockProps) {
-	return {
-		width: 'auto',
-		table: {
-			widths: [80, 'auto', '*', '*'],
-			body: [
-				[{ text: label, colSpan: 4, alignment: 'left' }, {}, {}, {}],
-				[
-					{ text: '' },
-					{ text: 'Signature', alignment: 'left' },
-					{
-						text: '',
-						alignment: 'justify',
-						border: [false, false, false, true],
-						colSpan: 2,
-						margin: [0, 0, 0, 0]
-					},
-					{}
-				],
-				[
-					{ text: '' },
-					{ text: 'Name', alignment: 'left' },
-					{
-						text: fullName.toUpperCase(),
-						alignment: 'center',
-						border: [false, false, false, true],
-						colSpan: 2,
-						bold: true,
-						margin: [0, 0, 0, 0]
-					},
-					{}
-				],
-				[
-					{ text: '' },
-					{ text: 'Position', alignment: 'left' },
-					{
-						text: (position || '').toUpperCase(),
-						alignment: 'center',
-						border: [false, false, false, true],
-						colSpan: 2,
-						bold: true,
-						margin: [0, 0, 0, 0]
-					},
-					{}
-				],
-				[
-					{ text: '' },
-					{ text: 'Date', alignment: 'left' },
-					{
-						text: '',
-						alignment: 'center',
-						border: [false, false, false, true],
-						colSpan: 2,
-						bold: true,
-						margin: [0, 0, 0, 0]
-					},
-					{}
-				]
-			]
-		},
-		style: {
-			fontSize: 11
-		},
-		layout: {
-			defaultBorder: false
-		}
-	};
 }

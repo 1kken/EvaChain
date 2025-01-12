@@ -303,4 +303,3 @@ INSERT INTO accomplishment_report_template (
     TIMEZONE('utc'::text, NOW())      -- Current timestamp
 );
 
-
