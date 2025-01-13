@@ -69,36 +69,3 @@ export function createSignatureBlock({ fullName, position }: SignatureBlockProps
 		}
 	};
 }
-
-export function createIPCRTable() {
-	return {
-		width: 'auto',
-		table: {
-			widths: ['*', '*', '*', '*', '*', '*'],
-			body: [
-				[
-					{ text: 'No.', bold: true, alignment: 'center' },
-					{ text: 'Key Result Areas', bold: true, alignment: 'center' },
-					{ text: 'Objectives', bold: true, alignment: 'center' },
-					{ text: 'Measures', bold: true, alignment: 'center' },
-					{ text: 'Actual Accomplishments', bold: true, alignment: 'center' },
-					{ text: 'Rating', bold: true, alignment: 'center' }
-				],
-				[
-					{ text: '1', alignment: 'center' },
-					{ text: '2', alignment: 'center' },
-					{ text: '3', alignment: 'center' },
-					{ text: '4', alignment: 'center' },
-					{ text: '5', alignment: 'center' },
-					{ text: '6', alignment: 'center' }
-				]
-			]
-		},
-		style: {
-			fontSize: 8
-		},
-		layout: {
-			defaultBorder: false
-		}
-	};
-}

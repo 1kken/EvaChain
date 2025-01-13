@@ -1279,6 +1279,15 @@ export type Database = {
       }
     }
     Views: {
+      ipcr_supervisors: {
+        Row: {
+          full_name: string | null
+          id: string | null
+          ipcr_id: string | null
+          position: string | null
+        }
+        Relationships: []
+      }
       operational_plan_activities: {
         Row: {
           activity: string | null
@@ -1381,6 +1390,43 @@ export type Database = {
       is_system_admin: {
         Args: Record<PropertyKey, never>
         Returns: boolean
+      }
+      toggle_metrics_inclusion: {
+        Args: {
+          metrics_id: string
+        }
+        Returns: {
+          id: string
+          is_included: boolean
+          accomplishment_program_project_id: string
+          metrics: string
+          former_state: string
+          annual_target: string
+          quarter_1_accomplishment: string
+          quarter_2_accomplishment: string
+          quarter_3_accomplishment: string
+          quarter_4_accomplishment: string
+          total_accomplishment: string
+          variance: string
+          remarks: string
+          position: number
+          created_at: string
+          updated_at: string
+        }[]
+      }
+      toggle_program_project_inclusion: {
+        Args: {
+          program_project_id: string
+        }
+        Returns: {
+          id: string
+          is_included: boolean
+          accomplishment_report_id: string
+          program_project: string
+          position: number
+          created_at: string
+          updated_at: string
+        }[]
       }
       validate_ipcr: {
         Args: {
