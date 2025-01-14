@@ -2,26 +2,15 @@ import { read } from '$app/server';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import dmmmsuLogo from '$lib/assets/pdf/images/dmmmsu-logo.png';
 import type { Database } from '$lib/types/database.types';
-import type {
-	ContentStack,
-	Table,
-	TableCell,
-	TDocumentDefinitions,
-	TFontDictionary
-} from 'pdfmake/interfaces';
+import type { TDocumentDefinitions, TFontDictionary } from 'pdfmake/interfaces';
 import PdfPrinter from 'pdfmake';
-import {
-	fetchIPCR,
-	fetchIPCRImmediateSupervisors,
-	fetchProfile,
-	formatSemesterRange,
-	generateFullName
-} from './helper';
+import { fetchIPCR, fetchIPCRImmediateSupervisors, fetchProfile, generateFullName } from './helper';
 import { generateHeader } from './parts/header';
 import { generateProfile } from './parts/profile';
 import { generateSupervisor } from './parts/supervisors';
 import { generateSubHeader } from './parts/sub_header';
 import { generateIPCRTable } from './parts/ipcr';
+import { generateIPCRSummary } from './parts/ipcr_summary_helper';
 
 // Configure fonts
 const fonts: TFontDictionary = {
@@ -77,10 +66,21 @@ export async function generatePDF(
 		.toUpperCase();
 
 	// Define the document definition
+	const { table: ipcrBody, categories } = await generateIPCRTable(ipcrId, supabase);
 	const docDefinition: TDocumentDefinitions = {
 		pageOrientation: 'landscape',
 		pageMargins: [40, 20, 40, 40],
 		pageSize: 'A4',
+		pageBreakBefore: function (currentNode, followingNodesOnPage) {
+			return currentNode.headlineLevel === 1 && followingNodesOnPage.length <= 1;
+		},
+		footer: function () {
+			return {
+				text: 'DMMMSU-PRD-FOO3 \n Rev 00 (10-10-2020)',
+				alignment: 'left',
+				margin: [40, 10, 0, 0]
+			};
+		},
 		content: [
 			//ulo ulo hahahahaha
 			generateHeader(logoBase64),
@@ -90,7 +90,8 @@ export async function generatePDF(
 			{ text: 'Reviewed by:', alignment: 'left', margin: [0, 10, 0, 0] },
 			//supervisors
 			generateSupervisor(immediateSupervisors),
-			await generateIPCRTable(ipcrId, supabase)
+			ipcrBody,
+			generateIPCRSummary(categories)
 		],
 
 		styles: {

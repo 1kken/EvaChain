@@ -24,8 +24,8 @@ VALUES
     (
         'a392f75c-6f4e-4e34-a91e-6b1c7a590e1d',
         'draft',
-        'f1234567-1234-5678-1234-567812345678',
-        'c1234567-1234-5678-1234-567812345678',
+        NULL,
+        NULL,
         'b392f75c-6f4e-4e34-a91e-6b1c7a590d3d',
         'Prepare action plan for 1st Semester, SY 2024-2025',
         '1 Action Plan for approval by the immediate supervisor',
@@ -44,8 +44,8 @@ VALUES
     (
         'a392f75c-6f4e-4e34-a91e-6b1c7a590e2d',
         'draft',
-        'f1234567-1234-5678-1234-567812345678',
-        'c1234567-1234-5678-1234-567812345678',
+        NULL,
+        NULL,
         'b392f75c-6f4e-4e34-a91e-6b1c7a590d3d',
         'Implement approved Action Plan',
         '1 Action Plan implemented',
@@ -64,8 +64,8 @@ VALUES
     (
         'a392f75c-6f4e-4e34-a91e-6b1c7a590e3d',
         'draft',
-        'f1234567-1234-5678-1234-567812345678',
-        'c2345678-2345-6789-2345-678923456789',
+        NULL,
+        NULL,
         'e2d4f6a8-1234-5678-90ab-cdef12345678',
         'Prepare syllabus and learning plan',
         '1 syllabus & 1 learning plan',
@@ -83,8 +83,8 @@ VALUES
     (
         'a392f75c-6f4e-4e34-a91e-6b1c7a590e4d',
         'draft',
-        'f1234567-1234-5678-1234-567812345678',
-        'c2345678-2345-6789-2345-678923456789',
+        NULL,
+        NULL,
         'e2d4f6a8-1234-5678-90ab-cdef12345678',
         'Develop instructional materials for the assigned subjects',
         'At least 1 IM per subject assigned',
@@ -103,7 +103,7 @@ VALUES
     (
         'a392f75c-6f4e-4e34-a91e-6b1c7a590e5d',
         'draft',
-        'f1234567-1234-5678-1234-567812345678',
+        NULL,
         'c3456789-3456-7890-3456-789034567890',
         NULL,
         'Prepare research proposal',
@@ -123,7 +123,7 @@ VALUES
     (
         'a392f75c-6f4e-4e34-a91e-6b1c7a590e6d',
         'draft',
-        'f1234567-1234-5678-1234-567812345678',
+        NULL,
         'c4567890-4567-8901-4567-890145678901',
         NULL,
         'Participate in a college extension activity',
@@ -143,7 +143,7 @@ VALUES
     (
         'a392f75c-6f4e-4e34-a91e-6b1c7a590e7d',
         'draft',
-        'f1234567-1234-5678-1234-567812345678',
+        NULL,
         'c5678901-5678-9012-5678-901256789012',
         NULL,
         'Plan academic (specific) related activities to be implemented in the Campus/College',
@@ -162,7 +162,7 @@ VALUES
     (
         'a392f75c-6f4e-4e34-a91e-6b1c7a590e8d',
         'draft',
-        'f1234567-1234-5678-1234-567812345678',
+        NULL,
         'c5678901-5678-9012-5678-901256789012',
         NULL,
         'Process request of faculty members and staff',
