@@ -1,0 +1,9 @@
+# Ignore .env and .env.example files
+.env
+.env.example
+
+# Ignore the .gitignore file itself
+.gitignore
+
+# Ignore the seeds folder and all its contents
+seeds/

@@ -14,6 +14,7 @@ INSERT INTO
         position
     )
 VALUES
+    --JUST FOR THE SEEDING FOR IPCR
     (
         'f392f75c-6f4e-4e34-a91e-6b1c7a590d4d',
         'e392f75c-6f4e-4e34-a91e-6b1c7a590d4d',
