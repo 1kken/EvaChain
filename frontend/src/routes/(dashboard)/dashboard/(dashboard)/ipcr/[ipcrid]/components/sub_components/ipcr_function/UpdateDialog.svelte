@@ -14,6 +14,7 @@
 	import { getIpcrFunctionStore } from '../../../states/ipcr_function_state';
 	import type { IPCRFunctionFormResult } from '../../../utils/types';
 	import type { Tables } from '$lib/types/database.types';
+	import { Input } from '$lib/components/ui/input';
 
 	//props
 	let {
@@ -23,7 +24,8 @@
 
 	//stores
 	const { updateForm } = getIpcrFunctionFormContext();
-	const { currentIpcrFunctions, updateIpcrFunction } = getIpcrFunctionStore();
+	const { currentIpcrFunctions, updateIpcrFunction, getTotalPercentage } = getIpcrFunctionStore();
+	let totalPercentage = $state(getTotalPercentage());
 	//states
 	let isOpen = $state(false);
 
@@ -61,6 +63,8 @@
 	$effect(() => {
 		$formData.id = ipcrFunction.id;
 		$formData.title = ipcrFunction.title;
+		$formData.percentage = ipcrFunction.percentage;
+		$formData.remainingPercentage = 100 - totalPercentage;
 	});
 
 	//effect for message
@@ -104,6 +108,20 @@
 							name={props.name}
 							placeholder={'Type IPCR Function here'}
 						/>
+						<Form.Field {form} name="percentage">
+							<Form.Control>
+								{#snippet children({ props })}
+									<Form.Label>Weight Percentage Allocation</Form.Label>
+									<Input type="number" {...props} bind:value={$formData.percentage} />
+								{/snippet}
+							</Form.Control>
+							<Form.Description
+								>This will be used for calculating your IPCR report, Remaining percentage <span
+									class="font-bold">{totalPercentage}% / 100%</span
+								>.</Form.Description
+							>
+							<Form.FieldErrors />
+						</Form.Field>
 					{/snippet}
 				</Form.Control>
 				<Form.FieldErrors />

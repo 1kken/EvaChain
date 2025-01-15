@@ -1,6 +1,6 @@
 import type { Database } from '$lib/types/database.types';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import { generateIPCRBody } from './ipcr_helper';
+import { generateIPCRBody } from './ipcr_body_helper';
 import { getIPCRFunctionsById } from '../helper';
 import type { Content } from 'pdfmake/interfaces';
 import type { CategoryStore } from './ipcr_utils';

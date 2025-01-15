@@ -4,8 +4,11 @@ import { message, superValidate, type Infer } from 'sveltekit-superforms';
 import {
 	createIPCRSchema,
 	deleteIPCRSchema,
+	updateIPCRSchema,
 	type CreateIPCRSchema,
-	type DeleteIPCRSchemanType
+	type DeleteIPCRSchemanType,
+	type UpdateIPCRSchema,
+	type UpdateIPCRSchemaType
 } from './schema';
 import { zod } from 'sveltekit-superforms/adapters';
 
@@ -28,7 +31,7 @@ function createTitle(last_name: string) {
 async function createCoreFunction(supabase: SupabaseClient<Database>, ipcrId: string) {
 	const { data, error } = await supabase
 		.from('ipcr_function')
-		.insert({ ipcr_id: ipcrId, title: 'Core Functions', position: 0 })
+		.insert({ ipcr_id: ipcrId, title: 'Core Functions', position: 0, percentage: 80 })
 		.select();
 
 	return { data, error };
@@ -51,6 +54,7 @@ export async function createIPCR(
 		});
 	}
 
+	console.log(form.data);
 	const { owner_id } = form.data;
 	//check if the same user
 	if (owner_id !== session?.user.id) {
@@ -84,7 +88,7 @@ export async function createIPCR(
 	//create the ipcr
 	const { data: ipcrData, error: ipcrError } = await supabase
 		.from('ipcr')
-		.insert({ title, owner_id, unit_id, office_id, program_id })
+		.insert({ title, unit_id, office_id, program_id, ...form.data })
 		.select()
 		.single();
 
@@ -107,6 +111,36 @@ export async function createIPCR(
 		});
 	}
 
+	return { form, ipcrData };
+}
+
+export async function updateIPCR(request: Request, supabase: SupabaseClient<Database>) {
+	const form = await superValidate<Infer<UpdateIPCRSchemaType>, App.Superforms.Message>(
+		request,
+		zod(updateIPCRSchema)
+	);
+
+	if (!form.valid) {
+		return message(form, {
+			status: 'error',
+			text: 'Unprocessable input!'
+		});
+	}
+
+	const { id } = form.data;
+	const { error, data: ipcrData } = await supabase
+		.from('ipcr')
+		.update({ ...form.data })
+		.eq('id', id)
+		.select()
+		.single();
+
+	if (error) {
+		return message(form, {
+			status: 'error',
+			text: `Error saving IPCR ${error}`
+		});
+	}
 	return { form, ipcrData };
 }
 

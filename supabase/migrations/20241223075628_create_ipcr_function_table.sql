@@ -2,6 +2,7 @@
 CREATE TABLE ipcr_function (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     title VARCHAR(255) NOT NULL,
+    percentage integer NOT NULL,
     ipcr_id UUID REFERENCES ipcr(id) ON DELETE CASCADE NOT NULL,
     position INTEGER NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,

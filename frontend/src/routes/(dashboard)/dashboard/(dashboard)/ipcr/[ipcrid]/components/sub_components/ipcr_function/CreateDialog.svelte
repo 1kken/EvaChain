@@ -12,14 +12,16 @@
 	import { getIpcrFunctionStore } from '../../../states/ipcr_function_state';
 	import type { IPCRFunctionFormResult } from '../../../utils/types';
 	import { getIpcrStore } from '../../../states/current_ipcr_state';
+	import Input from '$lib/components/ui/input/input.svelte';
 
 	//stores
 	const { currentIpcr } = getIpcrStore();
 	const { createForm } = getIpcrFunctionFormContext();
-	const { currentIpcrFunctions, addIpcrFunction, size } = getIpcrFunctionStore();
+	const { currentIpcrFunctions, addIpcrFunction, size, getTotalPercentage } =
+		getIpcrFunctionStore();
 	//states
 	let isOpen = $state(false);
-
+	let totalPercentage = $state(getTotalPercentage());
 	//form
 	const form = superForm(createForm, {
 		id: crypto.randomUUID(),
@@ -53,6 +55,7 @@
 	if ($currentIpcr) {
 		$formData.ipcr_id = $currentIpcr.id;
 		$formData.position = $size + 1;
+		$formData.remainingPercentage = 100 - totalPercentage;
 	}
 
 	//effect for message
@@ -95,6 +98,20 @@
 							name={props.name}
 							placeholder={'Type IPCR Function here'}
 						/>
+						<Form.Field {form} name="percentage">
+							<Form.Control>
+								{#snippet children({ props })}
+									<Form.Label>Weight Percentage Allocation</Form.Label>
+									<Input type="number" {...props} bind:value={$formData.percentage} />
+								{/snippet}
+							</Form.Control>
+							<Form.Description
+								>This will be used for calculating your IPCR report, Remaining percentage <span
+									class="font-bold">{totalPercentage}% / 100%</span
+								>.</Form.Description
+							>
+							<Form.FieldErrors />
+						</Form.Field>
 					{/snippet}
 				</Form.Control>
 				<Form.FieldErrors />

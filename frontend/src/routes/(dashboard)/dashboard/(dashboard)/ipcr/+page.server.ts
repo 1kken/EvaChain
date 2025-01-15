@@ -3,17 +3,19 @@ import { zod } from 'sveltekit-superforms/adapters';
 import {
 	createIPCRSchema,
 	deleteIPCRSchema,
+	updateIPCRSchema,
 	type CreateIPCRSchema,
 	type DeleteIPCRSchemanType
 } from './(data)/schema.js';
 import { error, type Actions } from '@sveltejs/kit';
-import { createIPCR, deleteIPCR } from './(data)/ipcr_services.js';
+import { createIPCR, deleteIPCR, updateIPCR } from './(data)/ipcr_services.js';
 
 export const load = async ({ params, locals: { supabase, session } }) => {
 	const createIPCRForm = await superValidate(zod(createIPCRSchema));
 	const deleteIPCRForm = await superValidate(zod(deleteIPCRSchema));
+	const updateIPCRForm = await superValidate(zod(updateIPCRSchema));
 
-	return { form: { createIPCRForm, deleteIPCRForm } };
+	return { form: { createIPCRForm, deleteIPCRForm, updateIPCRForm } };
 };
 
 export const actions: Actions = {
@@ -23,10 +25,10 @@ export const actions: Actions = {
 		}
 		return createIPCR(request, supabase, session);
 	},
+	updateipcr: async ({ request, locals: { supabase, session } }) => {
+		return updateIPCR(request, supabase);
+	},
 	deleteipcr: async ({ request, locals: { supabase, session } }) => {
 		return deleteIPCR(request, supabase);
 	}
-	// downloadIPCRexcel: async ({ request, locals: { supabase, session } }) => {
-	// 	return downloadIPCRExcel(request, supabase);
-	// }
 };

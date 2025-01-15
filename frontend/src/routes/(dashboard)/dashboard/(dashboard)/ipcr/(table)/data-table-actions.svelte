@@ -4,16 +4,17 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import DeleteActionUnit from './delete-action-unit.svelte';
 	import type { SuperValidated } from 'sveltekit-superforms';
-	import type { DeleteIPCRSchema } from '../(data)/schema';
+	import type { DeleteIPCRSchema, UpdateIPCRSchema } from '../(data)/schema';
 	import { Download, SquareArrowOutUpRight } from 'lucide-svelte';
-	import { enhance } from '$app/forms';
+	import UpdateIpcr from './UpdateIPCR.svelte';
 
 	interface Props {
 		deleteForm: SuperValidated<DeleteIPCRSchema>;
+		updateForm: SuperValidated<UpdateIPCRSchema>;
 		id: string;
 	}
 
-	let { deleteForm, id }: Props = $props();
+	let { deleteForm, updateForm, id }: Props = $props();
 	let dropDownOpen = $state(false);
 
 	function handleDownload(e: { preventDefault: () => void }) {
@@ -38,7 +39,7 @@
 		<DropdownMenu.Separator />
 
 		<DropdownMenu.Item onSelect={(e) => e.preventDefault()}>
-			<DeleteActionUnit {deleteForm} {id} bind:dropDownOpen />
+			<UpdateIpcr {updateForm} {id} bind:dropDownOpen />
 		</DropdownMenu.Item>
 		<DropdownMenu.Item onSelect={(e) => e.preventDefault()}>
 			<a href={`/dashboard/ipcr/${id}`}>
@@ -55,13 +56,8 @@
 				</button>
 			</form>
 		</DropdownMenu.Item>
-		<!-- <DropdownMenu.Item onselect={handleDownload}>
-			<form action={`/api/ipcr/excelDownload?id=${id}`} method="POST" class="w-full">
-				<button type="submit" class="flex w-full items-center gap-3">
-					<Download size={16} />
-					Download Excel
-				</button>
-			</form>
-		</DropdownMenu.Item> -->
+		<DropdownMenu.Item onSelect={(e) => e.preventDefault()}>
+			<DeleteActionUnit {deleteForm} {id} bind:dropDownOpen />
+		</DropdownMenu.Item>
 	</DropdownMenu.Content>
 </DropdownMenu.Root>

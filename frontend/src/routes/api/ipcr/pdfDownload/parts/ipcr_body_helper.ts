@@ -53,9 +53,12 @@ async function main(
 					const categoryAverage =
 						currentCategoryAverages.reduce((a, b) => a + b, 0) / currentCategoryAverages.length;
 					const categories = categoryStore.getAll();
-					if (categories[functionName]?.[currentCategoryId]) {
+					if (categories[functionName]?.categories[currentCategoryId]) {
+						const existingCategory = categories[functionName].categories[
+							currentCategoryId
+						] as Category;
 						categoryStore.add(functionName, currentCategoryId, {
-							...(categories[functionName][currentCategoryId] as Category),
+							...existingCategory,
 							total: parseFloat(categoryAverage.toFixed(2))
 						});
 					}
@@ -119,9 +122,10 @@ async function main(
 			const categoryAverage =
 				currentCategoryAverages.reduce((a, b) => a + b, 0) / currentCategoryAverages.length;
 			const categories = categoryStore.getAll();
-			if (categories[functionName]?.[currentCategoryId]) {
+			if (categories[functionName]?.categories[currentCategoryId]) {
+				const existingCategory = categories[functionName].categories[currentCategoryId] as Category;
 				categoryStore.add(functionName, currentCategoryId, {
-					...(categories[functionName][currentCategoryId] as Category),
+					...existingCategory,
 					total: parseFloat(categoryAverage.toFixed(2))
 				});
 			}
@@ -132,10 +136,15 @@ async function main(
 			const average =
 				averagePerIndicatorInFunction.reduce((a, b) => a + b, 0) /
 				averagePerIndicatorInFunction.length;
+
+			// For functions without categories, add them with a 'total' category
 			categoryStore.add(functionName, 'total', {
 				total: parseFloat(average.toFixed(2))
 			});
 		}
+
+		// Set the percentage for the function based on its type
+		categoryStore.setPercentage(functionName, func.percentage ?? 0);
 
 		rows.push(...generateWeightedAverage(averagePerIndicatorInFunction));
 	}
@@ -252,42 +261,42 @@ function generateIndicator(indicator: Tables<'ipcr_indicator'>): TableCell[][] {
 	context.push([
 		{
 			text: indicator.final_output,
-			alignment: 'center',
+			alignment: 'left',
 			marginTop: marginTop
 		},
 		{
 			text: indicator.success_indicator,
-			alignment: 'center',
+			alignment: 'left',
 			marginTop: marginTop
 		},
 		{
 			text: indicator.actual_accomplishments,
-			alignment: 'center',
+			alignment: 'left',
 			marginTop: marginTop
 		},
 		{
 			text: indicator.quality_rating,
-			alignment: 'center',
+			alignment: 'left',
 			marginTop: marginTop
 		},
 		{
 			text: indicator.efficiency_rating,
-			alignment: 'center',
+			alignment: 'left',
 			marginTop: marginTop
 		},
 		{
 			text: indicator.timeliness_rating,
-			alignment: 'center',
+			alignment: 'left',
 			marginTop: marginTop
 		},
 		{
 			text: indicator.average_rating,
-			alignment: 'center',
+			alignment: 'left',
 			marginTop: marginTop
 		},
 		{
 			text: indicator.remarks,
-			alignment: 'center',
+			alignment: 'left',
 			marginTop: marginTop
 		}
 	]);

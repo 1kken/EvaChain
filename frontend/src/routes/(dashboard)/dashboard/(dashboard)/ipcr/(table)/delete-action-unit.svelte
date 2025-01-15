@@ -31,7 +31,7 @@
 		onUpdate({ form, result }) {
 			const action = result.data as FormResult<IPCRFormResult>;
 			if (form.valid && action) {
-				const ipcrData = action.deletedIPCR;
+				const ipcrData = action.ipcrData;
 				removeIPCR(ipcrData.id);
 				showWarningToast(`Succesfully deleted IPCR ${ipcrData.title}`);
 				closeAllTabs();

@@ -11,6 +11,8 @@ import { generateSupervisor } from './parts/supervisors';
 import { generateSubHeader } from './parts/sub_header';
 import { generateIPCRTable } from './parts/ipcr';
 import { generateIPCRSummary } from './parts/ipcr_summary_helper';
+import { generateComments } from './parts/ipcr_comments_helper';
+import { generateFooter } from './parts/ipcr_footer';
 
 // Configure fonts
 const fonts: TFontDictionary = {
@@ -91,7 +93,9 @@ export async function generatePDF(
 			//supervisors
 			generateSupervisor(immediateSupervisors),
 			ipcrBody,
-			generateIPCRSummary(categories)
+			generateIPCRSummary(categories),
+			generateComments(),
+			generateFooter(ipcr, profile)
 		],
 
 		styles: {

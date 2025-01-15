@@ -322,9 +322,13 @@ export type Database = {
       ipcr: {
         Row: {
           created_at: string
+          dean: string | null
+          head_of_operating_unit: string | null
           id: string
+          immediate_supervisor: string | null
           office_id: number | null
           owner_id: string | null
+          program_chair: string | null
           program_id: number | null
           status: Database["public"]["Enums"]["ipcr_status"]
           title: string
@@ -333,9 +337,13 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          dean?: string | null
+          head_of_operating_unit?: string | null
           id?: string
+          immediate_supervisor?: string | null
           office_id?: number | null
           owner_id?: string | null
+          program_chair?: string | null
           program_id?: number | null
           status?: Database["public"]["Enums"]["ipcr_status"]
           title: string
@@ -344,9 +352,13 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          dean?: string | null
+          head_of_operating_unit?: string | null
           id?: string
+          immediate_supervisor?: string | null
           office_id?: number | null
           owner_id?: string | null
+          program_chair?: string | null
           program_id?: number | null
           status?: Database["public"]["Enums"]["ipcr_status"]
           title?: string
@@ -382,6 +394,7 @@ export type Database = {
           created_at: string
           id: string
           ipcr_id: string
+          percentage: number
           position: number
           title: string
           updated_at: string
@@ -390,6 +403,7 @@ export type Database = {
           created_at?: string
           id?: string
           ipcr_id: string
+          percentage: number
           position: number
           title: string
           updated_at?: string
@@ -398,6 +412,7 @@ export type Database = {
           created_at?: string
           id?: string
           ipcr_id?: string
+          percentage?: number
           position?: number
           title?: string
           updated_at?: string

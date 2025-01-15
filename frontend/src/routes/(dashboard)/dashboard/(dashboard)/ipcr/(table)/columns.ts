@@ -6,13 +6,16 @@ import DataTableActions from './data-table-actions.svelte';
 // import type { DeleteIPCRSchema } from '../(data)/schema';
 import type { SuperValidated } from 'sveltekit-superforms';
 import type { Tables } from '$lib/types/database.types';
-import type { DeleteIPCRSchema } from '../(data)/schema';
+import type { DeleteIPCRSchema, UpdateIPCRSchema } from '../(data)/schema';
 import { cellAround } from '@tiptap/pm/tables';
 import DataLink from './data-link.svelte';
 
 export type IPCR = Tables<'ipcr'>;
 
-export const createColumns = (deleteForm: SuperValidated<DeleteIPCRSchema>): ColumnDef<IPCR>[] => [
+export const createColumns = (
+	deleteForm: SuperValidated<DeleteIPCRSchema>,
+	updateForm: SuperValidated<UpdateIPCRSchema>
+): ColumnDef<IPCR>[] => [
 	{
 		accessorKey: 'title',
 		header: ({ column }) =>
@@ -69,7 +72,7 @@ export const createColumns = (deleteForm: SuperValidated<DeleteIPCRSchema>): Col
 		cell: ({ row }) => {
 			const id = row.original.id;
 			// You can pass whatever you need from `row.original` to the component
-			return renderComponent(DataTableActions, { deleteForm, id });
+			return renderComponent(DataTableActions, { deleteForm, updateForm, id });
 		}
 	}
 ];

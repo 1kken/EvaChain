@@ -23,22 +23,36 @@ interface NoCategory {
 
 type Categories = Category | NoCategory;
 
+interface FunctionData {
+	percentage: number;
+	categories: Record<string, Categories>;
+}
+
 export class CategoryStore {
-	private categories: Record<string, Record<string, Categories>> = {};
+	private store: Record<string, FunctionData> = {};
 
 	add(functionName: string, categoryId: string, data: Categories) {
-		if (!this.categories[functionName]) {
-			this.categories[functionName] = {};
+		if (!this.store[functionName]) {
+			this.store[functionName] = {
+				percentage: 0,
+				categories: {}
+			};
 		}
-		this.categories[functionName][categoryId] = data;
+		this.store[functionName].categories[categoryId] = data;
+	}
+
+	setPercentage(functionName: string, percentage: number) {
+		if (this.store[functionName]) {
+			this.store[functionName].percentage = percentage;
+		}
 	}
 
 	getAll() {
-		return this.categories;
+		return this.store;
 	}
 
 	clear() {
-		this.categories = {};
+		this.store = {};
 	}
 }
 

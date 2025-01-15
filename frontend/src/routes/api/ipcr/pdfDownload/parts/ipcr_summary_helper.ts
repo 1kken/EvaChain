@@ -64,39 +64,53 @@ export function generateIPCRSummary(categories: CategoryStore): Content {
 	return context;
 }
 
+//this is for Grand Total
+interface FunctionRating {
+	finalRating: number; // The final rating for the function
+	percentage: number; // The percentage associated with the function
+}
+
 function generateSummaryBody(categories: CategoryStore): TableCell[][] {
 	const rows: TableCell[][] = [];
 	const categoriesData = categories.getAll();
 	const adjectivalRating = [
-		'Outstanding',
-		'Very Satisfactory',
-		'Satisfactory',
+		'Poor',
 		'Unsatisfactory',
-		'Poor'
+		'Satisfactory',
+		'Very Satisfactory',
+		'Outstanding'
 	];
 
+	const grandTotal: FunctionRating[] = [];
 	for (const functionName in categoriesData) {
-		const categories = categoriesData[functionName];
-		const weightedAverage = Object.entries(categoriesData).reduce(
-			(functionAcc, [functionName, functionCategories]) => {
-				// Sum up only the categories (not the total objects) in this function
-				const functionTotal = Object.values(functionCategories).reduce((categoryAcc, value) => {
-					if ('category' in value) {
-						// Only add if it's a category with units
-						return categoryAcc + value.total;
-					}
-					return categoryAcc;
-				}, 0);
+		const functionData = categoriesData[functionName];
+		const categories = functionData.categories;
 
-				return functionAcc + functionTotal;
-			},
-			0
-		);
+		let weightedAverage = Object.entries(categories).reduce((acc, [_, value]) => {
+			if ('category' in value) {
+				return acc + value.total;
+			}
+			return acc + (value.total || 0);
+		}, 0);
+
 		let categoriesLength = Object.keys(categories).length;
+		if (functionData.categories['total']) {
+			grandTotal.push({
+				finalRating: functionData.categories['total'].total,
+				percentage: functionData.percentage
+			});
+		} else {
+			grandTotal.push({
+				finalRating: weightedAverage / categoriesLength,
+				percentage: functionData.percentage
+			});
+		}
+
 		let isFirst = true;
 		for (const [categoryId, value] of Object.entries(categories)) {
 			// If it's a category with units
 			if ('category' in value) {
+				//push for grand total
 				rows.push([
 					{ text: `${isFirst ? functionName : ''}` },
 					{
@@ -138,7 +152,10 @@ function generateSummaryBody(categories: CategoryStore): TableCell[][] {
 			}
 			isFirst = false;
 		}
+		weightedAverage = 0;
 	}
+
+	const grandTotalValue = calculateGrandTotal(grandTotal);
 	rows.push([
 		{ text: 'Grand Total ', colSpan: 6 },
 		{},
@@ -146,8 +163,8 @@ function generateSummaryBody(categories: CategoryStore): TableCell[][] {
 		{},
 		{},
 		{},
-		{ text: '0', alignment: 'center' },
-		{ text: adjectivalRating[0], alignment: 'center' }
+		{ text: grandTotalValue.toFixed(2), alignment: 'center' },
+		{ text: adjectivalRating[Math.trunc(grandTotalValue) - 1], alignment: 'center' }
 	]);
 
 	// If no data, add a "No Data Available" row
@@ -156,4 +173,11 @@ function generateSummaryBody(categories: CategoryStore): TableCell[][] {
 	}
 
 	return rows;
+}
+
+function calculateGrandTotal(grandTotal: FunctionRating[]): number {
+	const total = grandTotal.reduce((acc, { finalRating, percentage }) => {
+		return acc + finalRating * (percentage / 100);
+	}, 0);
+	return 2.1;
 }

@@ -6,10 +6,24 @@ const IPCRStatus = z.enum(['draft', 'submitted', 'reviewing', 'approved']);
 
 // Schema for creating new IPCR
 export const createIPCRSchema = z.object({
-	owner_id: z.string().uuid()
+	owner_id: z.string().uuid('Invalid owner ID'),
+	head_of_operating_unit: z.string().min(1, 'Head of operation unit name is required'),
+	immediate_supervisor: z.string().min(1, 'Immediate supervisor name is required').optional(),
+	program_chair: z.string().min(1, 'Program chair name is required').optional(),
+	dean: z.string().min(1, 'Dean name is required').optional()
+});
+
+export const updateIPCRSchema = z.object({
+	id: z.string().uuid('Invalid IPCR ID'),
+	head_of_operating_unit: z.string().min(1, 'Head of operation unit name is required'),
+	immediate_supervisor: z.string().min(1, 'Immediate supervisor name is required').optional(),
+	program_chair: z.string().min(1, 'Program chair name is required').optional(),
+	dean: z.string().min(1, 'Dean name is required').optional()
 });
 
 export type CreateIPCRSchema = typeof createIPCRSchema;
+export type UpdateIPCRSchema = z.infer<typeof updateIPCRSchema>;
+export type UpdateIPCRSchemaType = typeof updateIPCRSchema;
 
 export const deleteIPCRSchema = z
 	.object({

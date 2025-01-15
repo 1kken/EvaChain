@@ -33,12 +33,6 @@
 	}
 	let { ipcrFunction }: Iprops = $props();
 
-	//if core function
-	const regex = /core functions/i;
-
-	// Check if the regex matches the text
-	const isCoreFunction = regex.test(ipcrFunction.title);
-
 	//stores
 	const { deleteForm } = getIpcrFunctionFormContext();
 	const { removeIpcrFunction } = getIpcrFunctionStore();
@@ -199,9 +193,7 @@
 						childrens={[createDialog, createIndicatorDialog]}
 						bind:isDrawerOpen={isAddDrawerOpen}
 					/>
-					{#if !isCoreFunction}
-						<DropDownWrapper bind:isDrawerOpen childrens={[updateAction, deleteAction]} />
-					{/if}
+					<DropDownWrapper bind:isDrawerOpen childrens={[updateAction, deleteAction]} />
 				</div>
 			{/if}
 		</div>

@@ -9,6 +9,7 @@ export interface Profile extends Tables<'profiles'> {
 	position: Tables<'position'> | null;
 	employee_status: Tables<'employee_status'> | null;
 	program: Tables<'program'> | null;
+	nature_of_work: Tables<'nature_of_work'> | null; // Added this line
 }
 
 export interface ProfileResult {
@@ -29,7 +30,8 @@ export async function fetchProfile(
       office!office_id (*),
       position!position_id (*),
       employee_status!employee_status_id (*),
-      program!program_id (*)
+      program!program_id (*),
+      nature_of_work!nature_of_work_id (*)
     `
 		)
 		.eq('id', owner_id)
@@ -43,7 +45,8 @@ export async function fetchProfile(
 				office: data.office || null,
 				position: data.position || null,
 				employee_status: data.employee_status || null,
-				program: data.program || null
+				program: data.program || null,
+				nature_of_work: data.nature_of_work || null // Added this line
 			}
 		: null;
 
