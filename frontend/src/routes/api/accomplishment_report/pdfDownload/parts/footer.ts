@@ -3,7 +3,7 @@ import type { Content } from 'pdfmake/interfaces';
 import type { Profile } from '../helper';
 import { titleCase } from 'title-case';
 
-export function generateFooter(profile: Profile, op: Tables<'operational_plan'>): Content {
+export function generateFooter(profile: Profile): Content {
 	const org = profile.office?.name || profile.unit?.name || '';
 	return {
 		marginTop: 10,

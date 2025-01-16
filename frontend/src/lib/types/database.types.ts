@@ -143,7 +143,7 @@ export type Database = {
           id: string
           implementing_unit: string
           office_id: number | null
-          owner_id: string | null
+          owner_id: string
           program_id: number | null
           status: Database["public"]["Enums"]["accomplishment_status"]
           title: string
@@ -156,7 +156,7 @@ export type Database = {
           id?: string
           implementing_unit: string
           office_id?: number | null
-          owner_id?: string | null
+          owner_id: string
           program_id?: number | null
           status?: Database["public"]["Enums"]["accomplishment_status"]
           title: string
@@ -169,7 +169,7 @@ export type Database = {
           id?: string
           implementing_unit?: string
           office_id?: number | null
-          owner_id?: string | null
+          owner_id?: string
           program_id?: number | null
           status?: Database["public"]["Enums"]["accomplishment_status"]
           title?: string

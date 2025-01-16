@@ -64,6 +64,9 @@ sql_paths = [
     './seeds/ipcr/ipcr_category.sql',
     './seeds/ipcr/ipcr_sub_category.sql',
     './seeds/ipcr/ipcr_indicator.sql',
+    './seeds/accomplishment_report/accomplishment_report.sql',
+    './seeds/accomplishment_report/accomplishment_report_program_project.sql',
+    './seeds/accomplishment_report/accomplishment_report_metrics.sql',
     './seeds/*.sql',
 ]
 

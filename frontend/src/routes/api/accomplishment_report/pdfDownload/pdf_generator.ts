@@ -1,13 +1,14 @@
 import { read } from '$app/server';
+import type { SupabaseClient } from '@supabase/supabase-js';
 import dmmmsuLogo from '$lib/assets/pdf/images/dmmmsu-logo.png';
-import type { Database } from '$lib/types/database.types';
+import type { Database, Tables } from '$lib/types/database.types';
 import type { TDocumentDefinitions, TFontDictionary } from 'pdfmake/interfaces';
 import PdfPrinter from 'pdfmake';
 import { generateHeader } from './parts/header';
-import { generateOpBody } from './parts/op_body';
-import type { SupabaseClient } from '@supabase/supabase-js';
-import { fetchOperationalPlan, fetchProfileById } from './helper';
-import { generateFooter } from './parts/op_footer';
+import { generateBody } from './parts/body';
+import { fetchAccomplishmentProgramProjectById, fetchProfileById } from './helper';
+import { generateFooter } from './parts/footer';
+import { error } from '@sveltejs/kit';
 
 // Configure fonts
 const fonts: TFontDictionary = {
@@ -19,44 +20,45 @@ const fonts: TFontDictionary = {
 	}
 };
 const printer = new PdfPrinter(fonts);
-export async function generatePDF(supabase: SupabaseClient<Database>, opId: string): Promise<Blob> {
+export async function generatePDF(
+	supabase: SupabaseClient<Database>,
+	accomplishmentReport: Tables<'accomplishment_report'>,
+	ipcrId: string
+): Promise<Blob> {
 	const logo = await read(dmmmsuLogo).arrayBuffer();
 	const buffer = Buffer.from(logo);
 	const logoBase64 = buffer.toString('base64');
-	const MARGIN_PER_ELEMENT = 10;
 
-	const operationalPlan = await fetchOperationalPlan(opId, supabase);
-	const profile = await fetchProfileById(operationalPlan.creator_id, supabase);
+	const accProgramProject = await fetchAccomplishmentProgramProjectById(ipcrId, supabase);
+	const profile = await fetchProfileById(accomplishmentReport.owner_id, supabase);
+
 	if (!profile) {
-		throw new Error('Profile not found');
+		error(404, { message: 'Profile not found' });
 	}
 
-	// Define the document definition
 	const docDefinition: TDocumentDefinitions = {
 		pageOrientation: 'landscape',
-		pageMargins: [20, 20, 20, 40],
+		pageMargins: [40, 20, 40, 40],
 		pageSize: 'LEGAL',
 		pageBreakBefore: function (currentNode, followingNodesOnPage) {
 			return currentNode.headlineLevel === 1 && followingNodesOnPage.length <= 1;
 		},
 		footer: function () {
 			return {
-				text: 'DMMMSU-PRD-FOO1 \n Rev. No.00 (10-28-2020)',
+				text: 'DMMMSU-PRD-FOO2 Rev. No.00 (10-28-2020)',
 				alignment: 'left',
-				margin: [20, 10, 0, 0],
-				fontSize: 8
+				margin: [40, 10, 0, 0]
 			};
 		},
 		content: [
-			//ulo ulo hahahahaha
-			...generateHeader(
+			generateHeader(
 				logoBase64,
-				MARGIN_PER_ELEMENT,
-				operationalPlan.implementing_unit,
-				operationalPlan.created_at
+				10,
+				accomplishmentReport.implementing_unit,
+				accomplishmentReport.created_at
 			),
-			await generateOpBody(operationalPlan, supabase),
-			generateFooter(profile!, operationalPlan)
+			await generateBody(accProgramProject, supabase),
+			generateFooter(profile)
 		],
 
 		styles: {
@@ -64,7 +66,7 @@ export async function generatePDF(supabase: SupabaseClient<Database>, opId: stri
 				fontSize: 8,
 				bold: true,
 				alignment: 'center' as const,
-				marginTop: 7
+				margin: [0, 0]
 			},
 			ratings: {
 				fontSize: 9,

@@ -6,13 +6,17 @@
 	import type { SuperValidated } from 'sveltekit-superforms';
 	import type { UniversalDeleteInput } from '$lib/schemas/universal_delete_schema';
 	import UpdateDialogUnit from './Update.svelte';
-	import { SquareArrowOutUpRight } from 'lucide-svelte';
+	import { Download, SquareArrowOutUpRight } from 'lucide-svelte';
 	import type { UpdateAccomplishmentReportInput } from '../(data)/accomp_schema';
 
 	interface Props {
 		deleteForm: SuperValidated<UniversalDeleteInput>;
 		updateForm: SuperValidated<UpdateAccomplishmentReportInput>;
 		id: string;
+	}
+	function handleDownload(e: { preventDefault: () => void }) {
+		// Prevent DropdownMenu from closing
+		e.preventDefault();
 	}
 
 	let { deleteForm, updateForm, id }: Props = $props();
@@ -48,6 +52,14 @@
 					<SquareArrowOutUpRight size={16} /> Open
 				</span>
 			</a>
+		</DropdownMenu.Item>
+		<DropdownMenu.Item onselect={handleDownload}>
+			<form action={`/api/accomplishment_report/pdfDownload?id=${id}`} method="POST" class="w-full">
+				<button type="submit" class="flex w-full items-center gap-3">
+					<Download size={16} />
+					Download PDF
+				</button>
+			</form>
 		</DropdownMenu.Item>
 	</DropdownMenu.Content>
 </DropdownMenu.Root>

@@ -8,7 +8,7 @@ CREATE TABLE accomplishment_report (
     implementing_unit TEXT NOT NULL,
     title VARCHAR(255) NOT NULL,
     status accomplishment_status DEFAULT 'draft' NOT NULL,
-    owner_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+    owner_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
     unit_id INTEGER REFERENCES unit(id) ON DELETE CASCADE,
     office_id INTEGER REFERENCES office(id) ON DELETE CASCADE,
     program_id INTEGER REFERENCES program(id) ON DELETE CASCADE,
