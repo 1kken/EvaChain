@@ -88,7 +88,7 @@ export async function generatePDF(
 			generateHeader(logoBase64),
 			//panunumpa
 			generateProfile(profile, fullName, ipcr),
-			generateSubHeader(date, { profile }),
+			generateSubHeader(date, profile),
 			{ text: 'Reviewed by:', alignment: 'left', margin: [0, 10, 0, 0] },
 			//supervisors
 			generateSupervisor(immediateSupervisors),

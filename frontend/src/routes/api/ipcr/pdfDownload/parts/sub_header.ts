@@ -1,11 +1,7 @@
 import type { Column, Content, ContentColumns } from 'pdfmake/interfaces';
-import { generateFullName, type ProfileResultParams } from '../helper';
+import { generateFullName, type Profile, type ProfileResult } from '../helper';
 
-export const generateSubHeader = (
-	date: string,
-	paramProfile: ProfileResultParams
-): ContentColumns => {
-	const profile = paramProfile.profile;
+export const generateSubHeader = (date: string, profile: Profile): ContentColumns => {
 	return {
 		columns: [
 			{
@@ -60,7 +56,7 @@ export const generateSubHeader = (
 							{ text: '' },
 							{ text: 'Name', alignment: 'left' },
 							{
-								text: generateFullName(profile).toUpperCase(),
+								text: generateFullName(profile!).toUpperCase(),
 								alignment: 'center',
 								border: [false, false, false, true],
 								colSpan: 2,
@@ -73,7 +69,7 @@ export const generateSubHeader = (
 							{ text: '' },
 							{ text: 'Position', alignment: 'left' },
 							{
-								text: profile.position.name.toUpperCase(),
+								text: profile!.position!.name.toUpperCase(),
 								alignment: 'center',
 								border: [false, false, false, true],
 								colSpan: 2,
