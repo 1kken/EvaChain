@@ -58,7 +58,7 @@ export async function generatePDF(
 				accomplishmentReport.created_at
 			),
 			await generateBody(accProgramProject, supabase),
-			generateFooter(profile)
+			generateFooter(profile, accomplishmentReport)
 		],
 
 		styles: {

@@ -126,6 +126,22 @@
 					</Form.Description>
 					<Form.FieldErrors />
 				</Form.Field>
+				<Form.Field {form} name="head_of_operating_unit">
+					<Form.Control>
+						{#snippet children({ props })}
+							<Form.Label>Head of Operating Unit</Form.Label>
+							<Input
+								{...props}
+								bind:value={$formData.head_of_operating_unit}
+								placeholder="Juan D. Cruz"
+							/>
+						{/snippet}
+					</Form.Control>
+					<Form.Description>
+						The name of the person in charge of the operating unit.
+					</Form.Description>
+					<Form.FieldErrors />
+				</Form.Field>
 				{#if $delayed}
 					<Form.Button disabled><LoaderCircle class="animate-spin" />Processing...</Form.Button>
 				{:else}

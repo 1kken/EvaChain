@@ -54,11 +54,20 @@ export async function createOperationalPlan(
 		return message(form, { status: 'error', text: `Error fetching profile details` });
 	}
 	//get the form data
-	const { title, implementing_unit } = form.data;
+	const { title, implementing_unit, head_of_operating_unit, head_of_planning } = form.data;
 
 	const { data: opData, error } = await supabase
 		.from('operational_plan')
-		.insert({ title, implementing_unit, creator_id, unit_id, office_id, program_id })
+		.insert({
+			title,
+			implementing_unit,
+			creator_id,
+			unit_id,
+			office_id,
+			program_id,
+			head_of_operating_unit,
+			head_of_planning
+		})
 		.select()
 		.single();
 
@@ -108,11 +117,11 @@ export async function updateOperationalPlan(request: Request, supabase: Supabase
 			text: 'Unprocessable input!'
 		});
 	}
-	const { id, title, implementing_unit } = form.data;
+	const { id, title, implementing_unit, head_of_operating_unit, head_of_planning } = form.data;
 
 	const { data: opData, error } = await supabase
 		.from('operational_plan')
-		.update({ title, implementing_unit })
+		.update({ title, implementing_unit, head_of_operating_unit, head_of_planning })
 		.eq('id', id)
 		.select()
 		.single();

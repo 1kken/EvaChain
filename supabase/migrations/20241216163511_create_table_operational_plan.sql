@@ -2,6 +2,8 @@
 CREATE TABLE operational_plan (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     creator_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+    head_of_planning VARCHAR NOT NULL,
+    head_of_operating_unit VARCHAR NOT NULL,
     unit_id INTEGER REFERENCES unit(id) ON DELETE CASCADE NOT NULL,
     office_id INTEGER REFERENCES office(id) ON DELETE CASCADE,
     program_id INTEGER REFERENCES program(id) ON DELETE CASCADE,

@@ -54,13 +54,14 @@ export async function createAccomplishmentReport(
 	}
 
 	// Get the form data
-	const { title, implementing_unit } = form.data;
+	const { title, implementing_unit, head_of_operating_unit } = form.data;
 
 	// Insert the accomplishment report
 	const { data: accData, error } = await supabase
 		.from('accomplishment_report')
 		.insert({
 			title,
+			head_of_operating_unit,
 			implementing_unit,
 			owner_id,
 			unit_id,
@@ -109,7 +110,7 @@ export async function createAccomplishmentReportWithTemplate(
 		return message(form, { status: 'error', text: `Error fetching profile details` });
 	}
 
-	const { title, implementing_unit } = form.data;
+	const { title, implementing_unit, head_of_operating_unit } = form.data;
 
 	const { data: reportId, error: rpcError } = await supabase.rpc(
 		'create_accomplishment_report_from_template',
@@ -117,6 +118,7 @@ export async function createAccomplishmentReportWithTemplate(
 			p_implementing_unit: implementing_unit,
 			p_title: title,
 			p_owner_id: owner_id,
+			p_head_of_operating_unit: head_of_operating_unit,
 			p_unit_id: unit_id,
 			p_office_id: office_id === null ? undefined : office_id,
 			p_program_id: program_id === null ? undefined : program_id
@@ -190,11 +192,11 @@ export async function updateAccomplishmentReport(
 		});
 	}
 
-	const { id, title, implementing_unit } = form.data;
+	const { id, title, implementing_unit, head_of_operating_unit } = form.data;
 
 	const { data: accData, error } = await supabase
 		.from('accomplishment_report')
-		.update({ title, implementing_unit })
+		.update({ title, implementing_unit, head_of_operating_unit })
 		.eq('id', id)
 		.select()
 		.single();

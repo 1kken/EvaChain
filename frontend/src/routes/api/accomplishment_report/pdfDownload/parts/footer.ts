@@ -3,7 +3,10 @@ import type { Content } from 'pdfmake/interfaces';
 import type { Profile } from '../helper';
 import { titleCase } from 'title-case';
 
-export function generateFooter(profile: Profile): Content {
+export function generateFooter(
+	profile: Profile,
+	accomplishmentReport: Tables<'accomplishment_report'>
+): Content {
 	const org = profile.office?.name || profile.unit?.name || '';
 	return {
 		marginTop: 10,
@@ -11,9 +14,13 @@ export function generateFooter(profile: Profile): Content {
 		columns: [
 			createSignatureBlock(
 				generateFullName(profile),
-				profile.position?.name || '',
-				org,
-				'Prepared by:'
+				'Prepared by:',
+				titleCase(profile.position!.name) + ', ' + titleCase(org)
+			),
+			createSignatureBlock(
+				accomplishmentReport.head_of_operating_unit,
+				'Notded by:',
+				'Head of Operating Unit'
 			)
 		]
 	};
@@ -21,16 +28,11 @@ export function generateFooter(profile: Profile): Content {
 
 export function generateFullName(profile: Tables<'profiles'>): string {
 	const { first_name, middle_name, last_name } = profile;
-	console.log(first_name, middle_name, last_name);
 	return `${first_name} ${middle_name ?? ''} ${last_name}`.toUpperCase();
 }
-export function createSignatureBlock(
-	fullName: string,
-	position: string,
-	org: string,
-	header: string
-): Content {
+export function createSignatureBlock(fullName: string, header: string, title: string): Content {
 	return {
+		unbreakable: true,
 		table: {
 			widths: ['auto', 'auto'],
 			body: [
@@ -55,7 +57,7 @@ export function createSignatureBlock(
 				[
 					{ text: '' },
 					{
-						text: titleCase(position) + ', ' + titleCase(org),
+						text: title,
 						alignment: 'center',
 						border: [false, false, false, true],
 						bold: true,

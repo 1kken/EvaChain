@@ -54,6 +54,8 @@
 	$formData.id = id;
 	$formData.title = currentOperationalPlan?.title ?? 'error';
 	$formData.implementing_unit = currentOperationalPlan?.implementing_unit ?? 'error';
+	$formData.head_of_planning = currentOperationalPlan?.head_of_planning ?? 'error';
+	$formData.head_of_operating_unit = currentOperationalPlan?.head_of_operating_unit ?? 'error';
 
 	function closeAllTabs() {
 		isOpen = false;
@@ -113,6 +115,40 @@
 				>
 				<Form.FieldErrors />
 			</Form.Field>
+			<div class="grid grid-cols-1 md:grid-cols-1">
+				<Form.Field {form} name="head_of_planning">
+					<Form.Control>
+						{#snippet children({ props })}
+							<Form.Label>Head of Institutional Planning and Futures Thinking</Form.Label>
+							<Input
+								{...props}
+								bind:value={$formData.head_of_planning}
+								placeholder="Juan D. Cruz"
+							/>
+						{/snippet}
+					</Form.Control>
+					<Form.Description>
+						The head of the department responsible for developing and implementing the
+					</Form.Description>
+					<Form.FieldErrors />
+				</Form.Field>
+				<Form.Field {form} name="head_of_operating_unit">
+					<Form.Control>
+						{#snippet children({ props })}
+							<Form.Label>Head of Operating Unit</Form.Label>
+							<Input
+								{...props}
+								bind:value={$formData.head_of_operating_unit}
+								placeholder="Juan D. Cruz"
+							/>
+						{/snippet}
+					</Form.Control>
+					<Form.Description>
+						The name of the person in charge of the operating unit.
+					</Form.Description>
+					<Form.FieldErrors />
+				</Form.Field>
+			</div>
 			{#if $delayed}
 				<Form.Button disabled><LoaderCircle class="animate-spin" />Processing...</Form.Button>
 			{:else}

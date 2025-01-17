@@ -11,9 +11,18 @@ export function generateFooter(profile: Profile, op: Tables<'operational_plan'>)
 		columns: [
 			createSignatureBlock(
 				generateFullName(profile),
-				profile.position?.name || '',
-				org,
-				'Prepared by:'
+				'Prepared by:',
+				titleCase(profile.position!.name) + ', ' + titleCase(org)
+			),
+			createSignatureBlock(
+				op.head_of_planning.toUpperCase(),
+				'Noted by:',
+				'Head, Insititutional Planning and Futures Thinking'
+			),
+			createSignatureBlock(
+				op.head_of_operating_unit.toUpperCase(),
+				'Approved by:',
+				'Head of Operating Unit'
 			)
 		]
 	};
@@ -24,13 +33,9 @@ export function generateFullName(profile: Tables<'profiles'>): string {
 	console.log(first_name, middle_name, last_name);
 	return `${first_name} ${middle_name ?? ''} ${last_name}`.toUpperCase();
 }
-export function createSignatureBlock(
-	fullName: string,
-	position: string,
-	org: string,
-	header: string
-): Content {
+export function createSignatureBlock(fullName: string, header: string, title: string): Content {
 	return {
+		unbreakable: true,
 		table: {
 			widths: ['auto', 'auto'],
 			body: [
@@ -55,7 +60,7 @@ export function createSignatureBlock(
 				[
 					{ text: '' },
 					{
-						text: titleCase(position) + ', ' + titleCase(org),
+						text: title,
 						alignment: 'center',
 						border: [false, false, false, true],
 						bold: true,

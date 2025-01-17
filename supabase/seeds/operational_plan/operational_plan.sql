@@ -3,6 +3,8 @@ INSERT INTO
     operational_plan (
         id,
         creator_id,
+        head_of_planning,
+        head_of_operating_unit,
         unit_id,
         office_id,
         program_id,
@@ -16,6 +18,8 @@ VALUES
    (
         'e99f935f-19c6-4d0e-9d7f-54c5b96f9db7', -- id (UUID)
         '3d9b104f-f948-40d5-9626-072e890903f7',
+        'marrisa r. angon',
+        'joanne c. rivera',
         2, -- unit_id (from profile)
         9, -- office_id (from profile)
         1, -- program_id (from profile)
@@ -28,6 +32,8 @@ VALUES
     (
         'b392f75c-6f4e-4e34-a91e-6b1c7a590d4d',
         '3d9b104f-f948-40d5-9626-072e890903f7',
+        'marrisa r. angon',
+        'joanne c. rivera',
         2,
         9,
         1,

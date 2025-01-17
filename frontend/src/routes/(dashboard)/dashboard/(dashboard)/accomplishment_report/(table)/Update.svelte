@@ -60,6 +60,7 @@
 	$formData.id = id;
 	$formData.title = currentAccReport?.title ?? 'error';
 	$formData.implementing_unit = currentAccReport?.implementing_unit ?? 'error';
+	$formData.head_of_operating_unit = currentAccReport?.head_of_operating_unit ?? 'error';
 
 	function closeAllTabs() {
 		isOpen = false;
@@ -118,6 +119,20 @@
 					The unit or department responsible for the activities and achievements detailed in this
 					report.
 				</Form.Description>
+				<Form.FieldErrors />
+			</Form.Field>
+			<Form.Field {form} name="head_of_operating_unit">
+				<Form.Control>
+					{#snippet children({ props })}
+						<Form.Label>Head of Operating Unit</Form.Label>
+						<Input
+							{...props}
+							bind:value={$formData.head_of_operating_unit}
+							placeholder="Juan D. Cruz"
+						/>
+					{/snippet}
+				</Form.Control>
+				<Form.Description>The name of the person in charge of the operating unit.</Form.Description>
 				<Form.FieldErrors />
 			</Form.Field>
 			{#if $delayed}

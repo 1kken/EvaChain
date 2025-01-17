@@ -140,6 +140,7 @@ export type Database = {
       accomplishment_report: {
         Row: {
           created_at: string
+          head_of_operating_unit: string
           id: string
           implementing_unit: string
           office_id: number | null
@@ -153,6 +154,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          head_of_operating_unit: string
           id?: string
           implementing_unit: string
           office_id?: number | null
@@ -166,6 +168,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          head_of_operating_unit?: string
           id?: string
           implementing_unit?: string
           office_id?: number | null
@@ -1388,6 +1391,7 @@ export type Database = {
         Args: {
           p_implementing_unit: string
           p_title: string
+          p_head_of_operating_unit: string
           p_owner_id: string
           p_unit_id: number
           p_office_id?: number
