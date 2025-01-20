@@ -23,7 +23,7 @@ export const generateHeader = (
 							alignment: 'center'
 						},
 						{
-							text: 'OPERATIONAL PLAN',
+							text: `OPERATIONAL PLAN CY ${currentYear}`,
 							bold: true,
 							marginTop: 30,
 							alignment: 'center',
@@ -43,7 +43,7 @@ export const generateHeader = (
 		{
 			text: [
 				{
-					text: `OPERATING/ACADEMIC/ADMINISTRATIVE/TECHNICAL SUPPORT SERVICES UNIT: `,
+					text: `Office/Unit: `,
 					bold: true
 				},
 				{ text: implimentingUnit.toUpperCase(), bold: true, decoration: 'underline' }

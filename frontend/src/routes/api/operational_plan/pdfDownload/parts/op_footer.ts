@@ -7,22 +7,23 @@ export function generateFooter(profile: Profile, op: Tables<'operational_plan'>)
 	const org = profile.office?.name || profile.unit?.name || '';
 	return {
 		marginTop: 10,
-		columnGap: 10,
+		columnGap: 5,
 		columns: [
+			generateLegend(),
 			createSignatureBlock(
 				generateFullName(profile),
 				'Prepared by:',
 				titleCase(profile.position!.name) + ', ' + titleCase(org)
 			),
 			createSignatureBlock(
-				op.head_of_planning.toUpperCase(),
-				'Noted by:',
-				'Head, Insititutional Planning and Futures Thinking'
+				(op.review_by ?? '').toUpperCase(),
+				'Reviewed by:',
+				op.reviewer_position ?? ''
 			),
 			createSignatureBlock(
-				op.head_of_operating_unit.toUpperCase(),
+				(op.approve_by ?? '').toUpperCase(),
 				'Approved by:',
-				'Head of Operating Unit'
+				op.approver_position ?? ''
 			)
 		]
 	};
@@ -85,5 +86,21 @@ export function createSignatureBlock(fullName: string, header: string, title: st
 		layout: {
 			defaultBorder: false
 		}
+	};
+}
+
+function generateLegend(): Content {
+	return {
+		table: {
+			widths: ['auto'],
+			body: [
+				[{ text: 'Signature:', bold: true }],
+				[{ text: 'Printed Name:', bold: true }],
+				[{ text: 'Position:', bold: true }],
+				[{ text: 'Date:', bold: true }]
+			]
+		},
+		layout: 'noBorders',
+		marginTop: 10
 	};
 }

@@ -716,9 +716,9 @@ export type Database = {
           q2_target: string | null
           q3_target: string | null
           q4_target: string | null
-          responsible_officer_unit: string | null
+          responsible_officer_unit: string
           total: string | null
-          total_budgetary_requirements: string | null
+          total_budgetary_requirements: string
           updated_at: string
         }
         Insert: {
@@ -734,9 +734,9 @@ export type Database = {
           q2_target?: string | null
           q3_target?: string | null
           q4_target?: string | null
-          responsible_officer_unit?: string | null
+          responsible_officer_unit: string
           total?: string | null
-          total_budgetary_requirements?: string | null
+          total_budgetary_requirements: string
           updated_at?: string
         }
         Update: {
@@ -752,9 +752,9 @@ export type Database = {
           q2_target?: string | null
           q3_target?: string | null
           q4_target?: string | null
-          responsible_officer_unit?: string | null
+          responsible_officer_unit?: string
           total?: string | null
-          total_budgetary_requirements?: string | null
+          total_budgetary_requirements?: string
           updated_at?: string
         }
         Relationships: [

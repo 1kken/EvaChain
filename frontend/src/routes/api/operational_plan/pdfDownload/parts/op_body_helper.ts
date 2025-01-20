@@ -17,12 +17,12 @@ export async function fetchOpHeadersByOPId(
 	return opHeaders;
 }
 
-export async function fetchOpProgramProjectByOpHeaderId(
+export async function fetchOpAnnualPlanByOpHeaderId(
 	opHeaderId: string,
 	supabase: SupabaseClient<Database>
 ) {
 	const { data: opProgramProject, error } = await supabase
-		.from('op_program_project')
+		.from('op_annual_plan')
 		.select('*')
 		.eq('op_header_id', opHeaderId);
 
@@ -33,30 +33,30 @@ export async function fetchOpProgramProjectByOpHeaderId(
 	return opProgramProject;
 }
 
-export async function fetchOpObjectivesByOpProgramProjectId(
-	opProgramProjectId: string,
-	supabase: SupabaseClient<Database>
-) {
-	const { data: opObjectives, error } = await supabase
-		.from('op_objective')
-		.select('*')
-		.eq('op_program_project_id', opProgramProjectId);
+// export async function fetchOpObjectivesByOpProgramProjectId(
+// 	opProgramProjectId: string,
+// 	supabase: SupabaseClient<Database>
+// ) {
+// 	const { data: opObjectives, error } = await supabase
+// 		.from('op_objective')
+// 		.select('*')
+// 		.eq('op_program_project_id', opProgramProjectId);
 
-	if (error) {
-		throw new Error(error.message);
-	}
+// 	if (error) {
+// 		throw new Error(error.message);
+// 	}
 
-	return opObjectives;
-}
+// 	return opObjectives;
+// }
 
 export async function fetchOpActivitiesByOpObjectiveId(
-	opObjectiveId: string,
+	annualPlanId: string,
 	supabase: SupabaseClient<Database>
 ) {
 	const { data: opActivities, error } = await supabase
 		.from('op_activity')
 		.select('*')
-		.eq('op_objective_id', opObjectiveId);
+		.eq('op_annual_plan_id', annualPlanId);
 
 	if (error) {
 		throw new Error(error.message);

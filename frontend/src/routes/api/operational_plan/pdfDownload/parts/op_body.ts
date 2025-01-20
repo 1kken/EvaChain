@@ -2,9 +2,8 @@ import type { Database, Tables } from '$lib/types/database.types';
 import type { Content, TableCell } from 'pdfmake/interfaces';
 import {
 	fetchOpActivitiesByOpObjectiveId,
-	fetchOpHeadersByOPId,
-	fetchOpObjectivesByOpProgramProjectId,
-	fetchOpProgramProjectByOpHeaderId
+	fetchOpAnnualPlanByOpHeaderId,
+	fetchOpHeadersByOPId
 } from './op_body_helper';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
@@ -12,45 +11,37 @@ export async function generateOpBody(
 	op: Tables<'operational_plan'>,
 	supabase: SupabaseClient<Database>
 ): Promise<Content> {
-	const ratingWidth = 20;
+	const ratingWidth = 30;
 	const opHeaders = await fetchOpHeadersByOPId(op.id, supabase);
 	const cotext: Content = {
 		marginTop: 10,
 		table: {
 			//17 cols
 			widths: [
-				'*',
-				'*',
-				'*',
-				'*',
-				'*',
-				'*',
+				'*', //annual plan
+				'*', //activities
+				'*', //performance Indicator
+				'auto', //former state
 				ratingWidth,
 				ratingWidth,
 				ratingWidth,
 				ratingWidth,
-				'auto',
-				ratingWidth,
-				ratingWidth,
-				ratingWidth,
-				'auto',
-				'auto',
-				'auto'
+				ratingWidth, //Target
+				'*', // REsponsible officer/units
+				'*' // Total budget requirements
 			],
 			headerRows: 1,
 			body: [
 				[
-					{ text: 'Program/project', style: 'header' },
-					{ text: 'Objectives', style: 'header' },
+					{ text: 'Annual Plan', style: 'header' },
 					{ text: 'Activities', style: 'header' },
 					{ text: 'Performance Indicator', style: 'header' },
 					{ text: 'Former State', style: 'header' },
-					{ text: 'Desired State\n(Target)', style: 'header' },
 					{
-						colSpan: 4,
+						colSpan: 5,
 						stack: [
 							{
-								text: 'Time Frame',
+								text: 'Target',
 								style: 'header',
 								bold: true,
 								alignment: 'center'
@@ -58,7 +49,7 @@ export async function generateOpBody(
 							{
 								marginTop: 10,
 								table: {
-									widths: ['*', '*', '*', '*'],
+									widths: ['*', '*', '*', '*', '*'],
 									body: [
 										[
 											{
@@ -71,7 +62,7 @@ export async function generateOpBody(
 											},
 											{
 												text: [
-													{ text: 'E', style: 'normalText' },
+													{ text: 'Q', style: 'normalText' },
 													{ text: '2', sup: true }
 												],
 												alignment: 'center',
@@ -79,7 +70,7 @@ export async function generateOpBody(
 											},
 											{
 												text: [
-													{ text: 'T', style: 'normalText' },
+													{ text: 'Q', style: 'normalText' },
 													{ text: '3', sup: true }
 												],
 												alignment: 'center',
@@ -87,52 +78,14 @@ export async function generateOpBody(
 											},
 											{
 												text: [
-													{ text: 'A', style: 'normalText' },
+													{ text: 'Q', style: 'normalText' },
 													{ text: '4', sup: true }
 												],
 												alignment: 'center',
 												border: [true, true, false, false]
-											}
-										]
-									]
-								}
-							}
-						]
-					},
-					{},
-					{},
-					{},
-					{
-						colSpan: 4,
-						stack: [
-							{
-								text: 'Budgetary Requirements',
-								style: 'header',
-								bold: true,
-								alignment: 'center'
-							},
-							{
-								table: {
-									widths: ['*', '*', '*', '*'],
-									body: [
-										[
-											{
-												text: 'Item',
-												alignment: 'center',
-												border: [false, true, true, false]
 											},
 											{
-												text: 'Qty',
-												alignment: 'center',
-												border: [true, true, true, false]
-											},
-											{
-												text: 'Unit',
-												alignment: 'center',
-												border: [true, true, true, false]
-											},
-											{
-												text: 'Unit Cost',
+												text: 'Total',
 												alignment: 'center',
 												border: [true, true, false, false]
 											}
@@ -145,9 +98,9 @@ export async function generateOpBody(
 					{},
 					{},
 					{},
-					{ text: 'Amount', style: 'header' },
-					{ text: 'Fund Source', style: 'header' },
-					{ text: 'Person/ Unit Resposnible', style: 'header' }
+					{},
+					{ text: 'Responsible \n Officer/Units', style: 'header' },
+					{ text: 'Total Budget \n Requirements', style: 'header' }
 				],
 				...(await main(opHeaders, supabase))
 			]
@@ -165,31 +118,20 @@ async function main(
 
 	for (const opHeader of opHeaders) {
 		rows.push(generateOpHeaderRow(opHeader.title));
-
-		const opProgramProjects = await fetchOpProgramProjectByOpHeaderId(opHeader.id, supabase);
-		for (const opProgramProject of opProgramProjects) {
-			const opObjectives = await fetchOpObjectivesByOpProgramProjectId(
-				opProgramProject.id,
-				supabase
-			);
-			let isFirstProgramProject = true;
-			for (const opObjective of opObjectives) {
-				let isFirsObjective = true;
-				const opActivities = await fetchOpActivitiesByOpObjectiveId(opObjective.id, supabase);
-				for (const opActivity of opActivities) {
-					rows.push(
-						generateBodyRow({
-							programProjectDescription: opProgramProject.description,
-							objective: opObjective.objective,
-							activity: opActivity,
-							isFirstProgramProject,
-							isFirsObjective
-						})
-					);
-					isFirsObjective = false;
-					isFirstProgramProject = false;
-				}
-				isFirstProgramProject = false;
+		//fetch annual plans
+		const opAnnualPlans = await fetchOpAnnualPlanByOpHeaderId(opHeader.id, supabase);
+		let isFirstAnnualPlan = true;
+		for (const opAnnualPlan of opAnnualPlans) {
+			const opActivities = await fetchOpActivitiesByOpObjectiveId(opAnnualPlan.id, supabase);
+			for (const opActivity of opActivities) {
+				rows.push(
+					generateBodyRow({
+						isFirstAnnualPlan,
+						annualPlansDescription: opAnnualPlan.description,
+						activity: opActivity
+					})
+				);
+				isFirstAnnualPlan = false;
 			}
 		}
 	}
@@ -200,14 +142,9 @@ function generateOpHeaderRow(opHeader: string): TableCell[] {
 	return [
 		{
 			text: opHeader,
-			colSpan: 17
+			colSpan: 11,
+			bold: true
 		},
-		{},
-		{},
-		{},
-		{},
-		{},
-		{},
 		{},
 		{},
 		{},
@@ -222,36 +159,27 @@ function generateOpHeaderRow(opHeader: string): TableCell[] {
 }
 
 interface BodyRowParams {
-	programProjectDescription: string;
-	objective: string;
+	isFirstAnnualPlan: boolean;
+	annualPlansDescription: string;
 	activity: Tables<'op_activity'>;
-	isFirstProgramProject: boolean;
-	isFirsObjective: boolean;
 }
 function generateBodyRow(params: BodyRowParams): TableCell[] {
 	return [
-		{ text: params.isFirstProgramProject ? params.programProjectDescription : '' },
-		{ text: params.isFirsObjective ? params.objective : '' },
+		{ text: params.isFirstAnnualPlan ? params.annualPlansDescription : '' },
 		{ text: params.activity.activity },
-		{ text: params.activity.indicator },
+		{
+			text: params.activity.performance_indicator
+		},
 		{
 			text: params.activity.former_state,
 			alignment: 'center'
 		},
-		{
-			text: params.activity.desired_state,
-			alignment: 'center'
-		},
-		{ text: params.activity.q1, alignment: 'center' },
-		{ text: params.activity.q2, alignment: 'center' },
-		{ text: params.activity.q3, alignment: 'center' },
-		{ text: params.activity.q4, alignment: 'center' },
-		{ text: params.activity.item, alignment: 'center' },
-		{ text: params.activity.qty, alignment: 'center' },
-		{ text: params.activity.unit, alignment: 'center' },
-		{ text: params.activity.unit_cost, alignment: 'center' },
-		{ text: params.activity.amount, alignment: 'center' },
-		{ text: params.activity.fund_source, alignment: 'center' },
-		{ text: params.activity.entity_responsible }
+		{ text: params.activity.q1_target, alignment: 'center' },
+		{ text: params.activity.q2_target, alignment: 'center' },
+		{ text: params.activity.q3_target, alignment: 'center' },
+		{ text: params.activity.q4_target, alignment: 'center' },
+		{ text: params.activity.total, alignment: 'center' },
+		{ text: params.activity.responsible_officer_unit, alignment: 'center' },
+		{ text: params.activity.total_budgetary_requirements, alignment: 'center' }
 	];
 }
