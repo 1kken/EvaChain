@@ -705,84 +705,114 @@ export type Database = {
       op_activity: {
         Row: {
           activity: string
-          amount: string | null
           created_at: string
-          desired_state: string
-          entity_responsible: string
           former_state: string
-          fund_source: string | null
           id: string
-          indicator: string
-          item: string | null
-          op_objective_id: string
+          input_type: Database["public"]["Enums"]["input_type_op"]
+          op_annual_plan_id: string
+          performance_indicator: string
           position: number
-          q1: boolean
-          q2: boolean
-          q3: boolean
-          q4: boolean
-          qty: string | null
-          unit: string | null
-          unit_cost: string | null
+          q1_target: string | null
+          q2_target: string | null
+          q3_target: string | null
+          q4_target: string | null
+          responsible_officer_unit: string | null
+          total: string | null
+          total_budgetary_requirements: string | null
           updated_at: string
         }
         Insert: {
           activity: string
-          amount?: string | null
           created_at?: string
-          desired_state: string
-          entity_responsible: string
           former_state: string
-          fund_source?: string | null
           id?: string
-          indicator: string
-          item?: string | null
-          op_objective_id: string
+          input_type?: Database["public"]["Enums"]["input_type_op"]
+          op_annual_plan_id: string
+          performance_indicator: string
           position: number
-          q1?: boolean
-          q2?: boolean
-          q3?: boolean
-          q4?: boolean
-          qty?: string | null
-          unit?: string | null
-          unit_cost?: string | null
+          q1_target?: string | null
+          q2_target?: string | null
+          q3_target?: string | null
+          q4_target?: string | null
+          responsible_officer_unit?: string | null
+          total?: string | null
+          total_budgetary_requirements?: string | null
           updated_at?: string
         }
         Update: {
           activity?: string
-          amount?: string | null
           created_at?: string
-          desired_state?: string
-          entity_responsible?: string
           former_state?: string
-          fund_source?: string | null
           id?: string
-          indicator?: string
-          item?: string | null
-          op_objective_id?: string
+          input_type?: Database["public"]["Enums"]["input_type_op"]
+          op_annual_plan_id?: string
+          performance_indicator?: string
           position?: number
-          q1?: boolean
-          q2?: boolean
-          q3?: boolean
-          q4?: boolean
-          qty?: string | null
-          unit?: string | null
-          unit_cost?: string | null
+          q1_target?: string | null
+          q2_target?: string | null
+          q3_target?: string | null
+          q4_target?: string | null
+          responsible_officer_unit?: string | null
+          total?: string | null
+          total_budgetary_requirements?: string | null
           updated_at?: string
         }
         Relationships: [
           {
-            foreignKeyName: "op_activity_op_objective_id_fkey"
-            columns: ["op_objective_id"]
+            foreignKeyName: "op_activity_op_annual_plan_id_fkey"
+            columns: ["op_annual_plan_id"]
             isOneToOne: false
-            referencedRelation: "op_objective"
+            referencedRelation: "op_annual_plan"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "op_activity_op_objective_id_fkey"
-            columns: ["op_objective_id"]
+            foreignKeyName: "op_activity_op_annual_plan_id_fkey"
+            columns: ["op_annual_plan_id"]
             isOneToOne: false
             referencedRelation: "operational_plan_activities"
-            referencedColumns: ["objective_id"]
+            referencedColumns: ["annual_plan_id"]
+          },
+        ]
+      }
+      op_annual_plan: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          op_header_id: string
+          position: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          id?: string
+          op_header_id: string
+          position: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          op_header_id?: string
+          position?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "op_annual_plan_op_header_id_fkey"
+            columns: ["op_header_id"]
+            isOneToOne: false
+            referencedRelation: "op_header"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "op_annual_plan_op_header_id_fkey"
+            columns: ["op_header_id"]
+            isOneToOne: false
+            referencedRelation: "operational_plan_activities"
+            referencedColumns: ["header_id"]
           },
         ]
       }
@@ -828,126 +858,48 @@ export type Database = {
           },
         ]
       }
-      op_objective: {
-        Row: {
-          created_at: string
-          id: string
-          objective: string
-          op_program_project_id: string
-          position: number
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          objective: string
-          op_program_project_id: string
-          position: number
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          objective?: string
-          op_program_project_id?: string
-          position?: number
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "op_objective_op_program_project_id_fkey"
-            columns: ["op_program_project_id"]
-            isOneToOne: false
-            referencedRelation: "op_program_project"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "op_objective_op_program_project_id_fkey"
-            columns: ["op_program_project_id"]
-            isOneToOne: false
-            referencedRelation: "operational_plan_activities"
-            referencedColumns: ["program_project_id"]
-          },
-        ]
-      }
-      op_program_project: {
-        Row: {
-          created_at: string
-          description: string
-          id: string
-          op_header_id: string
-          position: number
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          description: string
-          id?: string
-          op_header_id: string
-          position: number
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          description?: string
-          id?: string
-          op_header_id?: string
-          position?: number
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "op_program_project_op_header_id_fkey"
-            columns: ["op_header_id"]
-            isOneToOne: false
-            referencedRelation: "op_header"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "op_program_project_op_header_id_fkey"
-            columns: ["op_header_id"]
-            isOneToOne: false
-            referencedRelation: "operational_plan_activities"
-            referencedColumns: ["header_id"]
-          },
-        ]
-      }
       operational_plan: {
         Row: {
+          approve_by: string | null
+          approver_position: string | null
           created_at: string
           creator_id: string
-          head_of_operating_unit: string
-          head_of_planning: string
           id: string
           implementing_unit: string
           office_id: number | null
           program_id: number | null
+          review_by: string | null
+          reviewer_position: string | null
           title: string
           unit_id: number
           updated_at: string
         }
         Insert: {
+          approve_by?: string | null
+          approver_position?: string | null
           created_at?: string
           creator_id: string
-          head_of_operating_unit: string
-          head_of_planning: string
           id?: string
           implementing_unit: string
           office_id?: number | null
           program_id?: number | null
+          review_by?: string | null
+          reviewer_position?: string | null
           title: string
           unit_id: number
           updated_at?: string
         }
         Update: {
+          approve_by?: string | null
+          approver_position?: string | null
           created_at?: string
           creator_id?: string
-          head_of_operating_unit?: string
-          head_of_planning?: string
           id?: string
           implementing_unit?: string
           office_id?: number | null
           program_id?: number | null
+          review_by?: string | null
+          reviewer_position?: string | null
           title?: string
           unit_id?: number
           updated_at?: string
@@ -1322,35 +1274,32 @@ export type Database = {
           activity_id: string | null
           activity_position: number | null
           activity_updated_at: string | null
-          amount: string | null
+          annual_plan_description: string | null
+          annual_plan_id: string | null
+          annual_plan_position: number | null
+          approve_by: string | null
+          approver_position: string | null
           creator_id: string | null
-          desired_state: string | null
-          entity_responsible: string | null
           former_state: string | null
-          fund_source: string | null
           header_id: string | null
           header_position: number | null
           header_title: string | null
           implementing_unit: string | null
-          indicator: string | null
-          item: string | null
-          objective: string | null
-          objective_id: string | null
-          objective_position: number | null
+          input_type: Database["public"]["Enums"]["input_type_op"] | null
           office_id: number | null
           operational_plan_id: string | null
           operational_plan_title: string | null
+          performance_indicator: string | null
           program_id: number | null
-          program_project_description: string | null
-          program_project_id: string | null
-          program_project_position: number | null
-          q1: boolean | null
-          q2: boolean | null
-          q3: boolean | null
-          q4: boolean | null
-          qty: string | null
-          unit: string | null
-          unit_cost: string | null
+          q1_target: string | null
+          q2_target: string | null
+          q3_target: string | null
+          q4_target: string | null
+          responsible_officer_unit: string | null
+          review_by: string | null
+          reviewer_position: string | null
+          total: string | null
+          total_budgetary_requirements: string | null
           unit_id: number | null
         }
         Relationships: [
@@ -1471,6 +1420,7 @@ export type Database = {
         | "revision"
         | "approved"
       input_type: "percentage" | "number" | "ratio" | "text"
+      input_type_op: "percentage" | "number" | "ratio" | "text"
       ipcr_indicator_status:
         | "draft"
         | "submitted"

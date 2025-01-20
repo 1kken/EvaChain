@@ -4,25 +4,25 @@
 	import { cn } from '$lib/utils';
 	import { slide } from 'svelte/transition';
 	import { ChevronDown } from 'lucide-svelte';
-	import DropDownWrapper from '$lib/custom_components/DropDownWrapper.svelte';
-	import UniversalDeleteAction from '$lib/custom_components/UniversalDeleteAction.svelte';
 	import { showErrorToast, showWarningToast } from '$lib/utils/toast';
-	import { getOpObjectiveStore } from '../states/op_objective_state';
 	import { fetchOpActivities } from '../utils/page_load_services';
 	import DndContainer from '$lib/custom_components/dashboard/documents/DndContainer.svelte';
-	import { getOpObjectiveFormContext } from '../states/op_objective_form_state';
 	import { setOpActivityStore } from '../states/op_activity_state';
-	import UpdateDialog from './sub_components/op_objectives/UpdateDialog.svelte';
 	import OperationalActivity from './OperationalActivity.svelte';
-	import CreateDialog from './sub_components/op_activity/CreateDialog.svelte';
 	import Badge from '$lib/components/ui/badge/badge.svelte';
 	import TruncatedDiv from '../../../components/TruncatedDiv.svelte';
+	import { getOpAnnualPlanStore } from '../states/op_annual_plan_state';
+	import { getOpAnnualPlanFormContext } from '../states/op_annual_plan_form_state';
+	import UniversalDeleteAction from '$lib/custom_components/UniversalDeleteAction.svelte';
+	import UpdateDialog from './sub_components/op_annual_plan/UpdateDialog.svelte';
+	import DropDownWrapper from '$lib/custom_components/DropDownWrapper.svelte';
+	import CreateDialog from './sub_components/op_activity/CreateDialog.svelte';
 
 	//props
 	interface Iprops {
-		opObjective: Tables<'op_objective'>;
+		opAnnualPlan: Tables<'op_annual_plan'>;
 	}
-	let { opObjective }: Iprops = $props();
+	let { opAnnualPlan }: Iprops = $props();
 
 	//states
 	let isExpanded = $state(false);
@@ -32,8 +32,8 @@
 	let dndItems: Tables<'op_activity'>[] = $state([]);
 
 	//stores
-	const { removeOpObjective } = getOpObjectiveStore();
-	const { deleteForm } = getOpObjectiveFormContext();
+	const { removeOpAnnualPlan } = getOpAnnualPlanStore();
+	const { deleteForm } = getOpAnnualPlanFormContext();
 	const { currentOpActivities } = setOpActivityStore();
 
 	// Separate fetch function
@@ -42,7 +42,7 @@
 		error = null;
 
 		try {
-			const result = await fetchOpActivities(opObjective.id);
+			const result = await fetchOpActivities(opAnnualPlan.id);
 			if (result.error) {
 				error = result.error;
 				showErrorToast(result.error);
@@ -74,15 +74,15 @@
 
 	//functions
 	function handleDelete(result: { type: string; data: any }) {
-		if (result.data.opObjective) {
-			const opObjective = result.data.opObjective;
-			removeOpObjective(opObjective.id);
-			showWarningToast(`Successfully deleted ${opObjective.objective}`);
+		if (result.data.opAnnualPlan) {
+			const opAnnualPlan = result.data.opAnnualPlan;
+			removeOpAnnualPlan(opAnnualPlan.id);
+			showWarningToast(`Successfully deleted ${opAnnualPlan.description}`);
 		}
 	}
 
 	const updateOpActivityPosition = async (items: Tables<'op_activity'>[]): Promise<void> => {
-		const response = await fetch('/api/op_activity', {
+		const response = await fetch('/api/operational_plan/activity', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
@@ -110,27 +110,28 @@
 				/>
 			</Button>
 			<div class="flex items-center gap-2">
-				<Badge variant={'secondary'} class="h-5 flex-shrink-0 bg-green-400 text-xs">Objective</Badge
+				<Badge variant={'secondary'} class="h-5 flex-shrink-0 bg-green-400 text-xs"
+					>Annual Plan</Badge
 				>
 				<div class="min-w-0 flex-1">
-					<TruncatedDiv text={opObjective.objective} maxLength={50} />
+					<TruncatedDiv text={opAnnualPlan.description} maxLength={50} />
 				</div>
 			</div>
 		</div>
 		<div class="ml-4 flex flex-shrink-0 items-center gap-5">
 			{#snippet deleteAction()}
 				<UniversalDeleteAction
-					id={opObjective.id}
-					action="?/deleteopobjective"
+					id={opAnnualPlan.id}
+					action="?/deleteopannualplan"
 					data={deleteForm}
 					onDelete={handleDelete}
 				/>
 			{/snippet}
 			{#snippet updateAction()}
-				<UpdateDialog bind:isDrawerOpen {opObjective} />
+				<UpdateDialog bind:isDrawerOpen {opAnnualPlan} />
 			{/snippet}
 			<div class="flex gap-4">
-				<CreateDialog opObjectiveId={opObjective.id} onToggle={fetchData} bind:isExpanded />
+				<CreateDialog opAnnualPlanId={opAnnualPlan.id} onToggle={fetchData} bind:isExpanded />
 				<DropDownWrapper bind:isDrawerOpen childrens={[updateAction, deleteAction]} />
 			</div>
 		</div>

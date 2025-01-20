@@ -4,17 +4,17 @@ import { json, type RequestHandler } from '@sveltejs/kit';
 export const GET: RequestHandler = async ({ url, locals: { supabase } }) => {
 	try {
 		// Get op_objective_id from URL parameter
-		const objectiveId = url.searchParams.get('op_objective_id');
+		const annualPlanId = url.searchParams.get('annual_plan_id');
 
-		if (!objectiveId) {
-			return json({ error: 'op_objective_id is required' }, { status: 400 });
+		if (!annualPlanId) {
+			return json({ error: 'Annual Plan Id is Required' }, { status: 400 });
 		}
 
 		// Query the database for activities
 		const { data: activities, error } = await supabase
 			.from('op_activity')
 			.select('*')
-			.eq('op_objective_id', objectiveId)
+			.eq('op_annual_plan_id', annualPlanId)
 			.order('position');
 
 		if (error) {

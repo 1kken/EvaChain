@@ -5,12 +5,10 @@
 
 	let {
 		formerState,
-		desiredState,
 		progress
 	}: {
 		formerState: string;
-		desiredState: string;
-		progress: { q1: boolean; q2: boolean; q3: boolean; q4: boolean };
+		progress: { q1: string | null; q2: string | null; q3: string | null; q4: string | null };
 	} = $props();
 </script>
 
@@ -24,23 +22,15 @@
 				<span class="text-sm font-medium">Former State</span>
 				<Badge variant="secondary">{formerState}</Badge>
 			</div>
-			<div class="space-y-2">
-				<span class="text-sm font-medium">Desired State</span>
-				<Badge variant="default">{desiredState}</Badge>
-			</div>
 		</div>
 
 		<div>
-			<span class="text-sm font-medium">Implementation Quarters</span>
+			<span class="text-sm font-medium">Target Quarters</span>
 			<div class="mt-2 flex items-center gap-4">
-				{#each Object.entries(progress) as [quarter, completed]}
+				{#each Object.entries(progress) as [quarter, target]}
 					<div class="flex items-center gap-2">
-						<span class="text-sm">{quarter.toUpperCase()}</span>
-						{#if completed}
-							<Check class="text-primary h-5 w-5" />
-						{:else}
-							<Square class="text-muted-foreground h-5 w-5" />
-						{/if}
+						{quarter.toUpperCase()}:
+						<p>{target}</p>
 					</div>
 				{/each}
 			</div>

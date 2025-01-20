@@ -6,24 +6,23 @@
 	import SuperDebug, { setError, superForm, type FormResult } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';
-	import type { OpObjectiveFormResult } from '../../../utils/type';
 	import IntelligentInput from '$lib/custom_components/IntelligentInput.svelte';
-	import { getOpObjectiveStore } from '../../../states/op_objective_state';
-	import { getOpObjectiveFormContext } from '../../../states/op_objective_form_state';
-	import { createOpObjectiveSchema } from '../../../schema/op_objective_schema';
-	import { browser } from '$app/environment';
+	import { getOpAnnualPlanFormContext } from '../../../states/op_annual_plan_form_state';
+	import { getOpAnnualPlanStore } from '../../../states/op_annual_plan_state';
+	import { createOpAnnualPlanSchema } from '../../../schema/op_annual_plan_schema';
+	import type { OpAnnualPlanFormResult } from '../../../utils/type';
 
 	//props
 	interface Iprops {
-		opProgramProjectId: string;
+		opHeaderId: string;
 		isExpanded: boolean;
 		onToggle: () => Promise<void>;
 	}
-	let { opProgramProjectId, onToggle, isExpanded = $bindable() }: Iprops = $props();
+	let { opHeaderId, onToggle, isExpanded = $bindable() }: Iprops = $props();
 
 	//stores
-	const { createForm } = getOpObjectiveFormContext();
-	const { size, addOpObjective, currentOpObjectives } = getOpObjectiveStore();
+	const { createForm } = getOpAnnualPlanFormContext();
+	const { size, addOpAnnualPlan, currentOpAnnualPlans } = getOpAnnualPlanStore();
 
 	//states
 	let isOpen = $state(false);
@@ -32,28 +31,27 @@
 	const form = superForm(createForm, {
 		id: crypto.randomUUID(),
 		dataType: 'json',
-		validators: zodClient(createOpObjectiveSchema),
+		validators: zodClient(createOpAnnualPlanSchema),
 		multipleSubmits: 'prevent',
 		onUpdate({ form, result }) {
 			if (
-				$currentOpObjectives.some(
-					(opObjective) =>
-						opObjective.objective.toLocaleLowerCase() === form.data.objective.toLowerCase()
+				$currentOpAnnualPlans.some(
+					(opAnnualPlan) => opAnnualPlan.description === form.data.description
 				)
 			) {
-				setError(form, 'objective', 'Objective already exists');
+				setError(form, 'description', 'Annual plan already exists');
 			}
-			const action = result.data as FormResult<OpObjectiveFormResult>;
-			if (form.valid && action.opObjective) {
-				const opObjective = action.opObjective;
-				addOpObjective(opObjective);
-				showSuccessToast(`successfully added Objective to the Program/Project`);
+			const action = result.data as FormResult<OpAnnualPlanFormResult>;
+			if (form.valid && action.opAnnualPlan) {
+				const opAnnualPlan = action.opAnnualPlan;
+				addOpAnnualPlan(opAnnualPlan);
+				showSuccessToast(`Successfully added ${opAnnualPlan.description}`);
 				isOpen = false;
 				isExpanded = true;
 				reset({
-					data: { op_program_project_id: opObjective.op_program_project_id, position: $size + 1 },
+					data: { op_header_id: opAnnualPlan.op_header_id, position: $size + 1 },
 					newState: {
-						op_program_project_id: opObjective.op_program_project_id,
+						op_header_id: opAnnualPlan.op_header_id,
 						position: $size + 1
 					}
 				});
@@ -63,12 +61,8 @@
 
 	const { form: formData, enhance, delayed, message, reset } = form;
 	// //set data that is needed
-	$effect(() => {
-		if (opProgramProjectId) {
-			$formData.op_program_project_id = opProgramProjectId;
-			$formData.position = $size + 1;
-		}
-	});
+	$formData.op_header_id = opHeaderId;
+	$formData.position = $size + 1;
 
 	//effect for message
 	$effect(() => {
@@ -82,28 +76,28 @@
 	<Dialog.Trigger class="focus-visible:outline-none" id="nav-2">
 		<span class="flex items-center gap-2">
 			<Plus class="h-5 w-5" />
-			<span class="hidden md:inline">Add Objective</span>
+			<span class="hidden md:inline">Add Annual Plan</span>
 		</span>
 	</Dialog.Trigger>
 	<Dialog.Content class="max-h-[85vh] overflow-y-auto sm:max-w-[800px]">
 		<Dialog.Header>
-			<Dialog.Title>Add Objectives & Activities</Dialog.Title>
+			<Dialog.Title>Add Annual Plans</Dialog.Title>
 			<Dialog.Description>
-				Program/Project Objective: A concise statement outlining the goals and intended outcomes of
-				the program or project.
+				Annual plan is a detailed plan of the objectives and activities that will be carried out in
+				a year.
 			</Dialog.Description>
 		</Dialog.Header>
-		<form action="?/createopobjectives" method="POST" use:enhance class="space-y-6">
+		<form action="?/createopannualplan" method="POST" use:enhance class="space-y-6">
 			<input hidden name="position" value={$formData.position} />
-			<input hidden name="operational_plan_id" value={$formData.op_program_project_id} />
-			<Form.Field {form} name="objective">
+			<input hidden name="op_header_id" value={$formData.op_header_id} />
+			<Form.Field {form} name="description">
 				<Form.Control>
 					{#snippet children({ props })}
-						<Form.Label>Objective</Form.Label>
+						<Form.Label>Description</Form.Label>
 						<IntelligentInput
 							textAreaWidth={'full'}
-							placeholder="Enter the objective for the program/project."
-							bind:content={$formData.objective}
+							placeholder="Enter the description of the Annual Plan"
+							bind:content={$formData.description}
 							name={props.name}
 						/>
 					{/snippet}
@@ -116,8 +110,5 @@
 				<Form.Button>Submit</Form.Button>
 			{/if}
 		</form>
-		{#if browser}
-			<SuperDebug data={$formData} />
-		{/if}
 	</Dialog.Content>
 </Dialog.Root>

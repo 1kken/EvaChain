@@ -3,25 +3,26 @@ import { json, type RequestHandler } from '@sveltejs/kit';
 
 export const GET: RequestHandler = async ({ url, locals: { supabase } }) => {
 	try {
-		// Get op_program_project_id from URL parameter
-		const programProjectId = url.searchParams.get('op_program_project_id');
+		// Get header_id from URL parameter
+		const headerId = url.searchParams.get('op_header_id');
 
-		if (!programProjectId) {
-			return json({ error: 'op_program_project_id is required' }, { status: 400 });
+		if (!headerId) {
+			return json({ error: 'op_header_id is required' }, { status: 400 });
 		}
 
-		// Query the database for objectives
-		const { data: objectives, error } = await supabase
-			.from('op_objective')
+		// Query the database for annual plans
+		const { data: annualPlans, error } = await supabase
+			.from('op_annual_plan')
 			.select('*')
-			.eq('op_program_project_id', programProjectId)
+			.eq('op_header_id', headerId)
 			.order('position');
 
 		if (error) {
 			console.error('Database error:', error);
-			return json({ error: 'Failed to fetch objectives' }, { status: 500 });
+			return json({ error: 'Failed to fetch annual plans' }, { status: 500 });
 		}
-		return json({ data: objectives });
+
+		return json({ data: annualPlans });
 	} catch (err) {
 		console.error('Server error:', err);
 		return json({ error: 'Internal server error' }, { status: 500 });
@@ -30,12 +31,12 @@ export const GET: RequestHandler = async ({ url, locals: { supabase } }) => {
 
 export const POST: RequestHandler = async ({ request, locals: { supabase } }) => {
 	try {
-		const items: Tables<'op_objective'>[] = await request.json();
+		const items: Tables<'op_annual_plan'>[] = await request.json();
 
 		// Process each update sequentially
 		for (const item of items) {
 			const { error } = await supabase
-				.from('op_objective')
+				.from('op_annual_plan')
 				.update({
 					position: item.position,
 					updated_at: new Date().toISOString()
@@ -49,7 +50,7 @@ export const POST: RequestHandler = async ({ request, locals: { supabase } }) =>
 
 		return json({ success: true });
 	} catch (error) {
-		console.error('Error updating objective positions:', error);
+		console.error('Error updating annual plan positions:', error);
 		return json({ error: 'Failed to update positions' }, { status: 500 });
 	}
 };

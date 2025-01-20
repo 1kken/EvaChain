@@ -5,10 +5,9 @@
 	import { setOpHeaderStore } from './states/op_header_state';
 	import IndexComponent from './components/IndexComponent.svelte';
 	import NavButton from './components/NavButton.svelte';
-	import { setOpProgramProjectFormContext } from './states/op_program_project_form_state';
-	import { setOpObjectiveFormContext } from './states/op_objective_form_state';
 	import { setOpActivityFormContext } from './states/op_activity_form_state';
 	import Header from '../../components/Header.svelte';
+	import { setOpAnnualPlanFormContext } from './states/op_annual_plan_form_state';
 
 	let { data }: { data: PageData } = $props();
 
@@ -17,10 +16,8 @@
 	//header
 	setOpHeaderStore(data.opHeaders);
 	setOpHeaderFormContext(data.opHeaderForms);
-	//program project
-	setOpProgramProjectFormContext(data.opProgramProjectForms);
-	//objectives
-	setOpObjectiveFormContext(data.opProgramObjectiveForms);
+	//annual plan
+	setOpAnnualPlanFormContext(data.opAnnualPlanForms);
 	//activities
 	setOpActivityFormContext(data.opActivityForms);
 </script>

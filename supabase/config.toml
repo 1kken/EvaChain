@@ -56,19 +56,18 @@ sql_paths = [
     './seeds/profile.sql',
     './seeds/operational_plan/operational_plan.sql',
     './seeds/operational_plan/op_plan_header.sql',
-    './seeds/operational_plan/op_plan_program_project.sql',
-    './seeds/operational_plan/op_plan_objective.sql',
+    './seeds/operational_plan/op_plan_annual_plan.sql',
     './seeds/operational_plan/op_plan_activity.sql',
-    './seeds/ipcr/ipcr.sql',
-    './seeds/ipcr/ipcr_function.sql',
-    './seeds/ipcr/ipcr_category.sql',
-    './seeds/ipcr/ipcr_sub_category.sql',
-    './seeds/ipcr/ipcr_indicator.sql',
     './seeds/accomplishment_report/accomplishment_report.sql',
     './seeds/accomplishment_report/accomplishment_report_program_project.sql',
     './seeds/accomplishment_report/accomplishment_report_metrics.sql',
     './seeds/*.sql',
 ]
+# './seeds/ipcr/ipcr.sql',
+# './seeds/ipcr/ipcr_function.sql',
+# './seeds/ipcr/ipcr_category.sql',
+# './seeds/ipcr/ipcr_sub_category.sql',
+# './seeds/ipcr/ipcr_indicator.sql',
 
 [realtime]
 enabled = true

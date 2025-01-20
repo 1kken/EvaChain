@@ -12,19 +12,16 @@
 
 	// Create reactive state using runes
 	let currentActivity = $state(activity);
+
 	let progress = $state({
-		q1: activity.q1,
-		q2: activity.q2,
-		q3: activity.q3,
-		q4: activity.q4
+		q1: activity.q1_target,
+		q2: activity.q2_target,
+		q3: activity.q3_target,
+		q4: activity.q4_target
 	});
 	let itemDetail = $state({
-		item: activity.item,
-		unit: activity.unit,
-		qty: activity.qty,
-		unit_cost: activity.unit_cost,
-		amount: activity.amount,
-		fundSource: activity.fund_source
+		responsible_officer_unit: activity.responsible_officer_unit,
+		total_budgetary_requirements: activity.total_budgetary_requirements
 	});
 
 	// Update state reactively when activity changes
@@ -38,20 +35,16 @@
 
 			// Update progress state
 			progress = {
-				q1: updatedActivity.q1,
-				q2: updatedActivity.q2,
-				q3: updatedActivity.q3,
-				q4: updatedActivity.q4
+				q1: updatedActivity.q1_target,
+				q2: updatedActivity.q2_target,
+				q3: updatedActivity.q3_target,
+				q4: updatedActivity.q4_target
 			};
 
 			// Update item details state
 			itemDetail = {
-				item: updatedActivity.item,
-				unit: updatedActivity.unit,
-				qty: updatedActivity.qty,
-				unit_cost: updatedActivity.unit_cost,
-				amount: updatedActivity.amount,
-				fundSource: updatedActivity.fund_source
+				responsible_officer_unit: activity.responsible_officer_unit,
+				total_budgetary_requirements: activity.total_budgetary_requirements
 			};
 		}
 	});
@@ -66,19 +59,15 @@
 	<Dialog.Content class="max-h-[85vh] overflow-y-auto sm:max-w-[800px]">
 		<div class="mx-auto max-w-4xl space-y-8">
 			<!-- Header Section -->
-			<ActivityHeader indicator={currentActivity.indicator} activity={currentActivity.activity} />
-
-			<!-- Status Section -->
-			<StatusSection
-				{progress}
-				formerState={currentActivity.former_state}
-				desiredState={currentActivity.desired_state}
+			<ActivityHeader
+				indicator={currentActivity.performance_indicator}
+				activity={currentActivity.activity}
 			/>
 
-			{#if currentActivity.item}
-				<!-- Details Section -->
-				<DetailsSection {itemDetail} />
-			{/if}
+			<!-- Status Section -->
+			<StatusSection {progress} formerState={currentActivity.former_state} />
+
+			<DetailsSection {itemDetail} />
 
 			<!-- Timestamp Section -->
 			<TimestampSection

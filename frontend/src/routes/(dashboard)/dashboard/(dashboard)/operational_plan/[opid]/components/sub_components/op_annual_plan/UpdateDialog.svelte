@@ -2,27 +2,28 @@
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
 	import { LoaderCircle, Pencil } from 'lucide-svelte';
+	import { Plus } from 'lucide-svelte';
 	import SuperDebug, { setError, superForm, type FormResult } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';
-	import type { OpObjectiveFormResult } from '../../../utils/type';
 	import IntelligentInput from '$lib/custom_components/IntelligentInput.svelte';
-	import { getOpObjectiveStore } from '../../../states/op_objective_state';
-	import { getOpObjectiveFormContext } from '../../../states/op_objective_form_state';
-	import { updateOpObjectiveSchema } from '../../../schema/op_objective_schema';
 	import { browser } from '$app/environment';
+	import { getOpAnnualPlanFormContext } from '../../../states/op_annual_plan_form_state';
+	import { getOpAnnualPlanStore } from '../../../states/op_annual_plan_state';
+	import { updateOpAnnualPlanSchema } from '../../../schema/op_annual_plan_schema';
+	import type { OpAnnualPlanFormResult } from '../../../utils/type';
 	import type { Tables } from '$lib/types/database.types';
 
 	//props
 	interface Iprops {
-		opObjective: Tables<'op_objective'>;
+		opAnnualPlan: Tables<'op_annual_plan'>;
 		isDrawerOpen: boolean;
 	}
-	let { opObjective, isDrawerOpen = $bindable() }: Iprops = $props();
+	let { opAnnualPlan, isDrawerOpen = $bindable() }: Iprops = $props();
 
 	//stores
-	const { updateForm } = getOpObjectiveFormContext();
-	const { updateOpObjective, currentOpObjectives } = getOpObjectiveStore();
+	const { updateForm } = getOpAnnualPlanFormContext();
+	const { updateOpAnnualPlan, currentOpAnnualPlans } = getOpAnnualPlanStore();
 
 	//states
 	let isOpen = $state(false);
@@ -31,33 +32,39 @@
 	const form = superForm(updateForm, {
 		id: crypto.randomUUID(),
 		dataType: 'json',
-		validators: zodClient(updateOpObjectiveSchema),
+		validators: zodClient(updateOpAnnualPlanSchema),
 		multipleSubmits: 'prevent',
 		onUpdate({ form, result }) {
 			if (
-				$currentOpObjectives.some(
-					(opObjective) => opObjective.objective.toLowerCase() === form.data.objective.toLowerCase()
+				$currentOpAnnualPlans.some(
+					(opAnnualPlan) =>
+						opAnnualPlan.description === form.data.description &&
+						opAnnualPlan.id !== opAnnualPlan.id
 				)
 			) {
-				setError(form, 'objective', 'Objective already exists');
+				setError(form, 'description', 'Annual plan already exists');
 			}
-			const action = result.data as FormResult<OpObjectiveFormResult>;
-			if (form.valid && action.opObjective) {
+			const action = result.data as FormResult<OpAnnualPlanFormResult>;
+			if (form.valid && action.opAnnualPlan) {
+				const opAnnualPlan = action.opAnnualPlan;
+				updateOpAnnualPlan(opAnnualPlan.id, opAnnualPlan);
+				showSuccessToast(`Successfully added ${opAnnualPlan.description}`);
+				isOpen = false;
 				isDrawerOpen = false;
-				isOpen = false;
-				const opObjective = action.opObjective;
-				updateOpObjective(opObjective.id, opObjective);
-				showSuccessToast(`successfully added Objective to the Program/Project`);
-				isOpen = false;
+				reset({
+					data: { id: opAnnualPlan.id },
+					newState: {
+						id: opAnnualPlan.id
+					}
+				});
 			}
 		}
 	});
 
 	const { form: formData, enhance, delayed, message, reset } = form;
-	//set data that is needed
-	$formData.id = opObjective.id;
-	$formData.objective = opObjective.objective;
-
+	// //set data that is needed
+	$formData.id = opAnnualPlan.id;
+	$formData.description = opAnnualPlan.description;
 	//effect for message
 	$effect(() => {
 		if ($message?.status === 'error') {
@@ -80,16 +87,16 @@
 				the program or project.
 			</Dialog.Description>
 		</Dialog.Header>
-		<form action="?/updateopobjectives" method="POST" use:enhance class="space-y-6">
+		<form action="?/updateopannualplan" method="POST" use:enhance class="space-y-6">
 			<input hidden name="id" value={$formData.id} />
-			<Form.Field {form} name="objective">
+			<Form.Field {form} name="description">
 				<Form.Control>
 					{#snippet children({ props })}
-						<Form.Label>Objective</Form.Label>
+						<Form.Label>Description</Form.Label>
 						<IntelligentInput
 							textAreaWidth={'full'}
-							placeholder="Enter the objective for the program/project."
-							bind:content={$formData.objective}
+							placeholder="Enter the description of the Annual Plan"
+							bind:content={$formData.description}
 							name={props.name}
 						/>
 					{/snippet}
@@ -101,10 +108,6 @@
 			{:else}
 				<Form.Button>Submit</Form.Button>
 			{/if}
-
-			{#if browser}
-				<SuperDebug data={$formData} />
-			{/if}
-		</form></Dialog.Content
-	>
+		</form>
+	</Dialog.Content>
 </Dialog.Root>

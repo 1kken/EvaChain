@@ -75,7 +75,8 @@
 		'Faculty Development',
 		'Infrastructure And Technology',
 		'Internationalization And Linkages',
-		'Administration'
+		'Administration',
+		'Personnel Development'
 	];
 </script>
 

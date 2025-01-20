@@ -5,14 +5,9 @@ export type OpHeaderFormResult = {
 	opHeader: Tables<'op_header'>;
 };
 
-export type OpProgramProjectFormResult = {
+export type OpAnnualPlanFormResult = {
 	form: any;
-	opProgramProject: Tables<'op_program_project'>;
-};
-
-export type OpObjectiveFormResult = {
-	form: any;
-	opObjective: Tables<'op_objective'>;
+	opAnnualPlan: Tables<'op_annual_plan'>;
 };
 
 export type OpActivityFormResult = {

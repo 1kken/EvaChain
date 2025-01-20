@@ -3,19 +3,19 @@
 	import { ChevronDown } from 'lucide-svelte';
 	import { cn } from '$lib/utils';
 	import type { Tables } from '$lib/types/database.types';
-	import DropDownWrapper from '$lib/custom_components/DropDownWrapper.svelte';
 	import UniversalDeleteAction from '$lib/custom_components/UniversalDeleteAction.svelte';
 	import { getOpHeaderStore } from '../states/op_header_state';
 	import { getOpHeaderFormContext } from '../states/op_header_form_state';
-	import type { OpHeaderFormResult } from '../utils/type';
+	import type { OpAnnualPlanFormResult, OpHeaderFormResult } from '../utils/type';
 	import { showWarningToast, showErrorToast } from '$lib/utils/toast';
 	import UpdateDialog from './sub_components/op_header/UpdateDialog.svelte';
-	import OperationalProgramProject from './OperationalProgramProject.svelte';
-	import { fetchOpProgramProjects } from '../utils/page_load_services';
 	import DndContainer from '$lib/custom_components/dashboard/documents/DndContainer.svelte';
-	import { setOpProgramProjectStore } from '../states/op_program_project_state';
-	import CreateDialogProgramProject from './sub_components/op_program_project/CreateDialog.svelte';
+	import CreateDialogAnnualPlan from './sub_components/op_annual_plan/CreateDialog.svelte';
 	import { slide } from 'svelte/transition';
+	import { fetchOpAnnualPlans } from '../utils/page_load_services';
+	import OperationalAnnualPlan from './OperationalAnnualPlan.svelte';
+	import { setOpAnnualPlanStore } from '../states/op_annual_plan_state';
+	import DropDownWrapper from '$lib/custom_components/DropDownWrapper.svelte';
 
 	//props
 	interface Iprops {
@@ -26,10 +26,10 @@
 	//stores
 	const { removeOpHeader } = getOpHeaderStore();
 	const { deleteForm } = getOpHeaderFormContext();
-	const { currentOpProgramProjects } = setOpProgramProjectStore();
+	const { currentOpAnnualPlans } = setOpAnnualPlanStore();
 
 	//states
-	let dndItems = $state<Tables<'op_program_project'>[]>([]);
+	let dndItems = $state<Tables<'op_annual_plan'>[]>([]);
 	let isLoading = $state(false);
 	let isExpanded = $state(false);
 	let isDrawerOpen = $state(false);
@@ -45,9 +45,9 @@
 	}
 
 	const updateOpProgramProjectPosition = async (
-		items: Tables<'op_program_project'>[]
+		items: Tables<'op_annual_plan'>[]
 	): Promise<void> => {
-		const response = await fetch('/api/op_program_project', {
+		const response = await fetch('/api/operational_plan/annual_plan', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
@@ -59,10 +59,11 @@
 			throw new Error('Failed to update positions');
 		}
 
-		$currentOpProgramProjects = items;
+		$currentOpAnnualPlans = items;
 	};
+
 	$effect(() => {
-		dndItems = $currentOpProgramProjects;
+		dndItems = $currentOpAnnualPlans;
 	});
 
 	// Separate fetch function
@@ -71,14 +72,14 @@
 		error = null;
 
 		try {
-			const result = await fetchOpProgramProjects(opHeader.id);
+			const result = await fetchOpAnnualPlans(opHeader.id);
 			if (result.error) {
 				error = result.error;
 				showErrorToast(result.error);
 				return;
 			}
 			dndItems = result.data;
-			$currentOpProgramProjects = result.data;
+			$currentOpAnnualPlans = result.data;
 		} catch (e) {
 			error = e instanceof Error ? e.message : 'An unknown error occurred';
 			showErrorToast(error);
@@ -124,7 +125,7 @@
 				<UpdateDialog bind:isDrawerOpen {opHeader} />
 			{/snippet}
 			<div class="flex gap-4">
-				<CreateDialogProgramProject opHeaderId={opHeader.id} onToggle={fetchData} bind:isExpanded />
+				<CreateDialogAnnualPlan opHeaderId={opHeader.id} onToggle={fetchData} bind:isExpanded />
 				<DropDownWrapper bind:isDrawerOpen childrens={[updateAction, deleteAction]} />
 			</div>
 		</div>
@@ -139,15 +140,15 @@
 					{error}
 				</div>
 			{:else if dndItems.length === 0}
-				<div class="text-muted-foreground text-center">No program projects found</div>
+				<div class="text-muted-foreground text-center">No Annual Plans Found</div>
 			{:else}
 				<DndContainer
 					bind:items={dndItems}
 					onPositionsUpdate={updateOpProgramProjectPosition}
-					emptyMessage="No program projects found"
+					emptyMessage="No Annual Plans Found"
 				>
-					{#each dndItems as opProgramProject (opProgramProject.id)}
-						<OperationalProgramProject {opProgramProject} />
+					{#each dndItems as opAnnualPlans (opAnnualPlans.id)}
+						<OperationalAnnualPlan opAnnualPlan={opAnnualPlans} />
 					{/each}
 				</DndContainer>
 			{/if}

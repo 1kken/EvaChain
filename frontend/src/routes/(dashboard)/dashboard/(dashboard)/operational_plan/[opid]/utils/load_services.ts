@@ -5,12 +5,11 @@ import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { createOpHeaderSchema, updateOpHeaderSchema } from '../schema/op_header_schema';
 import { universalDeleteSchema } from '$lib/schemas/universal_delete_schema';
-import {
-	createOpProgramProjectSchema,
-	updateOpProgramProjectSchema
-} from '../schema/op_project_program_schema';
-import { createOpObjectiveSchema, updateOpObjectiveSchema } from '../schema/op_objective_schema';
 import { createOpActivitySchema, updateOpActivitySchema } from '../schema/op_activity_schema';
+import {
+	createOpAnnualPlanSchema,
+	updateOpAnnualPlanSchema
+} from '../schema/op_annual_plan_schema';
 
 export async function getOperationalPlan(opid: string, supabase: SupabaseClient<Database>) {
 	const { data: operational_plan, error: fetchOpError } = await supabase
@@ -48,18 +47,10 @@ export async function getOpHeaderForms() {
 	};
 }
 
-export async function getOpProgramProjectForms() {
+export async function getOpAnnualPlanForms() {
 	return {
-		createForm: await superValidate(zod(createOpProgramProjectSchema)),
-		updateForm: await superValidate(zod(updateOpProgramProjectSchema)),
-		deleteForm: await superValidate(zod(universalDeleteSchema))
-	};
-}
-
-export async function getOpObjectiveForms() {
-	return {
-		createForm: await superValidate(zod(createOpObjectiveSchema)),
-		updateForm: await superValidate(zod(updateOpObjectiveSchema)),
+		createForm: await superValidate(zod(createOpAnnualPlanSchema)),
+		updateForm: await superValidate(zod(updateOpAnnualPlanSchema)),
 		deleteForm: await superValidate(zod(universalDeleteSchema))
 	};
 }
