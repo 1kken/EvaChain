@@ -92,6 +92,14 @@
 			<Form.FieldErrors />
 		</Form.Field>
 	</div>
+	<!-- <div class="mb-2 mt-1 text-right">
+		<a
+			href="/auth/recovery/email"
+			class="text-sm text-emerald-600 underline hover:text-emerald-500"
+		>
+			Forgot password?
+		</a>
+	</div> -->
 	{#if $delayed}
 		<Form.Button class="mt-2 w-full" disabled
 			><LoaderCircle class="animate-spin" />Processing...</Form.Button

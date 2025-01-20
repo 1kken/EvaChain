@@ -156,7 +156,7 @@
 				/>
 			</Button>
 			<div class="flex items-center gap-2">
-				<Badge variant={'secondary'} class="h-5 text-xs">Category</Badge>
+				<Badge variant={'secondary'} class="h-5 bg-teal-500 text-xs">Category</Badge>
 				<h1 class="text-sm">{ipcrFunctionCategory.category}</h1>
 				<p class="text-xs text-gray-500">{ipcrFunctionCategory.unit ?? '_'} units</p>
 			</div>

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import '../app.css';
-	import { invalidate } from '$app/navigation';
+	import { goto, invalidate } from '$app/navigation';
 	import Navbar from '$lib/custom_components/navbar.svelte';
 	import Footer from '$lib/custom_components/footer.svelte';
 	import { Toaster } from 'svelte-sonner';
@@ -18,6 +18,9 @@
 			}
 			if (newSession?.expires_at !== session?.expires_at) {
 				invalidate('supabase:auth');
+			}
+			if (event === 'PASSWORD_RECOVERY') {
+				goto('/auth/reset-password');
 			}
 		});
 		return () => data.subscription.unsubscribe();

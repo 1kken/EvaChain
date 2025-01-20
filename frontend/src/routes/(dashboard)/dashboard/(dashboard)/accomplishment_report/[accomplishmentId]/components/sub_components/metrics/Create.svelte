@@ -2,17 +2,16 @@
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
 	import { LoaderCircle, Plus } from 'lucide-svelte';
+	import * as Select from '$lib/components/ui/select/index.js';
 	import SuperDebug, { setError, superForm, type FormResult } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';
 	import IntelligentInput from '$lib/custom_components/IntelligentInput.svelte';
-	import { createAccomplishmentProgramProjectSchema } from '../../../schema/program_project_schema';
 	import type { MetricsFormResult, ProgramProjectFormResult } from '../../../utils/type';
 	import { getAccomplishmentMetricFormContext } from '../../../states/metrics_form_state';
 	import { getAccomplishmentMetricsStore } from '../../../states/metrics_state';
 	import { createAccomplishmentMetricSchema } from '../../../schema/metrics_schema';
 	import { Input } from '$lib/components/ui/input';
-	import { browser } from '$app/environment';
 
 	//props
 	interface Iprops {
@@ -62,6 +61,7 @@
 
 	$formData.accomplishment_program_project_id = programProjectId;
 	$formData.position = $size + 1;
+	$formData.input_type = 'text';
 
 	//effect for message
 	$effect(() => {
@@ -104,7 +104,28 @@
 				</Form.Control>
 				<Form.FieldErrors />
 			</Form.Field>
-			<div class="grid grid-cols-2 space-x-2">
+			<div class="grid grid-cols-1 space-x-2 md:grid-cols-3">
+				<Form.Field {form} name="input_type">
+					<Form.Control>
+						{#snippet children({ props })}
+							<Form.Label>Measurement metric.</Form.Label>
+							<Select.Root type="single" bind:value={$formData.input_type} name={props.name}>
+								<Select.Trigger {...props}>
+									{$formData.input_type
+										? $formData.input_type
+										: 'Select the measurement metric to apply." '}
+								</Select.Trigger>
+								<Select.Content>
+									<Select.Item value="text" label="text" />
+									<Select.Item value="number" label="number" />
+									<Select.Item value="ratio" label="ratio" />
+									<Select.Item value="percentage" label="percentage" />
+								</Select.Content>
+							</Select.Root>
+						{/snippet}
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
 				<Form.Field {form} name="former_state">
 					<Form.Control>
 						{#snippet children({ props })}

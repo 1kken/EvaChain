@@ -110,7 +110,8 @@
 				/>
 			</Button>
 			<div class="flex items-center gap-2">
-				<Badge variant={'secondary'} class="h-5 flex-shrink-0 text-xs">Objective</Badge>
+				<Badge variant={'secondary'} class="h-5 flex-shrink-0 bg-green-400 text-xs">Objective</Badge
+				>
 				<div class="min-w-0 flex-1">
 					<TruncatedDiv text={opObjective.objective} maxLength={50} />
 				</div>

@@ -9,13 +9,13 @@
 	import type { MetricsFormResult } from '../../../utils/type';
 	import { getAccomplishmentMetricFormContext } from '../../../states/metrics_form_state';
 	import { getAccomplishmentMetricsStore } from '../../../states/metrics_state';
+	import * as Select from '$lib/components/ui/select/index.js';
 	import {
 		createAccomplishmentMetricSchema,
 		updateAccomplishmentMetricSchema
 	} from '../../../schema/metrics_schema';
 	import { Input } from '$lib/components/ui/input';
 	import type { Tables } from '$lib/types/database.types';
-	import { browser } from '$app/environment';
 
 	let { metric }: { metric: Tables<'accomplishment_metrics'> } = $props();
 
@@ -71,6 +71,7 @@
 	$formData.total_accomplishment = metric.total_accomplishment;
 	$formData.variance = metric.variance;
 	$formData.remarks = metric.remarks;
+	$formData.input_type = metric.input_type;
 
 	//effect for message
 	$effect(() => {
@@ -107,7 +108,28 @@
 				</Form.Control>
 				<Form.FieldErrors />
 			</Form.Field>
-			<div class="grid grid-cols-2 space-x-2">
+			<div class="grid grid-cols-1 space-x-2 md:grid-cols-3">
+				<Form.Field {form} name="input_type">
+					<Form.Control>
+						{#snippet children({ props })}
+							<Form.Label>Measurement metric.</Form.Label>
+							<Select.Root type="single" bind:value={$formData.input_type} name={props.name}>
+								<Select.Trigger {...props}>
+									{$formData.input_type
+										? $formData.input_type
+										: 'Select the measurement metric to apply." '}
+								</Select.Trigger>
+								<Select.Content>
+									<Select.Item value="text" label="text" />
+									<Select.Item value="number" label="number" />
+									<Select.Item value="ratio" label="ratio" />
+									<Select.Item value="percentage" label="percentage" />
+								</Select.Content>
+							</Select.Root>
+						{/snippet}
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
 				<Form.Field {form} name="former_state">
 					<Form.Control>
 						{#snippet children({ props })}

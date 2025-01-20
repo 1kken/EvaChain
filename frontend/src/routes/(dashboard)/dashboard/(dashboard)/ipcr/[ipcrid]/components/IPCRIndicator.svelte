@@ -37,7 +37,7 @@
 		</div>
 		<div class="flex items-center justify-between">
 			<div class="flex items-center space-x-2">
-				<Badge variant={'secondary'} class="h-5 text-xs">Indicator</Badge>
+				<Badge variant={'secondary'} class="h-5 bg-amber-500 text-xs">Indicator</Badge>
 				<ViewIndicator ipcrId={ipcrFunctionIndicator.id} />
 			</div>
 			<div>

@@ -111,7 +111,7 @@
 				/>
 			</Button>
 			<div class="flex items-center gap-2">
-				<Badge variant={'secondary'} class="h-5 w-fit text-xs">Prorgam/Project</Badge>
+				<Badge variant={'secondary'} class="h-5 w-fit bg-teal-500 text-xs">Prorgam/Project</Badge>
 				<div class="pr-4">
 					<TruncatedDiv text={opProgramProject.description} maxLength={50} />
 				</div>

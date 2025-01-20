@@ -34,7 +34,7 @@
 <div class="rounded-lg border">
 	<header class=" top-0 flex h-10 items-center justify-between p-7 md:px-10">
 		<div class="flex items-start gap-5 pr-4">
-			<Badge variant={'secondary'} class="h-5 text-xs">Metric</Badge>
+			<Badge variant={'secondary'} class="h-5 bg-amber-500 text-xs">Metric</Badge>
 			<span class={cn('text-sm font-semibold', { 'line-through': !metric.is_included })}>
 				{metric.metrics}
 			</span>

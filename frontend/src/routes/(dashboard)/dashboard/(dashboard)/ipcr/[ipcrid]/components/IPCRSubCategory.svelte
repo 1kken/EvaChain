@@ -104,7 +104,7 @@
 				/>
 			</Button>
 			<div class="flex items-center gap-2">
-				<Badge variant={'secondary'} class="h-5 text-xs">Sub-Category</Badge>
+				<Badge variant={'secondary'} class="h-5 bg-green-400 text-xs">Sub-Category</Badge>
 				<h1 class="text-sm">{ipcrSubCategory.sub_category}</h1>
 			</div>
 		</div>

@@ -41,6 +41,7 @@ export type Database = {
           created_at: string
           former_state: string | null
           id: string
+          input_type: Database["public"]["Enums"]["input_type"]
           is_included: boolean
           metrics: string
           position: number
@@ -59,6 +60,7 @@ export type Database = {
           created_at?: string
           former_state?: string | null
           id?: string
+          input_type?: Database["public"]["Enums"]["input_type"]
           is_included?: boolean
           metrics: string
           position: number
@@ -77,6 +79,7 @@ export type Database = {
           created_at?: string
           former_state?: string | null
           id?: string
+          input_type?: Database["public"]["Enums"]["input_type"]
           is_included?: boolean
           metrics?: string
           position?: number
@@ -913,6 +916,8 @@ export type Database = {
         Row: {
           created_at: string
           creator_id: string
+          head_of_operating_unit: string
+          head_of_planning: string
           id: string
           implementing_unit: string
           office_id: number | null
@@ -924,6 +929,8 @@ export type Database = {
         Insert: {
           created_at?: string
           creator_id: string
+          head_of_operating_unit: string
+          head_of_planning: string
           id?: string
           implementing_unit: string
           office_id?: number | null
@@ -935,6 +942,8 @@ export type Database = {
         Update: {
           created_at?: string
           creator_id?: string
+          head_of_operating_unit?: string
+          head_of_planning?: string
           id?: string
           implementing_unit?: string
           office_id?: number | null
@@ -1461,6 +1470,7 @@ export type Database = {
         | "reviewing"
         | "revision"
         | "approved"
+      input_type: "percentage" | "number" | "ratio" | "text"
       ipcr_indicator_status:
         | "draft"
         | "submitted"
