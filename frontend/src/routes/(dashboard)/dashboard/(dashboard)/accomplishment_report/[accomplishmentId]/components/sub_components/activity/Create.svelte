@@ -9,24 +9,25 @@
 	import IntelligentInput from '$lib/custom_components/IntelligentInput.svelte';
 	import FormSection from './FormSection.svelte';
 	import { Input } from '$lib/components/ui/input';
-	import { getOpActivityFormContext } from '../../../states/op_activity_form_state';
-	import { getOpActivityStore } from '../../../states/op_activity_state';
-	import { createOpActivitySchema } from '../../../schema/op_activity_schema';
-	import type { OpActivityFormResult } from '../../../utils/type';
+	import { getAccomplishmentActivityFormContext } from '../../../states/activity_form_state';
+	import { getAccomplishmentActivityStore } from '../../../states/activity_state';
+	import { createAccomplishmentActivitySchema } from '../../../schema/activity_schema';
+	import type { ActivityFormResult } from '../../../utils/type';
 	import * as Select from '$lib/components/ui/select/index.js';
 
 	//props
 	interface Iprops {
-		opAnnualPlanId: string;
+		annualPlanId: string;
 		isExpanded: boolean;
 		onToggle: () => Promise<void>;
 	}
 
-	let { opAnnualPlanId, isExpanded = $bindable(), onToggle }: Iprops = $props();
+	let { annualPlanId, isExpanded = $bindable(), onToggle }: Iprops = $props();
 
 	//stores
-	const { createForm } = getOpActivityFormContext();
-	const { size, addOpActivity, currentOpActivities } = getOpActivityStore();
+	const { createForm } = getAccomplishmentActivityFormContext();
+	const { size, addAccomplishmentActivity, currentAccomplishmentActivities } =
+		getAccomplishmentActivityStore();
 
 	//states
 	let isOpen = $state(false);
@@ -35,27 +36,30 @@
 	const form = superForm(createForm, {
 		id: crypto.randomUUID(),
 		dataType: 'json',
-		validators: zodClient(createOpActivitySchema),
+		validators: zodClient(createAccomplishmentActivitySchema),
 		multipleSubmits: 'prevent',
 		onUpdate({ form, result }) {
 			if (
-				$currentOpActivities.some(
-					(opActivity) => opActivity.activity.toLowerCase() === form.data.activity.toLowerCase()
+				$currentAccomplishmentActivities.some(
+					(activity) => activity.activity === form.data.activity
 				)
 			) {
 				setError(form, 'activity', 'Activity already exists');
 			}
-			const action = result.data as FormResult<OpActivityFormResult>;
-			if (form.valid && action.opActivity) {
-				const opActivity = action.opActivity;
-				addOpActivity(opActivity);
+			const action = result.data as FormResult<ActivityFormResult>;
+			if (form.valid && action.accActivity) {
+				const activity = action.accActivity;
+				addAccomplishmentActivity(activity);
 				showSuccessToast(`successfully added Activity`);
 				isOpen = false;
 				isExpanded = true;
 				reset({
-					data: { op_annual_plan_id: opActivity.op_annual_plan_id, position: $size + 1 },
+					data: {
+						accomplishment_annual_plan_id: activity.accomplishment_annual_plan_id,
+						position: $size + 1
+					},
 					newState: {
-						op_annual_plan_id: opActivity.op_annual_plan_id,
+						accomplishment_annual_plan_id: activity.accomplishment_annual_plan_id,
 						position: $size + 1
 					}
 				});
@@ -65,14 +69,14 @@
 
 	const { form: formData, enhance, delayed, message, reset } = form;
 	// //set data that is needed
-	$formData.op_annual_plan_id = opAnnualPlanId;
+	$formData.accomplishment_annual_plan_id = annualPlanId;
 	$formData.position = $size + 1;
 	$formData.input_type = 'text';
 
 	//effect for message
 	$effect(() => {
 		if ($message?.status === 'error') {
-			showErrorToast(`Error adding activity to the objective: ${$message.text}`);
+			showErrorToast(`Error adding activity to the annual plan: ${$message.text}`);
 		}
 	});
 </script>
@@ -86,15 +90,18 @@
 	</Dialog.Trigger>
 	<Dialog.Content class="max-h-[85vh] overflow-y-auto sm:max-w-[800px]">
 		<Dialog.Header>
-			<Dialog.Title>Add Objectives & Activities</Dialog.Title>
+			<Dialog.Title>Add Activities</Dialog.Title>
 			<Dialog.Description>
-				Program/Project Objective: A concise statement outlining the goals and intended outcomes of
-				the program or project.
+				Activties are the tasks that are to be carried out in the annual plan.
 			</Dialog.Description>
 		</Dialog.Header>
-		<form action="?/createopactivity" method="POST" use:enhance class="space-y-6">
+		<form action="?/createactivity" method="POST" use:enhance class="space-y-6">
 			<input hidden name="position" value={$formData.position} />
-			<input hidden name="op_annual_plan_id" value={$formData.op_annual_plan_id} />
+			<input
+				hidden
+				name="accomplishment_annual_plan_id"
+				value={$formData.accomplishment_annual_plan_id}
+			/>
 			<FormSection title={'Basic Information'} required={true}>
 				<div class="grid gap-4 md:grid-cols-2">
 					<Form.Field {form} name="activity">
@@ -151,14 +158,14 @@
 						</Form.Control>
 						<Form.FieldErrors />
 					</Form.Field>
-					<Form.Field {form} name="former_state">
+					<Form.Field {form} name="annual_target">
 						<Form.Control>
 							{#snippet children({ props })}
-								<Form.Label>Former State</Form.Label>
+								<Form.Label>Annual Target</Form.Label>
 								<Input
 									{...props}
-									bind:value={$formData.former_state}
-									placeholder="Enter former state..."
+									bind:value={$formData.annual_target}
+									placeholder="Enter annual target..."
 								/>
 							{/snippet}
 						</Form.Control>
@@ -166,37 +173,53 @@
 					</Form.Field>
 				</div>
 				<div class="grid grid-cols-1 md:grid-cols-2 md:space-x-2">
-					<Form.Field {form} name="q1_target">
+					<Form.Field {form} name="q1_accomplishment">
 						<Form.Control>
 							{#snippet children({ props })}
-								<Form.Label>Quarter 1 Target</Form.Label>
-								<Input {...props} bind:value={$formData.q1_target} placeholder="Enter target..." />
+								<Form.Label>Quarter 1 Accomplishment</Form.Label>
+								<Input
+									{...props}
+									bind:value={$formData.q1_accomplishment}
+									placeholder="Enter accomplishment..."
+								/>
 							{/snippet}
 						</Form.Control>
 					</Form.Field>
-					<Form.Field {form} name="q2_target">
+					<Form.Field {form} name="q2_accomplishment">
 						<Form.Control>
 							{#snippet children({ props })}
-								<Form.Label>Quarter 2 Target</Form.Label>
-								<Input {...props} bind:value={$formData.q2_target} placeholder="Enter target..." />
+								<Form.Label>Quarter 2 Accomplishment</Form.Label>
+								<Input
+									{...props}
+									bind:value={$formData.q2_accomplishment}
+									placeholder="Enter accomplishment..."
+								/>
 							{/snippet}
 						</Form.Control>
 					</Form.Field>
 				</div>
 				<div class="grid grid-cols-1 md:grid-cols-2 md:space-x-2">
-					<Form.Field {form} name="q3_target">
+					<Form.Field {form} name="q3_accomplishment">
 						<Form.Control>
 							{#snippet children({ props })}
-								<Form.Label>Quarter 3 Target</Form.Label>
-								<Input {...props} bind:value={$formData.q3_target} placeholder="Enter target..." />
+								<Form.Label>Quarter 3 Accomplishment</Form.Label>
+								<Input
+									{...props}
+									bind:value={$formData.q3_accomplishment}
+									placeholder="Enter accomplishment..."
+								/>
 							{/snippet}
 						</Form.Control>
 					</Form.Field>
-					<Form.Field {form} name="q4_target">
+					<Form.Field {form} name="q4_accomplishment">
 						<Form.Control>
 							{#snippet children({ props })}
 								<Form.Label>Quarter 4 Target</Form.Label>
-								<Input {...props} bind:value={$formData.q4_target} placeholder="Enter target..." />
+								<Input
+									{...props}
+									bind:value={$formData.q4_accomplishment}
+									placeholder="Enter accomplishment..."
+								/>
 							{/snippet}
 						</Form.Control>
 					</Form.Field>
@@ -204,35 +227,47 @@
 			</FormSection>
 			<FormSection title="Additional Information" required={true}>
 				<div class="grid gap-4 md:grid-cols-2">
-					<div class="space-y-2">
-						<Form.Field {form} name="responsible_officer_unit">
-							<Form.Control>
-								{#snippet children({ props })}
-									<Form.Label>Responsible Officer/Units</Form.Label>
-									<Input
-										{...props}
-										bind:value={$formData.responsible_officer_unit}
-										placeholder="Enter responsible officer/unit..."
-									/>
-								{/snippet}
-							</Form.Control>
-							<Form.FieldErrors />
-						</Form.Field>
-					</div>
-					<Form.Field {form} name="total_budgetary_requirements">
+					<Form.Field {form} name="accomplishment_rate">
 						<Form.Control>
 							{#snippet children({ props })}
-								<Form.Label>Total Budgetary Requirements</Form.Label>
+								<Form.Label>Accomplishment Rate</Form.Label>
 								<Input
 									{...props}
-									bind:value={$formData.total_budgetary_requirements}
-									placeholder="Enter total budgetary requirements..."
+									bind:value={$formData.accomplishment_rate}
+									placeholder="Enter  accomplishment rate..."
+								/>
+							{/snippet}
+						</Form.Control>
+						<Form.FieldErrors />
+					</Form.Field>
+					<Form.Field {form} name="responsible_officer_unit">
+						<Form.Control>
+							{#snippet children({ props })}
+								<Form.Label>Responsible Officer/Units</Form.Label>
+								<Input
+									{...props}
+									bind:value={$formData.responsible_officer_unit}
+									placeholder="Enter responsible officer/unit..."
 								/>
 							{/snippet}
 						</Form.Control>
 						<Form.FieldErrors />
 					</Form.Field>
 				</div>
+				<Form.Field {form} name="remarks">
+					<Form.Control>
+						{#snippet children({ props })}
+							<Form.Label>Remarks</Form.Label>
+							<IntelligentInput
+								textAreaWidth={'full'}
+								placeholder="Enter remarks..."
+								bind:content={$formData.remarks}
+								name={props.name}
+							/>
+						{/snippet}
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
 			</FormSection>
 			<div class="flex w-full justify-end">
 				{#if $delayed}

@@ -1,11 +1,16 @@
 import { Tables } from '$lib/types/database.types';
 
-export type ProgramProjectFormResult = {
+export type HeaderFormResult = {
 	form: any;
-	programProject: Tables<'accomplishment_program_project'>;
+	accHeader: Tables<'accomplishment_header'>;
 };
 
-export type MetricsFormResult = {
+export type AnnualPlanFormResult = {
 	form: any;
-	metrics: Tables<'accomplishment_metrics'>;
+	accAnnualPlan: Tables<'accomplishment_annual_plan'>;
+};
+
+export type ActivityFormResult = {
+	form: any;
+	accActivity: Tables<'accomplishment_activity'>;
 };

@@ -1,7 +1,7 @@
 <script>
 	import { page } from '$app/stores';
 	import NavButtonGroup from '$lib/magic-ui/Dock.svelte';
-	import Create from './sub_components/program_project/Create.svelte';
+	import Create from './sub_components/header/Create.svelte';
 </script>
 
 <NavButtonGroup currentPath={$page.url.pathname}>

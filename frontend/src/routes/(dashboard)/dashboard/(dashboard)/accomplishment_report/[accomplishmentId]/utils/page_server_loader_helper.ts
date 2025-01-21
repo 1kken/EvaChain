@@ -3,16 +3,18 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import {
-	createAccomplishmentProgramProjectSchema,
-	toggleIsIncludeProgramProjectSchema,
-	updateAccomplishmentProgramProjectSchema
-} from '../schema/program_project_schema';
+	createAccomplishmentHeaderSchema,
+	updateAccomplishmentHeaderSchema
+} from '../schema/header_schema';
 import { universalDeleteSchema } from '$lib/schemas/universal_delete_schema';
 import {
-	createAccomplishmentMetricSchema,
-	toggleIsIncludeMetricsSchema,
-	updateAccomplishmentMetricSchema
-} from '../schema/metrics_schema';
+	createAccomplishmentAnnualPlanSchema,
+	updateAccomplishmentAnnualPlanSchema
+} from '../schema/annual_plan_schema';
+import {
+	createAccomplishmentActivitySchema,
+	updateAccomplishmentActivitySchema
+} from '../schema/activity_schema';
 
 //load data
 export async function getCurrentAccomplishmentReport(
@@ -32,15 +34,14 @@ export async function getCurrentAccomplishmentReport(
 	return data;
 }
 
-export async function getProgramProjects(
+export async function getAccomplishmentHeaders(
 	supabase: SupabaseClient<Database>,
 	accomplishmentId: string
 ) {
 	const { data, error } = await supabase
-		.from('accomplishment_program_project')
+		.from('accomplishment_header')
 		.select('*')
-		.eq('accomplishment_report_id', accomplishmentId)
-		.order('position', { ascending: true });
+		.eq('accomplishment_report_id', accomplishmentId);
 
 	if (error) {
 		throw error;
@@ -50,20 +51,26 @@ export async function getProgramProjects(
 }
 
 //forms
-export async function getAccomplishmentProgramProjectForms() {
+export async function getAccomplishmentHeaderForms() {
 	return {
-		createForm: await superValidate(zod(createAccomplishmentProgramProjectSchema)),
-		updateForm: await superValidate(zod(updateAccomplishmentProgramProjectSchema)),
-		deleteForm: await superValidate(zod(universalDeleteSchema)),
-		toggleIsIncludeForm: await superValidate(zod(toggleIsIncludeProgramProjectSchema))
+		createForm: await superValidate(zod(createAccomplishmentHeaderSchema)),
+		updateForm: await superValidate(zod(updateAccomplishmentHeaderSchema)),
+		deleteForm: await superValidate(zod(universalDeleteSchema))
 	};
 }
 
-export async function getAccomplismentMetricsForms() {
+export async function getAccomplishmentAnnualPlanForms() {
 	return {
-		createForm: await superValidate(zod(createAccomplishmentMetricSchema)),
-		updateForm: await superValidate(zod(updateAccomplishmentMetricSchema)),
-		deleteForm: await superValidate(zod(universalDeleteSchema)),
-		toggleIsIncludeForm: await superValidate(zod(toggleIsIncludeMetricsSchema))
+		createForm: await superValidate(zod(createAccomplishmentAnnualPlanSchema)),
+		updateForm: await superValidate(zod(updateAccomplishmentAnnualPlanSchema)),
+		deleteForm: await superValidate(zod(universalDeleteSchema))
+	};
+}
+
+export async function getAccomplishmentActivityForms() {
+	return {
+		createForm: await superValidate(zod(createAccomplishmentActivitySchema)),
+		updateForm: await superValidate(zod(updateAccomplishmentActivitySchema)),
+		deleteForm: await superValidate(zod(universalDeleteSchema))
 	};
 }

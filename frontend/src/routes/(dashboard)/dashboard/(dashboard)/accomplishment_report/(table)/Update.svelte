@@ -60,7 +60,10 @@
 	$formData.id = id;
 	$formData.title = currentAccReport?.title ?? 'error';
 	$formData.implementing_unit = currentAccReport?.implementing_unit ?? 'error';
-	$formData.head_of_operating_unit = currentAccReport?.head_of_operating_unit ?? 'error';
+	$formData.review_by = currentAccReport?.review_by ?? '';
+	$formData.reviewer_position = currentAccReport?.reviewer_position ?? '';
+	$formData.approve_by = currentAccReport?.approve_by ?? '';
+	$formData.approver_position = currentAccReport?.approver_position ?? '';
 
 	function closeAllTabs() {
 		isOpen = false;
@@ -121,20 +124,54 @@
 				</Form.Description>
 				<Form.FieldErrors />
 			</Form.Field>
-			<Form.Field {form} name="head_of_operating_unit">
-				<Form.Control>
-					{#snippet children({ props })}
-						<Form.Label>Head of Operating Unit</Form.Label>
-						<Input
-							{...props}
-							bind:value={$formData.head_of_operating_unit}
-							placeholder="Juan D. Cruz"
-						/>
-					{/snippet}
-				</Form.Control>
-				<Form.Description>The name of the person in charge of the operating unit.</Form.Description>
-				<Form.FieldErrors />
-			</Form.Field>
+			<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+				<Form.Field {form} name="review_by">
+					<Form.Control>
+						{#snippet children({ props })}
+							<Form.Label>Reviewer</Form.Label>
+							<Input {...props} bind:value={$formData.review_by} placeholder="Juan D. Cruz" />
+						{/snippet}
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
+				<Form.Field {form} name="reviewer_position">
+					<Form.Control>
+						{#snippet children({ props })}
+							<Form.Label>Reviewer position</Form.Label>
+							<Input
+								{...props}
+								bind:value={$formData.reviewer_position}
+								placeholder="Head of Institutional Planning and Futures Thinking e.g..."
+							/>
+						{/snippet}
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
+			</div>
+			<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+				<Form.Field {form} name="approve_by">
+					<Form.Control>
+						{#snippet children({ props })}
+							<Form.Label>Approver</Form.Label>
+							<Input {...props} bind:value={$formData.approve_by} placeholder="Juan D. Cruz" />
+						{/snippet}
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
+				<Form.Field {form} name="approver_position">
+					<Form.Control>
+						{#snippet children({ props })}
+							<Form.Label>Approver position</Form.Label>
+							<Input
+								{...props}
+								bind:value={$formData.approver_position}
+								placeholder="Chancellor, President, etc..."
+							/>
+						{/snippet}
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
+			</div>
 			{#if $delayed}
 				<Form.Button disabled><LoaderCircle class="animate-spin" />Processing...</Form.Button>
 			{:else}

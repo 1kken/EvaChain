@@ -3,16 +3,21 @@
 	import type { PageData } from './$types';
 	import Index from './components/Index.svelte';
 	import NavButton from './components/NavButton.svelte';
+	import { setAccomplishmentActivityFormContext } from './states/activity_form_state';
+	import { setAccomplishmentAnnualPlanFormContext } from './states/annual_plan_form_state';
 	import { setCurrentAccomplishmentReportStore } from './states/current_accomplishment_report_state';
-	import { setAccomplishmentMetricFormContext } from './states/metrics_form_state';
-	import { setAccomplishmentProgramProjectFormContext } from './states/program_project_form_state';
-	import { setAccomplishmentProgramProjectStore } from './states/program_project_state';
+	import { setAccomplishmentHeaderFormContext } from './states/header_form_state';
+	import { setAccomplishmentHeaderStore } from './states/header_state';
 
 	let { data }: { data: PageData } = $props();
+	//data form
+	setAccomplishmentHeaderFormContext(data.form.accomplishmentHeaderForms);
+	setAccomplishmentAnnualPlanFormContext(data.form.accomplishmentAnnualPlanForms);
+	setAccomplishmentActivityFormContext(data.form.accomplishmentActivityForms);
+
+	//data store
 	setCurrentAccomplishmentReportStore(data.accomplishmentReport);
-	setAccomplishmentProgramProjectStore(data.programProjects);
-	setAccomplishmentProgramProjectFormContext(data.programProjectForms);
-	setAccomplishmentMetricFormContext(data.metricsForms);
+	setAccomplishmentHeaderStore(data.accomplishmentHeader);
 </script>
 
 <!-- Main wrapper -->

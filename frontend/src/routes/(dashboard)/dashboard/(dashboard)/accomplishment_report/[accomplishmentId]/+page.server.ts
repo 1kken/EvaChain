@@ -1,65 +1,79 @@
 import type { Actions, PageServerLoad } from './$types';
 import {
-	createAccomplishmentMetric,
-	deleteAccomplishmentMetric,
-	toggleIsIncludeMetrics,
-	updateAccomplishmentMetric
-} from './services/metrics_services';
+	createAccomplishmentActivity,
+	deleteAccomplishmentActivity,
+	updateAccomplishmentActivity
+} from './services/activity_services';
 import {
-	createAccomplishmentProgramProject,
-	deleteAccomplishmentProgramProject,
-	toggleIsIncludeProgramProject,
-	updateAccomplishmentProgramProject
-} from './services/program_project_services';
+	createAccomplishmentAnnualPlan,
+	deleteAccomplishmentAnnualPlan,
+	updateAccomplishmentAnnualPlan
+} from './services/annual_plan_services';
 import {
-	getAccomplishmentProgramProjectForms,
-	getAccomplismentMetricsForms,
-	getCurrentAccomplishmentReport,
-	getProgramProjects
+	createAccomplishmentHeader,
+	deleteAccomplishmentHeader,
+	updateAccomplishmentHeader
+} from './services/header_services';
+import {
+	getAccomplishmentActivityForms,
+	getAccomplishmentAnnualPlanForms,
+	getAccomplishmentHeaderForms,
+	getAccomplishmentHeaders,
+	getCurrentAccomplishmentReport
 } from './utils/page_server_loader_helper';
 
 export const load = (async ({ params, locals: { supabase, session } }) => {
 	const accomplishmentId = params.accomplishmentId;
 
+	//data
 	const accomplishmentReport = await getCurrentAccomplishmentReport(supabase, accomplishmentId);
-	const programProjects = await getProgramProjects(supabase, accomplishmentId);
+	const accomplishmentHeader = await getAccomplishmentHeaders(supabase, accomplishmentId);
 
 	//forms
-	const programProjectForms = await getAccomplishmentProgramProjectForms();
-	const metricsForms = await getAccomplismentMetricsForms();
+	const accomplishmentHeaderForms = await getAccomplishmentHeaderForms();
+	const accomplishmentAnnualPlanForms = await getAccomplishmentAnnualPlanForms();
+	const accomplishmentActivityForms = await getAccomplishmentActivityForms();
 
 	return {
 		accomplishmentReport,
-		programProjects,
-		programProjectForms,
-		metricsForms
+		accomplishmentHeader,
+		form: {
+			accomplishmentHeaderForms,
+			accomplishmentAnnualPlanForms,
+			accomplishmentActivityForms
+		}
 	};
 }) satisfies PageServerLoad;
 
 export const actions = {
-	createaccomplishmentprogramproject: async ({ request, locals: { supabase } }) => {
-		return createAccomplishmentProgramProject(request, supabase);
+	//accomplishment header
+	createaccheader: async ({ request, locals: { supabase } }) => {
+		return createAccomplishmentHeader(request, supabase);
 	},
-	deleteaccomplishmentprogramproject: async ({ request, locals: { supabase } }) => {
-		return deleteAccomplishmentProgramProject(request, supabase);
+	updateaccheader: async ({ request, locals: { supabase } }) => {
+		return updateAccomplishmentHeader(request, supabase);
 	},
-	updateaccomplishmentprogramproject: async ({ request, locals: { supabase } }) => {
-		return updateAccomplishmentProgramProject(request, supabase);
+	deleteaccheader: async ({ request, locals: { supabase } }) => {
+		return deleteAccomplishmentHeader(request, supabase);
 	},
-	createmetric: async ({ request, locals: { supabase } }) => {
-		return createAccomplishmentMetric(request, supabase);
+	//annual plan
+	createannualplan: async ({ request, locals: { supabase } }) => {
+		return createAccomplishmentAnnualPlan(request, supabase);
 	},
-	deletemetric: async ({ request, locals: { supabase } }) => {
-		return deleteAccomplishmentMetric(request, supabase);
+	updateannualplan: async ({ request, locals: { supabase } }) => {
+		return updateAccomplishmentAnnualPlan(request, supabase);
 	},
-	updatemetric: async ({ request, locals: { supabase } }) => {
-		return updateAccomplishmentMetric(request, supabase);
+	deleteannualplan: async ({ request, locals: { supabase } }) => {
+		return deleteAccomplishmentAnnualPlan(request, supabase);
 	},
-	toggleisincludedmetrics: async ({ request, locals: { supabase } }) => {
-		return toggleIsIncludeMetrics(request, supabase);
+	//activity
+	createactivity: async ({ request, locals: { supabase } }) => {
+		return createAccomplishmentActivity(request, supabase);
 	},
-	toggleisincludeprogramproject: async ({ request, locals: { supabase } }) => {
-		console.log('test');
-		return toggleIsIncludeProgramProject(request, supabase);
+	updateactivity: async ({ request, locals: { supabase } }) => {
+		return updateAccomplishmentActivity(request, supabase);
+	},
+	deleteactivity: async ({ request, locals: { supabase } }) => {
+		return deleteAccomplishmentActivity(request, supabase);
 	}
 } satisfies Actions;

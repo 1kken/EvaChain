@@ -7,10 +7,10 @@ CREATE TABLE operational_plan (
     program_id INTEGER REFERENCES program(id) ON DELETE CASCADE,
     title TEXT NOT NULL,
     implementing_unit TEXT NOT NULL,
-    review_by VARCHAR(255),
-    reviewer_position VARCHAR(255),
-    approve_by VARCHAR(255),
-    approver_position VARCHAR(255),
+    review_by VARCHAR(255)  NOT NULL,
+    reviewer_position VARCHAR(255)  NOT NULL,
+    approve_by VARCHAR(255)  NOT NULL,
+    approver_position VARCHAR(255) NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
 );

@@ -54,20 +54,16 @@ export async function createAccomplishmentReport(
 	}
 
 	// Get the form data
-	const { title, implementing_unit, head_of_operating_unit } = form.data;
 
 	// Insert the accomplishment report
 	const { data: accData, error } = await supabase
 		.from('accomplishment_report')
 		.insert({
-			title,
-			head_of_operating_unit,
-			implementing_unit,
+			...form.data,
 			owner_id,
 			unit_id,
 			office_id,
-			program_id,
-			status: 'draft' // Set initial status as draft
+			program_id
 		})
 		.select()
 		.single();
@@ -79,67 +75,33 @@ export async function createAccomplishmentReport(
 	return { form, accData };
 }
 
-export async function createAccomplishmentReportWithTemplate(
+export async function updateAccomplishmentReport(
 	request: Request,
-	session: Session,
 	supabase: SupabaseClient<Database>
 ) {
-	const form = await superValidate<Infer<CreateAccomplishmentReportSchema>, App.Superforms.Message>(
+	const form = await superValidate<Infer<UpdateAccomplishmentReportSchema>, App.Superforms.Message>(
 		request,
-		zod(createAccomplishmentReportSchema)
+		zod(updateAccomplishmentReportSchema)
 	);
 
 	if (!form.valid) {
-		return message(form, { status: 'error', text: 'Unprocessable input!' });
-	}
-
-	const owner_id = session.user.id;
-	const { data: profileData, error: profileError } = await fetchProfileDetails(owner_id, supabase);
-
-	if (profileError || !profileData) {
-		return message(form, { status: 'error', text: `Error fetching profile details` });
-	}
-
-	const result = await checkIfAccomplishmentReportExists(supabase, profileData);
-	if (result.error) {
-		return message(form, result.message);
-	}
-
-	const { unit_id, office_id, program_id } = profileData;
-	if (!unit_id) {
-		return message(form, { status: 'error', text: `Error fetching profile details` });
-	}
-
-	const { title, implementing_unit, head_of_operating_unit } = form.data;
-
-	const { data: reportId, error: rpcError } = await supabase.rpc(
-		'create_accomplishment_report_from_template',
-		{
-			p_implementing_unit: implementing_unit,
-			p_title: title,
-			p_owner_id: owner_id,
-			p_head_of_operating_unit: head_of_operating_unit,
-			p_unit_id: unit_id,
-			p_office_id: office_id === null ? undefined : office_id,
-			p_program_id: program_id === null ? undefined : program_id
-		}
-	);
-
-	if (rpcError) {
 		return message(form, {
 			status: 'error',
-			text: `Error creating Accomplishment Report ${rpcError.message}`
+			text: 'Unprocessable input!'
 		});
 	}
 
-	const { data: accData, error: fetchError } = await supabase
+	const { id } = form.data;
+
+	const { data: accData, error } = await supabase
 		.from('accomplishment_report')
+		.update({ ...form.data })
+		.eq('id', id)
 		.select()
-		.eq('id', reportId)
 		.single();
 
-	if (fetchError) {
-		return message(form, { status: 'error', text: `Error fetching created report` });
+	if (error) {
+		return message(form, { status: 'error', text: `Error updating Accomplishment Report` });
 	}
 
 	return { form, accData };
@@ -171,38 +133,6 @@ export async function deleteAccomplishmentReport(
 
 	if (error) {
 		return message(form, { status: 'error', text: `Error deleting Operational plan` });
-	}
-
-	return { form, accData };
-}
-
-export async function updateAccomplishmentReport(
-	request: Request,
-	supabase: SupabaseClient<Database>
-) {
-	const form = await superValidate<Infer<UpdateAccomplishmentReportSchema>, App.Superforms.Message>(
-		request,
-		zod(updateAccomplishmentReportSchema)
-	);
-
-	if (!form.valid) {
-		return message(form, {
-			status: 'error',
-			text: 'Unprocessable input!'
-		});
-	}
-
-	const { id, title, implementing_unit, head_of_operating_unit } = form.data;
-
-	const { data: accData, error } = await supabase
-		.from('accomplishment_report')
-		.update({ title, implementing_unit, head_of_operating_unit })
-		.eq('id', id)
-		.select()
-		.single();
-
-	if (error) {
-		return message(form, { status: 'error', text: `Error updating Accomplishment Report` });
 	}
 
 	return { form, accData };

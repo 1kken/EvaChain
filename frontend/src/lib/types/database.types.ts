@@ -34,105 +34,134 @@ export type Database = {
   }
   public: {
     Tables: {
-      accomplishment_metrics: {
+      accomplishment_activity: {
         Row: {
-          accomplishment_program_project_id: string
-          annual_target: string | null
+          accomplishment_annual_plan_id: string
+          accomplishment_rate: string | null
+          activity: string
+          annual_target: string
           created_at: string
-          former_state: string | null
           id: string
-          input_type: Database["public"]["Enums"]["input_type"]
-          is_included: boolean
-          metrics: string
+          input_type: Database["public"]["Enums"]["input_type_accomplishment"]
+          performance_indicator: string
           position: number
-          quarter_1_accomplishment: string | null
-          quarter_2_accomplishment: string | null
-          quarter_3_accomplishment: string | null
-          quarter_4_accomplishment: string | null
-          remarks: string | null
-          total_accomplishment: string | null
+          q1_accomplishment: string | null
+          q2_accomplishment: string | null
+          q3_accomplishment: string | null
+          q4_accomplishment: string | null
+          remarks: string
+          responsible_officer_unit: string
           updated_at: string
-          variance: string | null
         }
         Insert: {
-          accomplishment_program_project_id: string
-          annual_target?: string | null
+          accomplishment_annual_plan_id: string
+          accomplishment_rate?: string | null
+          activity: string
+          annual_target: string
           created_at?: string
-          former_state?: string | null
           id?: string
-          input_type?: Database["public"]["Enums"]["input_type"]
-          is_included?: boolean
-          metrics: string
+          input_type?: Database["public"]["Enums"]["input_type_accomplishment"]
+          performance_indicator: string
           position: number
-          quarter_1_accomplishment?: string | null
-          quarter_2_accomplishment?: string | null
-          quarter_3_accomplishment?: string | null
-          quarter_4_accomplishment?: string | null
-          remarks?: string | null
-          total_accomplishment?: string | null
+          q1_accomplishment?: string | null
+          q2_accomplishment?: string | null
+          q3_accomplishment?: string | null
+          q4_accomplishment?: string | null
+          remarks: string
+          responsible_officer_unit: string
           updated_at?: string
-          variance?: string | null
         }
         Update: {
-          accomplishment_program_project_id?: string
-          annual_target?: string | null
+          accomplishment_annual_plan_id?: string
+          accomplishment_rate?: string | null
+          activity?: string
+          annual_target?: string
           created_at?: string
-          former_state?: string | null
           id?: string
-          input_type?: Database["public"]["Enums"]["input_type"]
-          is_included?: boolean
-          metrics?: string
+          input_type?: Database["public"]["Enums"]["input_type_accomplishment"]
+          performance_indicator?: string
           position?: number
-          quarter_1_accomplishment?: string | null
-          quarter_2_accomplishment?: string | null
-          quarter_3_accomplishment?: string | null
-          quarter_4_accomplishment?: string | null
-          remarks?: string | null
-          total_accomplishment?: string | null
+          q1_accomplishment?: string | null
+          q2_accomplishment?: string | null
+          q3_accomplishment?: string | null
+          q4_accomplishment?: string | null
+          remarks?: string
+          responsible_officer_unit?: string
           updated_at?: string
-          variance?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "accomplishment_metrics_accomplishment_program_project_id_fkey"
-            columns: ["accomplishment_program_project_id"]
+            foreignKeyName: "accomplishment_activity_accomplishment_annual_plan_id_fkey"
+            columns: ["accomplishment_annual_plan_id"]
             isOneToOne: false
-            referencedRelation: "accomplishment_program_project"
+            referencedRelation: "accomplishment_annual_plan"
             referencedColumns: ["id"]
           },
         ]
       }
-      accomplishment_program_project: {
+      accomplishment_annual_plan: {
+        Row: {
+          accomplishment_header_id: string
+          created_at: string
+          description: string
+          id: string
+          position: number
+          updated_at: string
+        }
+        Insert: {
+          accomplishment_header_id: string
+          created_at?: string
+          description: string
+          id?: string
+          position: number
+          updated_at?: string
+        }
+        Update: {
+          accomplishment_header_id?: string
+          created_at?: string
+          description?: string
+          id?: string
+          position?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "accomplishment_annual_plan_accomplishment_header_id_fkey"
+            columns: ["accomplishment_header_id"]
+            isOneToOne: false
+            referencedRelation: "accomplishment_header"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      accomplishment_header: {
         Row: {
           accomplishment_report_id: string
           created_at: string
           id: string
-          is_included: boolean
           position: number
-          program_project: string
+          title: string
           updated_at: string
         }
         Insert: {
           accomplishment_report_id: string
           created_at?: string
           id?: string
-          is_included?: boolean
           position: number
-          program_project: string
+          title: string
           updated_at?: string
         }
         Update: {
           accomplishment_report_id?: string
           created_at?: string
           id?: string
-          is_included?: boolean
           position?: number
-          program_project?: string
+          title?: string
           updated_at?: string
         }
         Relationships: [
           {
-            foreignKeyName: "accomplishment_program_project_accomplishment_report_id_fkey"
+            foreignKeyName: "accomplishment_header_accomplishment_report_id_fkey"
             columns: ["accomplishment_report_id"]
             isOneToOne: false
             referencedRelation: "accomplishment_report"
@@ -142,46 +171,49 @@ export type Database = {
       }
       accomplishment_report: {
         Row: {
+          approve_by: string
+          approver_position: string
           created_at: string
-          head_of_operating_unit: string
           id: string
           implementing_unit: string
           office_id: number | null
           owner_id: string
           program_id: number | null
-          status: Database["public"]["Enums"]["accomplishment_status"]
+          review_by: string
+          reviewer_position: string
           title: string
           unit_id: number | null
           updated_at: string
-          using_template: boolean
         }
         Insert: {
+          approve_by: string
+          approver_position: string
           created_at?: string
-          head_of_operating_unit: string
           id?: string
           implementing_unit: string
           office_id?: number | null
           owner_id: string
           program_id?: number | null
-          status?: Database["public"]["Enums"]["accomplishment_status"]
+          review_by: string
+          reviewer_position: string
           title: string
           unit_id?: number | null
           updated_at?: string
-          using_template?: boolean
         }
         Update: {
+          approve_by?: string
+          approver_position?: string
           created_at?: string
-          head_of_operating_unit?: string
           id?: string
           implementing_unit?: string
           office_id?: number | null
           owner_id?: string
           program_id?: number | null
-          status?: Database["public"]["Enums"]["accomplishment_status"]
+          review_by?: string
+          reviewer_position?: string
           title?: string
           unit_id?: number | null
           updated_at?: string
-          using_template?: boolean
         }
         Relationships: [
           {
@@ -203,103 +235,6 @@ export type Database = {
             columns: ["unit_id"]
             isOneToOne: false
             referencedRelation: "unit"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      accomplishment_report_template: {
-        Row: {
-          created_at: string
-          id: string
-          is_published: boolean
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          is_published?: boolean
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          is_published?: boolean
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      accomplishment_template_metrics: {
-        Row: {
-          accomplishment_template_program_project_id: string
-          annual_target: string | null
-          created_at: string
-          former_state: string | null
-          id: string
-          metrics: string
-          position: number
-          updated_at: string
-        }
-        Insert: {
-          accomplishment_template_program_project_id: string
-          annual_target?: string | null
-          created_at?: string
-          former_state?: string | null
-          id?: string
-          metrics: string
-          position: number
-          updated_at?: string
-        }
-        Update: {
-          accomplishment_template_program_project_id?: string
-          annual_target?: string | null
-          created_at?: string
-          former_state?: string | null
-          id?: string
-          metrics?: string
-          position?: number
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "accomplishment_template_metri_accomplishment_template_prog_fkey"
-            columns: ["accomplishment_template_program_project_id"]
-            isOneToOne: false
-            referencedRelation: "accomplishment_template_program_project"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      accomplishment_template_program_project: {
-        Row: {
-          accomplishment_report_template_id: string
-          created_at: string
-          id: string
-          position: number
-          program_project: string
-          updated_at: string
-        }
-        Insert: {
-          accomplishment_report_template_id: string
-          created_at?: string
-          id?: string
-          position: number
-          program_project: string
-          updated_at?: string
-        }
-        Update: {
-          accomplishment_report_template_id?: string
-          created_at?: string
-          id?: string
-          position?: number
-          program_project?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "accomplishment_template_progr_accomplishment_report_templa_fkey"
-            columns: ["accomplishment_report_template_id"]
-            isOneToOne: false
-            referencedRelation: "accomplishment_report_template"
             referencedColumns: ["id"]
           },
         ]
@@ -860,46 +795,46 @@ export type Database = {
       }
       operational_plan: {
         Row: {
-          approve_by: string | null
-          approver_position: string | null
+          approve_by: string
+          approver_position: string
           created_at: string
           creator_id: string
           id: string
           implementing_unit: string
           office_id: number | null
           program_id: number | null
-          review_by: string | null
-          reviewer_position: string | null
+          review_by: string
+          reviewer_position: string
           title: string
           unit_id: number
           updated_at: string
         }
         Insert: {
-          approve_by?: string | null
-          approver_position?: string | null
+          approve_by: string
+          approver_position: string
           created_at?: string
           creator_id: string
           id?: string
           implementing_unit: string
           office_id?: number | null
           program_id?: number | null
-          review_by?: string | null
-          reviewer_position?: string | null
+          review_by: string
+          reviewer_position: string
           title: string
           unit_id: number
           updated_at?: string
         }
         Update: {
-          approve_by?: string | null
-          approver_position?: string | null
+          approve_by?: string
+          approver_position?: string
           created_at?: string
           creator_id?: string
           id?: string
           implementing_unit?: string
           office_id?: number | null
           program_id?: number | null
-          review_by?: string | null
-          reviewer_position?: string | null
+          review_by?: string
+          reviewer_position?: string
           title?: string
           unit_id?: number
           updated_at?: string
@@ -1345,18 +1280,6 @@ export type Database = {
         }
         Returns: boolean
       }
-      create_accomplishment_report_from_template: {
-        Args: {
-          p_implementing_unit: string
-          p_title: string
-          p_head_of_operating_unit: string
-          p_owner_id: string
-          p_unit_id: number
-          p_office_id?: number
-          p_program_id?: number
-        }
-        Returns: string
-      }
       get_user_role: {
         Args: Record<PropertyKey, never>
         Returns: {
@@ -1368,43 +1291,6 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: boolean
       }
-      toggle_metrics_inclusion: {
-        Args: {
-          metrics_id: string
-        }
-        Returns: {
-          id: string
-          is_included: boolean
-          accomplishment_program_project_id: string
-          metrics: string
-          former_state: string
-          annual_target: string
-          quarter_1_accomplishment: string
-          quarter_2_accomplishment: string
-          quarter_3_accomplishment: string
-          quarter_4_accomplishment: string
-          total_accomplishment: string
-          variance: string
-          remarks: string
-          position: number
-          created_at: string
-          updated_at: string
-        }[]
-      }
-      toggle_program_project_inclusion: {
-        Args: {
-          program_project_id: string
-        }
-        Returns: {
-          id: string
-          is_included: boolean
-          accomplishment_report_id: string
-          program_project: string
-          position: number
-          created_at: string
-          updated_at: string
-        }[]
-      }
       validate_ipcr: {
         Args: {
           p_ipcr_id: string
@@ -1413,13 +1299,7 @@ export type Database = {
       }
     }
     Enums: {
-      accomplishment_status:
-        | "draft"
-        | "submitted"
-        | "reviewing"
-        | "revision"
-        | "approved"
-      input_type: "percentage" | "number" | "ratio" | "text"
+      input_type_accomplishment: "percentage" | "number" | "ratio" | "text"
       input_type_op: "percentage" | "number" | "ratio" | "text"
       ipcr_indicator_status:
         | "draft"

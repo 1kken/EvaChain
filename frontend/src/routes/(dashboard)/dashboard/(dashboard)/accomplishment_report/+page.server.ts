@@ -2,7 +2,6 @@ import { error } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import {
 	createAccomplishmentReport,
-	createAccomplishmentReportWithTemplate,
 	deleteAccomplishmentReport,
 	updateAccomplishmentReport
 } from './(data)/accomp_services';
@@ -40,12 +39,6 @@ export const actions = {
 			return { status: 401, body: 'Unauthorized' };
 		}
 		return createAccomplishmentReport(request, session, supabase);
-	},
-	createaccreportwithtemplate: async ({ request, locals: { supabase, session } }) => {
-		if (!session) {
-			return { status: 401, body: 'Unauthorized' };
-		}
-		return createAccomplishmentReportWithTemplate(request, session, supabase);
 	},
 	deleteaccreport: async ({ request, locals: { supabase } }) => {
 		return deleteAccomplishmentReport(request, supabase);

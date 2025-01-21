@@ -33,22 +33,6 @@ export async function fetchOpAnnualPlanByOpHeaderId(
 	return opProgramProject;
 }
 
-// export async function fetchOpObjectivesByOpProgramProjectId(
-// 	opProgramProjectId: string,
-// 	supabase: SupabaseClient<Database>
-// ) {
-// 	const { data: opObjectives, error } = await supabase
-// 		.from('op_objective')
-// 		.select('*')
-// 		.eq('op_program_project_id', opProgramProjectId);
-
-// 	if (error) {
-// 		throw new Error(error.message);
-// 	}
-
-// 	return opObjectives;
-// }
-
 export async function fetchOpActivitiesByOpObjectiveId(
 	annualPlanId: string,
 	supabase: SupabaseClient<Database>
