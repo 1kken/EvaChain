@@ -1035,22 +1035,21 @@ VALUES
         'HR Training, IT Department',
         '100000',
         2
+    ),
+    -- JUST FOR THE SEEDING FOR IPCR
+    (
+        'f392f75c-6f4e-4e34-a91e-6b1c7a590d4d',
+        'c492f75c-6f4e-4e34-a91e-6b1c7a590d4d',
+        'TEST PRINTING IPCR',
+        'text',
+        'TEST PRINTING IPCR',
+        'TEST PRINTING IPCR',
+        'Q1',
+        'Q2',
+        'Q3',
+        'Q4',
+        'TOTAL',
+        'TEST PRINTING IPCR',
+        'N/A',
+        1
     );
-
---JUST FOR THE SEEDING FOR IPCR
--- (
---     'f392f75c-6f4e-4e34-a91e-6b1c7a590d4d',
---     'e392f75c-6f4e-4e34-a91e-6b1c7a590d4d',
---     'TEST PRINTING IPCR',
---     'text',
---     'TEST PRINTING IPCR',
---     'TEST PRINTING IPCR',
---     'Q1',
---     'Q2',
---     'Q3',
---     'Q4',
---     'TOTAL',
---     'TEST PRINTING IPCR',
---     'N/A',
---     1
--- );

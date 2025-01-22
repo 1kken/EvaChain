@@ -6,7 +6,8 @@ export const GET: RequestHandler = async ({ url, locals: { supabase, session } }
 		if (!session) {
 			return json({ error: 'Unauthorized' }, { status: 401 });
 		}
-		//fetch the profile base on session id
+
+		// Fetch the profile based on session id
 		const { data: profile, error: profileError } = await supabase
 			.from('profiles')
 			.select('*')
@@ -19,16 +20,11 @@ export const GET: RequestHandler = async ({ url, locals: { supabase, session } }
 		}
 
 		// Get query parameters
-		const textSearch = url.searchParams.get('text');
-		const year = new Date(Date.now()).getFullYear();
+		const textSearch = url.searchParams.get('text') || '';
+		const year = new Date().getFullYear();
 		const programId = profile.program_id;
 		const officeId = profile.office_id;
 		const unitId = profile.unit_id;
-
-		// Validate required parameters
-		if (!year) {
-			return json({ error: 'year is required' }, { status: 400 });
-		}
 
 		// Build date range
 		const startDate = `${year}-01-01`;
@@ -41,6 +37,7 @@ export const GET: RequestHandler = async ({ url, locals: { supabase, session } }
 			.gte('created_at', startDate)
 			.lte('created_at', endDate);
 
+		// Apply filters based on user's profile
 		if (programId) query = query.eq('program_id', programId);
 		if (officeId) query = query.eq('office_id', officeId);
 		if (unitId) query = query.eq('unit_id', unitId);
@@ -62,10 +59,11 @@ export const GET: RequestHandler = async ({ url, locals: { supabase, session } }
 			.from('operational_plan_activities')
 			.select('*')
 			.in('operational_plan_id', planIds)
-			.ilike('activity', `%${textSearch}%`)
+			.or(
+				`activity.ilike.%${textSearch}%,performance_indicator.ilike.%${textSearch}%,responsible_officer_unit.ilike.%${textSearch}%`
+			)
 			.order('header_position')
-			.order('program_project_position')
-			.order('objective_position')
+			.order('annual_plan_position')
 			.order('activity_position')
 			.limit(10);
 
