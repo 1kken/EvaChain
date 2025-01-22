@@ -8,6 +8,7 @@
 	import { getAccomplishmentActivityStore } from '../states/activity_state';
 	import type { ActivityFormResult } from '../utils/type';
 	import Update from './sub_components/activity/Update.svelte';
+	import ViewActivity from './ViewActivity.svelte';
 
 	let { activity }: { activity: Tables<'accomplishment_activity'> } = $props();
 	//states
@@ -16,7 +17,6 @@
 	//store
 	const { removeAccomplishmentActivity } = getAccomplishmentActivityStore();
 	const { deleteForm } = getAccomplishmentActivityFormContext();
-	// const { deleteForm } = getOpActivityFormContext();
 	//functions
 	function handleDelete(result: { type: string; data: ActivityFormResult }) {
 		if (result.data.accActivity) {
@@ -31,10 +31,7 @@
 	<header class=" top-0 flex h-10 items-center justify-between p-7 md:px-10">
 		<div class="flex items-start gap-5 pr-4">
 			<Badge variant={'secondary'} class="h-5 bg-amber-500 text-xs">Activity</Badge>
-			<h2>
-				{activity.activity}
-			</h2>
-			<!-- <ViewActivity activity={opActivity} /> -->
+			<ViewActivity {activity} />
 		</div>
 		<div class="flex items-center gap-5">
 			{#snippet deleteAction()}

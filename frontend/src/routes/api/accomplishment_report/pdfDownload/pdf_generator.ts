@@ -6,7 +6,7 @@ import type { TDocumentDefinitions, TFontDictionary } from 'pdfmake/interfaces';
 import PdfPrinter from 'pdfmake';
 import { generateHeader } from './parts/header';
 import { generateBody } from './parts/body';
-import { fetchAccomplishmentProgramProjectById, fetchProfileById } from './helper';
+import { fetchProfileById } from './helper';
 import { generateFooter } from './parts/footer';
 import { error } from '@sveltejs/kit';
 
@@ -29,7 +29,6 @@ export async function generatePDF(
 	const buffer = Buffer.from(logo);
 	const logoBase64 = buffer.toString('base64');
 
-	const accProgramProject = await fetchAccomplishmentProgramProjectById(ipcrId, supabase);
 	const profile = await fetchProfileById(accomplishmentReport.owner_id, supabase);
 
 	if (!profile) {
@@ -45,7 +44,7 @@ export async function generatePDF(
 		},
 		footer: function () {
 			return {
-				text: 'DMMMSU-PRD-FOO2 Rev. No.00 (10-28-2020)',
+				text: 'DMMMSU-IPFT-FOO4 \n Rev. No.02 (12.10.2024)',
 				alignment: 'left',
 				margin: [40, 10, 0, 0]
 			};
@@ -57,7 +56,7 @@ export async function generatePDF(
 				accomplishmentReport.implementing_unit,
 				accomplishmentReport.created_at
 			),
-			await generateBody(accProgramProject, supabase),
+			await generateBody(accomplishmentReport, supabase),
 			generateFooter(profile, accomplishmentReport)
 		],
 

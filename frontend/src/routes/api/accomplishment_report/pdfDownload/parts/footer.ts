@@ -5,22 +5,28 @@ import { titleCase } from 'title-case';
 
 export function generateFooter(
 	profile: Profile,
-	accomplishmentReport: Tables<'accomplishment_report'>
+	accReport: Tables<'accomplishment_report'>
 ): Content {
 	const org = profile.office?.name || profile.unit?.name || '';
 	return {
 		marginTop: 10,
-		columnGap: 10,
+		columnGap: 5,
 		columns: [
+			generateLegend(),
 			createSignatureBlock(
 				generateFullName(profile),
 				'Prepared by:',
 				titleCase(profile.position!.name) + ', ' + titleCase(org)
 			),
 			createSignatureBlock(
-				accomplishmentReport.head_of_operating_unit,
-				'Notded by:',
-				'Head of Operating Unit'
+				(accReport.review_by ?? '').toUpperCase(),
+				'Reviewed by:',
+				accReport.reviewer_position ?? ''
+			),
+			createSignatureBlock(
+				(accReport.approve_by ?? '').toUpperCase(),
+				'Approved by:',
+				accReport.approver_position ?? ''
 			)
 		]
 	};
@@ -28,6 +34,7 @@ export function generateFooter(
 
 export function generateFullName(profile: Tables<'profiles'>): string {
 	const { first_name, middle_name, last_name } = profile;
+	console.log(first_name, middle_name, last_name);
 	return `${first_name} ${middle_name ?? ''} ${last_name}`.toUpperCase();
 }
 export function createSignatureBlock(fullName: string, header: string, title: string): Content {
@@ -82,5 +89,21 @@ export function createSignatureBlock(fullName: string, header: string, title: st
 		layout: {
 			defaultBorder: false
 		}
+	};
+}
+
+function generateLegend(): Content {
+	return {
+		table: {
+			widths: ['auto'],
+			body: [
+				[{ text: 'Signature:', bold: true }],
+				[{ text: 'Printed Name:', bold: true }],
+				[{ text: 'Position:', bold: true }],
+				[{ text: 'Date:', bold: true }]
+			]
+		},
+		layout: 'noBorders',
+		marginTop: 10
 	};
 }

@@ -51,6 +51,7 @@ export type Database = {
           q4_accomplishment: string | null
           remarks: string
           responsible_officer_unit: string
+          total: string | null
           updated_at: string
         }
         Insert: {
@@ -69,6 +70,7 @@ export type Database = {
           q4_accomplishment?: string | null
           remarks: string
           responsible_officer_unit: string
+          total?: string | null
           updated_at?: string
         }
         Update: {
@@ -87,6 +89,7 @@ export type Database = {
           q4_accomplishment?: string | null
           remarks?: string
           responsible_officer_unit?: string
+          total?: string | null
           updated_at?: string
         }
         Relationships: [

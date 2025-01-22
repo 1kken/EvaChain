@@ -18,33 +18,48 @@ export async function fetchAccomplishmentReportById(
 	return data;
 }
 
-export async function fetchAccomplishmentProgramProjectById(
+export async function fetchAccomplishmentHeadersById(
 	id: string,
 	supabase: SupabaseClient<Database>
-) {
+): Promise<Tables<'accomplishment_header'>[]> {
 	const { data, error: errorFetch } = await supabase
-		.from('accomplishment_program_project')
+		.from('accomplishment_header')
 		.select()
 		.eq('accomplishment_report_id', id);
 	if (errorFetch) {
 		error(404, { message: errorFetch.message });
 	}
-	if (!data) throw new Error('Accomplishment Program Project not found');
+	if (!data) throw new Error('Accomplishment Report Header not found');
 	return data;
 }
 
-export async function fetchAccomplishmentMetricsById(
+export async function fetchAnnualPlanByHeadersId(
 	id: string,
 	supabase: SupabaseClient<Database>
-) {
+): Promise<Tables<'accomplishment_annual_plan'>[]> {
 	const { data, error: errorFetch } = await supabase
-		.from('accomplishment_metrics')
+		.from('accomplishment_annual_plan')
 		.select()
-		.eq('accomplishment_program_project_id', id);
+		.eq('accomplishment_header_id', id);
 	if (errorFetch) {
 		error(404, { message: errorFetch.message });
 	}
-	if (!data) throw new Error('Accomplishment Metrics not found');
+	if (!data) throw new Error('Annual Plan not found');
+	return data;
+}
+
+export async function fetchActivitiesByAnnualPlanId(
+	id: string,
+	supabase: SupabaseClient<Database>
+): Promise<Tables<'accomplishment_activity'>[]> {
+	const { data, error: errorFetch } = await supabase
+		.from('accomplishment_activity')
+		.select()
+		.eq('accomplishment_annual_plan_id', id);
+	if (errorFetch) {
+		error(404, { message: errorFetch.message });
+	}
+	if (!data) throw new Error('Activities not found');
 	return data;
 }
 

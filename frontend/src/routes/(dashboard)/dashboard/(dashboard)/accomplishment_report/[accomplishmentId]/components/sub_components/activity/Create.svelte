@@ -224,6 +224,18 @@
 						</Form.Control>
 					</Form.Field>
 				</div>
+				<Form.Field {form} name="total">
+					<Form.Control>
+						{#snippet children({ props })}
+							<Form.Label>Accomplishment Total</Form.Label>
+							<Input
+								{...props}
+								bind:value={$formData.total}
+								placeholder="Enter total accomplishment..."
+							/>
+						{/snippet}
+					</Form.Control>
+				</Form.Field>
 			</FormSection>
 			<FormSection title="Additional Information" required={true}>
 				<div class="grid gap-4 md:grid-cols-2">

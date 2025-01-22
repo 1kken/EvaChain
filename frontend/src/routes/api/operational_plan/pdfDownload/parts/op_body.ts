@@ -120,8 +120,8 @@ async function main(
 		rows.push(generateOpHeaderRow(opHeader.title));
 		//fetch annual plans
 		const opAnnualPlans = await fetchOpAnnualPlanByOpHeaderId(opHeader.id, supabase);
-		let isFirstAnnualPlan = true;
 		for (const opAnnualPlan of opAnnualPlans) {
+			let isFirstAnnualPlan = true;
 			const opActivities = await fetchOpActivitiesByOpObjectiveId(opAnnualPlan.id, supabase);
 			for (const opActivity of opActivities) {
 				rows.push(

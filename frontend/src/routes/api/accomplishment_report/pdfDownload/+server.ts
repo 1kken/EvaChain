@@ -3,7 +3,7 @@ import { generatePDF } from './pdf_generator';
 import { fetchAccomplishmentReportById } from './helper';
 export const POST: RequestHandler = async ({ url, locals: { supabase } }) => {
 	const id = url.searchParams.get('id');
-	if (!id) throw error(400, 'IPCR ID is required');
+	if (!id) throw error(400, 'accomplishment report ID is required');
 	const accommplishmentReport = await fetchAccomplishmentReportById(id, supabase);
 	try {
 		// Generate PDF

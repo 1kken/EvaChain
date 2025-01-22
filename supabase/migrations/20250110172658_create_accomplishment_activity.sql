@@ -13,6 +13,7 @@ CREATE TABLE accomplishment_activity (
     q2_accomplishment TEXT,
     q3_accomplishment TEXT,
     q4_accomplishment TEXT,
+    total TEXT,
     accomplishment_rate TEXT,
     responsible_officer_unit TEXT NOT NULL,
     remarks TEXT NOT NULL,

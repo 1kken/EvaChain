@@ -11,6 +11,7 @@ const fieldsToValidate = [
 	'q2_accomplishment',
 	'q3_accomplishment',
 	'q4_accomplishment',
+	'total',
 	'accomplishment_rate'
 ] as const;
 
@@ -26,6 +27,7 @@ export const createAccomplishmentActivitySchema = z
 		q2_accomplishment: z.string().nullable(),
 		q3_accomplishment: z.string().nullable(),
 		q4_accomplishment: z.string().nullable(),
+		total: z.string().nullable(),
 		accomplishment_rate: z.string().nullable(),
 		responsible_officer_unit: z.string().min(1, 'Responsible officer/unit is required'),
 		remarks: z.string().min(1, 'Remarks is required'),
@@ -84,6 +86,7 @@ export const updateAccomplishmentActivitySchema = z
 		q2_accomplishment: z.string().nullable().optional(),
 		q3_accomplishment: z.string().nullable().optional(),
 		q4_accomplishment: z.string().nullable().optional(),
+		total: z.string().nullable(),
 		accomplishment_rate: z.string().nullable().optional(),
 		responsible_officer_unit: z.string().min(1, 'Responsible officer/unit is required').optional(),
 		remarks: z.string().min(1, 'Remarks is required').optional()

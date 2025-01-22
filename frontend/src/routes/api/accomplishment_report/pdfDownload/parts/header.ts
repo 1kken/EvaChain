@@ -23,8 +23,10 @@ export const generateHeader = (
 							alignment: 'center'
 						},
 						{
-							text: 'ACCOMPLISHMENT REPORT',
-							bold: true,
+							text: [
+								{ text: 'ACCOMPLISHMENT REPORT CY ' },
+								{ text: currentYear.toString(), decoration: 'underline' }
+							],
 							marginTop: 30,
 							alignment: 'center',
 							fontSize: 16
@@ -34,18 +36,11 @@ export const generateHeader = (
 			}
 		},
 		{
-			text: `Calendar Year ${currentYear}`,
-			alignment: 'center',
-			bold: true,
-			fontSize: 13,
-			marginTop: margin_per_elemet
-		},
-		{
 			text: [
 				{
-					text: `OPERATING/ACADEMIC/TECHNICAL SUPPORT SERVICES UNIT: `
+					text: `Office/Unit: `
 				},
-				{ text: implimentingUnit.toUpperCase(), bold: true, decoration: 'underline' }
+				{ text: implimentingUnit.toUpperCase(), decoration: 'underline' }
 			],
 			alignment: 'left',
 			marginTop: margin_per_elemet
