@@ -78,6 +78,10 @@ const authGuard: Handle = async ({ event, resolve }) => {
 		error(403, 'Unauthorized access');
 	}
 
+	if (!event.locals.session && event.url.pathname.startsWith('/auth/recovery')) {
+		redirect(303, '/dashboard');
+	}
+
 	if (event.locals.session && event.url.pathname === '/auth') {
 		redirect(303, '/dashboard');
 	}

@@ -6,7 +6,6 @@ INSERT INTO
         title,
         status,
         head_of_operating_unit,
-        immediate_supervisor,
         program_chair,
         dean,
         owner_id,
@@ -20,7 +19,6 @@ VALUES
         'IPCR for First Semester 2024',
         'draft',
         'JOANNE C. RIVERA',
-        null,
         'RAYMUND E. DILAN',
         'ENRICO G. DACANAY',
         '3d9b104f-f948-40d5-9626-072e890903f7', -- owner_id (matches the profile)

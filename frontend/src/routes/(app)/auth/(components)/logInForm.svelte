@@ -92,22 +92,23 @@
 			<Form.FieldErrors />
 		</Form.Field>
 	</div>
-	<!-- <div class="mb-2 mt-1 text-right">
+	<div class="mb-2 mt-1 text-right">
+		{#if $delayed}
+			<Form.Button class="mt-2 w-full" disabled
+				><LoaderCircle class="animate-spin" />Processing...</Form.Button
+			>
+		{:else}
+			<Button type="submit" class="w-full rounded-lg px-4 py-2 transition duration-200"
+				>Log In</Button
+			>
+		{/if}
 		<a
 			href="/auth/recovery/email"
-			class="text-sm text-emerald-600 underline hover:text-emerald-500"
+			class="text-sm text-emerald-600 underline hover:text-emerald-600"
 		>
 			Forgot password?
 		</a>
-	</div> -->
-	{#if $delayed}
-		<Form.Button class="mt-2 w-full" disabled
-			><LoaderCircle class="animate-spin" />Processing...</Form.Button
-		>
-	{:else}
-		<Button type="submit" class="w-full rounded-lg px-4 py-2 transition duration-200">Log In</Button
-		>
-	{/if}
+	</div>
 </form>
 <!-- Divider -->
 <div class="relative">

@@ -242,6 +242,250 @@ export type Database = {
           },
         ]
       }
+      dpcr: {
+        Row: {
+          created_at: string
+          id: string
+          office_id: number | null
+          owner_id: string
+          program_id: number | null
+          review_by: string
+          reviewer_position: string
+          title: string
+          unit_id: number | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          office_id?: number | null
+          owner_id: string
+          program_id?: number | null
+          review_by: string
+          reviewer_position: string
+          title: string
+          unit_id?: number | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          office_id?: number | null
+          owner_id?: string
+          program_id?: number | null
+          review_by?: string
+          reviewer_position?: string
+          title?: string
+          unit_id?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dpcr_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "office"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "dpcr_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "program"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "dpcr_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "unit"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      dpcr_assessor: {
+        Row: {
+          created_at: string
+          dpcr_id: string
+          id: string
+          name: string
+          position: string
+          sequence: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          dpcr_id: string
+          id?: string
+          name: string
+          position: string
+          sequence?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          dpcr_id?: string
+          id?: string
+          name?: string
+          position?: string
+          sequence?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dpcr_assessor_dpcr_id_fkey"
+            columns: ["dpcr_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      dpcr_function: {
+        Row: {
+          created_at: string
+          dpcr_id: string
+          id: string
+          percentage: number
+          position: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          dpcr_id: string
+          id?: string
+          percentage: number
+          position: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          dpcr_id?: string
+          id?: string
+          percentage?: number
+          position?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dpcr_function_dpcr_id_fkey"
+            columns: ["dpcr_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      dpcr_function_category: {
+        Row: {
+          category: string
+          created_at: string
+          dpcr_function_id: string
+          id: string
+          position: number
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          dpcr_function_id: string
+          id?: string
+          position: number
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          dpcr_function_id?: string
+          id?: string
+          position?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dpcr_function_category_dpcr_function_id_fkey"
+            columns: ["dpcr_function_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_function"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      dpcr_indicator: {
+        Row: {
+          actual_accomplishments: string | null
+          alloted_budget: string | null
+          average_rating: number | null
+          created_at: string
+          division_individuals_accountable: string | null
+          dpcr_function_category_id: string | null
+          dpcr_function_id: string | null
+          efficiency_rating: number | null
+          id: string
+          physical_targets: string | null
+          position: number
+          quality_rating: number | null
+          remarks: string | null
+          success_indicator: string
+          timeliness_rating: number | null
+          updated_at: string
+        }
+        Insert: {
+          actual_accomplishments?: string | null
+          alloted_budget?: string | null
+          average_rating?: number | null
+          created_at?: string
+          division_individuals_accountable?: string | null
+          dpcr_function_category_id?: string | null
+          dpcr_function_id?: string | null
+          efficiency_rating?: number | null
+          id?: string
+          physical_targets?: string | null
+          position: number
+          quality_rating?: number | null
+          remarks?: string | null
+          success_indicator: string
+          timeliness_rating?: number | null
+          updated_at?: string
+        }
+        Update: {
+          actual_accomplishments?: string | null
+          alloted_budget?: string | null
+          average_rating?: number | null
+          created_at?: string
+          division_individuals_accountable?: string | null
+          dpcr_function_category_id?: string | null
+          dpcr_function_id?: string | null
+          efficiency_rating?: number | null
+          id?: string
+          physical_targets?: string | null
+          position?: number
+          quality_rating?: number | null
+          remarks?: string | null
+          success_indicator?: string
+          timeliness_rating?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dpcr_indicator_dpcr_function_category_id_fkey"
+            columns: ["dpcr_function_category_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_function_category"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "dpcr_indicator_dpcr_function_id_fkey"
+            columns: ["dpcr_function_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_function"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       employee_status: {
         Row: {
           created_at: string
@@ -269,7 +513,6 @@ export type Database = {
           dean: string | null
           head_of_operating_unit: string | null
           id: string
-          immediate_supervisor: string | null
           office_id: number | null
           owner_id: string | null
           program_chair: string | null
@@ -284,7 +527,6 @@ export type Database = {
           dean?: string | null
           head_of_operating_unit?: string | null
           id?: string
-          immediate_supervisor?: string | null
           office_id?: number | null
           owner_id?: string | null
           program_chair?: string | null
@@ -299,7 +541,6 @@ export type Database = {
           dean?: string | null
           head_of_operating_unit?: string | null
           id?: string
-          immediate_supervisor?: string | null
           office_id?: number | null
           owner_id?: string | null
           program_chair?: string | null

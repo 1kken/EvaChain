@@ -29,8 +29,14 @@ export const signupSchema = z
 			.string()
 			.email()
 			.regex(/^[a-zA-Z0-9._%+-]+@dmmmsu\.edu\.ph$/, 'Only dmmmsu.edu.ph email is allowed'),
-		password: z.string().min(6),
-		passwordRepeat: z.string().min(6),
+		password: z
+			.string()
+			.min(8)
+			.regex(
+				/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+				'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character'
+			),
+		passwordRepeat: z.string().min(8),
 		agree: z.literal(true, {
 			errorMap: () => ({ message: 'You must agree to the terms and conditions' })
 		})

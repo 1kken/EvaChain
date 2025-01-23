@@ -7,7 +7,6 @@ CREATE TABLE ipcr (
     title VARCHAR(255) NOT NULL,
     status ipcr_status DEFAULT 'draft' NOT NULL,
     head_of_operating_unit VARCHAR(255),
-    immediate_supervisor VARCHAR(255),
     program_chair VARCHAR(255), 
     dean VARCHAR(255),
     owner_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,

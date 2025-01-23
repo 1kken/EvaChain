@@ -1,4 +1,4 @@
-import type { Tables } from '$lib/types/database.types';
+import type { Database, Tables } from '$lib/types/database.types';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
 export const fetchOfficeByUnit = async (
@@ -42,3 +42,12 @@ export const fetchPositionByNatureOfWork = async (
 
 	return data || [];
 };
+
+export async function fetchProfile(owner_id: string, supabase: SupabaseClient<Database>) {
+	const { data: profile, error: profileError } = await supabase
+		.from('profiles')
+		.select()
+		.eq('id', owner_id)
+		.single();
+	return { profile, profileError };
+}

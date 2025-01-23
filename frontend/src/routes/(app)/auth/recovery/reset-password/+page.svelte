@@ -5,7 +5,7 @@
 	import type { PageData } from './$types';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import BorderBeam from '$lib/magic-ui/BorderBeam.svelte';
-	import { Send, LoaderCircle } from 'lucide-svelte';
+	import { Send, LoaderCircle, UserCheck } from 'lucide-svelte';
 	import { showSuccessToast } from '$lib/utils/toast';
 	import { passwordRecoverySchema } from './schema';
 	import { EyeOff } from 'lucide-svelte';
@@ -32,7 +32,10 @@
 </script>
 
 <div class="relative w-full max-w-md space-y-6 rounded-lg p-6 shadow-md backdrop-blur-sm">
-	<h1>Recover Password</h1>
+	<div class="flex items-center gap-3">
+		<UserCheck />
+		<h1 class="text-2xl font-bold">Recover Password</h1>
+	</div>
 	<BorderBeam size={150} duration={12} />
 	<form method="POST" action="?/resetpassword" use:enhance>
 		<Form.Field {form} name="password">
