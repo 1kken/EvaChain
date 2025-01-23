@@ -172,18 +172,18 @@ export async function counterCheckDeleteAssessor(
 	}
 }
 
-async function updateEachAssessor(
-	assessors: Partial<Tables<'dpcr_assessor'>>[],
-	supabase: SupabaseClient<Database>
-) {
-	for (const assessor of assessors) {
-		const { data, error: insertError } = await supabase
-			.from('dpcr_assessor')
-			.update(assessor)
-			.eq('id', assessor.id)
-			.select();
-		if (insertError) {
-			error(500, { message: 'Failed to update assessor' });
-		}
-	}
-}
+// async function updateEachAssessor(
+// 	assessors: Partial<Tables<'dpcr_assessor'>>[],
+// 	supabase: SupabaseClient<Database>
+// ) {
+// 	for (const assessor of assessors) {
+// 		const { data, error: insertError } = await supabase
+// 			.from('dpcr_assessor')
+// 			.update(assessor)
+// 			.eq('id', assessor.id)
+// 			.select();
+// 		if (insertError) {
+// 			error(500, { message: 'Failed to update assessor' });
+// 		}
+// 	}
+// }
