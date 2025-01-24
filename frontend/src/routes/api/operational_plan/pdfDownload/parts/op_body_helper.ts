@@ -8,7 +8,8 @@ export async function fetchOpHeadersByOPId(
 	const { data: opHeaders, error } = await supabase
 		.from('op_header')
 		.select('*')
-		.eq('operational_plan_id', opId);
+		.eq('operational_plan_id', opId)
+		.order('position', { ascending: true });
 
 	if (error) {
 		throw new Error(error.message);
@@ -24,7 +25,8 @@ export async function fetchOpAnnualPlanByOpHeaderId(
 	const { data: opProgramProject, error } = await supabase
 		.from('op_annual_plan')
 		.select('*')
-		.eq('op_header_id', opHeaderId);
+		.eq('op_header_id', opHeaderId)
+		.order('position', { ascending: true });
 
 	if (error) {
 		throw new Error(error.message);
@@ -40,7 +42,8 @@ export async function fetchOpActivitiesByOpObjectiveId(
 	const { data: opActivities, error } = await supabase
 		.from('op_activity')
 		.select('*')
-		.eq('op_annual_plan_id', annualPlanId);
+		.eq('op_annual_plan_id', annualPlanId)
+		.order('position', { ascending: true });
 
 	if (error) {
 		throw new Error(error.message);

@@ -91,7 +91,7 @@ export async function updateDPCR(request: Request, supabase: SupabaseClient<Data
 
 	if (assessors) {
 		await counterCheckDeleteAssessor(id, assessors, supabase);
-		console.log(assessors);
+		await updateEachAssessor(assessors, supabase);
 	}
 
 	console.log('eneter');
@@ -172,18 +172,12 @@ export async function counterCheckDeleteAssessor(
 	}
 }
 
-// async function updateEachAssessor(
-// 	assessors: Partial<Tables<'dpcr_assessor'>>[],
-// 	supabase: SupabaseClient<Database>
-// ) {
-// 	for (const assessor of assessors) {
-// 		const { data, error: insertError } = await supabase
-// 			.from('dpcr_assessor')
-// 			.update(assessor)
-// 			.eq('id', assessor.id)
-// 			.select();
-// 		if (insertError) {
-// 			error(500, { message: 'Failed to update assessor' });
-// 		}
-// 	}
-// }
+async function updateEachAssessor(
+	assessors: Tables<'dpcr_assessor'>[],
+	supabase: SupabaseClient<Database>
+) {
+	const { data, error: updateError } = await supabase.from('dpcr_assessor').upsert(assessors);
+	if (updateError) {
+		error(500, { message: 'Failed to update assessors' });
+	}
+}

@@ -148,7 +148,8 @@ async function getFunctionCategoriesByFunctionId(id: string, supabase: SupabaseC
 	const { data, error } = await supabase
 		.from('ipcr_function_category')
 		.select()
-		.eq('ipcr_function_id', id);
+		.eq('ipcr_function_id', id)
+		.order('position', { ascending: true });
 	if (error) {
 		throw new Error(`Error fetching IPCR function categories: ${error.message}`);
 	}
@@ -159,7 +160,8 @@ async function getSubCategoriesByCategoryId(id: string, supabase: SupabaseClient
 	const { data, error } = await supabase
 		.from('ipcr_function_sub_category')
 		.select()
-		.eq('ipcr_function_category_id', id);
+		.eq('ipcr_function_category_id', id)
+		.order('position', { ascending: true });
 	if (error) {
 		throw new Error(`Error fetching IPCR function sub categories: ${error.message}`);
 	}
@@ -186,7 +188,11 @@ export async function getIndicatorsByParent(
 		throw new Error(`Invalid parent type: ${parentType}`);
 	}
 
-	const { data, error } = await supabase.from('ipcr_indicator').select().eq(columnName, parentId);
+	const { data, error } = await supabase
+		.from('ipcr_indicator')
+		.select()
+		.eq(columnName, parentId)
+		.order('position', { ascending: true });
 
 	if (error) {
 		throw new Error(`Error fetching IPCR indicators: ${error.message}`);
@@ -271,7 +277,8 @@ export async function fetchDataCategory(categoryId: string, supabase: SupabaseCl
 			supabase
 				.from('ipcr_function_sub_category')
 				.select()
-				.eq('ipcr_function_category_id', categoryId),
+				.eq('ipcr_function_category_id', categoryId)
+				.order('position', { ascending: true }),
 			getIndicatorsByParent(categoryId, 'category', supabase)
 		]);
 

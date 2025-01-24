@@ -25,7 +25,9 @@ export async function fetchAccomplishmentHeadersById(
 	const { data, error: errorFetch } = await supabase
 		.from('accomplishment_header')
 		.select()
-		.eq('accomplishment_report_id', id);
+		.eq('accomplishment_report_id', id)
+		.order('position', { ascending: true });
+
 	if (errorFetch) {
 		error(404, { message: errorFetch.message });
 	}
@@ -40,7 +42,8 @@ export async function fetchAnnualPlanByHeadersId(
 	const { data, error: errorFetch } = await supabase
 		.from('accomplishment_annual_plan')
 		.select()
-		.eq('accomplishment_header_id', id);
+		.eq('accomplishment_header_id', id)
+		.order('position', { ascending: true });
 	if (errorFetch) {
 		error(404, { message: errorFetch.message });
 	}
@@ -55,7 +58,8 @@ export async function fetchActivitiesByAnnualPlanId(
 	const { data, error: errorFetch } = await supabase
 		.from('accomplishment_activity')
 		.select()
-		.eq('accomplishment_annual_plan_id', id);
+		.eq('accomplishment_annual_plan_id', id)
+		.order('position', { ascending: true });
 	if (errorFetch) {
 		error(404, { message: errorFetch.message });
 	}

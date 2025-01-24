@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { buttonVariants } from '$lib/components/ui/button/index.js';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
-	import { GripHorizontal, Pencil, Trash2 } from 'lucide-svelte';
+	import { GripHorizontal, Pencil, Plus, Trash2 } from 'lucide-svelte';
 	import { LoaderCircle } from 'lucide-svelte';
 	import * as Form from '$lib/components/ui/form/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
-	import {
+	import SuperDebug, {
 		type SuperValidated,
 		type Infer,
 		superForm,
@@ -22,6 +22,7 @@
 	import type { Tables } from '$lib/types/database.types';
 	import { onMount } from 'svelte';
 	import { fetchAssessors } from '../(data)/helper';
+	import { browser } from '$app/environment';
 
 	let {
 		updateForm,
@@ -89,9 +90,19 @@
 	}
 
 	//helpers
-	// function addAssessor() {
-	// 	assessors.push({ id: '', position: '', sequence: assessors.length });
-	// }
+	function addAssessor() {
+		const now = new Date().toISOString();
+		let newAssessor = {
+			id: crypto.randomUUID(),
+			dpcr_id: currentDpcr!.id,
+			name: '',
+			position: '',
+			sequence: assessors.length,
+			created_at: now,
+			updated_at: now
+		};
+		assessors.push({ ...newAssessor });
+	}
 
 	function removeAssessor(id: string) {
 		assessors = assessors.filter((assessor) => assessor.id !== id);
@@ -192,6 +203,9 @@
 							<GripHorizontal size="16" />
 							<div class="flex-1">
 								<input type="hidden" bind:value={assessor.id} />
+								<input type="hidden" bind:value={assessor.dpcr_id} />
+								<input type="hidden" bind:value={assessor.sequence} />
+
 								<Input type="text" bind:value={assessor.name} placeholder="Assessor Name" />
 								{#if $errors.assessors?.[assessor.id]?.name}
 									<p class="mt-1 text-sm text-red-500">{$errors.assessors[assessor.id].name}</p>
@@ -213,10 +227,10 @@
 						</div>
 					{/each}
 				</div>
-				<!-- <Button variant="outline" class="border-dashed" onclick={addAssessor}>
+				<Button variant="outline" class="border-dashed" onclick={addAssessor}>
 					<Plus size="16" />
 					Add Assessor
-				</Button> -->
+				</Button>
 			</div>
 
 			{#if $delayed}

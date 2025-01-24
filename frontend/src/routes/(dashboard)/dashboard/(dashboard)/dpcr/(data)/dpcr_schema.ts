@@ -1,3 +1,4 @@
+import { updated } from '$app/stores';
 import { z } from 'zod';
 
 // Schema for creating a new DPCR
@@ -42,6 +43,9 @@ export const updateDpcrSchema = z
 		assessors: z.array(
 			z.object({
 				id: z.string().uuid('Invalid Assessor ID format'),
+				dpcr_id: z.string().uuid('Invalid DPCR ID format'),
+				created_at: z.string().min(1),
+				updated_at: z.string().min(1),
 				name: z.string().min(1, 'Assessor name is required').max(255),
 				position: z.string().min(1, 'Assessor position is required').max(255),
 				sequence: z.number().int().min(0)

@@ -346,7 +346,6 @@ export type Database = {
           created_at: string
           dpcr_id: string
           id: string
-          percentage: number
           position: number
           title: string
           updated_at: string
@@ -355,7 +354,6 @@ export type Database = {
           created_at?: string
           dpcr_id: string
           id?: string
-          percentage: number
           position: number
           title: string
           updated_at?: string
@@ -364,7 +362,6 @@ export type Database = {
           created_at?: string
           dpcr_id?: string
           id?: string
-          percentage?: number
           position?: number
           title?: string
           updated_at?: string

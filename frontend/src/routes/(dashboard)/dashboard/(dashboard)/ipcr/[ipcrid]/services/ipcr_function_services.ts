@@ -25,10 +25,10 @@ export async function createIpcrFunction(request: Request, supabase: SupabaseCli
 			text: 'Unprocessable input!'
 		});
 	}
-	let { position, ipcr_id, title } = form.data;
+	let { position, ipcr_id, title, percentage } = form.data;
 	const { data: ipcrFunction, error: ipcrError } = await supabase
 		.from('ipcr_function')
-		.insert({ position, ipcr_id, title: titleCase(title) })
+		.insert({ position, ipcr_id, title: titleCase(title), percentage })
 		.select()
 		.single();
 	if (ipcrError) {

@@ -3,7 +3,6 @@ CREATE TABLE dpcr_function (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     dpcr_id UUID REFERENCES dpcr(id) ON DELETE CASCADE NOT NULL,
     title VARCHAR(255) NOT NULL,
-    percentage INTEGER NOT NULL,
     position INTEGER NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
