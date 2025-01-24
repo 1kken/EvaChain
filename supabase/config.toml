@@ -67,6 +67,10 @@ sql_paths = [
     './seeds/accomplishment_report/header.sql',
     './seeds/accomplishment_report/annual_plan.sql',
     './seeds/accomplishment_report/activity.sql',
+    './seeds/dpcr/dpcr.sql',
+    './seeds/dpcr/dpcr_function.sql',
+    './seeds/dpcr/dpcr_category.sql',
+    './seeds/dpcr/dpcr_indicator.sql',
     './seeds/*.sql',
 ]
 

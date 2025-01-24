@@ -54,7 +54,7 @@
 			</a>
 		</DropdownMenu.Item>
 		<DropdownMenu.Item onselect={handleDownload}>
-			<form action={`/api/operational_plan/pdfDownload?id=${id}`} method="POST" class="w-full">
+			<form action={`/api/dpcr/pdfDownload?id=${id}`} method="POST" class="w-full">
 				<button type="submit" class="flex w-full items-center gap-3">
 					<Download size={16} />
 					Download PDF

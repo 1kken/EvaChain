@@ -17,6 +17,7 @@
 	import Create from './sub_component/indicator/create.svelte';
 	import IndicatorComponent from './indicatorComponent.svelte';
 	import TruncatedDiv from '../../../components/TruncatedDiv.svelte';
+	import { slide } from 'svelte/transition';
 
 	interface Iprops {
 		dpcrCategory: Tables<'dpcr_function_category'>;
@@ -121,7 +122,7 @@
 	</div>
 
 	{#if isExpanded}
-		<div class="border-t p-3">
+		<div class="border-t p-3" transition:slide={{ duration: 300 }}>
 			<DndContainer
 				bind:items={dndItems}
 				{isLoading}
