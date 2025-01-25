@@ -71,6 +71,7 @@ sql_paths = [
     './seeds/dpcr/dpcr_function.sql',
     './seeds/dpcr/dpcr_category.sql',
     './seeds/dpcr/dpcr_indicator.sql',
+    './seeds/dpcr/dpcr_assessor.sql',
     './seeds/*.sql',
 ]
 

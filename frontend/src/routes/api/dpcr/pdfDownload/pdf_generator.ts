@@ -5,15 +5,12 @@ import type { TDocumentDefinitions, TFontDictionary } from 'pdfmake/interfaces';
 import PdfPrinter from 'pdfmake';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { generateHeader } from './parts/header';
-import { fetchDPCRById, fetchProfile } from './helper';
+import { fetchAssessorByDpcrId, fetchDPCRById, fetchProfile } from './helper';
 import { error } from '@sveltejs/kit';
 import { generateSubHeader } from './parts/rating_table';
 import { createSignatureBlock } from './parts/review_by';
 import { generateBody } from './parts/body';
-// import { generateHeader } from './parts/header';
-// import { generateOpBody } from './parts/op_body';
-// import { fetchOperationalPlan, fetchProfileById } from './helper';
-// import { generateFooter } from './parts/op_footer';
+import { generateAssesorSignatureBlock, generateFooter } from './parts/footer';
 
 // Configure fonts
 const fonts: TFontDictionary = {
@@ -34,6 +31,8 @@ export async function generatePDF(supabase: SupabaseClient<Database>, opId: stri
 	const dpcr = await fetchDPCRById(supabase, opId);
 
 	const profile = await fetchProfile(supabase, dpcr.owner_id);
+
+	const assessors = await fetchAssessorByDpcrId(supabase, dpcr.id);
 
 	if (!profile.profile) {
 		error(500, { message: 'Failed to fetch profile' });
@@ -60,9 +59,9 @@ export async function generatePDF(supabase: SupabaseClient<Database>, opId: stri
 			...generateHeader(logoBase64, dpcr, profile.profile),
 			generateSubHeader(profile.profile),
 			createSignatureBlock(dpcr.review_by, dpcr.reviewer_position),
-			await generateBody(dpcr, supabase)
-
-			// await generateOpBody(operationalPlan, supabase),
+			await generateBody(dpcr, supabase),
+			generateFooter(assessors, dpcr),
+			generateAssesorSignatureBlock(assessors, dpcr)
 			// generateFooter(profile!, operationalPlan)
 		],
 

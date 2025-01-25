@@ -82,7 +82,7 @@
 			<Pencil size={16} /> Edit
 		</span>
 	</Dialog.Trigger>
-	<Dialog.Content class="sm:max-w-auto">
+	<Dialog.Content class="max-h-[85vh] overflow-y-auto sm:max-w-[500px]">
 		<Dialog.Header>
 			<Dialog.Title>Update Unit</Dialog.Title>
 			<Dialog.Description>

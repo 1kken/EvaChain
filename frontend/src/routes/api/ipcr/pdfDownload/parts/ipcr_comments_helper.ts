@@ -3,8 +3,6 @@ import type { Content, TableCell } from 'pdfmake/interfaces';
 export function generateComments(): Content {
 	const TOTAL_FINAL_RATING_WIDTH = 20;
 	const DEFUALT_WIDTH = 153;
-	const MARGIN_TOP = 5;
-	const CIRCLE = `<svg xmlns="http://www.w3.org/2000/svg" version="1.1"><circle cx="10" cy="10" r="5" stroke="black" stroke-width="2" fill="none" /></svg>`;
 	const context: Content = {
 		unbreakable: true,
 		margin: [0, 10, 0, 0],

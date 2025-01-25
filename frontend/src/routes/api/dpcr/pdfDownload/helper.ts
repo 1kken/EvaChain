@@ -47,6 +47,18 @@ export async function fetchDpcrIndicatorsByCategoryId(
 	return data;
 }
 
+export async function fetchAssessorByDpcrId(supabase: SupabaseClient<Database>, dpcr_id: string) {
+	const { data, error: fetchError } = await supabase
+		.from('dpcr_assessor')
+		.select('*')
+		.eq('dpcr_id', dpcr_id)
+		.order('position', { ascending: true });
+	if (fetchError) {
+		error(500, { message: 'Failed to fetch DPCR assessors' });
+	}
+	return data;
+}
+
 export async function fetchDataFunction(functionId: string, supabase: SupabaseClient<Database>) {
 	try {
 		const [categoriesResult, indicatorsResult] = await Promise.all([

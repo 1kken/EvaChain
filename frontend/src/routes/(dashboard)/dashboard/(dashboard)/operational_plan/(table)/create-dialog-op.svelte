@@ -84,7 +84,7 @@
 		<Dialog.Trigger class={buttonVariants({ variant: 'default' })}
 			><Plus /> Create Operational Plan</Dialog.Trigger
 		>
-		<Dialog.Content class="sm:max-w-auto">
+		<Dialog.Content class="max-h-[85vh] overflow-y-auto sm:max-w-[500px]">
 			<Dialog.Header>
 				<Dialog.Title>Operational Plan</Dialog.Title>
 				<Dialog.Description>
