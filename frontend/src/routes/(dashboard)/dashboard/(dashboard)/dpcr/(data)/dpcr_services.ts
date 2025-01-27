@@ -83,7 +83,8 @@ export async function updateDPCR(request: Request, supabase: SupabaseClient<Data
 		.from('dpcr')
 		.update({ ...data })
 		.eq('id', id)
-		.select();
+		.select()
+		.single();
 
 	if (error) {
 		return message(form, { status: 'error', text: `Error creating Operational plan` });

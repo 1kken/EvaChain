@@ -6,8 +6,8 @@
 	import type { UniversalDeleteInput } from '$lib/schemas/universal_delete_schema';
 	import { Download, SquareArrowOutUpRight } from 'lucide-svelte';
 	import Delete from './delete.svelte';
-	import type { UpdateDpcrInput } from '../(data)/dpcr_schema';
 	import Update from './update.svelte';
+	import type { UpdateDpcrInput } from '../../dpcr/(data)/dpcr_schema';
 
 	interface Props {
 		deleteForm: SuperValidated<UniversalDeleteInput>;

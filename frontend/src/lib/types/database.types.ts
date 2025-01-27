@@ -1369,6 +1369,102 @@ export type Database = {
         }
         Relationships: []
       }
+      strat_plan_objective: {
+        Row: {
+          created_at: string
+          id: string
+          objective: string
+          position: number
+          strategic_plan_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          objective: string
+          position: number
+          strategic_plan_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          objective?: string
+          position?: number
+          strategic_plan_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "strat_plan_objective_strategic_plan_id_fkey"
+            columns: ["strategic_plan_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      strategic_plan: {
+        Row: {
+          created_at: string
+          goal: string
+          id: string
+          major_output: Database["public"]["Enums"]["strategic_major_output"]
+          office_id: number | null
+          owner_id: string
+          program_id: number | null
+          title: string
+          unit_id: number | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          goal: string
+          id?: string
+          major_output: Database["public"]["Enums"]["strategic_major_output"]
+          office_id?: number | null
+          owner_id: string
+          program_id?: number | null
+          title: string
+          unit_id?: number | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          goal?: string
+          id?: string
+          major_output?: Database["public"]["Enums"]["strategic_major_output"]
+          office_id?: number | null
+          owner_id?: string
+          program_id?: number | null
+          title?: string
+          unit_id?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "strategic_plan_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "office"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "strategic_plan_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "program"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "strategic_plan_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "unit"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       unit: {
         Row: {
           code: string
@@ -1550,6 +1646,11 @@ export type Database = {
         | "approved"
       ipcr_status: "draft" | "submitted" | "reviewing" | "revision" | "approved"
       scope_type: "all" | "office" | "program" | "unit"
+      strategic_major_output:
+        | "instruction"
+        | "research"
+        | "extension"
+        | "governance_and_management"
     }
     CompositeTypes: {
       validation_result: {
