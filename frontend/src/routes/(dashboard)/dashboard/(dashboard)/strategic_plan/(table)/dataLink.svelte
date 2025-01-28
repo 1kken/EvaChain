@@ -6,4 +6,4 @@
 	const prop: Props = $props();
 </script>
 
-<a class="hover:underline" href={`/dashboard/dpcr/${prop.id}`}>{prop.name}</a>
+<a class="hover:underline" href={`/dashboard/strategic_plan/${prop.id}`}>{prop.name}</a>

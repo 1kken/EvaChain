@@ -1369,6 +1369,59 @@ export type Database = {
         }
         Relationships: []
       }
+      sdg_alignment: {
+        Row: {
+          created_at: string
+          id: string
+          strat_plan_objective_id: string
+          strat_plan_performance_indicator_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          strat_plan_objective_id: string
+          strat_plan_performance_indicator_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          strat_plan_objective_id?: string
+          strat_plan_performance_indicator_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sdg_alignment_strat_plan_objective_id_fkey"
+            columns: ["strat_plan_objective_id"]
+            isOneToOne: false
+            referencedRelation: "sdg_alignment_view"
+            referencedColumns: ["objective_id"]
+          },
+          {
+            foreignKeyName: "sdg_alignment_strat_plan_objective_id_fkey"
+            columns: ["strat_plan_objective_id"]
+            isOneToOne: false
+            referencedRelation: "strat_plan_objective"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sdg_alignment_strat_plan_performance_indicator_id_fkey"
+            columns: ["strat_plan_performance_indicator_id"]
+            isOneToOne: false
+            referencedRelation: "sdg_alignment_view"
+            referencedColumns: ["performance_indicator_id"]
+          },
+          {
+            foreignKeyName: "sdg_alignment_strat_plan_performance_indicator_id_fkey"
+            columns: ["strat_plan_performance_indicator_id"]
+            isOneToOne: false
+            referencedRelation: "strategy_plan_performance_indicator"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       strat_plan_objective: {
         Row: {
           created_at: string
@@ -1399,7 +1452,59 @@ export type Database = {
             foreignKeyName: "strat_plan_objective_strategic_plan_id_fkey"
             columns: ["strategic_plan_id"]
             isOneToOne: false
+            referencedRelation: "sdg_alignment_view"
+            referencedColumns: ["strategic_plan_id"]
+          },
+          {
+            foreignKeyName: "strat_plan_objective_strategic_plan_id_fkey"
+            columns: ["strategic_plan_id"]
+            isOneToOne: false
             referencedRelation: "strategic_plan"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      strat_plan_yearly_plan: {
+        Row: {
+          budget: string
+          created_at: string
+          id: string
+          strategy_plan_performance_indicator_id: string
+          target: string
+          updated_at: string
+          year: number
+        }
+        Insert: {
+          budget: string
+          created_at?: string
+          id?: string
+          strategy_plan_performance_indicator_id: string
+          target: string
+          updated_at?: string
+          year: number
+        }
+        Update: {
+          budget?: string
+          created_at?: string
+          id?: string
+          strategy_plan_performance_indicator_id?: string
+          target?: string
+          updated_at?: string
+          year?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "strat_plan_yearly_plan_strategy_plan_performance_indicator_fkey"
+            columns: ["strategy_plan_performance_indicator_id"]
+            isOneToOne: false
+            referencedRelation: "sdg_alignment_view"
+            referencedColumns: ["performance_indicator_id"]
+          },
+          {
+            foreignKeyName: "strat_plan_yearly_plan_strategy_plan_performance_indicator_fkey"
+            columns: ["strategy_plan_performance_indicator_id"]
+            isOneToOne: false
+            referencedRelation: "strategy_plan_performance_indicator"
             referencedColumns: ["id"]
           },
         ]
@@ -1407,36 +1512,42 @@ export type Database = {
       strategic_plan: {
         Row: {
           created_at: string
+          end_year: number
           goal: string
           id: string
           major_output: Database["public"]["Enums"]["strategic_major_output"]
           office_id: number | null
           owner_id: string
           program_id: number | null
+          start_year: number
           title: string
           unit_id: number | null
           updated_at: string
         }
         Insert: {
           created_at?: string
+          end_year: number
           goal: string
           id?: string
           major_output: Database["public"]["Enums"]["strategic_major_output"]
           office_id?: number | null
           owner_id: string
           program_id?: number | null
+          start_year: number
           title: string
           unit_id?: number | null
           updated_at?: string
         }
         Update: {
           created_at?: string
+          end_year?: number
           goal?: string
           id?: string
           major_output?: Database["public"]["Enums"]["strategic_major_output"]
           office_id?: number | null
           owner_id?: string
           program_id?: number | null
+          start_year?: number
           title?: string
           unit_id?: number | null
           updated_at?: string
@@ -1461,6 +1572,95 @@ export type Database = {
             columns: ["unit_id"]
             isOneToOne: false
             referencedRelation: "unit"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      strategy_plan: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          position: number
+          strat_plan_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          id?: string
+          position: number
+          strat_plan_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          position?: number
+          strat_plan_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "strategy_plan_strat_plan_id_fkey"
+            columns: ["strat_plan_id"]
+            isOneToOne: false
+            referencedRelation: "sdg_alignment_view"
+            referencedColumns: ["strategic_plan_id"]
+          },
+          {
+            foreignKeyName: "strategy_plan_strat_plan_id_fkey"
+            columns: ["strat_plan_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      strategy_plan_performance_indicator: {
+        Row: {
+          actual_target: string
+          base_target: string
+          concerned_offices: string | null
+          created_at: string
+          id: string
+          performance_indicator: string
+          position: number
+          remarks: string | null
+          strategy_plan_id: string
+          updated_at: string
+        }
+        Insert: {
+          actual_target: string
+          base_target: string
+          concerned_offices?: string | null
+          created_at?: string
+          id?: string
+          performance_indicator: string
+          position: number
+          remarks?: string | null
+          strategy_plan_id: string
+          updated_at?: string
+        }
+        Update: {
+          actual_target?: string
+          base_target?: string
+          concerned_offices?: string | null
+          created_at?: string
+          id?: string
+          performance_indicator?: string
+          position?: number
+          remarks?: string | null
+          strategy_plan_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "strategy_plan_performance_indicator_strategy_plan_id_fkey"
+            columns: ["strategy_plan_id"]
+            isOneToOne: false
+            referencedRelation: "strategy_plan"
             referencedColumns: ["id"]
           },
         ]
@@ -1597,6 +1797,29 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      sdg_alignment_view: {
+        Row: {
+          actual_target: string | null
+          alignment_created_at: string | null
+          alignment_id: string | null
+          alignment_updated_at: string | null
+          base_target: string | null
+          concerned_offices: string | null
+          major_output:
+            | Database["public"]["Enums"]["strategic_major_output"]
+            | null
+          objective: string | null
+          objective_id: string | null
+          objective_position: number | null
+          performance_indicator_id: string | null
+          performance_indicator_position: number | null
+          performance_indicator_remarks: string | null
+          strategic_plan_goal: string | null
+          strategic_plan_id: string | null
+          strategic_plan_title: string | null
+        }
+        Relationships: []
       }
       user_role_view: {
         Row: {

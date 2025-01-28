@@ -107,6 +107,8 @@
 		$formData.goal = currentStratPlan.goal ?? '';
 		$formData.major_output = currentStratPlan.major_output;
 		$formData.title = currentStratPlan.title;
+		$formData.start_year = currentStratPlan.start_year;
+		$formData.end_year = currentStratPlan.end_year;
 	}
 
 	//helpers
@@ -191,7 +193,7 @@
 				<Form.Field {form} name="major_output">
 					<Form.Control>
 						{#snippet children({ props })}
-							<Form.Label>Email</Form.Label>
+							<Form.Label>Major output/ PPA</Form.Label>
 							<Select.Root type="single" bind:value={$formData.major_output} name={props.name}>
 								<Select.Trigger {...props} class="capitalize">
 									{$formData.major_output === null
@@ -221,11 +223,28 @@
 							</Select.Root>
 						{/snippet}
 					</Form.Control>
-					<Form.Description>
-						You can manage email address in your <a href="/examples/forms">email settings</a>.
-					</Form.Description>
 					<Form.FieldErrors />
 				</Form.Field>
+				<div class="grid grid-cols-1 gap-2 md:grid-cols-2">
+					<Form.Field {form} name="start_year">
+						<Form.Control>
+							{#snippet children({ props })}
+								<Form.Label>Start Year</Form.Label>
+								<Input {...props} type="number" bind:value={$formData.start_year} />
+							{/snippet}
+						</Form.Control>
+						<Form.FieldErrors />
+					</Form.Field>
+					<Form.Field {form} name="end_year">
+						<Form.Control>
+							{#snippet children({ props })}
+								<Form.Label>End Year</Form.Label>
+								<Input {...props} type="number" bind:value={$formData.end_year} />
+							{/snippet}
+						</Form.Control>
+						<Form.FieldErrors />
+					</Form.Field>
+				</div>
 				<div class="mb-2 flex flex-col gap-2 rounded border p-4 text-center">
 					{#if objectives.length === 0}
 						<p class="text-gray-500">No objectives added yet</p>

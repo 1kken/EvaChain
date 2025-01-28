@@ -38,8 +38,18 @@ export async function createStrategicPlan(
 	}
 
 	const { unit_id, program_id, office_id } = profile;
-	const { goal, major_output, title, objectives } = form.data;
-	const data = { unit_id, program_id, office_id, owner_id: ownerId, goal, major_output, title };
+	const { goal, major_output, title, objectives, start_year, end_year } = form.data;
+	const data = {
+		unit_id,
+		program_id,
+		office_id,
+		owner_id: ownerId,
+		goal,
+		major_output,
+		title,
+		start_year,
+		end_year
+	};
 
 	const { data: stratPlan, error: insertError } = await supabase
 		.from('strategic_plan')
