@@ -17,6 +17,7 @@
 	import { fetchPerformanceIndicator } from '../utils/page_load';
 	import { setStrategyPerformanceIndicatorStore } from '../states/performance_indicator_state';
 	import Create from './sub_components/performance_indicator/create.svelte';
+	import PerformanceIndicator from './performanceIndicator.svelte';
 
 	//props
 	interface Iprops {
@@ -45,27 +46,27 @@
 		}
 	}
 
-	// const updateOpProgramProjectPosition = async (
-	// 	items: Tables<'op_annual_plan'>[]
-	// ): Promise<void> => {
-	// 	const response = await fetch('/api/operational_plan/annual_plan', {
-	// 		method: 'POST',
-	// 		headers: {
-	// 			'Content-Type': 'application/json'
-	// 		},
-	// 		body: JSON.stringify(items)
-	// 	});
+	const updateIndicatorPosition = async (
+		items: Tables<'strategy_plan_performance_indicator'>[]
+	): Promise<void> => {
+		const response = await fetch('/api/strategic_plan/performance_indicator', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(items)
+		});
 
-	// 	if (!response.ok) {
-	// 		throw new Error('Failed to update positions');
-	// 	}
+		if (!response.ok) {
+			throw new Error('Failed to update positions');
+		}
 
-	// 	$currentOpAnnualPlans = items;
-	// };
+		$currentPerformanceIndicators = items;
+	};
 
-	// $effect(() => {
-	// 	dndItems = $currentOpAnnualPlans;
-	// });
+	$effect(() => {
+		dndItems = $currentPerformanceIndicators;
+	});
 
 	// Separate fetch function
 	async function fetchData() {
@@ -93,9 +94,9 @@
 	async function toggleExpand() {
 		isExpanded = !isExpanded;
 
-		// if (isExpanded && dndItems.length === 0) {
-		// 	await fetchData();
-		// }
+		if (isExpanded && dndItems.length === 0) {
+			await fetchData();
+		}
 	}
 </script>
 
@@ -131,10 +132,10 @@
 		</div>
 	</header>
 
-	<!-- {#if isExpanded}
+	{#if isExpanded}
 		<div class="p-4" transition:slide={{ duration: 300 }}>
 			{#if isLoading}
-				<div class="flex justify-center">Loading program projects...</div>
+				<div class="flex justify-center">Loading program indicators...</div>
 			{:else if error}
 				<div class="text-destructive text-center">
 					{error}
@@ -144,14 +145,14 @@
 			{:else}
 				<DndContainer
 					bind:items={dndItems}
-					onPositionsUpdate={updateOpProgramProjectPosition}
+					onPositionsUpdate={updateIndicatorPosition}
 					emptyMessage="No Annual Plans Found"
 				>
-					{#each dndItems as opAnnualPlans (opAnnualPlans.id)}
-						<OperationalAnnualPlan opAnnualPlan={opAnnualPlans} />
+					{#each dndItems as indicator (indicator.id)}
+						<PerformanceIndicator {indicator} />
 					{/each}
 				</DndContainer>
 			{/if}
 		</div>
-	{/if} -->
+	{/if}
 </div>

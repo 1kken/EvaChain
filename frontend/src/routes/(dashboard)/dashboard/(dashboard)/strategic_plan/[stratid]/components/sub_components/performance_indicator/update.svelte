@@ -1,7 +1,7 @@
 <script lang="ts">
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
-	import { LoaderCircle, Trash2 } from 'lucide-svelte';
+	import { LoaderCircle, Pencil, Trash2 } from 'lucide-svelte';
 	import { Plus } from 'lucide-svelte';
 	import SuperDebug, { setError, superForm, type FormResult } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
@@ -11,43 +11,49 @@
 	import { browser } from '$app/environment';
 	import { getStrategyPerformanceIndicatorStore } from '../../../states/performance_indicator_state';
 	import { getStrategyPerformanceIndicatorFormContext } from '../../../states/performance_indicator_form_state';
-	import { createStrategyPlanPerformanceIndicatorSchema } from '../../../schema/performance_indicator_schema';
+	import {
+		createStrategyPlanPerformanceIndicatorSchema,
+		updateStrategyPlanPerformanceIndicatorSchema
+	} from '../../../schema/performance_indicator_schema';
 	import type { PerformanceIndicatorFormResult } from '../../../utils/types';
 	import { getCurrentStrategicPlanStore } from '../../../states/strategic_plan_state';
 	import * as Select from '$lib/components/ui/select/index.js';
 	import { Button } from '$lib/components/ui/button';
 	import FormSection from './FormSection.svelte';
+	import type { Tables } from '$lib/types/database.types';
+	import { onMount } from 'svelte';
+	import { fetchSdgAlignments, fetchYearlyPlans } from '../../../utils/page_load';
 
 	//props
 	interface Iprops {
-		strategyPlanId: string;
-		isExpanded: boolean;
-		onToggle: () => Promise<void>;
+		indicator: Tables<'strategy_plan_performance_indicator'>;
+		isDrawerOpen: boolean;
 	}
 
-	let { strategyPlanId, isExpanded = $bindable(), onToggle }: Iprops = $props();
+	let { indicator, isDrawerOpen = $bindable() }: Iprops = $props();
 	//stores
-	const { currentPerformanceIndicators, addPerformanceIndicator, size } =
+
+	const { currentPerformanceIndicators, updatePerformanceIndicator } =
 		getStrategyPerformanceIndicatorStore();
-	const { createForm } = getStrategyPerformanceIndicatorFormContext();
-	const { objectives, yearCount, currentStrategicPlan } = getCurrentStrategicPlanStore();
+	const { updateForm } = getStrategyPerformanceIndicatorFormContext();
+	const { objectives, currentStrategicPlan } = getCurrentStrategicPlanStore();
 
 	//states
 	let isOpen = $state(false);
 
 	//form
-	const form = superForm(createForm, {
+	const form = superForm(updateForm, {
 		id: crypto.randomUUID(),
 		dataType: 'json',
 		resetForm: false,
-		validators: zodClient(createStrategyPlanPerformanceIndicatorSchema),
+		validators: zodClient(updateStrategyPlanPerformanceIndicatorSchema),
 		multipleSubmits: 'prevent',
 		onUpdate({ form, result }) {
 			if (
 				$currentPerformanceIndicators.some(
 					(indicator) =>
 						indicator.performance_indicator.toLocaleLowerCase() ===
-						form.data.performance_indicator.toLocaleLowerCase()
+							form.data.performance_indicator.toLocaleLowerCase() && indicator.id !== form.data.id
 				)
 			) {
 				setError(form, 'performance_indicator', 'Indicator already exists');
@@ -55,34 +61,57 @@
 			const action = result.data as FormResult<PerformanceIndicatorFormResult>;
 			if (form.valid && action.performanceIndicator) {
 				const performanceIndicator = action.performanceIndicator;
-				addPerformanceIndicator(performanceIndicator);
-				showSuccessToast(`Succesfully added strategy plan indicator `);
+				updatePerformanceIndicator(performanceIndicator.id, performanceIndicator);
+				showSuccessToast(`Succesfully updated strategy plan indicator `);
 				isOpen = false;
-				isExpanded = false;
-				reset({
-					data: {
-						...form.data
-					},
-					newState: {
-						...form.data
-					}
-				});
+				isDrawerOpen = false;
 			}
 		}
 	});
 
 	const { form: formData, enhance, delayed, message, reset, errors } = form;
 	//set data that is needed
-	$formData.strategy_plan_id = strategyPlanId;
-	$formData.position = $size + 1;
+	$formData.id = indicator.id;
+	$formData.performance_indicator = indicator.performance_indicator;
+	$formData.input_type = indicator.input_type;
+	$formData.base_target = indicator.base_target;
+	$formData.actual_target = indicator.actual_target;
+	$formData.concerned_offices = indicator.concerned_offices;
+	$formData.remarks = indicator.remarks;
 
 	//effect for message
 	$effect(() => {
 		if ($message?.status === 'error') {
-			showErrorToast(`Error adding dpcr function indicator: ${$message.text}`);
+			showErrorToast(`Error updating performance indicator: ${$message.text}`);
 		}
 	});
 
+	//onmount for detching datas
+	onMount(async () => {
+		const { data: sdgAlignments } = await fetchSdgAlignments(indicator.id);
+		currentSdg = sdgAlignments ?? []; // Set to empty array if data is null/undefined
+
+		const { data: plans } = await fetchYearlyPlans(indicator.id);
+		let tempYearlyPlan = plans || [];
+
+		// Fill in missing years between start and end
+		for (
+			let year = $currentStrategicPlan!.strategic.start_year;
+			year <= $currentStrategicPlan!.strategic.end_year;
+			year++
+		) {
+			if (!tempYearlyPlan.some((plan: { year: number }) => plan.year === year)) {
+				tempYearlyPlan.push({
+					year,
+					target: '',
+					budget: 0
+				});
+			}
+		}
+
+		// Sort by year
+		yearlyPlan = tempYearlyPlan.sort((a: { year: number }, b: { year: number }) => a.year - b.year);
+	});
 	//extra states
 	//======================== SDG alignment ===========================//
 	//types
@@ -102,6 +131,7 @@
 	});
 	//===================== YEARLY Plan ========================//
 	interface YearlyPlan {
+		id: string;
 		year: number;
 		target: string;
 		budget: number;
@@ -109,42 +139,27 @@
 
 	let yearlyPlan: YearlyPlan[] = $state([]);
 
-	const start = $currentStrategicPlan!.strategic.start_year;
-	const end = $currentStrategicPlan!.strategic.end_year;
-
-	const years = [];
-	for (let year = start; year <= end; year++) {
-		years.push({
-			year,
-			target: '',
-			budget: 0
-		});
-	}
-
-	yearlyPlan = years;
 	$effect(() => {
 		$formData.yearly_plans = yearlyPlan;
 	});
 </script>
 
 <Dialog.Root bind:open={isOpen}>
-	<Dialog.Trigger class="focus-visible:outline-none" id="nav-2">
-		<span class="flex items-center gap-2">
-			<Plus class="h-5 w-5" />
-			<span class=" md:inline">Add Performance Indicator</span>
+	<Dialog.Trigger class="focus-visible:outline-none">
+		<span class="flex items-center gap-3">
+			<Pencil size={16} />Edit
 		</span>
 	</Dialog.Trigger>
 	<Dialog.Content class="max-h-[85vh] overflow-y-auto sm:max-w-[800px]">
 		<Dialog.Header>
-			<Dialog.Title>Add Performance Indicator</Dialog.Title>
+			<Dialog.Title>Update Performance Indicator</Dialog.Title>
 			<Dialog.Description>
 				An indicator is a measurable criterion used to assess the performance and success of a
 				specific task or objective, aligning efforts with organizational goals.
 			</Dialog.Description>
 		</Dialog.Header>
-		<form action="?/createindicator" method="POST" use:enhance class="space-y-6">
-			<input hidden name="position" value={$formData.position} />
-			<input hidden name="strategy_plan_id" value={$formData.strategy_plan_id} />
+		<form action="?/updateindicator" method="POST" use:enhance class="space-y-6">
+			<input hidden name="id" value={$formData.id} />
 			<FormSection title={'Basic Information *'}>
 				<div>
 					<Form.Field {form} name="performance_indicator">
@@ -246,7 +261,6 @@
 				<div class="flex items-center gap-4">
 					<div class="flex-1">
 						<Select.Root
-							required
 							type="single"
 							name="sdg"
 							onValueChange={(value) => {
@@ -316,27 +330,30 @@
 
 			<h1 class="text-sm font-medium">Yearly Plans</h1>
 			{#each yearlyPlan as plan, index}
-				<div class="grid gap-2 md:grid-cols-2">
-					<div>
-						<Input type="text" bind:value={plan.target} placeholder={`Target for ${plan.year}`} />
-						{#if $errors.yearly_plans?.[index]?.target}
-							<p class="mt-1 text-sm text-red-500">
-								{$errors.yearly_plans?.[index]?.target}
-							</p>
-						{/if}
-					</div>
-					<div>
-						<Input
-							type="number"
-							step="0.01"
-							bind:value={plan.budget}
-							placeholder={`Budget for ${plan.year}`}
-						/>
-						{#if $errors.yearly_plans?.[index]?.budget}
-							<p class="mt-1 text-sm text-red-500">
-								{$errors.yearly_plans?.[index]?.budget}
-							</p>
-						{/if}
+				<div>
+					<h1>Year plan for <span class=" text-sm font-medium">{plan.year}</span></h1>
+					<div class="grid gap-2 md:grid-cols-2">
+						<div>
+							<Input type="text" bind:value={plan.target} placeholder={`Target for ${plan.year}`} />
+							{#if $errors.yearly_plans?.[index]?.target}
+								<p class="mt-1 text-sm text-red-500">
+									{$errors.yearly_plans?.[index]?.target}
+								</p>
+							{/if}
+						</div>
+						<div>
+							<Input
+								type="number"
+								step="0.01"
+								bind:value={plan.budget}
+								placeholder={`Budget for ${plan.year}`}
+							/>
+							{#if $errors.yearly_plans?.[index]?.budget}
+								<p class="mt-1 text-sm text-red-500">
+									{$errors.yearly_plans?.[index]?.budget}
+								</p>
+							{/if}
+						</div>
 					</div>
 				</div>
 			{/each}

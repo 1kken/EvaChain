@@ -4,7 +4,7 @@ CREATE TABLE strat_plan_yearly_plan (
     strategy_plan_performance_indicator_id UUID REFERENCES strategy_plan_performance_indicator(id) ON DELETE CASCADE NOT NULL,
     year INTEGER NOT NULL,
     target TEXT NOT NULL,
-    budget TEXT NOT NULL,
+    budget NUMERIC NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
     -- Ensure unique combination of performance indicator and year

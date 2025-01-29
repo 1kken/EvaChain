@@ -55,7 +55,7 @@
 	const { form: formData, enhance, delayed, message, reset } = form;
 	//set data that is needed
 	if ($currentStrategicPlan) {
-		$formData.strat_plan_id = $currentStrategicPlan.id;
+		$formData.strat_plan_id = $currentStrategicPlan.strategic.id;
 		$formData.position = $size + 1;
 	}
 

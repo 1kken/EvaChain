@@ -4,17 +4,23 @@ import { derived, writable, type Writable, type Readable } from 'svelte/store';
 
 const STRATEGIC_PLAN_STATE_KEY = Symbol('STRATEGIC_PLAN_STATE_KEY');
 
+interface StrategicWithObjectives {
+	strategic: Tables<'strategic_plan'>;
+	objectives: Tables<'strat_plan_objective'>[];
+}
+
 type StrategicPlanState = {
-	currentStrategicPlan: Writable<Tables<'strategic_plan'> | null>;
-	setCurrentStrategicPlan: (plan: Tables<'strategic_plan'>) => void;
+	currentStrategicPlan: Writable<StrategicWithObjectives | null>;
+	setCurrentStrategicPlan: (plan: StrategicWithObjectives) => void;
 	resetCurrentStrategicPlan: () => void;
 	yearCount: Readable<number | null>;
+	objectives: Readable<Tables<'strat_plan_objective'>[]>;
 };
 
-function createStrategicPlanStore(initialData?: Tables<'strategic_plan'>): StrategicPlanState {
-	const currentStrategicPlan = writable<Tables<'strategic_plan'> | null>(initialData || null);
+function createStrategicPlanStore(initialData?: StrategicWithObjectives): StrategicPlanState {
+	const currentStrategicPlan = writable<StrategicWithObjectives | null>(initialData || null);
 
-	function setCurrentStrategicPlan(plan: Tables<'strategic_plan'>) {
+	function setCurrentStrategicPlan(plan: StrategicWithObjectives) {
 		currentStrategicPlan.set(plan);
 	}
 
@@ -24,14 +30,20 @@ function createStrategicPlanStore(initialData?: Tables<'strategic_plan'>): Strat
 
 	const yearCount = derived(currentStrategicPlan, ($plan) => {
 		if (!$plan) return null;
-		return $plan.end_year - $plan.start_year + 1;
+		return $plan.strategic.end_year - $plan.strategic.start_year + 1;
+	});
+
+	const objectives = derived(currentStrategicPlan, ($plan) => {
+		if (!$plan) return [];
+		return $plan.objectives;
 	});
 
 	return {
 		currentStrategicPlan,
 		setCurrentStrategicPlan,
 		resetCurrentStrategicPlan,
-		yearCount
+		yearCount,
+		objectives
 	};
 }
 
@@ -44,11 +56,11 @@ export function getCurrentStrategicPlanStore(): StrategicPlanState {
 }
 
 export function setCurrentStrategicPlanStore(
-	initialData?: Tables<'strategic_plan'>
+	initialData?: StrategicWithObjectives
 ): StrategicPlanState {
 	const store = createStrategicPlanStore(initialData);
 	setContext(STRATEGIC_PLAN_STATE_KEY, store);
 	return store;
 }
 
-export type { StrategicPlanState };
+export type { StrategicPlanState, StrategicWithObjectives };

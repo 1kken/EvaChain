@@ -1,8 +1,12 @@
--- Create strategy_plan_performance_indicator table
+-- Create the input type enum
+CREATE TYPE input_type_strategic_plan AS ENUM ('percentage', 'number', 'ratio', 'text');
+
+-- Recreate strategy_plan_performance_indicator table with new column
 CREATE TABLE strategy_plan_performance_indicator (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     strategy_plan_id UUID REFERENCES strategy_plan(id) ON DELETE CASCADE NOT NULL,
     performance_indicator TEXT NOT NULL,
+    input_type input_type_strategic_plan NOT NULL DEFAULT 'text',
     base_target TEXT NOT NULL,
     actual_target TEXT NOT NULL,
     concerned_offices TEXT,

@@ -1,5 +1,10 @@
 import type { Actions, PageServerLoad } from './$types';
 import {
+	createPerformanceIndicator,
+	deleteIndicator,
+	updatePerformanceIndicator
+} from './services/performance_indicator_services';
+import {
 	createStrategyPlan,
 	deleteStrategyPlan,
 	updateStrategyPlan
@@ -41,5 +46,15 @@ export const actions = {
 	},
 	deleteStrategyPlan: async ({ request, locals: { supabase, session } }) => {
 		return deleteStrategyPlan(request, supabase);
+	},
+	//indicators
+	createindicator: async ({ request, locals: { supabase, session } }) => {
+		return createPerformanceIndicator(request, supabase);
+	},
+	updateindicator: async ({ request, locals: { supabase, session } }) => {
+		return updatePerformanceIndicator(request, supabase);
+	},
+	deleteindicator: async ({ request, locals: { supabase, session } }) => {
+		return deleteIndicator(request, supabase);
 	}
 } satisfies Actions;

@@ -1466,7 +1466,7 @@ export type Database = {
       }
       strat_plan_yearly_plan: {
         Row: {
-          budget: string
+          budget: number
           created_at: string
           id: string
           strategy_plan_performance_indicator_id: string
@@ -1475,7 +1475,7 @@ export type Database = {
           year: number
         }
         Insert: {
-          budget: string
+          budget: number
           created_at?: string
           id?: string
           strategy_plan_performance_indicator_id: string
@@ -1484,7 +1484,7 @@ export type Database = {
           year: number
         }
         Update: {
-          budget?: string
+          budget?: number
           created_at?: string
           id?: string
           strategy_plan_performance_indicator_id?: string
@@ -1625,6 +1625,7 @@ export type Database = {
           concerned_offices: string | null
           created_at: string
           id: string
+          input_type: Database["public"]["Enums"]["input_type_strategic_plan"]
           performance_indicator: string
           position: number
           remarks: string | null
@@ -1637,6 +1638,7 @@ export type Database = {
           concerned_offices?: string | null
           created_at?: string
           id?: string
+          input_type?: Database["public"]["Enums"]["input_type_strategic_plan"]
           performance_indicator: string
           position: number
           remarks?: string | null
@@ -1649,6 +1651,7 @@ export type Database = {
           concerned_offices?: string | null
           created_at?: string
           id?: string
+          input_type?: Database["public"]["Enums"]["input_type_strategic_plan"]
           performance_indicator?: string
           position?: number
           remarks?: string | null
@@ -1861,6 +1864,7 @@ export type Database = {
     Enums: {
       input_type_accomplishment: "percentage" | "number" | "ratio" | "text"
       input_type_op: "percentage" | "number" | "ratio" | "text"
+      input_type_strategic_plan: "percentage" | "number" | "ratio" | "text"
       ipcr_indicator_status:
         | "draft"
         | "submitted"

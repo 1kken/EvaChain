@@ -13,7 +13,7 @@ import {
 	universalDeleteSchema,
 	type UniversalDeleteSchema
 } from '$lib/schemas/universal_delete_schema';
-import type { SupabaseClient } from '@supabase/supabase-js';
+import { type PostgrestError, type SupabaseClient } from '@supabase/supabase-js';
 
 export async function createStrategicPlan(
 	request: Request,
@@ -120,7 +120,6 @@ export async function deleteStrategicPlan(request: Request, supabase: SupabaseCl
 	return { form, stratPlan };
 }
 
-// Assuming you have a schema defined similarly to DPCR
 export async function updateStrategicPlan(request: Request, supabase: SupabaseClient<Database>) {
 	// Validate form data
 	const form = await superValidate<Infer<UpdateStratPlanSchema>, App.Superforms.Message>(
@@ -135,33 +134,45 @@ export async function updateStrategicPlan(request: Request, supabase: SupabaseCl
 		});
 	}
 
-	try {
-		const { id, title, objectives, ...planData } = form.data;
+	const { id, title, objectives, ...planData } = form.data;
 
-		// Update strategic plan
-		const { data: stratPlan, error: updateError } = await supabase
-			.from('strategic_plan')
-			.update({ title, ...planData })
-			.eq('id', id)
-			.select()
-			.single();
+	// Update strategic plan
 
-		if (updateError) throw updateError;
+	if (objectives) {
+		// Handle objectives updates in parallel
+		await Promise.all([
+			handleObjectiveDeletions(id, objectives, supabase),
+			upsertObjectives(objectives, supabase)
+		]);
+	}
+	const { error: yearUpdateError } = await handleYearRangeUpdate(
+		id,
+		form.data.start_year!,
+		form.data.end_year!,
+		supabase
+	);
 
-		if (objectives) {
-			// Handle objectives updates in parallel
-			await Promise.all([
-				handleObjectiveDeletions(id, objectives, supabase),
-				upsertObjectives(objectives, supabase)
-			]);
-		}
-		return { form, stratPlan };
-	} catch (error) {
+	if (yearUpdateError) {
 		return message(form, {
 			status: 'error',
-			text: `Failed to update strategic plan: ${error instanceof Error ? error.message : 'Unknown error'}`
+			text: `Error updating year range: ${yearUpdateError.message}`
 		});
 	}
+
+	const { data: stratPlan, error: updateError } = await supabase
+		.from('strategic_plan')
+		.update({ title, ...planData })
+		.eq('id', id)
+		.select()
+		.single();
+
+	if (updateError) {
+		return message(form, {
+			status: 'error',
+			text: `Error updating Strategic plan: ${updateError.message}`
+		});
+	}
+	return { form, stratPlan };
 }
 
 async function handleObjectiveDeletions(
@@ -203,6 +214,56 @@ async function handleObjectiveDeletions(
 	if (deleteError) {
 		throw new Error(`Failed to delete objectives: ${deleteError.message}`);
 	}
+}
+
+async function handleYearRangeUpdate(
+	strategicPlanId: string,
+	newStartYear: number,
+	newEndYear: number,
+	supabase: SupabaseClient<Database>
+) {
+	// Get all strategy plans related to this strategic plan
+	const { data: strategyPlans, error: strategyError } = await supabase
+		.from('strategy_plan')
+		.select('id')
+		.eq('strat_plan_id', strategicPlanId);
+
+	if (strategyError) {
+		return { error: strategyError };
+	}
+
+	if (strategyPlans && strategyPlans.length > 0) {
+		// Get all performance indicators for the found strategy plans
+		const { data: indicators, error: indicatorError } = await supabase
+			.from('strategy_plan_performance_indicator')
+			.select('id')
+			.in(
+				'strategy_plan_id',
+				strategyPlans.map((plan) => plan.id)
+			);
+
+		if (indicatorError) {
+			return { error: indicatorError };
+		}
+
+		if (indicators && indicators.length > 0) {
+			// Delete yearly plans outside the new year range
+			const { error: deleteError } = await supabase
+				.from('strat_plan_yearly_plan')
+				.delete()
+				.or(`year.lt.${newStartYear},year.gt.${newEndYear}`)
+				.in(
+					'strategy_plan_performance_indicator_id',
+					indicators.map((ind) => ind.id)
+				);
+
+			if (deleteError) {
+				return { error: deleteError };
+			}
+		}
+	}
+
+	return { data: null };
 }
 
 async function upsertObjectives(

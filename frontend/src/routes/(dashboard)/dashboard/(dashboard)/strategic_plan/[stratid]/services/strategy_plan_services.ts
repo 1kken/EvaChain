@@ -27,7 +27,6 @@ export async function createStrategyPlan(request: Request, supabase: SupabaseCli
 		});
 	}
 	const { strat_plan_id, description, position } = form.data;
-	console.log(strat_plan_id);
 	const { data: strategyPlan, error: strategyPlanError } = await supabase
 		.from('strategy_plan')
 		.insert({ strat_plan_id, description, position })

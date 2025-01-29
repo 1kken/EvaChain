@@ -44,3 +44,41 @@ export async function fetchStratPlanObjectives(id: string) {
 		};
 	}
 }
+
+export async function fetchSdgAlignments(performanceIndicatorId: string) {
+	try {
+		const response = await fetch(
+			`/api/strategic_plan/sdg_alignment?performance_indicator_id=${performanceIndicatorId}`
+		);
+		const result = await response.json();
+		if (!response.ok) {
+			throw new Error(result.error || 'Failed to fetch SDG alignments');
+		}
+		return result;
+	} catch (error) {
+		console.error('Error fetching SDG alignments:', error);
+		return {
+			data: [],
+			error: error instanceof Error ? error.message : 'An unknown error occurred'
+		};
+	}
+}
+
+export async function fetchYearlyPlans(performanceIndicatorId: string) {
+	try {
+		const response = await fetch(
+			`/api/strategic_plan/yearly_plan?performance_indicator_id=${performanceIndicatorId}`
+		);
+		const result = await response.json();
+		if (!response.ok) {
+			throw new Error(result.error || 'Failed to fetch yearly plans');
+		}
+		return result;
+	} catch (error) {
+		console.error('Error fetching yearly plans:', error);
+		return {
+			data: [],
+			error: error instanceof Error ? error.message : 'An unknown error occurred'
+		};
+	}
+}
