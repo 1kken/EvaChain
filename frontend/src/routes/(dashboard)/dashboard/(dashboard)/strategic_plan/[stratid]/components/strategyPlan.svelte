@@ -117,7 +117,7 @@
 			{#snippet deleteAction()}
 				<UniversalDeleteAction
 					id={strategyPlan.id}
-					action="?/deleteopheader"
+					action="?/deletestrategyplan"
 					data={deleteForm}
 					onDelete={handleDelete}
 				/>

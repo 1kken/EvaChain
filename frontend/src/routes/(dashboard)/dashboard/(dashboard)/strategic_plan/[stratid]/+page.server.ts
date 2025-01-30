@@ -44,7 +44,7 @@ export const actions = {
 	updatestrategyplan: async ({ request, locals: { supabase, session } }) => {
 		return updateStrategyPlan(request, supabase);
 	},
-	deleteStrategyPlan: async ({ request, locals: { supabase, session } }) => {
+	deletestrategyplan: async ({ request, locals: { supabase, session } }) => {
 		return deleteStrategyPlan(request, supabase);
 	},
 	//indicators

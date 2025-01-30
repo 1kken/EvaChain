@@ -92,6 +92,7 @@ export async function deleteStrategyPlan(request: Request, supabase: SupabaseCli
 		.eq('id', id)
 		.select()
 		.single();
+	console.log(form.data.id);
 
 	if (strategyPlanError) {
 		return message(form, {
