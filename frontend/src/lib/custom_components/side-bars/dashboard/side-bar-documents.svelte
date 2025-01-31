@@ -6,7 +6,8 @@
 		ScrollText,
 		ClipboardCheck,
 		NotebookText,
-		BookOpenCheck
+		BookOpenCheck,
+		FileCheck2
 	} from 'lucide-svelte';
 
 	const items = [
@@ -24,6 +25,11 @@
 			title: 'DPCR',
 			url: `/dashboard/dpcr`,
 			icon: NotebookText
+		},
+		{
+			title: 'OPCR',
+			url: `/dashboard/opcr`,
+			icon: FileCheck2
 		},
 		{
 			title: 'Strategic Plan',

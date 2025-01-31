@@ -95,7 +95,6 @@ export async function updateDPCR(request: Request, supabase: SupabaseClient<Data
 		await updateEachAssessor(assessors, supabase);
 	}
 
-	console.log('eneter');
 	return { form, dpcr };
 }
 

@@ -5,12 +5,7 @@
 	import DndContainer from '$lib/custom_components/dashboard/documents/DndContainer.svelte';
 	import type { Tables } from '$lib/types/database.types';
 	import Badge from '$lib/components/ui/badge/badge.svelte';
-	import { setDpcrIndicatorStore } from '../states/indicator_state';
-	import { getDpcrCategoryFormContext } from '../states/category_form_state';
-	import { fetchDpcrIndicators, updateDpcrIndicatorPosition } from '../utils/page_helper';
 	import { showErrorToast, showWarningToast } from '$lib/utils/toast';
-	import type { DPCRCategoryFormResult } from '../utils/types';
-	import { getDpcrCategoryStore } from '../states/category_state';
 	import UniversalDeleteAction from '$lib/custom_components/UniversalDeleteAction.svelte';
 	import Update from './sub_component/category/update.svelte';
 	import DropDownWrapper from '$lib/custom_components/DropDownWrapper.svelte';
@@ -18,45 +13,50 @@
 	import IndicatorComponent from './indicatorComponent.svelte';
 	import TruncatedDiv from '../../../components/TruncatedDiv.svelte';
 	import { slide } from 'svelte/transition';
+	import { setOpcrIndicatorStore } from '../states/indicator_state';
+	import { getOpcrCategoryStore } from '../states/category_state';
+	import { getOpcrCategoryFormContext } from '../states/category_form_state';
+	import { fetchOpcrIndicators, updateOpcrIndicatorPosition } from '../utils/page_helper';
+	import type { OPCRCategoryFormResult } from '../utils/types';
 
 	interface Iprops {
-		dpcrCategory: Tables<'dpcr_function_category'>;
+		opcrCategory: Tables<'opcr_function_category'>;
 	}
 
-	let { dpcrCategory }: Iprops = $props();
+	let { opcrCategory }: Iprops = $props();
 
 	// States
 	let isExpanded = $state(false);
 	let isDrawerOpen = $state(false);
 	let isLoading = $state(false);
-	let dndItems = $state<Tables<'dpcr_indicator'>[]>([]);
+	let dndItems = $state<Tables<'opcr_indicator'>[]>([]);
 
 	// Store initialization
-	const { currentDpcrIndicators } = setDpcrIndicatorStore();
-	const { removeDpcrCategory } = getDpcrCategoryStore();
-	const { deleteForm } = getDpcrCategoryFormContext();
+	const { currentOpcrIndicators } = setOpcrIndicatorStore();
+	const { removeOpcrCategory } = getOpcrCategoryStore();
+	const { deleteForm } = getOpcrCategoryFormContext();
 
 	// API Functions
-	const updateIndicatorPositions = async (items: Tables<'dpcr_indicator'>[]): Promise<void> => {
-		const indicators = await updateDpcrIndicatorPosition(items);
+	const updateIndicatorPositions = async (items: Tables<'opcr_indicator'>[]): Promise<void> => {
+		const indicators = await updateOpcrIndicatorPosition(items);
 		if (indicators.error) {
 			showErrorToast('Failed to update indicator positions');
 			return;
 		}
-		$currentDpcrIndicators = items;
+		$currentOpcrIndicators = items;
 	};
 
 	async function fetchIndicators(): Promise<void> {
 		try {
 			isLoading = true;
-			const result = await fetchDpcrIndicators('dpcr_function_category_id', dpcrCategory.id);
+			const result = await fetchOpcrIndicators('opcr_function_category_id', opcrCategory.id);
 
 			if (result.error) {
 				throw new Error(result.error);
 			}
 
 			dndItems = result.data;
-			$currentDpcrIndicators = result.data;
+			$currentOpcrIndicators = result.data;
 		} catch (error) {
 			console.error('Error fetching indicators:', error);
 			showErrorToast('Failed to load indicators');
@@ -75,15 +75,15 @@
 
 	$effect(() => {
 		if (!isLoading) {
-			dndItems = [...$currentDpcrIndicators];
+			dndItems = [...$currentOpcrIndicators];
 		}
 	});
 
-	function handleDelete(result: { type: string; data: DPCRCategoryFormResult }) {
-		if (result.data.dpcrCategory) {
-			const dpcrCategory = result.data.dpcrCategory;
-			removeDpcrCategory(dpcrCategory.id);
-			showWarningToast(`Successfully deleted DPCR category`);
+	function handleDelete(result: { type: string; data: OPCRCategoryFormResult }) {
+		if (result.data.opcrCategory) {
+			const opcrCategory = result.data.opcrCategory;
+			removeOpcrCategory(opcrCategory.id);
+			showWarningToast(`Successfully deleted OPCR category`);
 		}
 	}
 </script>
@@ -101,22 +101,22 @@
 			</Button>
 			<div class="flex h-auto items-center gap-2">
 				<Badge variant={'secondary'} class="h-5 bg-green-400 text-xs">Sub-Category</Badge>
-				<TruncatedDiv text={dpcrCategory.category} maxLength={50} />
+				<TruncatedDiv text={opcrCategory.category} maxLength={50} />
 			</div>
 		</div>
 		{#snippet deleteAction()}
 			<UniversalDeleteAction
-				id={dpcrCategory.id}
-				action="?/deletedpcrcategory"
+				id={opcrCategory.id}
+				action="?/deleteopcrcategory"
 				data={deleteForm}
 				onDelete={handleDelete}
 			/>
 		{/snippet}
 		{#snippet updateDialog()}
-			<Update {dpcrCategory} bind:isDrawerOpen />
+			<Update {opcrCategory} bind:isDrawerOpen />
 		{/snippet}
 		<div class="flex gap-4">
-			<Create bind:isDrawerOpen dpcrCategoryId={dpcrCategory.id} />
+			<Create bind:isDrawerOpen opcrCategoryId={opcrCategory.id} />
 			<DropDownWrapper childrens={[updateDialog, deleteAction]} bind:isDrawerOpen />
 		</div>
 	</div>
@@ -132,7 +132,7 @@
 				errorMessage="Failed to update indicator order. Please try again"
 			>
 				{#each dndItems as indicator (indicator.id)}
-					<IndicatorComponent dpcrIndicator={indicator} />
+					<IndicatorComponent opcrIndicator={indicator} />
 				{/each}
 			</DndContainer>
 		</div>

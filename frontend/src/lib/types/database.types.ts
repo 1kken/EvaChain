@@ -1034,6 +1034,215 @@ export type Database = {
           },
         ]
       }
+      opcr: {
+        Row: {
+          administrative_officer: string
+          created_at: string
+          human_resource: string
+          id: string
+          office_id: number | null
+          owner_id: string
+          planning_officer: string
+          program_id: number | null
+          review_by: string
+          reviewer_position: string
+          title: string
+          unit_id: number | null
+          updated_at: string
+        }
+        Insert: {
+          administrative_officer: string
+          created_at?: string
+          human_resource: string
+          id?: string
+          office_id?: number | null
+          owner_id: string
+          planning_officer: string
+          program_id?: number | null
+          review_by: string
+          reviewer_position: string
+          title: string
+          unit_id?: number | null
+          updated_at?: string
+        }
+        Update: {
+          administrative_officer?: string
+          created_at?: string
+          human_resource?: string
+          id?: string
+          office_id?: number | null
+          owner_id?: string
+          planning_officer?: string
+          program_id?: number | null
+          review_by?: string
+          reviewer_position?: string
+          title?: string
+          unit_id?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "opcr_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "office"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "opcr_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "program"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "opcr_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "unit"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      opcr_function: {
+        Row: {
+          created_at: string
+          id: string
+          opcr_id: string
+          position: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          opcr_id: string
+          position: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          opcr_id?: string
+          position?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "opcr_function_opcr_id_fkey"
+            columns: ["opcr_id"]
+            isOneToOne: false
+            referencedRelation: "opcr"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      opcr_function_category: {
+        Row: {
+          category: string
+          created_at: string
+          id: string
+          opcr_function_id: string
+          position: number
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          id?: string
+          opcr_function_id: string
+          position: number
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: string
+          opcr_function_id?: string
+          position?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "opcr_function_category_opcr_function_id_fkey"
+            columns: ["opcr_function_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_function"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      opcr_indicator: {
+        Row: {
+          actual_accomplishments: string | null
+          alloted_budget: string | null
+          average_rating: number | null
+          created_at: string
+          division_individuals_accountable: string | null
+          efficiency_rating: number | null
+          id: string
+          opcr_function_category_id: string | null
+          opcr_function_id: string | null
+          position: number
+          quality_rating: number | null
+          remarks: string | null
+          success_indicator: string
+          timeliness_rating: number | null
+          updated_at: string
+        }
+        Insert: {
+          actual_accomplishments?: string | null
+          alloted_budget?: string | null
+          average_rating?: number | null
+          created_at?: string
+          division_individuals_accountable?: string | null
+          efficiency_rating?: number | null
+          id?: string
+          opcr_function_category_id?: string | null
+          opcr_function_id?: string | null
+          position: number
+          quality_rating?: number | null
+          remarks?: string | null
+          success_indicator: string
+          timeliness_rating?: number | null
+          updated_at?: string
+        }
+        Update: {
+          actual_accomplishments?: string | null
+          alloted_budget?: string | null
+          average_rating?: number | null
+          created_at?: string
+          division_individuals_accountable?: string | null
+          efficiency_rating?: number | null
+          id?: string
+          opcr_function_category_id?: string | null
+          opcr_function_id?: string | null
+          position?: number
+          quality_rating?: number | null
+          remarks?: string | null
+          success_indicator?: string
+          timeliness_rating?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "opcr_indicator_opcr_function_category_id_fkey"
+            columns: ["opcr_function_category_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_function_category"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "opcr_indicator_opcr_function_id_fkey"
+            columns: ["opcr_function_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_function"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       operational_plan: {
         Row: {
           approve_by: string

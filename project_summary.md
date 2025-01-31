@@ -316,3 +316,27 @@ CREATE OR REPLACE VIEW ipcr_supervisors AS WITH combined_supervisors AS ( -- Get
 -- Create strat_plan_yearly_plan table CREATE TABLE strat_plan_yearly_plan ( id UUID PRIMARY KEY DEFAULT uuid_generate_v4(), strategy_plan_performance_indicator_id UUID REFERENCES strategy_plan_performance_indicator(id) ON DELETE CASCADE NOT NULL, year INTEGER NOT NULL, target TEXT NOT NULL, budget NUMERIC NOT NULL, created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL, updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL, -- Ensure unique combination of performance indicator and year UNIQUE(strategy_plan_performance_indicator_id, year) ); -- Create index for foreign key CREATE INDEX idx_strat_plan_yearly_plan_performance_indicator_id ON strat_plan_yearly_plan(strategy_plan_performance_indicator_id); -- Create index for year queries CREATE INDEX idx_strat_plan_yearly_plan_year ON strat_plan_yearly_plan(year); -- Add trigger for updating timestamps CREATE TRIGGER set_updated_at BEFORE UPDATE ON strat_plan_yearly_plan FOR EACH ROW EXECUTE FUNCTION fn_set_updated_at();
 ```
 
+# 20250131164632_create_table_opcr.sql
+
+```sql
+-- Create opcr table CREATE TABLE opcr ( id UUID PRIMARY KEY DEFAULT uuid_generate_v4(), title VARCHAR(255) NOT NULL, review_by VARCHAR(255) NOT NULL, reviewer_position VARCHAR(255) NOT NULL, administrative_officer VARCHAR(255) NOT NULL, planning_officer VARCHAR(255) NOT NULL, human_resource VARCHAR(255) NOT NULL, owner_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL, unit_id INTEGER REFERENCES unit(id) ON DELETE CASCADE, office_id INTEGER REFERENCES office(id) ON DELETE CASCADE, program_id INTEGER REFERENCES program(id) ON DELETE CASCADE, created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL, updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL ); -- Create indexes for foreign keys and common query patterns CREATE INDEX idx_opcr_owner ON opcr(owner_id); CREATE INDEX idx_opcr_unit ON opcr(unit_id); CREATE INDEX idx_opcr_office ON opcr(office_id); CREATE INDEX idx_opcr_program ON opcr(program_id); -- Add trigger for updating timestamps CREATE TRIGGER set_updated_at BEFORE UPDATE ON opcr FOR EACH ROW EXECUTE FUNCTION fn_set_updated_at();
+```
+
+# 20250131164807_create_table_opcr_function.sql
+
+```sql
+-- Create opcr_function table CREATE TABLE opcr_function ( id UUID PRIMARY KEY DEFAULT uuid_generate_v4(), opcr_id UUID REFERENCES opcr(id) ON DELETE CASCADE NOT NULL, title VARCHAR(255) NOT NULL, position INTEGER NOT NULL, created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL, updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL, UNIQUE(opcr_id, title) ); -- Create indexes for better query performance CREATE INDEX idx_opcr_function_opcr_id ON opcr_function(opcr_id); CREATE INDEX idx_opcr_function_position ON opcr_function(position, opcr_id); -- Add trigger for updating timestamps CREATE TRIGGER set_updated_at BEFORE UPDATE ON opcr_function FOR EACH ROW EXECUTE FUNCTION fn_set_updated_at();
+```
+
+# 20250131164956_create_table_opcr_function_category.sql
+
+```sql
+-- Create opcr_function_category table CREATE TABLE opcr_function_category ( id UUID PRIMARY KEY DEFAULT uuid_generate_v4(), opcr_function_id UUID REFERENCES opcr_function(id) ON DELETE CASCADE NOT NULL, category VARCHAR(255) NOT NULL, position SMALLINT NOT NULL, created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL, updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL, UNIQUE(category, opcr_function_id) ); -- Create indexes for better query performance CREATE INDEX idx_opcr_function_category_function_id ON opcr_function_category(opcr_function_id); CREATE INDEX idx_opcr_function_category_position ON opcr_function_category(position, opcr_function_id); -- Add trigger for updating timestamps CREATE TRIGGER set_updated_at BEFORE UPDATE ON opcr_function_category FOR EACH ROW EXECUTE FUNCTION fn_set_updated_at();
+```
+
+# 20250131165054_create_table_opcr_function_indicator.sql
+
+```sql
+-- Create opcr_indicator table -- Create opcr_indicator table CREATE TABLE opcr_indicator ( id UUID PRIMARY KEY DEFAULT uuid_generate_v4(), opcr_function_id UUID REFERENCES opcr_function(id) ON DELETE CASCADE, opcr_function_category_id UUID REFERENCES opcr_function_category(id) ON DELETE CASCADE, success_indicator TEXT NOT NULL, alloted_budget TEXT, division_individuals_accountable TEXT, actual_accomplishments TEXT, quality_rating NUMERIC(3,2), efficiency_rating NUMERIC(3,2), timeliness_rating NUMERIC(3,2), average_rating NUMERIC(3,2), remarks TEXT, position INTEGER NOT NULL, created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL, updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL ); -- Create indexes for better query performance CREATE INDEX idx_opcr_indicator_function_id ON opcr_indicator(opcr_function_id); CREATE INDEX idx_opcr_indicator_category_id ON opcr_indicator(opcr_function_category_id); CREATE INDEX idx_opcr_indicator_position ON opcr_indicator(position, opcr_function_category_id); -- Add trigger for updating timestamps CREATE TRIGGER set_updated_at BEFORE UPDATE ON opcr_indicator FOR EACH ROW EXECUTE FUNCTION fn_set_updated_at();
+```
+
