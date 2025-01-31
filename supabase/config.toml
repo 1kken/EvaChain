@@ -78,6 +78,10 @@ sql_paths = [
     './seeds/dpcr/dpcr_category.sql',
     './seeds/dpcr/dpcr_indicator.sql',
     './seeds/dpcr/dpcr_assessor.sql',
+    './seeds/opcr/opcr.sql',
+    './seeds/opcr/opcr_function.sql',
+    './seeds/opcr/opcr_category.sql',
+    './seeds/opcr/opcr_indicator.sql',
     './seeds/*.sql',
 ]
 
