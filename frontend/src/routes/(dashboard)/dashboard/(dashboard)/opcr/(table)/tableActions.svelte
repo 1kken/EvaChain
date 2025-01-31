@@ -6,12 +6,12 @@
 	import type { UniversalDeleteInput } from '$lib/schemas/universal_delete_schema';
 	import { Download, SquareArrowOutUpRight } from 'lucide-svelte';
 	import Delete from './delete.svelte';
-	import type { UpdateDpcrInput } from '../(data)/dpcr_schema';
 	import Update from './update.svelte';
+	import type { UpdateOpcrInput } from '../(data)/opcr_schema';
 
 	interface Props {
 		deleteForm: SuperValidated<UniversalDeleteInput>;
-		updateForm: SuperValidated<UpdateDpcrInput>;
+		updateForm: SuperValidated<UpdateOpcrInput>;
 		id: string;
 	}
 
@@ -47,14 +47,14 @@
 			><Delete {deleteForm} {id} bind:dropDownOpen /></DropdownMenu.Item
 		>
 		<DropdownMenu.Item onSelect={(e) => e.preventDefault()}>
-			<a href={`/dashboard/dpcr/${id}`}>
+			<a href={`/dashboard/opcr/${id}`}>
 				<span class="flex items-center gap-3">
 					<SquareArrowOutUpRight size={16} /> Open
 				</span>
 			</a>
 		</DropdownMenu.Item>
 		<DropdownMenu.Item onselect={handleDownload}>
-			<form action={`/api/dpcr/pdfDownload?id=${id}`} method="POST" class="w-full">
+			<form action={`/api/opcr/pdfDownload?id=${id}`} method="POST" class="w-full">
 				<button type="submit" class="flex w-full items-center gap-3">
 					<Download size={16} />
 					Download PDF
