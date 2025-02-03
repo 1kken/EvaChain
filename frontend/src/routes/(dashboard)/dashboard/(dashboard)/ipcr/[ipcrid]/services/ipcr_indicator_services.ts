@@ -110,8 +110,7 @@ export async function deleteIpcrIndicator(request: Request, supabase: SupabaseCl
 	return { form, ipcrFunctionIndicator };
 }
 
-export async function markIpcrIndicatorDone(request: Request, supabase: SupabaseClient) {
-	console.log('markIpcrIndicatorDone');
+export async function markIpcrIndicatorDone(request: Request, supabase: SupabaseClient<Database>) {
 	const {
 		data: { user }
 	} = await supabase.auth.getUser();
@@ -141,9 +140,21 @@ export async function markIpcrIndicatorDone(request: Request, supabase: Supabase
 		});
 	}
 
+	const { data, error: fetchError } = await supabase.rpc('get_ipcr_id_from_indicator', {
+		p_indicator_id: id
+	});
+
+	if (fetchError || !data) {
+		return message(form, {
+			status: 'error',
+			text: `Error fetching IPCR ID: ${fetchError?.message ?? 'No data received'}`
+		});
+	}
+
 	// upload evidence
 	const { data: uploadEvidenceData, error: uploadEvidenceError } = await uploadEvidence(
 		id,
+		data,
 		user_id,
 		pdf_evidence,
 		supabase
@@ -205,12 +216,14 @@ export async function markIpcrIndicatorDone(request: Request, supabase: Supabase
 // Helper function to upload evidence
 async function uploadEvidence(
 	indicatorId: string,
+	ipcrId: string,
 	userId: string,
 	file: File,
 	supabase: SupabaseClient
 ) {
 	const fileExt = file.name.split('.').pop();
-	const filePath = `${userId}/${indicatorId}/${Date.now()}.${fileExt}`;
+	//userId/ipcrID/indicator.fileExt
+	const filePath = `${userId}/${ipcrId}/${indicatorId}.${fileExt}`;
 
 	const { data, error } = await supabase.storage.from('indicator_evidence').upload(filePath, file);
 

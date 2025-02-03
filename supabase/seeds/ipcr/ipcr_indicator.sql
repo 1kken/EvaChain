@@ -195,7 +195,7 @@ VALUES
         NULL,
         1,
         '9a4ba6de-9fc0-4110-8445-f9a1efbc1432',
-        NULL,
+        12.00,
         'Documents for Area 1 – VMGO of the MSCS program'
     ),
     (
@@ -214,7 +214,7 @@ VALUES
         NULL,
         2,
         '9a4ba6de-9fc0-4110-8445-f9a1efbc1432',
-        NULL,
+        12.00,
         'Rendered 54 hours of service as class adviser by conducting academic consultations, updating of students'' academic record, participate in clean-up drive, and monitor attendance of students during school activities'
     ),
     -- Support Function Indicators
@@ -234,7 +234,7 @@ VALUES
         NULL,
         1,
         '9a4ba6de-9fc0-4110-8445-f9a1efbc1432',
-        NULL,
+        12.00,
         'Conducted 1 training session'
     ),
     (
@@ -253,6 +253,6 @@ VALUES
         NULL,
         2,
         '9a4ba6de-9fc0-4110-8445-f9a1efbc1432',
-        NULL,
+        12.00,
         'Provided support for the following activities: Year-end college celebration, Fund-raising event for calamity victims, REGTA Health and Wellness Program'
     );

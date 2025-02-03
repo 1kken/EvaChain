@@ -242,6 +242,36 @@ export type Database = {
           },
         ]
       }
+      blockchain_data: {
+        Row: {
+          blockchain_hash: string
+          created_at: string
+          file_cid: string
+          file_name: string
+          id: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          blockchain_hash: string
+          created_at?: string
+          file_cid: string
+          file_name: string
+          id?: string
+          type?: string
+          updated_at?: string
+        }
+        Update: {
+          blockchain_hash?: string
+          created_at?: string
+          file_cid?: string
+          file_name?: string
+          id?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       dpcr: {
         Row: {
           created_at: string
@@ -607,6 +637,13 @@ export type Database = {
             referencedRelation: "ipcr"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "ipcr_function_ipcr_id_fkey"
+            columns: ["ipcr_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["ipcr_id"]
+          },
         ]
       }
       ipcr_function_category: {
@@ -645,6 +682,13 @@ export type Database = {
             foreignKeyName: "ipcr_function_category_ipcr_function_id_fkey"
             columns: ["ipcr_function_id"]
             isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["function_id"]
+          },
+          {
+            foreignKeyName: "ipcr_function_category_ipcr_function_id_fkey"
+            columns: ["ipcr_function_id"]
+            isOneToOne: false
             referencedRelation: "ipcr_function"
             referencedColumns: ["id"]
           },
@@ -676,6 +720,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "ipcr_function_sub_category_ipcr_function_category_id_fkey"
+            columns: ["ipcr_function_category_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["category_id"]
+          },
           {
             foreignKeyName: "ipcr_function_sub_category_ipcr_function_category_id_fkey"
             columns: ["ipcr_function_category_id"]
@@ -757,6 +808,13 @@ export type Database = {
             foreignKeyName: "ipcr_indicator_ipcr_function_category_id_fkey"
             columns: ["ipcr_function_category_id"]
             isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["category_id"]
+          },
+          {
+            foreignKeyName: "ipcr_indicator_ipcr_function_category_id_fkey"
+            columns: ["ipcr_function_category_id"]
+            isOneToOne: false
             referencedRelation: "ipcr_function_category"
             referencedColumns: ["id"]
           },
@@ -764,8 +822,22 @@ export type Database = {
             foreignKeyName: "ipcr_indicator_ipcr_function_id_fkey"
             columns: ["ipcr_function_id"]
             isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["function_id"]
+          },
+          {
+            foreignKeyName: "ipcr_indicator_ipcr_function_id_fkey"
+            columns: ["ipcr_function_id"]
+            isOneToOne: false
             referencedRelation: "ipcr_function"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ipcr_indicator_ipcr_function_sub_category_id_fkey"
+            columns: ["ipcr_function_sub_category_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["subcategory_id"]
           },
           {
             foreignKeyName: "ipcr_indicator_ipcr_function_sub_category_id_fkey"
@@ -813,6 +885,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "ipcr_indicator_evidence_ipcr_indicator_id_fkey"
+            columns: ["ipcr_indicator_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["indicator_id"]
+          },
           {
             foreignKeyName: "ipcr_indicator_evidence_ipcr_indicator_id_fkey"
             columns: ["ipcr_indicator_id"]
@@ -1942,6 +2021,29 @@ export type Database = {
       }
     }
     Views: {
+      ipcr_backup_view: {
+        Row: {
+          actual_accomplishments: string | null
+          average_rating: number | null
+          category: string | null
+          category_id: string | null
+          efficiency_rating: number | null
+          final_output: string | null
+          function_id: string | null
+          function_title: string | null
+          indicator_id: string | null
+          ipcr_id: string | null
+          owner_employee_id: string | null
+          quality_rating: number | null
+          status: Database["public"]["Enums"]["ipcr_status"] | null
+          sub_category: string | null
+          subcategory_id: string | null
+          success_indicator: string | null
+          timeliness_rating: number | null
+          title: string | null
+        }
+        Relationships: []
+      }
       ipcr_supervisors: {
         Row: {
           full_name: string | null
@@ -2051,6 +2153,12 @@ export type Database = {
           target_program_id?: number
         }
         Returns: boolean
+      }
+      get_ipcr_id_from_indicator: {
+        Args: {
+          p_indicator_id: string
+        }
+        Returns: string
       }
       get_user_role: {
         Args: Record<PropertyKey, never>

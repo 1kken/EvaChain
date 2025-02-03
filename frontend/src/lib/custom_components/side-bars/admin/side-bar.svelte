@@ -4,7 +4,7 @@
 	import SideBarFooter from '$lib/custom_components/side-bars/side-bar-footer.svelte';
 	import SideBarEntities from './side-bar-entities.svelte';
 	import SideBarAttributes from './side-bar-attributes.svelte';
-	import SideBarTemplates from './side-bar-templates.svelte';
+	import SideBarData from './side-bar-data.svelte';
 
 	let { sidebarOpen = $bindable() } = $props();
 
@@ -43,9 +43,9 @@
 			<Sidebar.GroupContent></Sidebar.GroupContent>
 		</Sidebar.Group>
 		<Sidebar.Group>
-			<Sidebar.GroupLabel>Document Management</Sidebar.GroupLabel>
+			<Sidebar.GroupLabel>Data Management</Sidebar.GroupLabel>
 			<Sidebar.GroupContent>
-				<SideBarTemplates />
+				<SideBarData />
 			</Sidebar.GroupContent>
 		</Sidebar.Group>
 	</Sidebar.Content>
