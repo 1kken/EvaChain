@@ -13,12 +13,49 @@ interface FileDetails {
 	fileType: BigNumberish;
 	fileName: string;
 }
-export async function uploadFileDetailsToBlockChain(fileDetails: FileDetails) {
-	const tx = await contract.addFileReference(
-		fileDetails.cid,
-		fileDetails.fileType,
-		fileDetails.fileName
-	);
 
-	await tx.wait();
+interface FileReferenceAddedEvent {
+	cid: string;
+	fileType: BigNumberish;
+	fileName: string;
+	currentTimeStamp: BigNumberish;
+	currentBlockHash: string;
+}
+export async function uploadFileDetailsToBlockChain(fileDetails: FileDetails) {
+	try {
+		const exists = await contract.fileExists(fileDetails.cid);
+		if (exists) {
+			return null;
+		}
+
+		const tx = await contract.addFileReference(
+			fileDetails.cid,
+			fileDetails.fileType,
+			fileDetails.fileName
+		);
+
+		const eventPromise = new Promise((resolve) => {
+			contract.once(
+				contract.filters['FileReferenceAdded(string,uint8,string,uint256,bytes32)'],
+				// These are the actual parameters passed by the event
+				(cid: string, fileType: bigint, fileName: string, timeStamp: bigint, blockHash: string) => {
+					resolve({
+						cid,
+						fileType,
+						fileName,
+						currentTimeStamp: timeStamp,
+						currentBlockHash: blockHash
+					});
+				}
+			);
+		});
+		// Wait for transaction confirmation
+		await tx.wait();
+
+		// Wait for and return the event data
+		const eventData = await eventPromise;
+		return eventData as FileReferenceAddedEvent;
+	} catch (error: any) {
+		throw new Error('Unknown Error');
+	}
 }

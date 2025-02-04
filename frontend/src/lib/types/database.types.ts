@@ -100,6 +100,13 @@ export type Database = {
             referencedRelation: "accomplishment_annual_plan"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "accomplishment_activity_accomplishment_annual_plan_id_fkey"
+            columns: ["accomplishment_annual_plan_id"]
+            isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["annual_plan_id"]
+          },
         ]
       }
       accomplishment_annual_plan: {
@@ -135,6 +142,13 @@ export type Database = {
             referencedRelation: "accomplishment_header"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "accomplishment_annual_plan_accomplishment_header_id_fkey"
+            columns: ["accomplishment_header_id"]
+            isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["header_id"]
+          },
         ]
       }
       accomplishment_header: {
@@ -169,6 +183,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "accomplishment_report"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "accomplishment_header_accomplishment_report_id_fkey"
+            columns: ["accomplishment_report_id"]
+            isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["accomplishment_report_id"]
           },
         ]
       }
@@ -223,8 +244,134 @@ export type Database = {
             foreignKeyName: "accomplishment_report_office_id_fkey"
             columns: ["office_id"]
             isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["ar_office_id"]
+          },
+          {
+            foreignKeyName: "accomplishment_report_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["owner_office_id"]
+          },
+          {
+            foreignKeyName: "accomplishment_report_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["dpcr_office_id"]
+          },
+          {
+            foreignKeyName: "accomplishment_report_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["owner_office_id"]
+          },
+          {
+            foreignKeyName: "accomplishment_report_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["owner_office_id"]
+          },
+          {
+            foreignKeyName: "accomplishment_report_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["ipcr_office_id"]
+          },
+          {
+            foreignKeyName: "accomplishment_report_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
             referencedRelation: "office"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "accomplishment_report_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["opcr_office_id"]
+          },
+          {
+            foreignKeyName: "accomplishment_report_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["owner_office_id"]
+          },
+          {
+            foreignKeyName: "accomplishment_report_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["owner_office_id"]
+          },
+          {
+            foreignKeyName: "accomplishment_report_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["sp_office_id"]
+          },
+          {
+            foreignKeyName: "accomplishment_report_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["owner_program_id"]
+          },
+          {
+            foreignKeyName: "accomplishment_report_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["ar_program_id"]
+          },
+          {
+            foreignKeyName: "accomplishment_report_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["owner_program_id"]
+          },
+          {
+            foreignKeyName: "accomplishment_report_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["dpcr_program_id"]
+          },
+          {
+            foreignKeyName: "accomplishment_report_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["ipcr_program_id"]
+          },
+          {
+            foreignKeyName: "accomplishment_report_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["owner_program_id"]
+          },
+          {
+            foreignKeyName: "accomplishment_report_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["owner_program_id"]
+          },
+          {
+            foreignKeyName: "accomplishment_report_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["opcr_program_id"]
           },
           {
             foreignKeyName: "accomplishment_report_program_id_fkey"
@@ -232,6 +379,90 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "program"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "accomplishment_report_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["owner_program_id"]
+          },
+          {
+            foreignKeyName: "accomplishment_report_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["sp_program_id"]
+          },
+          {
+            foreignKeyName: "accomplishment_report_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "accomplishment_report_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["ar_unit_id"]
+          },
+          {
+            foreignKeyName: "accomplishment_report_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "accomplishment_report_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["dpcr_unit_id"]
+          },
+          {
+            foreignKeyName: "accomplishment_report_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "accomplishment_report_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["ipcr_unit_id"]
+          },
+          {
+            foreignKeyName: "accomplishment_report_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "accomplishment_report_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["opcr_unit_id"]
+          },
+          {
+            foreignKeyName: "accomplishment_report_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["sp_unit_id"]
+          },
+          {
+            foreignKeyName: "accomplishment_report_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["owner_unit_id"]
           },
           {
             foreignKeyName: "accomplishment_report_unit_id_fkey"
@@ -314,8 +545,134 @@ export type Database = {
             foreignKeyName: "dpcr_office_id_fkey"
             columns: ["office_id"]
             isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["ar_office_id"]
+          },
+          {
+            foreignKeyName: "dpcr_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["owner_office_id"]
+          },
+          {
+            foreignKeyName: "dpcr_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["dpcr_office_id"]
+          },
+          {
+            foreignKeyName: "dpcr_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["owner_office_id"]
+          },
+          {
+            foreignKeyName: "dpcr_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["owner_office_id"]
+          },
+          {
+            foreignKeyName: "dpcr_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["ipcr_office_id"]
+          },
+          {
+            foreignKeyName: "dpcr_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
             referencedRelation: "office"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "dpcr_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["opcr_office_id"]
+          },
+          {
+            foreignKeyName: "dpcr_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["owner_office_id"]
+          },
+          {
+            foreignKeyName: "dpcr_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["owner_office_id"]
+          },
+          {
+            foreignKeyName: "dpcr_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["sp_office_id"]
+          },
+          {
+            foreignKeyName: "dpcr_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["owner_program_id"]
+          },
+          {
+            foreignKeyName: "dpcr_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["ar_program_id"]
+          },
+          {
+            foreignKeyName: "dpcr_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["owner_program_id"]
+          },
+          {
+            foreignKeyName: "dpcr_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["dpcr_program_id"]
+          },
+          {
+            foreignKeyName: "dpcr_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["ipcr_program_id"]
+          },
+          {
+            foreignKeyName: "dpcr_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["owner_program_id"]
+          },
+          {
+            foreignKeyName: "dpcr_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["owner_program_id"]
+          },
+          {
+            foreignKeyName: "dpcr_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["opcr_program_id"]
           },
           {
             foreignKeyName: "dpcr_program_id_fkey"
@@ -323,6 +680,90 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "program"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "dpcr_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["owner_program_id"]
+          },
+          {
+            foreignKeyName: "dpcr_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["sp_program_id"]
+          },
+          {
+            foreignKeyName: "dpcr_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "dpcr_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["ar_unit_id"]
+          },
+          {
+            foreignKeyName: "dpcr_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "dpcr_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["dpcr_unit_id"]
+          },
+          {
+            foreignKeyName: "dpcr_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "dpcr_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["ipcr_unit_id"]
+          },
+          {
+            foreignKeyName: "dpcr_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "dpcr_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["opcr_unit_id"]
+          },
+          {
+            foreignKeyName: "dpcr_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["sp_unit_id"]
+          },
+          {
+            foreignKeyName: "dpcr_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["owner_unit_id"]
           },
           {
             foreignKeyName: "dpcr_unit_id_fkey"
@@ -369,6 +810,13 @@ export type Database = {
             referencedRelation: "dpcr"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "dpcr_assessor_dpcr_id_fkey"
+            columns: ["dpcr_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["dpcr_id"]
+          },
         ]
       }
       dpcr_function: {
@@ -404,6 +852,13 @@ export type Database = {
             referencedRelation: "dpcr"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "dpcr_function_dpcr_id_fkey"
+            columns: ["dpcr_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["dpcr_id"]
+          },
         ]
       }
       dpcr_function_category: {
@@ -432,6 +887,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "dpcr_function_category_dpcr_function_id_fkey"
+            columns: ["dpcr_function_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["function_id"]
+          },
           {
             foreignKeyName: "dpcr_function_category_dpcr_function_id_fkey"
             columns: ["dpcr_function_id"]
@@ -501,8 +963,22 @@ export type Database = {
             foreignKeyName: "dpcr_indicator_dpcr_function_category_id_fkey"
             columns: ["dpcr_function_category_id"]
             isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["category_id"]
+          },
+          {
+            foreignKeyName: "dpcr_indicator_dpcr_function_category_id_fkey"
+            columns: ["dpcr_function_category_id"]
+            isOneToOne: false
             referencedRelation: "dpcr_function_category"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "dpcr_indicator_dpcr_function_id_fkey"
+            columns: ["dpcr_function_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["function_id"]
           },
           {
             foreignKeyName: "dpcr_indicator_dpcr_function_id_fkey"
@@ -582,8 +1058,134 @@ export type Database = {
             foreignKeyName: "ipcr_office_id_fkey"
             columns: ["office_id"]
             isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["ar_office_id"]
+          },
+          {
+            foreignKeyName: "ipcr_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["owner_office_id"]
+          },
+          {
+            foreignKeyName: "ipcr_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["dpcr_office_id"]
+          },
+          {
+            foreignKeyName: "ipcr_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["owner_office_id"]
+          },
+          {
+            foreignKeyName: "ipcr_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["owner_office_id"]
+          },
+          {
+            foreignKeyName: "ipcr_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["ipcr_office_id"]
+          },
+          {
+            foreignKeyName: "ipcr_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
             referencedRelation: "office"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ipcr_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["opcr_office_id"]
+          },
+          {
+            foreignKeyName: "ipcr_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["owner_office_id"]
+          },
+          {
+            foreignKeyName: "ipcr_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["owner_office_id"]
+          },
+          {
+            foreignKeyName: "ipcr_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["sp_office_id"]
+          },
+          {
+            foreignKeyName: "ipcr_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["owner_program_id"]
+          },
+          {
+            foreignKeyName: "ipcr_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["ar_program_id"]
+          },
+          {
+            foreignKeyName: "ipcr_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["owner_program_id"]
+          },
+          {
+            foreignKeyName: "ipcr_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["dpcr_program_id"]
+          },
+          {
+            foreignKeyName: "ipcr_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["ipcr_program_id"]
+          },
+          {
+            foreignKeyName: "ipcr_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["owner_program_id"]
+          },
+          {
+            foreignKeyName: "ipcr_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["owner_program_id"]
+          },
+          {
+            foreignKeyName: "ipcr_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["opcr_program_id"]
           },
           {
             foreignKeyName: "ipcr_program_id_fkey"
@@ -591,6 +1193,90 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "program"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ipcr_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["owner_program_id"]
+          },
+          {
+            foreignKeyName: "ipcr_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["sp_program_id"]
+          },
+          {
+            foreignKeyName: "ipcr_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "ipcr_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["ar_unit_id"]
+          },
+          {
+            foreignKeyName: "ipcr_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "ipcr_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["dpcr_unit_id"]
+          },
+          {
+            foreignKeyName: "ipcr_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "ipcr_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["ipcr_unit_id"]
+          },
+          {
+            foreignKeyName: "ipcr_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "ipcr_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["opcr_unit_id"]
+          },
+          {
+            foreignKeyName: "ipcr_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["sp_unit_id"]
+          },
+          {
+            foreignKeyName: "ipcr_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["owner_unit_id"]
           },
           {
             foreignKeyName: "ipcr_unit_id_fkey"
@@ -857,6 +1543,13 @@ export type Database = {
             foreignKeyName: "ipcr_indicator_op_activity_id_fkey"
             columns: ["op_activity_id"]
             isOneToOne: false
+            referencedRelation: "operational_backup_view"
+            referencedColumns: ["activity_id"]
+          },
+          {
+            foreignKeyName: "ipcr_indicator_op_activity_id_fkey"
+            columns: ["op_activity_id"]
+            isOneToOne: false
             referencedRelation: "operational_plan_activities"
             referencedColumns: ["activity_id"]
           },
@@ -952,6 +1645,76 @@ export type Database = {
             foreignKeyName: "office_unit_id_fkey"
             columns: ["unit_id"]
             isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "office_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["ar_unit_id"]
+          },
+          {
+            foreignKeyName: "office_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "office_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["dpcr_unit_id"]
+          },
+          {
+            foreignKeyName: "office_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "office_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["ipcr_unit_id"]
+          },
+          {
+            foreignKeyName: "office_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "office_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["opcr_unit_id"]
+          },
+          {
+            foreignKeyName: "office_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["sp_unit_id"]
+          },
+          {
+            foreignKeyName: "office_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "office_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
             referencedRelation: "unit"
             referencedColumns: ["id"]
           },
@@ -1024,6 +1787,13 @@ export type Database = {
             foreignKeyName: "op_activity_op_annual_plan_id_fkey"
             columns: ["op_annual_plan_id"]
             isOneToOne: false
+            referencedRelation: "operational_backup_view"
+            referencedColumns: ["annual_plan_id"]
+          },
+          {
+            foreignKeyName: "op_activity_op_annual_plan_id_fkey"
+            columns: ["op_annual_plan_id"]
+            isOneToOne: false
             referencedRelation: "operational_plan_activities"
             referencedColumns: ["annual_plan_id"]
           },
@@ -1066,6 +1836,13 @@ export type Database = {
             foreignKeyName: "op_annual_plan_op_header_id_fkey"
             columns: ["op_header_id"]
             isOneToOne: false
+            referencedRelation: "operational_backup_view"
+            referencedColumns: ["header_id"]
+          },
+          {
+            foreignKeyName: "op_annual_plan_op_header_id_fkey"
+            columns: ["op_header_id"]
+            isOneToOne: false
             referencedRelation: "operational_plan_activities"
             referencedColumns: ["header_id"]
           },
@@ -1097,6 +1874,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "op_header_operational_plan_id_fkey"
+            columns: ["operational_plan_id"]
+            isOneToOne: false
+            referencedRelation: "operational_backup_view"
+            referencedColumns: ["operational_plan_id"]
+          },
           {
             foreignKeyName: "op_header_operational_plan_id_fkey"
             columns: ["operational_plan_id"]
@@ -1164,8 +1948,134 @@ export type Database = {
             foreignKeyName: "opcr_office_id_fkey"
             columns: ["office_id"]
             isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["ar_office_id"]
+          },
+          {
+            foreignKeyName: "opcr_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["owner_office_id"]
+          },
+          {
+            foreignKeyName: "opcr_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["dpcr_office_id"]
+          },
+          {
+            foreignKeyName: "opcr_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["owner_office_id"]
+          },
+          {
+            foreignKeyName: "opcr_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["owner_office_id"]
+          },
+          {
+            foreignKeyName: "opcr_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["ipcr_office_id"]
+          },
+          {
+            foreignKeyName: "opcr_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
             referencedRelation: "office"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "opcr_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["opcr_office_id"]
+          },
+          {
+            foreignKeyName: "opcr_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["owner_office_id"]
+          },
+          {
+            foreignKeyName: "opcr_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["owner_office_id"]
+          },
+          {
+            foreignKeyName: "opcr_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["sp_office_id"]
+          },
+          {
+            foreignKeyName: "opcr_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["owner_program_id"]
+          },
+          {
+            foreignKeyName: "opcr_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["ar_program_id"]
+          },
+          {
+            foreignKeyName: "opcr_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["owner_program_id"]
+          },
+          {
+            foreignKeyName: "opcr_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["dpcr_program_id"]
+          },
+          {
+            foreignKeyName: "opcr_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["ipcr_program_id"]
+          },
+          {
+            foreignKeyName: "opcr_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["owner_program_id"]
+          },
+          {
+            foreignKeyName: "opcr_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["owner_program_id"]
+          },
+          {
+            foreignKeyName: "opcr_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["opcr_program_id"]
           },
           {
             foreignKeyName: "opcr_program_id_fkey"
@@ -1173,6 +2083,90 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "program"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "opcr_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["owner_program_id"]
+          },
+          {
+            foreignKeyName: "opcr_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["sp_program_id"]
+          },
+          {
+            foreignKeyName: "opcr_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "opcr_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["ar_unit_id"]
+          },
+          {
+            foreignKeyName: "opcr_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "opcr_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["dpcr_unit_id"]
+          },
+          {
+            foreignKeyName: "opcr_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "opcr_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["ipcr_unit_id"]
+          },
+          {
+            foreignKeyName: "opcr_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "opcr_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["opcr_unit_id"]
+          },
+          {
+            foreignKeyName: "opcr_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["sp_unit_id"]
+          },
+          {
+            foreignKeyName: "opcr_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["owner_unit_id"]
           },
           {
             foreignKeyName: "opcr_unit_id_fkey"
@@ -1216,6 +2210,13 @@ export type Database = {
             referencedRelation: "opcr"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "opcr_function_opcr_id_fkey"
+            columns: ["opcr_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["opcr_id"]
+          },
         ]
       }
       opcr_function_category: {
@@ -1244,6 +2245,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "opcr_function_category_opcr_function_id_fkey"
+            columns: ["opcr_function_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["function_id"]
+          },
           {
             foreignKeyName: "opcr_function_category_opcr_function_id_fkey"
             columns: ["opcr_function_id"]
@@ -1310,8 +2318,22 @@ export type Database = {
             foreignKeyName: "opcr_indicator_opcr_function_category_id_fkey"
             columns: ["opcr_function_category_id"]
             isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["category_id"]
+          },
+          {
+            foreignKeyName: "opcr_indicator_opcr_function_category_id_fkey"
+            columns: ["opcr_function_category_id"]
+            isOneToOne: false
             referencedRelation: "opcr_function_category"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "opcr_indicator_opcr_function_id_fkey"
+            columns: ["opcr_function_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["function_id"]
           },
           {
             foreignKeyName: "opcr_indicator_opcr_function_id_fkey"
@@ -1373,8 +2395,134 @@ export type Database = {
             foreignKeyName: "operational_plan_office_id_fkey"
             columns: ["office_id"]
             isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["ar_office_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["owner_office_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["dpcr_office_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["owner_office_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["owner_office_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["ipcr_office_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
             referencedRelation: "office"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "operational_plan_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["opcr_office_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["owner_office_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["owner_office_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["sp_office_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["owner_program_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["ar_program_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["owner_program_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["dpcr_program_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["ipcr_program_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["owner_program_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["owner_program_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["opcr_program_id"]
           },
           {
             foreignKeyName: "operational_plan_program_id_fkey"
@@ -1382,6 +2530,90 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "program"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "operational_plan_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["owner_program_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["sp_program_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["ar_unit_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["dpcr_unit_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["ipcr_unit_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["opcr_unit_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["sp_unit_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["owner_unit_id"]
           },
           {
             foreignKeyName: "operational_plan_unit_id_fkey"
@@ -1519,8 +2751,78 @@ export type Database = {
             foreignKeyName: "profiles_office_id_fkey"
             columns: ["office_id"]
             isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["ar_office_id"]
+          },
+          {
+            foreignKeyName: "profiles_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["owner_office_id"]
+          },
+          {
+            foreignKeyName: "profiles_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["dpcr_office_id"]
+          },
+          {
+            foreignKeyName: "profiles_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["owner_office_id"]
+          },
+          {
+            foreignKeyName: "profiles_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["owner_office_id"]
+          },
+          {
+            foreignKeyName: "profiles_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["ipcr_office_id"]
+          },
+          {
+            foreignKeyName: "profiles_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
             referencedRelation: "office"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profiles_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["opcr_office_id"]
+          },
+          {
+            foreignKeyName: "profiles_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["owner_office_id"]
+          },
+          {
+            foreignKeyName: "profiles_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["owner_office_id"]
+          },
+          {
+            foreignKeyName: "profiles_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["sp_office_id"]
           },
           {
             foreignKeyName: "profiles_position_id_fkey"
@@ -1533,8 +2835,148 @@ export type Database = {
             foreignKeyName: "profiles_program_id_fkey"
             columns: ["program_id"]
             isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["owner_program_id"]
+          },
+          {
+            foreignKeyName: "profiles_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["ar_program_id"]
+          },
+          {
+            foreignKeyName: "profiles_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["owner_program_id"]
+          },
+          {
+            foreignKeyName: "profiles_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["dpcr_program_id"]
+          },
+          {
+            foreignKeyName: "profiles_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["ipcr_program_id"]
+          },
+          {
+            foreignKeyName: "profiles_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["owner_program_id"]
+          },
+          {
+            foreignKeyName: "profiles_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["owner_program_id"]
+          },
+          {
+            foreignKeyName: "profiles_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["opcr_program_id"]
+          },
+          {
+            foreignKeyName: "profiles_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
             referencedRelation: "program"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profiles_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["owner_program_id"]
+          },
+          {
+            foreignKeyName: "profiles_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["sp_program_id"]
+          },
+          {
+            foreignKeyName: "profiles_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "profiles_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["ar_unit_id"]
+          },
+          {
+            foreignKeyName: "profiles_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "profiles_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["dpcr_unit_id"]
+          },
+          {
+            foreignKeyName: "profiles_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "profiles_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["ipcr_unit_id"]
+          },
+          {
+            foreignKeyName: "profiles_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "profiles_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["opcr_unit_id"]
+          },
+          {
+            foreignKeyName: "profiles_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["sp_unit_id"]
+          },
+          {
+            foreignKeyName: "profiles_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["owner_unit_id"]
           },
           {
             foreignKeyName: "profiles_unit_id_fkey"
@@ -1575,8 +3017,148 @@ export type Database = {
             foreignKeyName: "program_office_id_fkey"
             columns: ["office_id"]
             isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["ar_office_id"]
+          },
+          {
+            foreignKeyName: "program_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["owner_office_id"]
+          },
+          {
+            foreignKeyName: "program_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["dpcr_office_id"]
+          },
+          {
+            foreignKeyName: "program_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["owner_office_id"]
+          },
+          {
+            foreignKeyName: "program_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["owner_office_id"]
+          },
+          {
+            foreignKeyName: "program_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["ipcr_office_id"]
+          },
+          {
+            foreignKeyName: "program_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
             referencedRelation: "office"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "program_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["opcr_office_id"]
+          },
+          {
+            foreignKeyName: "program_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["owner_office_id"]
+          },
+          {
+            foreignKeyName: "program_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["owner_office_id"]
+          },
+          {
+            foreignKeyName: "program_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["sp_office_id"]
+          },
+          {
+            foreignKeyName: "program_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "program_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["ar_unit_id"]
+          },
+          {
+            foreignKeyName: "program_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "program_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["dpcr_unit_id"]
+          },
+          {
+            foreignKeyName: "program_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "program_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["ipcr_unit_id"]
+          },
+          {
+            foreignKeyName: "program_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "program_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["opcr_unit_id"]
+          },
+          {
+            foreignKeyName: "program_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["sp_unit_id"]
+          },
+          {
+            foreignKeyName: "program_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["owner_unit_id"]
           },
           {
             foreignKeyName: "program_unit_id_fkey"
@@ -1695,10 +3277,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "sdg_alignment_strat_plan_objective_id_fkey"
+            columns: ["strat_plan_objective_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["objective_id"]
+          },
+          {
             foreignKeyName: "sdg_alignment_strat_plan_performance_indicator_id_fkey"
             columns: ["strat_plan_performance_indicator_id"]
             isOneToOne: false
             referencedRelation: "sdg_alignment_view"
+            referencedColumns: ["performance_indicator_id"]
+          },
+          {
+            foreignKeyName: "sdg_alignment_strat_plan_performance_indicator_id_fkey"
+            columns: ["strat_plan_performance_indicator_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
             referencedColumns: ["performance_indicator_id"]
           },
           {
@@ -1740,6 +3336,13 @@ export type Database = {
             foreignKeyName: "strat_plan_objective_strategic_plan_id_fkey"
             columns: ["strategic_plan_id"]
             isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["strategic_plan_id"]
+          },
+          {
+            foreignKeyName: "strat_plan_objective_strategic_plan_id_fkey"
+            columns: ["strategic_plan_id"]
+            isOneToOne: false
             referencedRelation: "sdg_alignment_view"
             referencedColumns: ["strategic_plan_id"]
           },
@@ -1749,6 +3352,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "strategic_plan"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "strat_plan_objective_strategic_plan_id_fkey"
+            columns: ["strategic_plan_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["strategic_plan_id"]
           },
         ]
       }
@@ -1786,6 +3396,13 @@ export type Database = {
             columns: ["strategy_plan_performance_indicator_id"]
             isOneToOne: false
             referencedRelation: "sdg_alignment_view"
+            referencedColumns: ["performance_indicator_id"]
+          },
+          {
+            foreignKeyName: "strat_plan_yearly_plan_strategy_plan_performance_indicator_fkey"
+            columns: ["strategy_plan_performance_indicator_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
             referencedColumns: ["performance_indicator_id"]
           },
           {
@@ -1845,8 +3462,134 @@ export type Database = {
             foreignKeyName: "strategic_plan_office_id_fkey"
             columns: ["office_id"]
             isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["ar_office_id"]
+          },
+          {
+            foreignKeyName: "strategic_plan_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["owner_office_id"]
+          },
+          {
+            foreignKeyName: "strategic_plan_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["dpcr_office_id"]
+          },
+          {
+            foreignKeyName: "strategic_plan_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["owner_office_id"]
+          },
+          {
+            foreignKeyName: "strategic_plan_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["owner_office_id"]
+          },
+          {
+            foreignKeyName: "strategic_plan_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["ipcr_office_id"]
+          },
+          {
+            foreignKeyName: "strategic_plan_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
             referencedRelation: "office"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "strategic_plan_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["opcr_office_id"]
+          },
+          {
+            foreignKeyName: "strategic_plan_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["owner_office_id"]
+          },
+          {
+            foreignKeyName: "strategic_plan_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["owner_office_id"]
+          },
+          {
+            foreignKeyName: "strategic_plan_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["sp_office_id"]
+          },
+          {
+            foreignKeyName: "strategic_plan_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["owner_program_id"]
+          },
+          {
+            foreignKeyName: "strategic_plan_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["ar_program_id"]
+          },
+          {
+            foreignKeyName: "strategic_plan_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["owner_program_id"]
+          },
+          {
+            foreignKeyName: "strategic_plan_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["dpcr_program_id"]
+          },
+          {
+            foreignKeyName: "strategic_plan_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["ipcr_program_id"]
+          },
+          {
+            foreignKeyName: "strategic_plan_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["owner_program_id"]
+          },
+          {
+            foreignKeyName: "strategic_plan_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["owner_program_id"]
+          },
+          {
+            foreignKeyName: "strategic_plan_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["opcr_program_id"]
           },
           {
             foreignKeyName: "strategic_plan_program_id_fkey"
@@ -1854,6 +3597,90 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "program"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "strategic_plan_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["owner_program_id"]
+          },
+          {
+            foreignKeyName: "strategic_plan_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["sp_program_id"]
+          },
+          {
+            foreignKeyName: "strategic_plan_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "strategic_plan_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["ar_unit_id"]
+          },
+          {
+            foreignKeyName: "strategic_plan_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "strategic_plan_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["dpcr_unit_id"]
+          },
+          {
+            foreignKeyName: "strategic_plan_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "strategic_plan_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["ipcr_unit_id"]
+          },
+          {
+            foreignKeyName: "strategic_plan_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "strategic_plan_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["opcr_unit_id"]
+          },
+          {
+            foreignKeyName: "strategic_plan_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["sp_unit_id"]
+          },
+          {
+            foreignKeyName: "strategic_plan_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["owner_unit_id"]
           },
           {
             foreignKeyName: "strategic_plan_unit_id_fkey"
@@ -1894,6 +3721,13 @@ export type Database = {
             foreignKeyName: "strategy_plan_strat_plan_id_fkey"
             columns: ["strat_plan_id"]
             isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["strategic_plan_id"]
+          },
+          {
+            foreignKeyName: "strategy_plan_strat_plan_id_fkey"
+            columns: ["strat_plan_id"]
+            isOneToOne: false
             referencedRelation: "sdg_alignment_view"
             referencedColumns: ["strategic_plan_id"]
           },
@@ -1903,6 +3737,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "strategic_plan"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "strategy_plan_strat_plan_id_fkey"
+            columns: ["strat_plan_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["strategic_plan_id"]
           },
         ]
       }
@@ -1947,6 +3788,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "strategy_plan_performance_indicator_strategy_plan_id_fkey"
+            columns: ["strategy_plan_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["strategy_id"]
+          },
           {
             foreignKeyName: "strategy_plan_performance_indicator_strategy_plan_id_fkey"
             columns: ["strategy_plan_id"]
@@ -2021,26 +3869,195 @@ export type Database = {
       }
     }
     Views: {
+      accomplishment_report_backup_view: {
+        Row: {
+          accomplishment_rate: string | null
+          accomplishment_report_id: string | null
+          accomplishment_report_title: string | null
+          activity: string | null
+          activity_id: string | null
+          activity_position: number | null
+          activity_remarks: string | null
+          annual_plan_description: string | null
+          annual_plan_id: string | null
+          annual_plan_position: number | null
+          annual_target: string | null
+          approve_by: string | null
+          approver_position: string | null
+          ar_office_code: string | null
+          ar_office_id: number | null
+          ar_office_name: string | null
+          ar_program_id: number | null
+          ar_program_name: string | null
+          ar_unit_code: string | null
+          ar_unit_id: number | null
+          ar_unit_name: string | null
+          created_at: string | null
+          header_id: string | null
+          header_position: number | null
+          header_title: string | null
+          implementing_unit: string | null
+          input_type:
+            | Database["public"]["Enums"]["input_type_accomplishment"]
+            | null
+          owner_email: string | null
+          owner_employee_id: string | null
+          owner_employee_status: string | null
+          owner_first_name: string | null
+          owner_id: string | null
+          owner_last_name: string | null
+          owner_middle_name: string | null
+          owner_nature_of_work: string | null
+          owner_office_code: string | null
+          owner_office_id: number | null
+          owner_office_name: string | null
+          owner_position_name: string | null
+          owner_program_id: number | null
+          owner_program_name: string | null
+          owner_unit_code: string | null
+          owner_unit_id: number | null
+          owner_unit_name: string | null
+          performance_indicator: string | null
+          q1_accomplishment: string | null
+          q2_accomplishment: string | null
+          q3_accomplishment: string | null
+          q4_accomplishment: string | null
+          related_ipcr_indicators: Json | null
+          responsible_officer_unit: string | null
+          review_by: string | null
+          reviewer_position: string | null
+          total: string | null
+          updated_at: string | null
+        }
+        Relationships: []
+      }
+      dpcr_backup_view: {
+        Row: {
+          actual_accomplishments: string | null
+          alloted_budget: string | null
+          assessors: Json | null
+          average_rating: number | null
+          category: string | null
+          category_id: string | null
+          category_position: number | null
+          created_at: string | null
+          division_individuals_accountable: string | null
+          dpcr_id: string | null
+          dpcr_office_code: string | null
+          dpcr_office_id: number | null
+          dpcr_office_name: string | null
+          dpcr_program_id: number | null
+          dpcr_program_name: string | null
+          dpcr_title: string | null
+          dpcr_unit_code: string | null
+          dpcr_unit_id: number | null
+          dpcr_unit_name: string | null
+          efficiency_rating: number | null
+          function_id: string | null
+          function_position: number | null
+          function_title: string | null
+          indicator_id: string | null
+          indicator_position: number | null
+          owner_email: string | null
+          owner_employee_id: string | null
+          owner_employee_status: string | null
+          owner_first_name: string | null
+          owner_id: string | null
+          owner_last_name: string | null
+          owner_middle_name: string | null
+          owner_nature_of_work: string | null
+          owner_office_code: string | null
+          owner_office_id: number | null
+          owner_office_name: string | null
+          owner_position_name: string | null
+          owner_program_id: number | null
+          owner_program_name: string | null
+          owner_unit_code: string | null
+          owner_unit_id: number | null
+          owner_unit_name: string | null
+          physical_targets: string | null
+          quality_rating: number | null
+          remarks: string | null
+          review_by: string | null
+          reviewer_position: string | null
+          success_indicator: string | null
+          timeliness_rating: number | null
+          updated_at: string | null
+        }
+        Relationships: []
+      }
       ipcr_backup_view: {
         Row: {
+          accomplishment_date: string | null
           actual_accomplishments: string | null
           average_rating: number | null
           category: string | null
           category_id: string | null
+          category_position: number | null
+          category_supervisor_employee_id: string | null
+          category_supervisor_first_name: string | null
+          category_supervisor_last_name: string | null
+          category_supervisor_middle_name: string | null
+          category_supervisor_position: string | null
+          category_unit: number | null
+          created_at: string | null
+          dean: string | null
           efficiency_rating: number | null
+          evidence_files: Json | null
           final_output: string | null
           function_id: string | null
+          function_percentage: number | null
+          function_position: number | null
           function_title: string | null
+          head_of_operating_unit: string | null
           indicator_id: string | null
+          indicator_position: number | null
+          indicator_supervisor_employee_id: string | null
+          indicator_supervisor_first_name: string | null
+          indicator_supervisor_last_name: string | null
+          indicator_supervisor_middle_name: string | null
+          indicator_supervisor_position: string | null
+          indicator_units: number | null
           ipcr_id: string | null
+          ipcr_office_code: string | null
+          ipcr_office_id: number | null
+          ipcr_office_name: string | null
+          ipcr_program_id: number | null
+          ipcr_program_name: string | null
+          ipcr_status: Database["public"]["Enums"]["ipcr_status"] | null
+          ipcr_title: string | null
+          ipcr_unit_code: string | null
+          ipcr_unit_id: number | null
+          ipcr_unit_name: string | null
+          op_activity: string | null
+          op_performance_indicator: string | null
+          op_responsible_officer_unit: string | null
+          owner_email: string | null
           owner_employee_id: string | null
+          owner_employee_status: string | null
+          owner_first_name: string | null
+          owner_id: string | null
+          owner_last_name: string | null
+          owner_middle_name: string | null
+          owner_nature_of_work: string | null
+          owner_office_code: string | null
+          owner_office_id: number | null
+          owner_office_name: string | null
+          owner_position_name: string | null
+          owner_program_id: number | null
+          owner_program_name: string | null
+          owner_unit_code: string | null
+          owner_unit_id: number | null
+          owner_unit_name: string | null
+          program_chair: string | null
           quality_rating: number | null
-          status: Database["public"]["Enums"]["ipcr_status"] | null
+          remarks: string | null
           sub_category: string | null
           subcategory_id: string | null
+          subcategory_position: number | null
           success_indicator: string | null
           timeliness_rating: number | null
-          title: string | null
+          updated_at: string | null
         }
         Relationships: []
       }
@@ -2050,6 +4067,122 @@ export type Database = {
           id: string | null
           ipcr_id: string | null
           position: string | null
+        }
+        Relationships: []
+      }
+      opcr_backup_view: {
+        Row: {
+          actual_accomplishments: string | null
+          administrative_officer: string | null
+          alloted_budget: string | null
+          average_rating: number | null
+          category: string | null
+          category_id: string | null
+          category_position: number | null
+          created_at: string | null
+          division_individuals_accountable: string | null
+          efficiency_rating: number | null
+          function_id: string | null
+          function_position: number | null
+          function_title: string | null
+          human_resource: string | null
+          indicator_id: string | null
+          indicator_position: number | null
+          opcr_id: string | null
+          opcr_office_code: string | null
+          opcr_office_id: number | null
+          opcr_office_name: string | null
+          opcr_program_id: number | null
+          opcr_program_name: string | null
+          opcr_title: string | null
+          opcr_unit_code: string | null
+          opcr_unit_id: number | null
+          opcr_unit_name: string | null
+          owner_email: string | null
+          owner_employee_id: string | null
+          owner_employee_status: string | null
+          owner_first_name: string | null
+          owner_id: string | null
+          owner_last_name: string | null
+          owner_middle_name: string | null
+          owner_nature_of_work: string | null
+          owner_office_code: string | null
+          owner_office_id: number | null
+          owner_office_name: string | null
+          owner_position_name: string | null
+          owner_program_id: number | null
+          owner_program_name: string | null
+          owner_unit_code: string | null
+          owner_unit_id: number | null
+          owner_unit_name: string | null
+          planning_officer: string | null
+          quality_rating: number | null
+          remarks: string | null
+          review_by: string | null
+          reviewer_position: string | null
+          strategic_plan_end_year: number | null
+          strategic_plan_goal: string | null
+          strategic_plan_id: string | null
+          strategic_plan_major_output:
+            | Database["public"]["Enums"]["strategic_major_output"]
+            | null
+          strategic_plan_start_year: number | null
+          strategic_plan_title: string | null
+          success_indicator: string | null
+          timeliness_rating: number | null
+          updated_at: string | null
+        }
+        Relationships: []
+      }
+      operational_backup_view: {
+        Row: {
+          activity: string | null
+          activity_id: string | null
+          activity_position: number | null
+          annual_plan_description: string | null
+          annual_plan_id: string | null
+          annual_plan_position: number | null
+          approve_by: string | null
+          approver_position: string | null
+          created_at: string | null
+          creator_email: string | null
+          creator_employee_id: string | null
+          creator_employee_status: string | null
+          creator_first_name: string | null
+          creator_id: string | null
+          creator_last_name: string | null
+          creator_middle_name: string | null
+          creator_nature_of_work: string | null
+          creator_office_code: string | null
+          creator_office_name: string | null
+          creator_position_name: string | null
+          creator_program_name: string | null
+          creator_unit_code: string | null
+          creator_unit_name: string | null
+          former_state: string | null
+          header_id: string | null
+          header_position: number | null
+          header_title: string | null
+          implementing_unit: string | null
+          input_type: Database["public"]["Enums"]["input_type_op"] | null
+          op_office_code: string | null
+          op_office_name: string | null
+          op_program_name: string | null
+          op_unit_code: string | null
+          op_unit_name: string | null
+          operational_plan_id: string | null
+          operational_plan_title: string | null
+          performance_indicator: string | null
+          q1_target: string | null
+          q2_target: string | null
+          q3_target: string | null
+          q4_target: string | null
+          responsible_officer_unit: string | null
+          review_by: string | null
+          reviewer_position: string | null
+          total: string | null
+          total_budgetary_requirements: string | null
+          updated_at: string | null
         }
         Relationships: []
       }
@@ -2093,8 +4226,134 @@ export type Database = {
             foreignKeyName: "operational_plan_office_id_fkey"
             columns: ["office_id"]
             isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["ar_office_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["owner_office_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["dpcr_office_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["owner_office_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["owner_office_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["ipcr_office_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
             referencedRelation: "office"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "operational_plan_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["opcr_office_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["owner_office_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["owner_office_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["sp_office_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["owner_program_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["ar_program_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["owner_program_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["dpcr_program_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["ipcr_program_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["owner_program_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["owner_program_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["opcr_program_id"]
           },
           {
             foreignKeyName: "operational_plan_program_id_fkey"
@@ -2102,6 +4361,90 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "program"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "operational_plan_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["owner_program_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["sp_program_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["ar_unit_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["dpcr_unit_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["ipcr_unit_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["opcr_unit_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["sp_unit_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["owner_unit_id"]
           },
           {
             foreignKeyName: "operational_plan_unit_id_fkey"
@@ -2132,6 +4475,65 @@ export type Database = {
           strategic_plan_goal: string | null
           strategic_plan_id: string | null
           strategic_plan_title: string | null
+        }
+        Relationships: []
+      }
+      strategic_plan_backup_view: {
+        Row: {
+          actual_target: string | null
+          base_target: string | null
+          concerned_offices: string | null
+          created_at: string | null
+          end_year: number | null
+          goal: string | null
+          input_type:
+            | Database["public"]["Enums"]["input_type_strategic_plan"]
+            | null
+          major_output:
+            | Database["public"]["Enums"]["strategic_major_output"]
+            | null
+          objective: string | null
+          objective_id: string | null
+          objective_position: number | null
+          owner_email: string | null
+          owner_employee_id: string | null
+          owner_employee_status: string | null
+          owner_first_name: string | null
+          owner_id: string | null
+          owner_last_name: string | null
+          owner_middle_name: string | null
+          owner_nature_of_work: string | null
+          owner_office_code: string | null
+          owner_office_id: number | null
+          owner_office_name: string | null
+          owner_position_name: string | null
+          owner_program_id: number | null
+          owner_program_name: string | null
+          owner_unit_code: string | null
+          owner_unit_id: number | null
+          owner_unit_name: string | null
+          performance_indicator: string | null
+          performance_indicator_id: string | null
+          pi_position: number | null
+          pi_remarks: string | null
+          related_opcrs: Json | null
+          sdg_alignments: Json | null
+          sp_office_code: string | null
+          sp_office_id: number | null
+          sp_office_name: string | null
+          sp_program_id: number | null
+          sp_program_name: string | null
+          sp_unit_code: string | null
+          sp_unit_id: number | null
+          sp_unit_name: string | null
+          start_year: number | null
+          strategic_plan_id: string | null
+          strategic_plan_title: string | null
+          strategy_description: string | null
+          strategy_id: string | null
+          strategy_position: number | null
+          updated_at: string | null
+          yearly_plans: Json | null
         }
         Relationships: []
       }

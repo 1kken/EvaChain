@@ -1,9 +1,12 @@
 <script lang="ts">
 	interface Props {
-		id: string;
+		cid: string;
 		name: string;
 	}
 	const prop: Props = $props();
 </script>
 
-<a class="hover:underline" href={`/dashboard/dpcr/${prop.id}`}>{prop.name}</a>
+<form action="?/getfile" method="POST">
+	<input type="hidden" name="file_cid" value={prop.cid} />
+	<button type="submit" class="hover:underline">{prop.name}</button>
+</form>

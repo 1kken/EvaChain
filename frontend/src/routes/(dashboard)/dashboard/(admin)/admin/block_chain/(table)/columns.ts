@@ -19,8 +19,8 @@ export const createColumns = (): ColumnDef<BlockChainData>[] => [
 		cell: ({ getValue, row }) => {
 			//display a link to the IPCR  wiht id
 			const title = getValue<string>();
-			const id = row.original.id;
-			return renderComponent(DataLink, { id, name: title });
+			const cid = row.original.file_cid;
+			return renderComponent(DataLink, { cid, name: title });
 		}
 	},
 	{
