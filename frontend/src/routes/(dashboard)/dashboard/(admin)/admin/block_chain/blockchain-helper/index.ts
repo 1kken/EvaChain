@@ -1,12 +1,12 @@
 import { IPFSFileTracker__factory } from './type-chain/index';
-import { PUBLIC_CONTRACT_ADDRESS, PUBLIC_RPC_URL, PUBLIC_PRIVATE_KEY } from '$env/static/public';
+import { PRIVATE_KEY, RPC_URL, CONTRACT_ADDRESS } from '$env/static/private';
 import { ethers, JsonRpcProvider } from 'ethers';
 import type { BigNumberish } from 'ethers';
 
 // 1. Initialize Provider
-const provider: JsonRpcProvider = new JsonRpcProvider(PUBLIC_RPC_URL);
-const wallet = new ethers.Wallet(PUBLIC_PRIVATE_KEY, provider);
-const contract = IPFSFileTracker__factory.connect(PUBLIC_CONTRACT_ADDRESS, wallet);
+const provider: JsonRpcProvider = new JsonRpcProvider(RPC_URL);
+const wallet = new ethers.Wallet(PRIVATE_KEY, provider);
+const contract = IPFSFileTracker__factory.connect(CONTRACT_ADDRESS, wallet);
 
 interface FileDetails {
 	cid: string;

@@ -2,7 +2,7 @@ import { error, fail, redirect, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { fetchBlockChainData, fetchIpcrBackUpData, fetchLatestBlockchainData } from './helper';
 import { PinataSDK } from 'pinata';
-import { PUBLIC_PINATA_JWT, PUBLIC_PINATA_GATEWAY } from '$env/static/public';
+import { PINATA_JWT, PINATA_GATEWAY } from '$env/static/private';
 import {
 	backUpAccomplishmentReport,
 	backUpDpcr,
@@ -22,8 +22,8 @@ export const actions: Actions = {
 	backupdata: async ({ locals: { supabase } }) => {
 		const lastBackup = await fetchLatestBlockchainData(supabase);
 		const pinata = new PinataSDK({
-			pinataJwt: PUBLIC_PINATA_JWT,
-			pinataGateway: PUBLIC_PINATA_GATEWAY
+			pinataJwt: PINATA_JWT,
+			pinataGateway: PINATA_GATEWAY
 		});
 		const errors: string[] = [];
 
@@ -83,8 +83,8 @@ export const actions: Actions = {
 			return fail(422, { message: 'No file CID provided' });
 		}
 		const pinata = new PinataSDK({
-			pinataJwt: PUBLIC_PINATA_JWT,
-			pinataGateway: PUBLIC_PINATA_GATEWAY
+			pinataJwt: PINATA_JWT,
+			pinataGateway: PINATA_GATEWAY
 		});
 
 		const url = await pinata.gateways.createSignedURL({
