@@ -4,7 +4,8 @@
 	import SuperDebug, { fileProxy, superForm, type FormResult } from 'sveltekit-superforms';
 	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
-	import { Grid2x2Check, LoaderCircle } from 'lucide-svelte';
+	import { LoaderCircle } from 'lucide-svelte';
+	import { Pencil } from 'lucide-svelte';
 	import * as Form from '$lib/components/ui/form/index.js';
 	import IntelligentInput from '$lib/custom_components/IntelligentInput.svelte';
 	import CalendarIcon from 'lucide-svelte/icons/calendar';
@@ -25,13 +26,27 @@
 	import { markIndicatorDoneSchema } from '../../../schema/ipcr_indicator_schema';
 	import type { IPCRFunctionIndicatorFormResult } from '../../../utils/types';
 	import { onMount } from 'svelte';
-	import { fetchIpcrIndicatorEvidence } from '../../../../../../(admin)/admin/block_chain/helper';
 	import { getIpcrIndicatorEvidence, type SignedUrlResponse } from './mark_as_done_helper';
 
 	interface Props {
 		indicator: Tables<'ipcr_indicator'>; // Updated table name
 		isDrawerOpen: boolean;
 	}
+
+	let fileExists: SignedUrlResponse | null = $state(null);
+	onMount(() => {
+		getIpcrIndicatorEvidence(indicator.id)
+			.then((evidence) => {
+				if (!evidence.signedUrl) {
+					fileExists = null;
+				} else {
+					fileExists = evidence;
+				}
+			})
+			.catch((e) => {
+				showErrorToast(`Error fetching evidence ${e}`);
+			});
+	});
 
 	let { indicator, isDrawerOpen = $bindable() }: Props = $props();
 
@@ -81,12 +96,18 @@
 		const fileList = dataTransfer.files;
 		$evidenceProxy = fileList;
 	}
+
+	//set Data
+	$effect(() => {
+		$formData.accomplishment_date = indicator.accomplishment_date || '';
+		$formData.actual_accomplishments = indicator.actual_accomplishments || '';
+	});
 </script>
 
 <Dialog.Root bind:open={isOpen}>
 	<Dialog.Trigger class="focus-visible:outline-none">
 		<span class="flex items-center gap-3 text-sm">
-			<Grid2x2Check size={16} /> Mark as Done
+			<Pencil size={16} /> Edit Accomplishment
 		</span>
 	</Dialog.Trigger>
 	<Dialog.Content class="w-11/12 sm:max-w-md">
@@ -163,15 +184,31 @@
 			<Form.Field {form} name="pdf_evidence">
 				<Form.Control>
 					{#snippet children({ props })}
-						<DragAndDropFileWrapper
-							onFileSelect={onFileSelectAndHover}
-							name="pdf_evidence"
-							text={'Upload PDF evidence'}
-							role={'evidence_upload'}
-							id={'pdf_evidence'}
-							acceptedFileTypes={['application/pdf']}
-						/>
-						<input hidden type="file" bind:files={$evidenceProxy} name={props.name} />
+						{#if fileExists?.signedUrl}
+							<DragAndDropFileWrapper
+								existingUrl={{
+									url: fileExists.signedUrl,
+									type: 'application/pdf'
+								}}
+								onFileSelect={onFileSelectAndHover}
+								name="pdf_evidence"
+								text={'Upload PDF evidence'}
+								role={'evidence_upload'}
+								id={'pdf_evidence'}
+								acceptedFileTypes={['application/pdf']}
+							/>
+							<input hidden type="file" bind:files={$evidenceProxy} name={props.name} />
+						{:else}
+							<DragAndDropFileWrapper
+								onFileSelect={onFileSelectAndHover}
+								name="pdf_evidence"
+								text={'Upload PDF evidence'}
+								role={'evidence_upload'}
+								id={'pdf_evidence'}
+								acceptedFileTypes={['application/pdf']}
+							/>
+							<input hidden type="file" bind:files={$evidenceProxy} name={props.name} />
+						{/if}
 					{/snippet}
 				</Form.Control>
 				<Form.FieldErrors />

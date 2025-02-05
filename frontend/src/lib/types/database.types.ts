@@ -1017,6 +1017,7 @@ export type Database = {
           head_of_operating_unit: string | null
           id: string
           immediate_supervisor: string | null
+          immediate_supervisor_position: string | null
           office_id: number | null
           owner_id: string | null
           program_chair: string | null
@@ -1032,6 +1033,7 @@ export type Database = {
           head_of_operating_unit?: string | null
           id?: string
           immediate_supervisor?: string | null
+          immediate_supervisor_position?: string | null
           office_id?: number | null
           owner_id?: string | null
           program_chair?: string | null
@@ -1047,6 +1049,7 @@ export type Database = {
           head_of_operating_unit?: string | null
           id?: string
           immediate_supervisor?: string | null
+          immediate_supervisor_position?: string | null
           office_id?: number | null
           owner_id?: string | null
           program_chair?: string | null

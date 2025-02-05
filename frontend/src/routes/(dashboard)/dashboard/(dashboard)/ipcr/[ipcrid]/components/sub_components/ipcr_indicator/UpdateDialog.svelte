@@ -23,6 +23,8 @@
 	} from '../../../schema/ipcr_indicator_schema';
 	import IntelligentInput from '$lib/custom_components/IntelligentInput.svelte';
 	import type { Tables } from '$lib/types/database.types';
+	import { getAuthStore } from '$lib/utils/authStore';
+	const { currentProfile } = getAuthStore();
 
 	//props
 	interface Iprops {
@@ -158,38 +160,55 @@
 				<Form.FieldErrors />
 			</Form.Field>
 			{#if ipcrFunctionIndicator.ipcr_function_id}
-				<data class="grid grid-cols-2 gap-2">
-					<Form.Field {form} name="immediate_supervisor_id">
-						<Form.Control>
-							{#snippet children({ props })}
-								<Form.Label>Immediate Supervisor</Form.Label>
-								<AutoCompleteOnlineInput
-									bind:selectedId={$formData.immediate_supervisor_id}
-									name={props.name}
-									placeholder={'Type Immediate Supervisor here'}
-									onSearch={fetchProfileByname}
-									onFetchById={fetchProfileById}
-								/>
-							{/snippet}
-						</Form.Control>
-						<Form.FieldErrors />
-					</Form.Field>
-					<Form.Field {form} name="units">
-						<Form.Control>
-							{#snippet children({ props })}
-								<Form.Label>Units</Form.Label>
-								<Input
-									type="number"
-									step="0.1"
-									placeholder={'Enter Number of Units for this category...'}
-									{...props}
-									bind:value={$formData.units}
-								/>
-							{/snippet}
-						</Form.Control>
-						<Form.FieldErrors />
-					</Form.Field>
-				</data>
+				<div class="grid grid-cols-2 gap-2">
+					{#if $currentProfile!.nature_of_work_id === 1}
+						<Form.Field {form} name="immediate_supervisor_id">
+							<Form.Control>
+								{#snippet children({ props })}
+									<Form.Label>Immediate Supervisor</Form.Label>
+									<AutoCompleteOnlineInput
+										bind:selectedId={$formData.immediate_supervisor_id}
+										name={props.name}
+										placeholder={'Type Immediate Supervisor here'}
+										onSearch={fetchProfileByname}
+									/>
+								{/snippet}
+							</Form.Control>
+							<Form.FieldErrors />
+						</Form.Field>
+						<Form.Field {form} name="units">
+							<Form.Control>
+								{#snippet children({ props })}
+									<Form.Label>Units</Form.Label>
+									<Input
+										type="number"
+										step="0.1"
+										placeholder={'Enter Number of Units for this category...'}
+										{...props}
+										bind:value={$formData.units}
+									/>
+								{/snippet}
+							</Form.Control>
+							<Form.FieldErrors />
+						</Form.Field>
+					{:else}
+						<Form.Field {form} name="units" class="col-span-2">
+							<Form.Control>
+								{#snippet children({ props })}
+									<Form.Label>Units</Form.Label>
+									<Input
+										type="number"
+										step="0.1"
+										placeholder={'Enter Number of Units for this category...'}
+										{...props}
+										bind:value={$formData.units}
+									/>
+								{/snippet}
+							</Form.Control>
+							<Form.FieldErrors />
+						</Form.Field>
+					{/if}
+				</div>
 			{/if}
 			<div class="flex w-full justify-end">
 				{#if $delayed}

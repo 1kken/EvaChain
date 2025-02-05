@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { buttonVariants } from '$lib/components/ui/button/index.js';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import { Pencil, Plus } from 'lucide-svelte';
 	import { LoaderCircle } from 'lucide-svelte';
@@ -48,6 +47,7 @@
 						...ipcrData,
 						head_of_operating_unit: ipcrData.head_of_operating_unit ?? undefined,
 						immediate_supervisor: ipcrData.immediate_supervisor ?? undefined,
+						immediate_supervisor_position: ipcrData.immediate_supervisor_position ?? undefined,
 						program_chair: ipcrData.program_chair ?? undefined,
 						dean: ipcrData.dean ?? undefined
 					},
@@ -55,6 +55,7 @@
 						...ipcrData,
 						head_of_operating_unit: ipcrData.head_of_operating_unit ?? undefined,
 						immediate_supervisor: ipcrData.immediate_supervisor ?? undefined,
+						immediate_supervisor_position: ipcrData.immediate_supervisor_position ?? undefined,
 						program_chair: ipcrData.program_chair ?? undefined,
 						dean: ipcrData.dean ?? undefined
 					}
@@ -71,6 +72,7 @@
 	$formData.program_chair = currentIPCR?.program_chair || undefined;
 	$formData.immediate_supervisor = currentIPCR?.immediate_supervisor || undefined;
 	$formData.head_of_operating_unit = currentIPCR?.head_of_operating_unit ?? 'Error';
+	$formData.immediate_supervisor_position = currentIPCR?.immediate_supervisor_position || undefined;
 	$formData.id = id;
 
 	let completeProfile = $state(true);
@@ -152,19 +154,34 @@
 						</Form.Field>
 					</div>
 				{:else}
-					<Form.Field {form} name="immediate_supervisor">
-						<Form.Control>
-							{#snippet children({ props })}
-								<Form.Label>Immediate Supervisor</Form.Label>
-								<Input
-									{...props}
-									bind:value={$formData.immediate_supervisor}
-									placeholder="Juan D. Cruz"
-								/>
-							{/snippet}
-						</Form.Control>
-						<Form.FieldErrors />
-					</Form.Field>
+					<div class="grid grid-cols-1 space-x-2 md:grid-cols-2">
+						<Form.Field {form} name="immediate_supervisor">
+							<Form.Control>
+								{#snippet children({ props })}
+									<Form.Label>Immediate Supervisor</Form.Label>
+									<Input
+										{...props}
+										bind:value={$formData.immediate_supervisor}
+										placeholder="Juan D. Cruz"
+									/>
+								{/snippet}
+							</Form.Control>
+							<Form.FieldErrors />
+						</Form.Field>
+						<Form.Field {form} name="immediate_supervisor_position">
+							<Form.Control>
+								{#snippet children({ props })}
+									<Form.Label>Immediate Supervisor's Position</Form.Label>
+									<Input
+										{...props}
+										bind:value={$formData.immediate_supervisor_position}
+										placeholder="Head of instruction office, etc."
+									/>
+								{/snippet}
+							</Form.Control>
+							<Form.FieldErrors />
+						</Form.Field>
+					</div>
 				{/if}
 				{#if $delayed}
 					<Form.Button disabled><LoaderCircle class="animate-spin" />Processing...</Form.Button>

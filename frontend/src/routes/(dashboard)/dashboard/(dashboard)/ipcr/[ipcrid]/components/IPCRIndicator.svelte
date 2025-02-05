@@ -9,6 +9,7 @@
 	import { getIpcrIndicatorStore } from '../states/ipcr_indicator_state';
 	import type { IPCRFunctionIndicatorFormResult } from '../utils/types';
 	import MarkAsDone from './sub_components/ipcr_indicator/MarkAsDone.svelte';
+	import MarkAsDoneEdit from './sub_components/ipcr_indicator/MarkASDoneEdit.svelte';
 	import UpdateDialog from './sub_components/ipcr_indicator/UpdateDialog.svelte';
 	import ViewIndicator from './ViewIndicator.svelte';
 
@@ -33,6 +34,8 @@
 		<div class="w-full sm:w-auto">
 			{#if ipcrFunctionIndicator.status !== 'submitted' && !$canEdit}
 				<MarkAsDone indicator={ipcrFunctionIndicator} bind:isDrawerOpen />
+			{:else if ipcrFunctionIndicator.status === 'submitted'}
+				<MarkAsDoneEdit indicator={ipcrFunctionIndicator} bind:isDrawerOpen />
 			{/if}
 		</div>
 		<div class="flex items-center justify-between">

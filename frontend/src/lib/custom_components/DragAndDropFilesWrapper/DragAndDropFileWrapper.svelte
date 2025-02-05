@@ -3,6 +3,12 @@
 	import { CircleX, Download } from 'lucide-svelte';
 	import { createFileHandlers } from './helper';
 
+	type FileInfo = {
+		url: string;
+		name?: string;
+		type: string;
+	};
+
 	type Props = {
 		role?: string;
 		text: string;
@@ -12,6 +18,7 @@
 		className?: string;
 		id?: string;
 		name: string;
+		existingUrl?: FileInfo;
 		onFileSelect: (files: File[]) => void;
 	};
 
@@ -24,12 +31,13 @@
 		className = '',
 		id = 'file-drop-zone',
 		name,
+		existingUrl,
 		onFileSelect
 	}: Props = $props();
 
 	let isDropZoneActive = $state(false);
 	let error = $state<string | null>(null);
-	let files = $state<File[]>([]); // Initialize as empty array instead of null
+	let files = $state<(File | FileInfo)[]>(existingUrl ? [existingUrl] : []);
 	let fileInput: HTMLInputElement;
 
 	const { handleDrop, handleDragOver, handleDragEnter, handleDragLeave, handleFileSelect } =
@@ -42,21 +50,10 @@
 				setTimeout(() => (error = null), 3000);
 			},
 			onValidFiles: (validFiles) => {
-				files = validFiles; // Update the files state
+				files = validFiles; // This replaces any existing files
 				onFileSelect(validFiles);
 			}
 		});
-
-	// Clean up object URLs when files change
-	$effect(() => {
-		return () => {
-			files.forEach((file) => {
-				if ('objectURL' in file) {
-					URL.revokeObjectURL((file as any).objectURL);
-				}
-			});
-		};
-	});
 
 	function handleClick() {
 		fileInput.click();
@@ -75,6 +72,17 @@
 	function onDrop(e: DragEvent) {
 		handleDrop(e);
 		isDropZoneActive = false;
+	}
+
+	function handleRemove(file: File | FileInfo) {
+		files = files.filter((f) => f !== file);
+		if ('url' in file) {
+			// If removing existingUrl file, call onFileSelect with empty array
+			onFileSelect([]);
+		} else {
+			// If removing uploaded file, call onFileSelect with remaining files
+			onFileSelect(files.filter((f): f is File => !('url' in f)));
+		}
 	}
 </script>
 
@@ -108,7 +116,7 @@
 			{text}
 		{:else}
 			<div class="grid w-full grid-cols-1 gap-4 p-4">
-				{#each files as file (file.name)}
+				{#each files as file}
 					{@render showPreview(file)}
 				{/each}
 			</div>
@@ -121,7 +129,7 @@
 	{/if}
 </div>
 
-{#snippet showPreview(file: File)}
+{#snippet showPreview(file: File | FileInfo)}
 	<div class="group relative h-40 w-full overflow-hidden rounded border">
 		<!-- Delete button -->
 		<button
@@ -131,8 +139,7 @@
 			onclick={(e) => {
 				e.stopPropagation();
 				e.preventDefault();
-				files = files.filter((f) => f !== file);
-				onFileSelect(files);
+				handleRemove(file);
 			}}
 			title="Remove file"
 		>
@@ -147,34 +154,59 @@
 			onclick={(e) => {
 				e.stopPropagation();
 				e.preventDefault();
-				const url = URL.createObjectURL(file);
-				const a = document.createElement('a');
-				a.href = url;
-				a.download = file.name;
-				document.body.appendChild(a);
-				a.click();
-				document.body.removeChild(a);
-				URL.revokeObjectURL(url);
+				if ('url' in file) {
+					window.open(file.url, '_blank');
+				} else {
+					const url = URL.createObjectURL(file);
+					const a = document.createElement('a');
+					a.href = url;
+					a.download = file.name;
+					document.body.appendChild(a);
+					a.click();
+					document.body.removeChild(a);
+					URL.revokeObjectURL(url);
+				}
 			}}
 			title="Download file"
 		>
 			<Download size={16} />
 		</button>
 
-		{#if file.type.includes('image')}
-			<img src={URL.createObjectURL(file)} alt={file.name} class="h-full w-full object-contain" />
-		{:else if file.type === 'application/pdf'}
-			<!-- svelte-ignore element_invalid_self_closing_tag -->
-			<object
-				data={URL.createObjectURL(file)}
-				type="application/pdf"
-				class="h-full w-full"
-				aria-label={file.name}
-			/>
+		{#if 'url' in file}
+			<!-- Existing file from Supabase -->
+			{#if file.type.includes('image')}
+				<img src={file.url} alt={file.name} class="h-full w-full object-contain" />
+			{:else if file.type === 'application/pdf'}
+				<!-- svelte-ignore element_invalid_self_closing_tag -->
+				<object
+					data={file.url}
+					type="application/pdf"
+					class="h-full w-full"
+					aria-label={file.name}
+				/>
+			{:else}
+				<div class="flex h-full w-full items-center justify-center">
+					<span class="text-gray-500">Unsupported file type</span>
+				</div>
+			{/if}
 		{:else}
-			<div class="flex h-full w-full items-center justify-center">
-				<span class="text-gray-500">Unsupported file type</span>
-			</div>
+			<!-- New uploaded file -->
+			{@const objectUrl = URL.createObjectURL(file)}
+			{#if file.type.includes('image')}
+				<img src={objectUrl} alt={file.name} class="h-full w-full object-contain" />
+			{:else if file.type === 'application/pdf'}
+				<!-- svelte-ignore element_invalid_self_closing_tag -->
+				<object
+					data={objectUrl}
+					type="application/pdf"
+					class="h-full w-full"
+					aria-label={file.name}
+				/>
+			{:else}
+				<div class="flex h-full w-full items-center justify-center">
+					<span class="text-gray-500">Unsupported file type</span>
+				</div>
+			{/if}
 		{/if}
 	</div>
 {/snippet}

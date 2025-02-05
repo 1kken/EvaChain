@@ -126,19 +126,34 @@
 						</Form.Field>
 					</div>
 				{:else}
-					<Form.Field {form} name="immediate_supervisor">
-						<Form.Control>
-							{#snippet children({ props })}
-								<Form.Label>Immediate Supervisor</Form.Label>
-								<Input
-									{...props}
-									bind:value={$formData.immediate_supervisor}
-									placeholder="Juan D. Cruz"
-								/>
-							{/snippet}
-						</Form.Control>
-						<Form.FieldErrors />
-					</Form.Field>
+					<div class="grid grid-cols-1 space-x-2 md:grid-cols-2">
+						<Form.Field {form} name="immediate_supervisor">
+							<Form.Control>
+								{#snippet children({ props })}
+									<Form.Label>Immediate Supervisor</Form.Label>
+									<Input
+										{...props}
+										bind:value={$formData.immediate_supervisor}
+										placeholder="Juan D. Cruz"
+									/>
+								{/snippet}
+							</Form.Control>
+							<Form.FieldErrors />
+						</Form.Field>
+						<Form.Field {form} name="immediate_supervisor_position">
+							<Form.Control>
+								{#snippet children({ props })}
+									<Form.Label>Immediate Supervisor's Position</Form.Label>
+									<Input
+										{...props}
+										bind:value={$formData.immediate_supervisor_position}
+										placeholder="Head of instruction office, etc."
+									/>
+								{/snippet}
+							</Form.Control>
+							<Form.FieldErrors />
+						</Form.Field>
+					</div>
 				{/if}
 				{#if $delayed}
 					<Form.Button disabled><LoaderCircle class="animate-spin" />Processing...</Form.Button>
