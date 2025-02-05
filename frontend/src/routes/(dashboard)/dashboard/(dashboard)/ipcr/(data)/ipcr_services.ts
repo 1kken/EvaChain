@@ -54,7 +54,6 @@ export async function createIPCR(
 		});
 	}
 
-	console.log(form.data);
 	const { owner_id } = form.data;
 	//check if the same user
 	if (owner_id !== session?.user.id) {
@@ -92,6 +91,7 @@ export async function createIPCR(
 		.select()
 		.single();
 
+	console.log(ipcrError);
 	if (ipcrError) {
 		return message(form, {
 			status: 'error',
@@ -158,7 +158,7 @@ export async function deleteIPCR(request: Request, supabase: SupabaseClient<Data
 		});
 	}
 
-	const { error: deleteError, data: deletedIPCR } = await supabase
+	const { error: deleteError, data: ipcrData } = await supabase
 		.from('ipcr')
 		.delete()
 		.eq('id', id)
@@ -171,5 +171,5 @@ export async function deleteIPCR(request: Request, supabase: SupabaseClient<Data
 			text: `Error saving IPCR ${deleteError}`
 		});
 	}
-	return { form, deletedIPCR };
+	return { form, ipcrData };
 }

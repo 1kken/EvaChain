@@ -13,7 +13,9 @@ export const generateProfile = (
 			{ text: '\u200B\tI, ', bold: true },
 			{ text: fullName + ', ', bold: true, decoration: 'underline' },
 			{
-				text: titleCase(profile!.position!.name),
+				text: titleCase(
+					profile?.position?.name ?? 'Unknown error please message the administrator'
+				),
 				bold: true,
 				decoration: 'underline'
 			},
@@ -24,7 +26,7 @@ export const generateProfile = (
 				decoration: 'underline'
 			},
 			{
-				text: ', Don Mariano Marcos Memorial State University - ' + profile!.unit!.name,
+				text: ', Don Mariano Marcos Memorial State University - ' + profile?.unit?.name,
 				bold: true,
 				decoration: 'underline'
 			},

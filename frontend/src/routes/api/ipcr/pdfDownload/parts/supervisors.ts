@@ -1,16 +1,24 @@
 import type { Content } from 'pdfmake/interfaces';
 import type { SupervisorWithPosition } from '../helper';
 import { createSignatureBlock } from './pdf_gen_helper';
+import type { Tables } from '$lib/types/database.types';
 
-export const generateSupervisor = (immediateSupervisors: SupervisorWithPosition[]): Content => {
+export const generateSupervisor = (
+	immediateSupervisors: SupervisorWithPosition[],
+	ipcr: Tables<'ipcr'>
+): Content => {
 	return {
 		columns: [
-			...immediateSupervisors.map((supervisor, index) => {
-				return createSignatureBlock(supervisor);
-			})
-		],
+			immediateSupervisors?.length
+				? immediateSupervisors.map((supervisor) => createSignatureBlock(supervisor))
+				: [
+						createSignatureBlock({
+							position: 'Head, Instruction',
+							fullName: ipcr.immediate_supervisor ?? 'Unprocesable input'
+						})
+					]
+		].flat(),
 		columnGap: 10,
-		//horizontal,vertical
 		margin: [0, 5]
 	};
 };

@@ -91,7 +91,7 @@ export async function generatePDF(
 			generateSubHeader(date, profile),
 			{ text: 'Reviewed by:', alignment: 'left', margin: [0, 10, 0, 0] },
 			//supervisors
-			generateSupervisor(immediateSupervisors),
+			generateSupervisor(immediateSupervisors, ipcr),
 			ipcrBody,
 			generateIPCRSummary(categories),
 			generateComments(),

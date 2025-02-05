@@ -69,7 +69,7 @@ export const generateSubHeader = (date: string, profile: Profile): ContentColumn
 							{ text: '' },
 							{ text: 'Position', alignment: 'left' },
 							{
-								text: profile!.position!.name.toUpperCase(),
+								text: profile?.position?.name.toUpperCase(),
 								alignment: 'center',
 								border: [false, false, false, true],
 								colSpan: 2,

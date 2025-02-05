@@ -43,9 +43,11 @@
 	const { form: formData, enhance, message, delayed, reset } = form;
 
 	//set data
-	if ($currentProfile && $currentProfile.id !== null) {
-		$formData.owner_id = $currentProfile.id;
-	}
+	$effect(() => {
+		if ($currentProfile && $currentProfile.id !== null) {
+			$formData.owner_id = $currentProfile.id;
+		}
+	});
 
 	let completeProfile = $state(true);
 	let errorMessage = $state<string | null>();
