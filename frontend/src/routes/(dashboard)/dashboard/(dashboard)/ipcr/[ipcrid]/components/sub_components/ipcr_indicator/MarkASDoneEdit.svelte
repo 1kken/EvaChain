@@ -33,20 +33,7 @@
 		isDrawerOpen: boolean;
 	}
 
-	let fileExists: SignedUrlResponse | null = $state(null);
-	onMount(() => {
-		getIpcrIndicatorEvidence(indicator.id)
-			.then((evidence) => {
-				if (!evidence.signedUrl) {
-					fileExists = null;
-				} else {
-					fileExists = evidence;
-				}
-			})
-			.catch((e) => {
-				showErrorToast(`Error fetching evidence ${e}`);
-			});
-	});
+	//evidence
 
 	let { indicator, isDrawerOpen = $bindable() }: Props = $props();
 
@@ -59,7 +46,7 @@
 	const form = superForm(markDoneForm, {
 		validators: zodClient(markIndicatorDoneSchema),
 		multipleSubmits: 'prevent',
-		id: indicator.id,
+		id: crypto.randomUUID(),
 		onUpdate({ form, result }) {
 			const action = result.data as FormResult<IPCRFunctionIndicatorFormResult>;
 			if (form.valid && action.ipcrFunctionIndicator) {
@@ -73,6 +60,37 @@
 	});
 
 	const { form: formData, enhance, message, delayed, reset } = form;
+
+	const evidenceProxy = fileProxy(form, 'pdf_evidence');
+
+	//get the File from the signedUrl File in this context is the blob
+	async function getFileFromEvidence(signedUrl: string): Promise<File> {
+		const response = await fetch(signedUrl);
+		const blob = await response.blob();
+		const filename = signedUrl.split('?')[0].split('/').pop() || 'evidence';
+		return new File([blob], filename, { type: 'application/pdf' });
+	}
+
+	onMount(() => {
+		getIpcrIndicatorEvidence(indicator.id)
+			.then((evidence) => {
+				if (evidence.signedUrl) {
+					getFileFromEvidence(evidence.signedUrl)
+						.then((file) => {
+							const dataTransfer = new DataTransfer();
+							dataTransfer.items.add(file);
+							$evidenceProxy = dataTransfer.files;
+						})
+						.catch((e) => {
+							showErrorToast(`Error getting file from evidence: ${e}`);
+						});
+				}
+			})
+			.catch((e) => {
+				showErrorToast(`Error fetching evidence ${e}`);
+			});
+	});
+
 	$effect(() => {
 		if ($message?.status === 'error') {
 			showErrorToast(`Error marking indicator as done ${$message.text}`);
@@ -89,7 +107,6 @@
 	}
 	let placeholder = $state<DateValue>(today(getLocalTimeZone()));
 
-	const evidenceProxy = fileProxy(form, 'pdf_evidence');
 	function onFileSelectAndHover(files: File[]) {
 		const dataTransfer = new DataTransfer();
 		files.forEach((file) => dataTransfer.items.add(file));
@@ -119,7 +136,7 @@
 		</Dialog.Header>
 		<form
 			method="POST"
-			action="?/markipcrindicatordone"
+			action="?/editaccomplishment"
 			use:enhance
 			class="space-y-6"
 			enctype="multipart/form-data"
@@ -184,31 +201,16 @@
 			<Form.Field {form} name="pdf_evidence">
 				<Form.Control>
 					{#snippet children({ props })}
-						{#if fileExists?.signedUrl}
-							<DragAndDropFileWrapper
-								existingUrl={{
-									url: fileExists.signedUrl,
-									type: 'application/pdf'
-								}}
-								onFileSelect={onFileSelectAndHover}
-								name="pdf_evidence"
-								text={'Upload PDF evidence'}
-								role={'evidence_upload'}
-								id={'pdf_evidence'}
-								acceptedFileTypes={['application/pdf']}
-							/>
-							<input hidden type="file" bind:files={$evidenceProxy} name={props.name} />
-						{:else}
-							<DragAndDropFileWrapper
-								onFileSelect={onFileSelectAndHover}
-								name="pdf_evidence"
-								text={'Upload PDF evidence'}
-								role={'evidence_upload'}
-								id={'pdf_evidence'}
-								acceptedFileTypes={['application/pdf']}
-							/>
-							<input hidden type="file" bind:files={$evidenceProxy} name={props.name} />
-						{/if}
+						<DragAndDropFileWrapper
+							oldFile={$evidenceProxy[0]}
+							onFileSelect={onFileSelectAndHover}
+							name="pdf_evidence"
+							text={'Upload PDF evidence'}
+							role={'evidence_upload'}
+							id={'pdf_evidence'}
+							acceptedFileTypes={['application/pdf']}
+						/>
+						<input hidden type="file" bind:files={$evidenceProxy} name={props.name} />
 					{/snippet}
 				</Form.Control>
 				<Form.FieldErrors />

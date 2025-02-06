@@ -13,3 +13,10 @@ ON storage.objects FOR INSERT WITH CHECK (
 CREATE POLICY "Can read evidence files"
 ON storage.objects FOR SELECT TO public 
 USING (bucket_id = 'indicator_evidence');
+
+-- Allow anyone to update their own evidence files
+CREATE POLICY "User can update their own evidence files"
+ON storage.objects FOR UPDATE USING (
+   bucket_id = 'indicator_evidence'
+   AND auth.uid()::text = (storage.foldername(name))[1]
+);

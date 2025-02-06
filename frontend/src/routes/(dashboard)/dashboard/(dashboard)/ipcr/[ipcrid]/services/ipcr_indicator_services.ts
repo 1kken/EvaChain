@@ -213,6 +213,86 @@ export async function markIpcrIndicatorDone(request: Request, supabase: Supabase
 	return withFiles({ form, ipcrFunctionIndicator });
 }
 
+export async function editAccomplishment(request: Request, supabase: SupabaseClient<Database>) {
+	const {
+		data: { user }
+	} = await supabase.auth.getUser();
+	if (!user) {
+		return error(401, 'Unauthorized');
+	}
+	const user_id = user.id;
+
+	let form = await superValidate<Infer<MarkIndicatorDoneSchema>, App.Superforms.Message>(
+		request,
+		zod(markIndicatorDoneSchema)
+	);
+
+	if (!form.valid) {
+		return message(form, {
+			status: 'error',
+			text: 'Unprocessable input!'
+		});
+	}
+
+	//get the contents
+	const { id, actual_accomplishments, accomplishment_date, pdf_evidence } = form.data;
+
+	//update the ipcr indicator
+	const { error: updateError, data: ipcrFunctionIndicator } = await supabase
+		.from('ipcr_indicator')
+		.update({
+			actual_accomplishments,
+			accomplishment_date
+		})
+		.eq('id', id)
+		.select()
+		.single();
+
+	if (updateError) {
+		return message(form, {
+			status: 'error',
+			text: `Error updating indicator: ${updateError.message}`
+		});
+	}
+
+	const { data: indicatorEvidence, error: fetchIndicatorEvidenceError } = await supabase
+		.from('ipcr_indicator_evidence')
+		.select('file_path')
+		.eq('ipcr_indicator_id', id)
+		.single();
+
+	if (fetchIndicatorEvidenceError) {
+		return message(form, {
+			status: 'error',
+			text: `Error fetching indicator evidence: ${fetchIndicatorEvidenceError.message}`
+		});
+	}
+
+	if (!indicatorEvidence.file_path) {
+		return message(form, {
+			status: 'error',
+			text: 'No indicator evidence found Which ios unexpected behavior please contact developer'
+		});
+	}
+
+	//update the storage
+	const { data, error: updateStorageError } = await supabase.storage
+		.from('indicator_evidence')
+		.update(indicatorEvidence.file_path, pdf_evidence, {
+			cacheControl: '3600',
+			upsert: true
+		});
+
+	if (updateStorageError) {
+		return message(form, {
+			status: 'error',
+			text: `Error updating storage: ${updateStorageError.message}`
+		});
+	}
+
+	return withFiles({ form, ipcrFunctionIndicator });
+}
+
 // Helper function to upload evidence
 async function uploadEvidence(
 	indicatorId: string,

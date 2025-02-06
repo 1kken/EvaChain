@@ -24,9 +24,6 @@
 	import { getIpcrIndicatorStore } from '../../../states/ipcr_indicator_state';
 	import { markIndicatorDoneSchema } from '../../../schema/ipcr_indicator_schema';
 	import type { IPCRFunctionIndicatorFormResult } from '../../../utils/types';
-	import { onMount } from 'svelte';
-	import { fetchIpcrIndicatorEvidence } from '../../../../../../(admin)/admin/block_chain/helper';
-	import { getIpcrIndicatorEvidence, type SignedUrlResponse } from './mark_as_done_helper';
 
 	interface Props {
 		indicator: Tables<'ipcr_indicator'>; // Updated table name
@@ -44,7 +41,7 @@
 	const form = superForm(markDoneForm, {
 		validators: zodClient(markIndicatorDoneSchema),
 		multipleSubmits: 'prevent',
-		id: indicator.id,
+		id: crypto.randomUUID(),
 		onUpdate({ form, result }) {
 			const action = result.data as FormResult<IPCRFunctionIndicatorFormResult>;
 			if (form.valid && action.ipcrFunctionIndicator) {

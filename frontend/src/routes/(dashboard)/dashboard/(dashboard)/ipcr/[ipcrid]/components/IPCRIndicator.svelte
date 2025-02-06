@@ -35,7 +35,9 @@
 			{#if ipcrFunctionIndicator.status !== 'submitted' && !$canEdit}
 				<MarkAsDone indicator={ipcrFunctionIndicator} bind:isDrawerOpen />
 			{:else if ipcrFunctionIndicator.status === 'submitted'}
-				<MarkAsDoneEdit indicator={ipcrFunctionIndicator} bind:isDrawerOpen />
+				{#key ipcrFunctionIndicator.actual_accomplishments}
+					<MarkAsDoneEdit indicator={ipcrFunctionIndicator} bind:isDrawerOpen />
+				{/key}
 			{/if}
 		</div>
 		<div class="flex items-center justify-between">

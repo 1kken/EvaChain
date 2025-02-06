@@ -1,4 +1,3 @@
-import { superValidate } from 'sveltekit-superforms';
 import type { Actions, PageServerLoad } from './$types';
 import {
 	getCurrentIPCR,
@@ -22,6 +21,7 @@ import {
 import {
 	createIpcrIndicator,
 	deleteIpcrIndicator,
+	editAccomplishment,
 	markIpcrIndicatorDone,
 	updateIpcrIndicator
 } from './services/ipcr_indicator_services';
@@ -98,6 +98,9 @@ export const actions = {
 	},
 	markipcrindicatordone: async ({ request, locals: { supabase } }) => {
 		return await markIpcrIndicatorDone(request, supabase);
+	},
+	editaccomplishment: async ({ request, locals: { supabase } }) => {
+		return await editAccomplishment(request, supabase);
 	},
 	//ipcr
 	submitipcr: async ({ request, locals: { supabase } }) => {
