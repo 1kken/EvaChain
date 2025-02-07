@@ -1,6 +1,6 @@
 <script lang="ts">
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
-	import { Pencil, Plus } from 'lucide-svelte';
+	import { Pencil, Plus, Save } from 'lucide-svelte';
 	import { LoaderCircle } from 'lucide-svelte';
 	import * as Form from '$lib/components/ui/form/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
@@ -184,9 +184,11 @@
 					</div>
 				{/if}
 				{#if $delayed}
-					<Form.Button disabled><LoaderCircle class="animate-spin" />Processing...</Form.Button>
+					<Form.Button disabled class="w-full"
+						><LoaderCircle class="animate-spin" />Processing...</Form.Button
+					>
 				{:else}
-					<Form.Button>Submit</Form.Button>
+					<Form.Button class="w-full"><Save /> Save</Form.Button>
 				{/if}
 			</form>
 		</Dialog.Content>

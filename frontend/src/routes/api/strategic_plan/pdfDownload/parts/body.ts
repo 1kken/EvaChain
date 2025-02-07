@@ -181,7 +181,7 @@ async function generateIndicatorRow(
 function generateSdgAlignmentText(sdgAlignments: Tables<'sdg_alignment_view'>[]): string {
 	let sdgAlignmentText = '';
 	for (const [index, sdgAlignment] of sdgAlignments.entries()) {
-		sdgAlignmentText += `Objective ${sdgAlignment.objective_position},\n`;
+		sdgAlignmentText += `Objective ${sdgAlignment.objective_position! + 1},\n`;
 	}
 	return sdgAlignmentText;
 }

@@ -1,8 +1,7 @@
 <script lang="ts">
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
-	import { LoaderCircle } from 'lucide-svelte';
-	import { Plus } from 'lucide-svelte';
+	import { LoaderCircle, Pencil, Save } from 'lucide-svelte';
 	import { setError, superForm, type FormResult } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';
@@ -81,10 +80,9 @@
 </script>
 
 <Dialog.Root bind:open={isOpen}>
-	<Dialog.Trigger class="focus-visible:outline-none" id="nav-2">
-		<span class="flex items-center gap-2">
-			<Plus class="h-5 w-5" />
-			<span class="hidden md:inline">Add Sub Category</span>
+	<Dialog.Trigger class="focus-visible:outline-none">
+		<span class="flex items-center gap-3">
+			<Pencil size={16} />Edit
 		</span>
 	</Dialog.Trigger>
 	<Dialog.Content class="max-h-[85vh] overflow-y-auto sm:max-w-[800px]">
@@ -115,9 +113,11 @@
 			</Form.Field>
 			<div class="flex w-full justify-end">
 				{#if $delayed}
-					<Form.Button disabled><LoaderCircle class="animate-spin" />Processing...</Form.Button>
+					<Form.Button disabled class="w-full"
+						><LoaderCircle class="animate-spin" />Processing...</Form.Button
+					>
 				{:else}
-					<Form.Button>Submit</Form.Button>
+					<Form.Button class="w-full"><Save />Save</Form.Button>
 				{/if}
 			</div>
 		</form>

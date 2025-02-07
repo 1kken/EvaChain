@@ -1,7 +1,7 @@
 <script lang="ts">
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
-	import { LoaderCircle, Pencil } from 'lucide-svelte';
+	import { LoaderCircle, Pencil, Save } from 'lucide-svelte';
 	import { Plus } from 'lucide-svelte';
 	import SuperDebug, { setError, superForm, type FormResult } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
@@ -57,7 +57,7 @@
 				const ipcrFunctionCategory = action.ipcrFunctionCategory;
 				updateIpcrFunctionCategory(ipcrFunctionCategory.id, ipcrFunctionCategory);
 				showSuccessToast(
-					`Succesfully update ipcr function category ${ipcrFunctionCategory.category}`
+					`Succesfully updated ipcr function category ${ipcrFunctionCategory.category}`
 				);
 				isOpen = false;
 				reset({
@@ -88,7 +88,7 @@
 	//effect for message
 	$effect(() => {
 		if ($message?.status === 'error') {
-			showErrorToast(`Error adding ipcr function: ${$message.text}`);
+			showErrorToast(`Error updating ipcr function: ${$message.text}`);
 		}
 	});
 
@@ -170,9 +170,11 @@
 			</Form.Field>
 			<div class="flex w-full justify-end">
 				{#if $delayed}
-					<Form.Button disabled><LoaderCircle class="animate-spin" />Processing...</Form.Button>
+					<Form.Button disabled class="w-full"
+						><LoaderCircle class="animate-spin" />Processing...</Form.Button
+					>
 				{:else}
-					<Form.Button>Submit</Form.Button>
+					<Form.Button class="w-full"><Save />Save</Form.Button>
 				{/if}
 			</div>
 		</form>

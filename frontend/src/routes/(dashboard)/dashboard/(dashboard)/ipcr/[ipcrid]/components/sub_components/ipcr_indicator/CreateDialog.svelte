@@ -3,7 +3,7 @@
 	import * as Form from '$lib/components/ui/form/index.js';
 	import { LoaderCircle } from 'lucide-svelte';
 	import { Plus } from 'lucide-svelte';
-	import { setError, superForm, type FormResult } from 'sveltekit-superforms';
+	import SuperDebug, { setError, superForm, type FormResult } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';
 	import type { IPCRFunctionIndicatorFormResult } from '../../../utils/types';
@@ -18,6 +18,7 @@
 	import { createIpcrIndicatorSchema } from '../../../schema/ipcr_indicator_schema';
 	import IntelligentInput from '$lib/custom_components/IntelligentInput.svelte';
 	import { getAuthStore } from '$lib/utils/authStore';
+	import { browser } from '$app/environment';
 	const { currentProfile } = getAuthStore();
 
 	//props
@@ -233,5 +234,8 @@
 				{/if}
 			</div>
 		</form>
+		{#if browser}
+			<SuperDebug data={$formData} />
+		{/if}
 	</Dialog.Content>
 </Dialog.Root>

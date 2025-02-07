@@ -1,21 +1,20 @@
-import { message, superValidate, type Infer } from 'sveltekit-superforms';
+import { superValidate, type Infer } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import {
-	createIPCRSchema,
-	deleteIPCRSchema,
-	updateIPCRSchema,
-	type CreateIPCRSchema,
-	type DeleteIPCRSchemanType
-} from './(data)/schema.js';
+import { createIPCRSchema, deleteIPCRSchema, updateIPCRSchema } from './(data)/schema.js';
 import { error, type Actions } from '@sveltejs/kit';
 import { createIPCR, deleteIPCR, updateIPCR } from './(data)/ipcr_services.js';
+import { getOperationalPlanId } from './(data)/helper.js';
 
 export const load = async ({ params, locals: { supabase, session } }) => {
 	const createIPCRForm = await superValidate(zod(createIPCRSchema));
 	const deleteIPCRForm = await superValidate(zod(deleteIPCRSchema));
 	const updateIPCRForm = await superValidate(zod(updateIPCRSchema));
 
-	return { form: { createIPCRForm, deleteIPCRForm, updateIPCRForm } };
+	const operationalPlanId = await getOperationalPlanId(session, supabase);
+	return {
+		operationalPlanId,
+		form: { createIPCRForm, deleteIPCRForm, updateIPCRForm }
+	};
 };
 
 export const actions: Actions = {

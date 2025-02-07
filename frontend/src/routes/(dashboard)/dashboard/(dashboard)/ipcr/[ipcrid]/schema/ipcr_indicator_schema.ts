@@ -6,8 +6,12 @@ const ipcrIndicatorStatusEnum = z.enum(['draft', 'submitted', 'reviewing', 'revi
 
 // Schema for creating a new IPCR indicator
 export const createIpcrIndicatorSchema = z.object({
-	ipcr_function_id: z.string().uuid('Invalid IPCR Function ID').nullable(),
-	ipcr_function_category_id: z.string().uuid('Invalid IPCR Function Category ID').nullable(),
+	ipcr_function_id: z.string().uuid('Invalid IPCR Function ID').nullable().optional(),
+	ipcr_function_category_id: z
+		.string()
+		.uuid('Invalid IPCR Function Category ID')
+		.nullable()
+		.optional(),
 	ipcr_function_sub_category_id: z
 		.string()
 		.uuid('Invalid IPCR Function Sub Category ID')
