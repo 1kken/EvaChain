@@ -71,12 +71,17 @@
 	//effect for message
 	$effect(() => {
 		if ($message?.status === 'error') {
-			showErrorToast(`Error adding ipcr function: ${$message.text}`);
+			showErrorToast(`Error updating ipcr function: ${$message.text}`);
 		}
 	});
 
 	//for auto complete input
-	let items = ['Core Functions', 'Strategic Functions', 'Support Functions', 'Faculty Development'];
+	let items = [
+		'Instructional Imperatives',
+		'Teaching Effectiveness',
+		'Support to Operations',
+		'Auxiliary Services'
+	];
 </script>
 
 <Dialog.Root bind:open={isOpen}>
@@ -95,7 +100,7 @@
 				<span> *You can still add unspecified values beyond the given ones as you type.* </span>
 			</Dialog.Description>
 		</Dialog.Header>
-		<form action="?/createipcrfunctionsubcategory" method="POST" use:enhance class="space-y-6">
+		<form action="?/updateipcrfunctionsubcategory" method="POST" use:enhance class="space-y-6">
 			<input hidden name="id" value={$formData.id} />
 			<Form.Field {form} name="sub_category">
 				<Form.Control>

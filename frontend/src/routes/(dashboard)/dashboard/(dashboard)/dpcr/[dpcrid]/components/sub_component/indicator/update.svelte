@@ -1,7 +1,7 @@
 <script lang="ts">
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
-	import { LoaderCircle, Pencil } from 'lucide-svelte';
+	import { LoaderCircle, Pencil, Save } from 'lucide-svelte';
 	import { Plus } from 'lucide-svelte';
 	import SuperDebug, { setError, superForm, type FormResult } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
@@ -277,9 +277,11 @@
 			</Form.Field>
 			<div class="flex w-full justify-end">
 				{#if $delayed}
-					<Form.Button disabled><LoaderCircle class="animate-spin" />Processing...</Form.Button>
+					<Form.Button disabled class="w-full"
+						><LoaderCircle class="animate-spin" />Processing...</Form.Button
+					>
 				{:else}
-					<Form.Button>Save</Form.Button>
+					<Form.Button class="w-full"><Save />Save</Form.Button>
 				{/if}
 			</div>
 		</form>

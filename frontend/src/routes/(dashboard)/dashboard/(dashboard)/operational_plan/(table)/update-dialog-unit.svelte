@@ -1,6 +1,6 @@
 <script lang="ts">
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
-	import { LoaderCircle } from 'lucide-svelte';
+	import { LoaderCircle, Save } from 'lucide-svelte';
 	import * as Form from '$lib/components/ui/form/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { type SuperValidated, superForm, type FormResult } from 'sveltekit-superforms';
@@ -166,9 +166,11 @@
 				</Form.Field>
 			</div>
 			{#if $delayed}
-				<Form.Button disabled><LoaderCircle class="animate-spin" />Processing...</Form.Button>
+				<Form.Button disabled class="w-full"
+					><LoaderCircle class="animate-spin" />Processing...</Form.Button
+				>
 			{:else}
-				<Form.Button>Submit</Form.Button>
+				<Form.Button class="w-full"><Save />Save</Form.Button>
 			{/if}
 		</form>
 	</Dialog.Content>

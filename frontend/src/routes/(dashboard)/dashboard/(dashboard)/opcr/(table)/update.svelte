@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { buttonVariants } from '$lib/components/ui/button/index.js';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
-	import { GripHorizontal, Pencil, Plus, Trash2 } from 'lucide-svelte';
+	import { GripHorizontal, Pencil, Plus, Save, Trash2 } from 'lucide-svelte';
 	import { LoaderCircle } from 'lucide-svelte';
 	import * as Form from '$lib/components/ui/form/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
@@ -176,11 +176,11 @@
 				<Form.FieldErrors />
 			</Form.Field>
 			{#if $delayed}
-				<Form.Button class="w-[100%]" disabled
+				<Form.Button class="w-full" disabled
 					><LoaderCircle class="animate-spin" />Processing...</Form.Button
 				>
 			{:else}
-				<Form.Button class="w-[100%]">Submit</Form.Button>
+				<Form.Button class="w-full"><Save />Save</Form.Button>
 			{/if}
 		</form>
 	</Dialog.Content>

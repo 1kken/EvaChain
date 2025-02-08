@@ -52,10 +52,10 @@ export async function updateteIpcrFunction(request: Request, supabase: SupabaseC
 			text: 'Unprocessable input!'
 		});
 	}
-	let { id, title } = form.data;
+	let { id, title, percentage } = form.data;
 	const { data: ipcrFunction, error: ipcrError } = await supabase
 		.from('ipcr_function')
-		.update({ title: titleCase(title) })
+		.update({ title: titleCase(title), percentage })
 		.eq('id', id)
 		.select()
 		.single();

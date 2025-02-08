@@ -100,7 +100,7 @@
 				/>
 			</Button>
 			<div class="flex h-auto items-center gap-2">
-				<Badge variant={'secondary'} class="h-5 bg-green-400 text-xs">Sub-Category</Badge>
+				<Badge variant={'secondary'} class="h-5 bg-green-400 text-xs">Category</Badge>
 				<TruncatedDiv text={opcrCategory.category} maxLength={50} />
 			</div>
 		</div>

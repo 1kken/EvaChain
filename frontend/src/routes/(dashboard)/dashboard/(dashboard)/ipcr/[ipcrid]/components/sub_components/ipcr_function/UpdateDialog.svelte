@@ -38,7 +38,9 @@
 		onUpdate({ form, result }) {
 			if (
 				$currentIpcrFunctions.some(
-					(ipcrFunction) => ipcrFunction.title.toLowerCase() === form.data.title.toLowerCase()
+					(ipcrFunction) =>
+						ipcrFunction.title.toLowerCase() === form.data.title.toLowerCase() &&
+						ipcrFunction.id !== ipcrFunction.id
 				)
 			) {
 				setError(form, 'title', 'Title already exists');

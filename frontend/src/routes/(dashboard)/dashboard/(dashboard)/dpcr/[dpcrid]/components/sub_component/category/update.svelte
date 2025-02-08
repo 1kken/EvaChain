@@ -1,7 +1,7 @@
 <script lang="ts">
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
-	import { LoaderCircle, Pencil } from 'lucide-svelte';
+	import { LoaderCircle, Pencil, Save } from 'lucide-svelte';
 	import { Plus } from 'lucide-svelte';
 	import SuperDebug, { setError, superForm, type FormResult } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
@@ -48,7 +48,7 @@
 			if (form.valid && action.dpcrCategory) {
 				const dpcrCategory = action.dpcrCategory;
 				updateDpcrCategory(dpcrCategory.id, dpcrCategory);
-				showSuccessToast(`Succesfully added dpcr  category ${dpcrCategory.category}`);
+				showSuccessToast(`Succesfully Added DPCR category ${dpcrCategory.category}`);
 				isOpen = false;
 				isDrawerOpen = false;
 				reset({
@@ -92,7 +92,7 @@
 	</Dialog.Trigger>
 	<Dialog.Content class="max-h-[85vh] overflow-y-auto sm:max-w-[800px]">
 		<Dialog.Header>
-			<Dialog.Title>Add DPCR Function Category</Dialog.Title>
+			<Dialog.Title>Update DPCR Function Category</Dialog.Title>
 			<Dialog.Description>
 				Classifies responsibilities like higher education, advanced education services, and related
 				tasks.
@@ -118,9 +118,11 @@
 			</div>
 			<div class="flex w-full justify-end">
 				{#if $delayed}
-					<Form.Button disabled><LoaderCircle class="animate-spin" />Processing...</Form.Button>
+					<Form.Button disabled class="w-full"
+						><LoaderCircle class="animate-spin" />Processing...</Form.Button
+					>
 				{:else}
-					<Form.Button>Submit</Form.Button>
+					<Form.Button class="w-full"><Save />Save</Form.Button>
 				{/if}
 			</div>
 		</form>

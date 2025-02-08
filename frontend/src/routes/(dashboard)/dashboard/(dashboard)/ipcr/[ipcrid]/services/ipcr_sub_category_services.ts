@@ -52,7 +52,9 @@ export async function updateIpcrFunctionSubCategory(
 		Infer<UpdateIpcrFunctionSubCategorySchema>,
 		App.Superforms.Message
 	>(request, zod(updateIpcrFunctionSubCategorySchema));
+
 	if (!form.valid) {
+		console.log('form', form);
 		return message(form, {
 			status: 'error',
 			text: 'Unprocessable input!'
@@ -66,6 +68,7 @@ export async function updateIpcrFunctionSubCategory(
 		.single();
 
 	if (ipcrFunctionSubCategoryError) {
+		console.log('here');
 		return message(form, {
 			status: 'error',
 			text: `Error saving header , ${ipcrFunctionSubCategoryError.message}`
