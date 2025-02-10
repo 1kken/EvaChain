@@ -52,7 +52,9 @@
 			if (form.valid && action.ipcrFunctionIndicator) {
 				const indicator = action.ipcrFunctionIndicator;
 				updateIpcrIndicator(indicator.id, indicator);
-				showSuccessToast(`Indicator marked as done!`);
+				showSuccessToast(
+					`Updating accomplishment for ${indicator.success_indicator} is successful`
+				);
 				isOpen = false;
 				isDrawerOpen = false;
 			}
@@ -93,7 +95,7 @@
 
 	$effect(() => {
 		if ($message?.status === 'error') {
-			showErrorToast(`Error marking indicator as done ${$message.text}`);
+			showErrorToast(`Error editing accomplishment ${$message.text}`);
 		}
 	});
 	const df = new DateFormatter('en-US', { dateStyle: 'long' });

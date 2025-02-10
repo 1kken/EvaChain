@@ -14,6 +14,7 @@
 	import { createOpActivitySchema } from '../../../schema/op_activity_schema';
 	import type { OpActivityFormResult } from '../../../utils/type';
 	import * as Select from '$lib/components/ui/select/index.js';
+	import { calculateTotal } from './helper';
 
 	//props
 	interface Iprops {
@@ -75,6 +76,17 @@
 			showErrorToast(`Error adding activity to the objective: ${$message.text}`);
 		}
 	});
+
+	//for total
+	let handleInputChange = () => {
+		$formData.total = calculateTotal(
+			$formData.q1_target,
+			$formData.q2_target,
+			$formData.q3_target,
+			$formData.q4_target,
+			$formData.input_type
+		);
+	};
 </script>
 
 <Dialog.Root bind:open={isOpen} onOpenChange={onToggle}>
@@ -134,7 +146,12 @@
 						<Form.Control>
 							{#snippet children({ props })}
 								<Form.Label>Measurement metric</Form.Label>
-								<Select.Root type="single" bind:value={$formData.input_type} name={props.name}>
+								<Select.Root
+									type="single"
+									bind:value={$formData.input_type}
+									name={props.name}
+									onValueChange={handleInputChange}
+								>
 									<Select.Trigger {...props}>
 										{$formData.input_type
 											? $formData.input_type
@@ -170,7 +187,12 @@
 						<Form.Control>
 							{#snippet children({ props })}
 								<Form.Label>Quarter 1 Target</Form.Label>
-								<Input {...props} bind:value={$formData.q1_target} placeholder="Enter target..." />
+								<Input
+									{...props}
+									bind:value={$formData.q1_target}
+									placeholder="Enter target..."
+									oninput={handleInputChange}
+								/>
 							{/snippet}
 						</Form.Control>
 					</Form.Field>
@@ -178,7 +200,12 @@
 						<Form.Control>
 							{#snippet children({ props })}
 								<Form.Label>Quarter 2 Target</Form.Label>
-								<Input {...props} bind:value={$formData.q2_target} placeholder="Enter target..." />
+								<Input
+									{...props}
+									bind:value={$formData.q2_target}
+									placeholder="Enter target..."
+									oninput={handleInputChange}
+								/>
 							{/snippet}
 						</Form.Control>
 					</Form.Field>
@@ -188,7 +215,12 @@
 						<Form.Control>
 							{#snippet children({ props })}
 								<Form.Label>Quarter 3 Target</Form.Label>
-								<Input {...props} bind:value={$formData.q3_target} placeholder="Enter target..." />
+								<Input
+									{...props}
+									bind:value={$formData.q3_target}
+									placeholder="Enter target..."
+									oninput={handleInputChange}
+								/>
 							{/snippet}
 						</Form.Control>
 					</Form.Field>
@@ -196,11 +228,28 @@
 						<Form.Control>
 							{#snippet children({ props })}
 								<Form.Label>Quarter 4 Target</Form.Label>
-								<Input {...props} bind:value={$formData.q4_target} placeholder="Enter target..." />
+								<Input
+									{...props}
+									bind:value={$formData.q4_target}
+									placeholder="Enter target..."
+									oninput={handleInputChange}
+								/>
 							{/snippet}
 						</Form.Control>
 					</Form.Field>
 				</div>
+				<Form.Field {form} name="total">
+					<Form.Control>
+						{#snippet children({ props })}
+							<Form.Label>Total</Form.Label>
+							<Input
+								{...props}
+								bind:value={$formData.total}
+								placeholder="Auto calculated... Except 'TEXT' "
+							/>
+						{/snippet}
+					</Form.Control>
+				</Form.Field>
 			</FormSection>
 			<FormSection title="Additional Information" required={true}>
 				<div class="grid gap-4 md:grid-cols-2">

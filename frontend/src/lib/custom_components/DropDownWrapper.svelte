@@ -10,13 +10,22 @@
 		icon?: typeof IconType;
 		text?: string | null;
 		isDrawerOpen: boolean;
+		extraClass?: string | null;
 	}
 
-	let { childrens, icon = CircleEllipsis, text, isDrawerOpen = $bindable() }: Props = $props();
+	let {
+		childrens,
+		icon = CircleEllipsis,
+		text,
+		isDrawerOpen = $bindable(),
+		extraClass
+	}: Props = $props();
 </script>
 
 <DropdownMenu.Root bind:open={isDrawerOpen}>
-	<DropdownMenu.Trigger class={!text ? 'transition-transform duration-200 hover:rotate-90' : ''}>
+	<DropdownMenu.Trigger
+		class={cn(!text ? 'transition-transform duration-200 hover:rotate-90' : '', extraClass)}
+	>
 		{#if text}
 			{@const Icon = icon}
 			<span class="flex items-center gap-1">

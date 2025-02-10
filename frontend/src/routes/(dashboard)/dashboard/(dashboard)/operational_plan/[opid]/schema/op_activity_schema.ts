@@ -77,14 +77,14 @@ export const updateOpActivitySchema = z
 	.object({
 		id: z.string().uuid('Invalid Activity ID format'),
 		activity: z.string().min(1, 'Activity description is required').optional(),
-		input_type: z.enum(['percentage', 'number', 'ratio', 'text']).optional(),
+		input_type: z.enum(['percentage', 'number', 'ratio', 'text']),
 		performance_indicator: z.string().min(1, 'Performance indicator is required').optional(),
 		former_state: z.string().min(1, 'Former state is required').optional(),
-		q1_target: z.string().nullable().optional(),
-		q2_target: z.string().nullable().optional(),
-		q3_target: z.string().nullable().optional(),
-		q4_target: z.string().nullable().optional(),
-		total: z.string().nullable().optional(),
+		q1_target: z.string().nullable(),
+		q2_target: z.string().nullable(),
+		q3_target: z.string().nullable(),
+		q4_target: z.string().nullable(),
+		total: z.string().nullable(),
 		responsible_officer_unit: z.string().optional(),
 		total_budgetary_requirements: z.string().optional()
 	})

@@ -51,9 +51,13 @@ export const load = (async ({ locals: { supabase, session } }) => {
 
 //actions
 export const actions = {
-	createop: async ({ request, locals: { supabase, session } }) => {
+	createop: async ({ url, request, locals: { supabase, session } }) => {
+		const usePrevious = url.searchParams.get('usePrevious') === 'true';
 		if (!session) {
 			return { status: 401, body: 'Unauthorized' };
+		}
+		if (usePrevious) {
+			return createOperationalPlan(request, session, supabase, true);
 		}
 		return createOperationalPlan(request, session, supabase);
 	},

@@ -15,6 +15,7 @@
 	import { getOpActivityStore } from '../../../states/op_activity_state';
 	import { updateOpActivitySchema } from '../../../schema/op_activity_schema';
 	import type { Tables } from '$lib/types/database.types';
+	import { calculateTotal } from './helper';
 
 	//props
 	interface Iprops {
@@ -74,6 +75,7 @@
 	$formData.q2_target = opActivity.q2_target;
 	$formData.q3_target = opActivity.q3_target;
 	$formData.q4_target = opActivity.q4_target;
+	$formData.total = opActivity.total;
 	$formData.responsible_officer_unit = opActivity.responsible_officer_unit;
 	$formData.total_budgetary_requirements = opActivity.total_budgetary_requirements;
 
@@ -83,6 +85,17 @@
 			showErrorToast(`Error adding activity to the objective: ${$message.text}`);
 		}
 	});
+
+	//for total
+	let handleInputChange = () => {
+		$formData.total = calculateTotal(
+			$formData.q1_target,
+			$formData.q2_target,
+			$formData.q3_target,
+			$formData.q4_target,
+			$formData.input_type
+		);
+	};
 </script>
 
 <Dialog.Root bind:open={isOpen}>
@@ -140,7 +153,12 @@
 						<Form.Control>
 							{#snippet children({ props })}
 								<Form.Label>Measurement metric</Form.Label>
-								<Select.Root type="single" bind:value={$formData.input_type} name={props.name}>
+								<Select.Root
+									type="single"
+									bind:value={$formData.input_type}
+									name={props.name}
+									onValueChange={handleInputChange}
+								>
 									<Select.Trigger {...props}>
 										{$formData.input_type
 											? $formData.input_type
@@ -180,6 +198,7 @@
 									{...props}
 									bind:value={$formData.q1_target}
 									placeholder="Enter former state..."
+									oninput={handleInputChange}
 								/>
 							{/snippet}
 						</Form.Control>
@@ -193,6 +212,7 @@
 									{...props}
 									bind:value={$formData.q2_target}
 									placeholder="Enter former state..."
+									oninput={handleInputChange}
 								/>
 							{/snippet}
 						</Form.Control>
@@ -208,6 +228,7 @@
 									{...props}
 									bind:value={$formData.q3_target}
 									placeholder="Enter former state..."
+									oninput={handleInputChange}
 								/>
 							{/snippet}
 						</Form.Control>
@@ -221,12 +242,25 @@
 									{...props}
 									bind:value={$formData.q4_target}
 									placeholder="Enter former state..."
+									oninput={handleInputChange}
 								/>
 							{/snippet}
 						</Form.Control>
 						<Form.FieldErrors />
 					</Form.Field>
 				</div>
+				<Form.Field {form} name="total">
+					<Form.Control>
+						{#snippet children({ props })}
+							<Form.Label>Total</Form.Label>
+							<Input
+								{...props}
+								bind:value={$formData.total}
+								placeholder="Auto calculated... Except 'TEXT' "
+							/>
+						{/snippet}
+					</Form.Control>
+				</Form.Field>
 			</FormSection>
 			<FormSection title="Additional Information" required={true}>
 				<div class="grid gap-4 md:grid-cols-2">
