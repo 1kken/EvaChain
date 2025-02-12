@@ -2,6 +2,7 @@
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import AppSidebar from '$lib/custom_components/side-bars/dashboard/side-bar.svelte';
 	import NavBarDashboard from '$lib/custom_components/dashboard/layout/nav-bar-dashboard.svelte';
+	import Evabot from '$lib/evabot_components/evabot.svelte';
 	let { children } = $props();
 	let sidebarOpen = $state(false);
 </script>
@@ -18,3 +19,5 @@
 		</main>
 	</div>
 </Sidebar.Provider>
+
+<Evabot />
