@@ -3,20 +3,20 @@
 	import { LoaderCircle } from 'lucide-svelte';
 	import * as Form from '$lib/components/ui/form/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
-	import { createUnitSchema, type CreateUnit, type UpdateUnit } from '$lib/schemas/unit/schema';
-	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
+	import { createUnitSchema, type UpdateUnit } from '$lib/schemas/unit/schema';
+	import { type SuperValidated, superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { showErrorToast, showSuccessToast, showWarningToast } from '$lib/utils/toast';
-	import { unit } from '$lib/states/admin_unit.svelte';
 	import { Pencil } from 'lucide-svelte';
+	import type { Tables } from '$lib/types/database.types';
 
 	let {
 		updateForm,
-		id,
+		unit,
 		dropDownOpen = $bindable()
 	}: {
 		updateForm: SuperValidated<UpdateUnit>;
-		id: number;
+		unit: Tables<'unit'>;
 		dropDownOpen?: boolean;
 	} = $props();
 
@@ -29,12 +29,9 @@
 
 	const { form: formData, enhance, message, delayed } = form;
 
-	$formData.id = id;
-	const curr_unit = unit.units.find((unit) => unit.id === $formData.id);
-
-	//setting default values
-	$formData.code = curr_unit?.code;
-	$formData.name = curr_unit?.name;
+	$formData.id = unit.id;
+	$formData.code = unit.code;
+	$formData.name = unit.name;
 
 	function closeAllTabs() {
 		isOpen = false;

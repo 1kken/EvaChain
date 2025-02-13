@@ -5,20 +5,19 @@
 	import { superForm, type SuperValidated } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { Input } from '$lib/components/ui/input';
-	import { unit } from '$lib/states/admin_unit.svelte';
 	import { LoaderCircle } from 'lucide-svelte';
 	import { TriangleAlert } from 'lucide-svelte';
 	import { Trash2 } from 'lucide-svelte';
 	import { type DeleteOffice, deleteOfficeSchema } from '$lib/schemas/office/schema';
-	import { office } from '$lib/states/admin_office.svelte';
+	import type { Office } from './column';
 
 	interface Props {
 		deleteForm: SuperValidated<DeleteOffice>;
-		id: number;
+		office: Office;
 		dropDownOpen: boolean;
 	}
 
-	let { deleteForm, id, dropDownOpen = $bindable() }: Props = $props();
+	let { deleteForm, office, dropDownOpen = $bindable() }: Props = $props();
 
 	const form = superForm(deleteForm, {
 		validators: zodClient(deleteOfficeSchema),
@@ -50,9 +49,8 @@
 		}
 	});
 
-	$formData.id = id;
-	const curr_office = office.offices.find((office) => office.id == $formData.id);
-	$formData.name = curr_office?.name;
+	$formData.id = office.id;
+	$formData.name = office.name;
 
 	let isOpen = $state(false);
 </script>

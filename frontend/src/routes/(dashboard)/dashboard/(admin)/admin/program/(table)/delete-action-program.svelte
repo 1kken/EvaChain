@@ -9,16 +9,16 @@
 	import { TriangleAlert } from 'lucide-svelte';
 	import { Trash2 } from 'lucide-svelte';
 	import { deleteProgramSchema, type DeleteProgram } from '$lib/schemas/program/schema';
-
-	import { program } from '$lib/states/admin_program.svelte';
+	import type { Tables } from '$lib/types/database.types';
+	import type { Programme } from './column';
 
 	interface Props {
 		deleteForm: SuperValidated<DeleteProgram>;
-		id: number;
+		program: Programme;
 		dropDownOpen: boolean;
 	}
 
-	let { deleteForm, id, dropDownOpen = $bindable() }: Props = $props();
+	let { deleteForm, program, dropDownOpen = $bindable() }: Props = $props();
 
 	const form = superForm(deleteForm, {
 		validators: zodClient(deleteProgramSchema),
@@ -48,9 +48,8 @@
 		}
 	});
 
-	$formData.id = id;
-	const curr_program = program.programs.find((p) => p.id === $formData.id);
-	$formData.name = curr_program?.name;
+	$formData.id = program.id;
+	$formData.name = program.name;
 
 	let isOpen = $state(false);
 </script>

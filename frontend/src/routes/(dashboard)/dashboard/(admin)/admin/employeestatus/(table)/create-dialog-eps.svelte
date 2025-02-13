@@ -19,7 +19,8 @@
 	let isOpen = $state(false);
 	const form = superForm(data, {
 		validators: zodClient(createEmployeeStatusSchema),
-		multipleSubmits: 'prevent'
+		multipleSubmits: 'prevent',
+		invalidateAll: 'force'
 	});
 
 	const { form: formData, enhance, message, delayed } = form;

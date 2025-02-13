@@ -11,20 +11,21 @@
 		updateNatureOfWorkSchema,
 		type UpdateNatureOfWork
 	} from '$lib/schemas/natureofwork/schema';
-	import { natureOfWork } from '$lib/states/admin_nature_of_work.svelte';
+	import type { Tables } from '$lib/types/database.types';
 
 	interface Props {
 		updateForm: SuperValidated<UpdateNatureOfWork>;
-		id: number;
+		natureOfWork: Tables<'nature_of_work'>;
 		dropDownOpen: boolean;
 	}
 
-	let { updateForm, id, dropDownOpen = $bindable() }: Props = $props();
+	let { updateForm, natureOfWork, dropDownOpen = $bindable() }: Props = $props();
 
 	const form = superForm(updateForm, {
 		validators: zodClient(updateNatureOfWorkSchema),
 		multipleSubmits: 'prevent',
-		dataType: 'json'
+		dataType: 'json',
+		invalidateAll: 'force'
 	});
 
 	let isOpen = $state(false);
@@ -47,9 +48,8 @@
 		}
 	});
 
-	$formData.id = id;
-	const curr_now = natureOfWork.natureOfWorks.find((n) => n.id === $formData.id);
-	$formData.type = curr_now?.type;
+	$formData.id = natureOfWork.id;
+	$formData.type = natureOfWork.type;
 </script>
 
 <Dialog.Root bind:open={isOpen}>

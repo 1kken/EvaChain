@@ -9,21 +9,25 @@
 	import { TriangleAlert } from 'lucide-svelte';
 	import { Trash2 } from 'lucide-svelte';
 	import { type DeleteOffice, deleteOfficeSchema } from '$lib/schemas/office/schema';
-	import type { DeleteEmployeeStatus } from '$lib/schemas/employeestatus/schema';
-	import { employeeStatus } from '$lib/states/admin_employee_status.svelte';
+	import {
+		deleteEmployeeStatusSchema,
+		type DeleteEmployeeStatus
+	} from '$lib/schemas/employeestatus/schema';
+	import type { Tables } from '$lib/types/database.types';
 
 	interface Props {
 		deleteForm: SuperValidated<DeleteEmployeeStatus>;
-		id: number;
+		employeeStatus: Tables<'employee_status'>;
 		dropDownOpen: boolean;
 	}
 
-	let { deleteForm, id, dropDownOpen = $bindable() }: Props = $props();
+	let { deleteForm, employeeStatus, dropDownOpen = $bindable() }: Props = $props();
 
 	const form = superForm(deleteForm, {
-		validators: zodClient(deleteOfficeSchema),
+		validators: zodClient(deleteEmployeeStatusSchema),
 		multipleSubmits: 'prevent',
-		dataType: 'json'
+		dataType: 'json',
+		invalidateAll: 'force'
 	});
 
 	const { form: formData, enhance, message, delayed } = form;
@@ -34,11 +38,6 @@
 	}
 
 	$effect(() => {
-		if ($message?.status == 'success') {
-			showSuccessToast($message.text);
-			closeAllTabs();
-		}
-
 		if ($message?.status == 'error') {
 			showErrorToast($message.text);
 			closeAllTabs();
@@ -50,9 +49,8 @@
 		}
 	});
 
-	$formData.id = id;
-	const curr_eps = employeeStatus.employeeStatuses.find((e) => e.id === $formData.id);
-	$formData.type = curr_eps?.type;
+	$formData.id = employeeStatus.id;
+	$formData.type = employeeStatus.type;
 
 	let isOpen = $state(false);
 </script>

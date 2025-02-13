@@ -1,40 +1,28 @@
 <script lang="ts">
-	import { natureOfWork } from '$lib/states/admin_nature_of_work.svelte';
-	import { position } from '$lib/states/admin_positions_state.svelte';
-	import { onDestroy } from 'svelte';
 	import type { PageData } from './$types';
 	import { createColumns } from './(table)/column';
 	import DataTable from '$lib/custom_components/data-table/data-table.svelte';
-	import { map } from 'zod';
-	import { mapToOptions, type PropDataFacet } from '$lib/custom_components/data-table/helper';
+	import {
+		mapToOptions,
+		type PropDataFacet,
+		type PropOptionFacet
+	} from '$lib/custom_components/data-table/helper';
 	import CreateDialogPosition from './(table)/create-dialog-position.svelte';
 
 	let { data }: { data: PageData } = $props();
 
-	const {
-		positions,
-		nows,
-		supabase,
+	let {
 		form: { createPositionForm, updatePositionForm, deletePositionForm }
 	} = data;
 
-	natureOfWork.set(nows);
-	position.set(positions);
-	natureOfWork.subscribe(supabase);
-	position.subscribe(supabase);
-	onDestroy(() => {
-		natureOfWork.unsubscribe();
-		position.unsubscribe();
-	});
+	let natureOfWorks = $derived(data.nows);
+	let positions = $derived(data.positions);
 
-	let nowOptions = mapToOptions(natureOfWork.natureOfWorks, 'type', 'type');
-
-	$effect(() => {
-		nowOptions = mapToOptions(natureOfWork.natureOfWorks, 'type', 'type');
-	});
-
-	const columns = createColumns(updatePositionForm, deletePositionForm);
-	const propDataFacet: PropDataFacet[] = [{ column: 'nature_of_work', options: nowOptions }];
+	// svelte-ignore state_referenced_locally
+	const columns = createColumns(updatePositionForm, deletePositionForm, natureOfWorks);
+	// svelte-ignore state_referenced_locally
+	let nowOptions: PropOptionFacet[] = mapToOptions(natureOfWorks, 'type', 'type');
+	let propDataFacet: PropDataFacet[] = [{ column: 'nature_of_work', options: nowOptions }];
 </script>
 
 <DataTable
@@ -42,7 +30,7 @@
 	filterPlaceholder={'Search by Position title ...'}
 	filterColumn={'type'}
 	{columns}
-	data={position.positions}
+	data={positions}
 >
-	<CreateDialogPosition data={createPositionForm} />
+	<CreateDialogPosition data={createPositionForm} natureOfWork={natureOfWorks} />
 </DataTable>

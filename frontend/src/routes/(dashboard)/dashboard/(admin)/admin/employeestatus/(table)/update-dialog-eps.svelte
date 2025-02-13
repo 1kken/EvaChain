@@ -7,24 +7,25 @@
 	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';
-	import { employeeStatus } from '$lib/states/admin_employee_status.svelte';
 	import {
 		updateEmployeeStatusSchema,
 		type UpdateEmployeeStatus
 	} from '$lib/schemas/employeestatus/schema';
+	import type { Tables } from '$lib/types/database.types';
 
 	interface Props {
 		updateForm: SuperValidated<UpdateEmployeeStatus>;
-		id: number;
+		employeeStatus: Tables<'employee_status'>;
 		dropDownOpen: boolean;
 	}
 
-	let { updateForm, id, dropDownOpen = $bindable() }: Props = $props();
+	let { updateForm, employeeStatus, dropDownOpen = $bindable() }: Props = $props();
 
 	const form = superForm(updateForm, {
 		validators: zodClient(updateEmployeeStatusSchema),
 		multipleSubmits: 'prevent',
-		dataType: 'json'
+		dataType: 'json',
+		invalidateAll: 'force'
 	});
 
 	let isOpen = $state(false);
@@ -47,9 +48,8 @@
 		}
 	});
 
-	$formData.id = id;
-	const curr_eps = employeeStatus.employeeStatuses.find((e) => e.id === $formData.id);
-	$formData.type = curr_eps?.type;
+	$formData.id = employeeStatus.id;
+	$formData.type = employeeStatus.type;
 </script>
 
 <Dialog.Root bind:open={isOpen}>

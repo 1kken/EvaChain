@@ -6,14 +6,17 @@
 	import type { DeleteOffice, UpdateOffice } from '$lib/schemas/office/schema';
 	import DeleteActionOffice from './delete-action-office.svelte';
 	import UpdateDialogOffice from './update-dialog-office.svelte';
+	import type { Office } from './column';
+	import type { Tables } from '$lib/types/database.types';
 
 	interface Props {
 		deleteForm: SuperValidated<DeleteOffice>;
 		updateForm: SuperValidated<UpdateOffice>;
-		id: number;
+		office: Office;
+		units: Tables<'unit'>[];
 	}
 
-	let { deleteForm, updateForm, id }: Props = $props();
+	let { deleteForm, updateForm, office, units }: Props = $props();
 
 	let dropDownOpen = $state(false);
 </script>
@@ -33,10 +36,10 @@
 		</DropdownMenu.Group>
 		<DropdownMenu.Separator />
 		<DropdownMenu.Item onSelect={(e) => e.preventDefault()}
-			><UpdateDialogOffice {id} {updateForm} bind:dropDownOpen /></DropdownMenu.Item
+			><UpdateDialogOffice {office} {units} {updateForm} bind:dropDownOpen /></DropdownMenu.Item
 		>
 		<DropdownMenu.Item onSelect={(e) => e.preventDefault()}
-			><DeleteActionOffice {deleteForm} {id} bind:dropDownOpen /></DropdownMenu.Item
+			><DeleteActionOffice {deleteForm} {office} bind:dropDownOpen /></DropdownMenu.Item
 		>
 	</DropdownMenu.Content>
 </DropdownMenu.Root>

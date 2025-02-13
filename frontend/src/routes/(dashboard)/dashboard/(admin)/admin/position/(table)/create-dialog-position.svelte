@@ -10,9 +10,11 @@
 	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';
 	import * as Select from '$lib/components/ui/select';
 	import { createPositionSchema, type CreatePosition } from '$lib/schemas/position/schema';
-	import { natureOfWork } from '$lib/states/admin_nature_of_work.svelte';
-
-	let { data }: { data: SuperValidated<CreatePosition> } = $props();
+	import type { Tables } from '$lib/types/database.types';
+	let {
+		data,
+		natureOfWork
+	}: { data: SuperValidated<CreatePosition>; natureOfWork: Tables<'nature_of_work'>[] } = $props();
 
 	let isOpen = $state(false);
 	const form = superForm(data, {
@@ -33,8 +35,6 @@
 			showErrorToast($message.text);
 		}
 	});
-
-	const curr_under_nature_of_work = natureOfWork.natureOfWorks;
 </script>
 
 <Dialog.Root bind:open={isOpen}>
@@ -74,12 +74,11 @@
 						>
 							<Select.Trigger {...props} class="truncate">
 								{$formData.nature_of_work_id
-									? curr_under_nature_of_work.find((o) => o.id === $formData.nature_of_work_id)
-											?.type
+									? natureOfWork.find((o) => o.id === $formData.nature_of_work_id)?.type
 									: 'Select the nature of work that classifies this position'}
 							</Select.Trigger>
 							<Select.Content>
-								{#each curr_under_nature_of_work as now (now.id)}
+								{#each natureOfWork as now (now.id)}
 									<Select.Item value={now.id.toString()} label={now.type}>
 										{now.type}
 									</Select.Item>

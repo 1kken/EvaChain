@@ -4,6 +4,8 @@ import DataTableActions from './data-table-actions.svelte';
 import type { SuperValidated } from 'sveltekit-superforms';
 import type { DeleteProgram, UpdateProgram } from '$lib/schemas/program/schema';
 import DataTableSortButton from '$lib/custom_components/data-table/data-table-sort-button.svelte';
+import type { Tables } from '$lib/types/database.types';
+import type { Office } from '../../office/(table)/column';
 
 // This type is used to define the shape of our data.
 export type Programme = {
@@ -23,7 +25,9 @@ export type Programme = {
 };
 export const createColumns = (
 	updateForm: SuperValidated<UpdateProgram>,
-	deleteForm: SuperValidated<DeleteProgram>
+	deleteForm: SuperValidated<DeleteProgram>,
+	units: Tables<'unit'>[],
+	offices: Office[]
 ): ColumnDef<Programme>[] => [
 	{
 		id: 'name',
@@ -71,8 +75,8 @@ export const createColumns = (
 		id: 'actions',
 		header: 'Actions',
 		cell: ({ row }) => {
-			const id = row.original.id;
-			return renderComponent(DataTableActions, { id, deleteForm, updateForm });
+			const program = row.original;
+			return renderComponent(DataTableActions, { deleteForm, updateForm, program, units, offices });
 		}
 	}
 ];

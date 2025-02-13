@@ -13,20 +13,21 @@
 		deleteNatureOfWorkSchema,
 		type DeleteNatureOfWork
 	} from '$lib/schemas/natureofwork/schema';
-	import { natureOfWork } from '$lib/states/admin_nature_of_work.svelte';
+	import type { Tables } from '$lib/types/database.types';
 
 	interface Props {
 		deleteForm: SuperValidated<DeleteNatureOfWork>;
-		id: number;
+		natureOfWork: Tables<'nature_of_work'>;
 		dropDownOpen: boolean;
 	}
 
-	let { deleteForm, id, dropDownOpen = $bindable() }: Props = $props();
+	let { deleteForm, natureOfWork, dropDownOpen = $bindable() }: Props = $props();
 
 	const form = superForm(deleteForm, {
 		validators: zodClient(deleteNatureOfWorkSchema),
 		multipleSubmits: 'prevent',
-		dataType: 'json'
+		dataType: 'json',
+		invalidateAll: true
 	});
 
 	const { form: formData, enhance, message, delayed } = form;
@@ -39,23 +40,19 @@
 	$effect(() => {
 		if ($message?.status == 'success') {
 			showSuccessToast($message.text);
-			closeAllTabs();
 		}
 
 		if ($message?.status == 'error') {
 			showErrorToast($message.text);
-			closeAllTabs();
 		}
 
 		if ($message?.status == 'warning') {
 			showWarningToast($message.text);
-			isOpen = false;
 		}
 	});
 
-	$formData.id = id;
-	const curr_now = natureOfWork.natureOfWorks.find((n) => n.id === $formData.id);
-	$formData.type = curr_now?.type;
+	$formData.id = natureOfWork.id;
+	$formData.type = natureOfWork.type;
 
 	let isOpen = $state(false);
 </script>

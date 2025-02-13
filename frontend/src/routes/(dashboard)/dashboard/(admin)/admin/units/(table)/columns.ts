@@ -5,20 +5,12 @@ import DataTableActions from './data-table-actions.svelte';
 import DataTableSortButton from '$lib/custom_components/data-table/data-table-sort-button.svelte';
 import type { SuperValidated } from 'sveltekit-superforms';
 import type { DeleteUnit, UpdateUnit } from '$lib/schemas/unit/schema';
-
-// This type is used to define the shape of our data.
-export type Unit = {
-	code: string;
-	created_at: string;
-	id: number;
-	name: string;
-	updated_at: string;
-};
+import type { Tables } from '$lib/types/database.types';
 
 export const createColumns = (
 	deleteForm: SuperValidated<DeleteUnit>,
 	updateForm: SuperValidated<UpdateUnit>
-): ColumnDef<Unit>[] => [
+): ColumnDef<Tables<'unit'>>[] => [
 	{
 		accessorKey: 'code',
 		header: ({ column }) =>
@@ -41,9 +33,9 @@ export const createColumns = (
 		id: 'actions',
 		header: 'Actions',
 		cell: ({ row }) => {
-			const id = row.original.id;
+			const unit = row.original;
 			// You can pass whatever you need from `row.original` to the component
-			return renderComponent(DataTableActions, { deleteForm, updateForm, id });
+			return renderComponent(DataTableActions, { deleteForm, updateForm, unit });
 		}
 	}
 ];

@@ -9,16 +9,17 @@
 	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';
 	import { updateOfficeSchema, type UpdateOffice } from '$lib/schemas/office/schema';
 	import * as Select from '$lib/components/ui/select';
-	import { unit } from '$lib/states/admin_unit.svelte';
-	import { office } from '$lib/states/admin_office.svelte';
+	import type { Office } from './column';
+	import type { Tables } from '$lib/types/database.types';
 
 	interface Props {
 		updateForm: SuperValidated<UpdateOffice>;
-		id: number;
+		office: Office;
 		dropDownOpen: boolean;
+		units: Tables<'unit'>[];
 	}
 
-	let { updateForm, id, dropDownOpen = $bindable() }: Props = $props();
+	let { updateForm, office, units, dropDownOpen = $bindable() }: Props = $props();
 
 	const form = superForm(updateForm, {
 		validators: zodClient(updateOfficeSchema),
@@ -45,12 +46,12 @@
 		}
 	});
 
-	$formData.id = id;
-	const curr_under_unit = unit.units;
-	const curr_office = office.offices.find((office) => office.id == $formData.id);
-	$formData.unit_id = curr_office?.unit?.id;
-	$formData.name = curr_office?.name;
-	$formData.code = curr_office?.code;
+	$formData.id = office.id;
+	$formData.unit_id = office.unit?.id;
+	$formData.name = office.name;
+	$formData.code = office.code;
+
+	let curr_under_unit = $derived(units);
 </script>
 
 <Dialog.Root bind:open={isOpen}>

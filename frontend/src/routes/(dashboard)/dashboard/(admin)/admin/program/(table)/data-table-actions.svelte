@@ -6,14 +6,19 @@
 	import UpdateDialogProgramme from './update-dialog-program.svelte';
 	import type { DeleteProgram, UpdateProgram } from '$lib/schemas/program/schema';
 	import DeleteActionProgramme from './delete-action-program.svelte';
+	import type { Programme } from './column';
+	import type { Tables } from '$lib/types/database.types';
+	import type { Office } from '../../office/(table)/column';
 
 	interface Props {
 		deleteForm: SuperValidated<DeleteProgram>;
 		updateForm: SuperValidated<UpdateProgram>;
-		id: number;
+		program: Programme;
+		units: Tables<'unit'>[];
+		offices: Office[];
 	}
 
-	let { deleteForm, updateForm, id }: Props = $props();
+	let { deleteForm, updateForm, program, units, offices }: Props = $props();
 
 	let dropDownOpen = $state(false);
 </script>
@@ -33,10 +38,10 @@
 		</DropdownMenu.Group>
 		<DropdownMenu.Separator />
 		<DropdownMenu.Item onSelect={(e) => e.preventDefault()}
-			><UpdateDialogProgramme {updateForm} {id} bind:dropDownOpen />
+			><UpdateDialogProgramme {updateForm} {program} {units} {offices} bind:dropDownOpen />
 		</DropdownMenu.Item>
 		<DropdownMenu.Item onSelect={(e) => e.preventDefault()}>
-			<DeleteActionProgramme {deleteForm} {id} bind:dropDownOpen />
+			<DeleteActionProgramme {deleteForm} {program} bind:dropDownOpen />
 		</DropdownMenu.Item>
 	</DropdownMenu.Content>
 </DropdownMenu.Root>

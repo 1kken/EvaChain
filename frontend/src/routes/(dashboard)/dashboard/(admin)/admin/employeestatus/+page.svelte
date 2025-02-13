@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { employeeStatus } from '$lib/states/admin_employee_status.svelte';
 	import { onDestroy, onMount } from 'svelte';
 	import type { PageData } from './$types';
 	import { createColumns } from './(table)/column';
@@ -8,17 +7,10 @@
 
 	let { data }: { data: PageData } = $props();
 	const {
-		supabase,
-		employeeStatus: dataEps,
 		form: { createEpsForm, deleteEpsForm, updateEpsForm }
 	} = data;
 
-	employeeStatus.set(dataEps);
-	employeeStatus.subscribe(supabase);
-
-	onDestroy(() => {
-		employeeStatus.unsubscribe();
-	});
+	let employeeStatus = $derived(data.employeeStatus);
 
 	const columns = createColumns(updateEpsForm, deleteEpsForm);
 </script>
@@ -26,7 +18,7 @@
 <DataTable
 	filterPlaceholder="Search by type..."
 	filterColumn="type"
-	data={employeeStatus.employeeStatuses}
+	data={employeeStatus}
 	{columns}
 >
 	<CreateDialogEps data={createEpsForm} />

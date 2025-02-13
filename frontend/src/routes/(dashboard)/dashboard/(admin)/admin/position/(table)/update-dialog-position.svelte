@@ -9,15 +9,16 @@
 	import * as Select from '$lib/components/ui/select';
 	import { Pencil } from 'lucide-svelte';
 	import { updatePositionSchema, type UpdatePosition } from '$lib/schemas/position/schema';
-	import { position } from '$lib/states/admin_positions_state.svelte';
-	import { natureOfWork } from '$lib/states/admin_nature_of_work.svelte';
+	import type { Tables } from '$lib/types/database.types';
+	import type { Position } from './column';
 
 	interface Props {
 		updateForm: SuperValidated<UpdatePosition>;
-		id: number;
+		position: Position;
+		natureOfWorks: Tables<'nature_of_work'>[];
 		dropDownOpen: boolean;
 	}
-	let { updateForm, id, dropDownOpen = $bindable() }: Props = $props();
+	let { updateForm, position, natureOfWorks, dropDownOpen = $bindable() }: Props = $props();
 
 	let isOpen = $state(false);
 	const form = superForm(updateForm, {
@@ -44,12 +45,11 @@
 		}
 	});
 
-	$formData.id = id;
-	const curr_position = position.positions.find((p) => p.id === $formData.id);
-	const curr_under_nature_of_work = natureOfWork.natureOfWorks;
+	$formData.id = position.id;
+	$formData.name = position.name;
+	$formData.nature_of_work_id = position.nature_of_work?.id ?? undefined;
 
-	$formData.name = curr_position?.name ?? 'Error';
-	$formData.nature_of_work_id = curr_position?.nature_of_work?.id;
+	const curr_under_nature_of_work = natureOfWorks;
 </script>
 
 <Dialog.Root bind:open={isOpen}>

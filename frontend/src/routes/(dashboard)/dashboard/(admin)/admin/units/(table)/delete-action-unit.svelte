@@ -6,17 +6,17 @@
 	import { superForm, type SuperValidated } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { Input } from '$lib/components/ui/input';
-	import { unit } from '$lib/states/admin_unit.svelte';
 	import { LoaderCircle } from 'lucide-svelte';
 	import { TriangleAlert } from 'lucide-svelte';
 	import { Trash2 } from 'lucide-svelte';
+	import type { Tables } from '$lib/types/database.types';
 	interface Props {
 		deleteForm: SuperValidated<DeleteUnit>;
-		id: number;
+		unit: Tables<'unit'>;
 		dropDownOpen: boolean;
 	}
 
-	let { deleteForm, id, dropDownOpen = $bindable() }: Props = $props();
+	let { deleteForm, unit, dropDownOpen = $bindable() }: Props = $props();
 
 	const form = superForm(deleteForm, {
 		validators: zodClient(deleteUnitSchema),
@@ -47,9 +47,8 @@
 		}
 	});
 
-	$formData.id = id;
-	const curr_unit = unit.units.find((unit) => unit.id === $formData.id);
-	$formData.name = curr_unit?.name;
+	$formData.id = unit.id;
+	$formData.name = unit.name;
 
 	let isOpen = $state(false);
 </script>

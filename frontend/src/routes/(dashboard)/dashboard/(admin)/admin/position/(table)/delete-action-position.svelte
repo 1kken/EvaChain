@@ -8,19 +8,16 @@
 	import { LoaderCircle } from 'lucide-svelte';
 	import { TriangleAlert } from 'lucide-svelte';
 	import { Trash2 } from 'lucide-svelte';
-	import { deleteProgramSchema, type DeleteProgram } from '$lib/schemas/program/schema';
-
-	import { program } from '$lib/states/admin_program.svelte';
 	import { deletePositionSchema, type DeletePosition } from '$lib/schemas/position/schema';
-	import { position } from '$lib/states/admin_positions_state.svelte';
+	import type { Position } from './column';
 
 	interface Props {
 		deleteForm: SuperValidated<DeletePosition>;
-		id: number;
+		position: Position;
 		dropDownOpen: boolean;
 	}
 
-	let { deleteForm, id, dropDownOpen = $bindable() }: Props = $props();
+	let { deleteForm, position, dropDownOpen = $bindable() }: Props = $props();
 
 	const form = superForm(deleteForm, {
 		validators: zodClient(deletePositionSchema),
@@ -50,9 +47,9 @@
 		}
 	});
 
-	$formData.id = id;
-	const curr_position = position.positions.find((p) => p.id === $formData.id);
-	$formData.name = curr_position?.name;
+	$formData.id = position.id;
+	$formData.name = position.name;
+
 	let isOpen = $state(false);
 </script>
 

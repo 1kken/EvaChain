@@ -7,19 +7,24 @@
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';
 	import * as Select from '$lib/components/ui/select';
-	import { unit } from '$lib/states/admin_unit.svelte';
-	import { updateProgramSchema, type UpdateProgram } from '$lib/schemas/program/schema';
-	import { office } from '$lib/states/admin_office.svelte';
+	import {
+		programSchema,
+		updateProgramSchema,
+		type UpdateProgram
+	} from '$lib/schemas/program/schema';
 	import type { Tables } from '$lib/types/database.types';
-	import { program } from '$lib/states/admin_program.svelte';
 	import { Pencil } from 'lucide-svelte';
+	import type { Office } from '../../office/(table)/column';
+	import type { Programme } from './column';
 
 	interface Props {
 		updateForm: SuperValidated<UpdateProgram>;
-		id: number;
+		program: Programme;
+		units: Tables<'unit'>[];
+		offices: Office[];
 		dropDownOpen: boolean;
 	}
-	let { updateForm, id, dropDownOpen = $bindable() }: Props = $props();
+	let { updateForm, program, units, offices, dropDownOpen = $bindable() }: Props = $props();
 
 	let isOpen = $state(false);
 	const form = superForm(updateForm, {
@@ -46,16 +51,12 @@
 		}
 	});
 
-	$formData.id = id;
-	//find the program
-	const curr_program = program.programs.find((p) => p.id === $formData.id);
+	$formData.id = program.id;
+	$formData.name = program.name;
+	$formData.office_id = program.office?.id;
 
-	//set necessary details for update
-	$formData.name = curr_program?.name ?? 'Error';
-	$formData.office_id = curr_program?.office?.id;
-
-	const curr_under_unit = unit.units;
-	const curr_under_office = office.offices;
+	const curr_under_unit = units;
+	const curr_under_office = offices;
 
 	let curr_unit = $state<Tables<'unit'> | undefined>(undefined);
 

@@ -1,12 +1,10 @@
 <script lang="ts">
 	import DataTable from '$lib/custom_components/data-table/data-table.svelte';
-	import { office } from '$lib/states/admin_office.svelte';
 	import { onDestroy, onMount } from 'svelte';
 	import type { PageData } from './$types';
 	let { data }: { data: PageData } = $props();
 	import { createColumns } from './(table)/column';
 	import CreateDialogOffice from './(table)/create-dialog-office.svelte';
-	import { unit } from '$lib/states/admin_unit.svelte';
 	import {
 		mapToOptions,
 		type PropDataFacet,
@@ -14,41 +12,24 @@
 	} from '$lib/custom_components/data-table/helper';
 
 	const {
-		units,
-		offices,
-		supabase,
 		form: { createOfficeForm, updateOfficeForm, deleteOfficeForm }
 	} = data;
 
-	unit.set(units);
-	unit.subscribe(supabase);
+	let units = $derived(data.units);
+	let offices = $derived(data.offices);
 
-	//fetch unit so it can be used
-	onMount(() => {
-		office.set(offices);
-		office.subscribe(supabase);
-	});
-
-	onDestroy(() => {
-		// Clean up subscription
-		office.unsubscribe();
-		unit.unsubscribe();
-	});
-	let unitOptions: PropOptionFacet[] = mapToOptions(unit.units, 'name', 'code');
-	$effect(() => {
-		unitOptions = mapToOptions(unit.units, 'name', 'code');
-	});
-
+	// svelte-ignore state_referenced_locally
+	let unitOptions: PropOptionFacet[] = mapToOptions(units, 'name', 'code');
 	const propDataFacet: PropDataFacet[] = [{ column: 'unit', options: unitOptions }];
-
-	const columns = createColumns(updateOfficeForm, deleteOfficeForm);
+	// svelte-ignore state_referenced_locally
+	const columns = createColumns(updateOfficeForm, deleteOfficeForm, units);
 </script>
 
 <DataTable
 	filterDataFacet={propDataFacet}
 	filterPlaceholder={'Search by name...'}
 	{columns}
-	data={office.offices}
+	data={offices}
 >
-	<CreateDialogOffice data={createOfficeForm} />
+	<CreateDialogOffice data={createOfficeForm} {units} />
 </DataTable>

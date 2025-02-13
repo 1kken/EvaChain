@@ -9,12 +9,15 @@
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';
 	import * as Select from '$lib/components/ui/select';
-	import { unit } from '$lib/states/admin_unit.svelte';
 	import { createProgramSchema, type CreateProgram } from '$lib/schemas/program/schema';
-	import { office } from '$lib/states/admin_office.svelte';
 	import type { Tables } from '$lib/types/database.types';
+	import type { Office } from '../../office/(table)/column';
 
-	let { data }: { data: SuperValidated<CreateProgram> } = $props();
+	let {
+		data,
+		units,
+		offices
+	}: { data: SuperValidated<CreateProgram>; units: Tables<'unit'>[]; offices: Office[] } = $props();
 
 	let isOpen = $state(false);
 	const form = superForm(data, {
@@ -36,8 +39,8 @@
 		}
 	});
 
-	const curr_under_unit = unit.units;
-	const curr_under_office = office.offices;
+	const curr_under_unit = $derived(units);
+	const curr_under_office = $derived(offices);
 
 	let curr_unit = $state<Tables<'unit'> | undefined>(undefined);
 

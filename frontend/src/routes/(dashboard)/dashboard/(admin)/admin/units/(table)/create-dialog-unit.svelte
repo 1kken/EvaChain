@@ -15,7 +15,8 @@
 	let isOpen = $state(false);
 	const form = superForm(data, {
 		validators: zodClient(createUnitSchema),
-		multipleSubmits: 'prevent'
+		multipleSubmits: 'prevent',
+		invalidateAll: 'force'
 	});
 
 	const { form: formData, enhance, message, delayed } = form;

@@ -10,9 +10,9 @@
 	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';
 	import { createOfficeSchema, type CreateOffice } from '$lib/schemas/office/schema';
 	import * as Select from '$lib/components/ui/select';
-	import { unit } from '$lib/states/admin_unit.svelte';
+	import type { Tables } from '$lib/types/database.types';
 
-	let { data }: { data: SuperValidated<CreateOffice> } = $props();
+	let { data, units }: { data: SuperValidated<CreateOffice>; units: Tables<'unit'>[] } = $props();
 
 	let isOpen = $state(false);
 	const form = superForm(data, {
@@ -34,7 +34,7 @@
 		}
 	});
 
-	const curr_under_unit = unit.units;
+	let curr_under_unit = $derived(units);
 </script>
 
 <Dialog.Root bind:open={isOpen}>

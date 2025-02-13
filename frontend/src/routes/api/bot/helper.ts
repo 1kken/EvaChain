@@ -13,9 +13,13 @@ const datasource = new DataSource({
 		STATUS === 'DEV'
 			? 'postgresql://postgres:postgres@127.0.0.1:54322/postgres'
 			: `postgresql://postgres.xixattpbfetzpwecbkde:${DB_PASSWORD}@aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres`,
-	ssl: {
-		rejectUnauthorized: false
-	}
+
+	ssl:
+		STATUS === 'DEV'
+			? false
+			: {
+					rejectUnauthorized: false
+				}
 });
 
 const db = await SqlDatabase.fromDataSourceParams({

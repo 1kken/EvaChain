@@ -6,14 +6,15 @@
 	import type { SuperValidated } from 'sveltekit-superforms';
 	import type { DeleteUnit, UpdateUnit } from '$lib/schemas/unit/schema';
 	import UpdateDialogUnit from './update-dialog-unit.svelte';
+	import type { Tables } from '$lib/types/database.types';
 
 	interface Props {
 		deleteForm: SuperValidated<DeleteUnit>;
 		updateForm: SuperValidated<UpdateUnit>;
-		id: number;
+		unit: Tables<'unit'>;
 	}
 
-	let { deleteForm, updateForm, id }: Props = $props();
+	let { deleteForm, updateForm, unit }: Props = $props();
 	let dropDownOpen = $state(false);
 </script>
 
@@ -35,10 +36,10 @@
 		<DropdownMenu.Item
 			onSelect={(e) => {
 				e.preventDefault();
-			}}><UpdateDialogUnit {updateForm} {id} bind:dropDownOpen /></DropdownMenu.Item
+			}}><UpdateDialogUnit {updateForm} {unit} bind:dropDownOpen /></DropdownMenu.Item
 		>
 		<DropdownMenu.Item onSelect={(e) => e.preventDefault()}
-			><DeleteActionUnit {deleteForm} {id} bind:dropDownOpen /></DropdownMenu.Item
+			><DeleteActionUnit {deleteForm} {unit} bind:dropDownOpen /></DropdownMenu.Item
 		>
 	</DropdownMenu.Content>
 </DropdownMenu.Root>
