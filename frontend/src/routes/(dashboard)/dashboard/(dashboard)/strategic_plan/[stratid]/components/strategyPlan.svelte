@@ -126,7 +126,7 @@
 				<Update {strategyPlan} bind:isDrawerOpen />
 			{/snippet}
 			<div class="flex gap-4">
-				<Create strategyPlanId={strategyPlan.id} bind:isExpanded onToggle={fetchData} />
+				<Create strategyPlanId={strategyPlan.id} onToggle={fetchData} />
 				<DropDownWrapper bind:isDrawerOpen childrens={[updateAction, deleteAction]} />
 			</div>
 		</div>

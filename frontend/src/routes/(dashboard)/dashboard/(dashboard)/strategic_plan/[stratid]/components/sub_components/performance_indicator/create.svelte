@@ -17,15 +17,15 @@
 	import * as Select from '$lib/components/ui/select/index.js';
 	import { Button } from '$lib/components/ui/button';
 	import FormSection from './FormSection.svelte';
+	import { fetchSdgAlignments } from '../../../utils/page_load';
 
 	//props
 	interface Iprops {
 		strategyPlanId: string;
-		isExpanded: boolean;
 		onToggle: () => Promise<void>;
 	}
 
-	let { strategyPlanId, isExpanded = $bindable(), onToggle }: Iprops = $props();
+	let { strategyPlanId, onToggle }: Iprops = $props();
 	//stores
 	const { currentPerformanceIndicators, addPerformanceIndicator, size } =
 		getStrategyPerformanceIndicatorStore();
@@ -39,7 +39,7 @@
 	const form = superForm(createForm, {
 		id: crypto.randomUUID(),
 		dataType: 'json',
-		resetForm: false,
+		resetForm: true,
 		validators: zodClient(createStrategyPlanPerformanceIndicatorSchema),
 		multipleSubmits: 'prevent',
 		onUpdate({ form, result }) {
@@ -58,13 +58,25 @@
 				addPerformanceIndicator(performanceIndicator);
 				showSuccessToast(`Succesfully added strategy plan indicator `);
 				isOpen = false;
-				isExpanded = false;
+				const years = [];
+				for (let year = start; year <= end; year++) {
+					years.push({
+						year,
+						target: '',
+						budget: 0
+					});
+				}
+				yearlyPlan = years;
+				currentSdg = [];
+				onToggle();
 				reset({
 					data: {
-						...form.data
+						strategy_plan_id: strategyPlanId,
+						position: $size + 1
 					},
 					newState: {
-						...form.data
+						strategy_plan_id: strategyPlanId,
+						position: $size + 1
 					}
 				});
 			}

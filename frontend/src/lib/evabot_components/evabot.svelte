@@ -49,7 +49,7 @@
 			console.error('Chat error:', error);
 			messages.push({
 				sender: 'ai',
-				text: error instanceof Error ? error.message : 'An unknown error occurred',
+				text: 'Hi im sorry something went wrong 😔, maybe you can try again?',
 				timestamp: getTimeStamp()
 			});
 		} finally {
