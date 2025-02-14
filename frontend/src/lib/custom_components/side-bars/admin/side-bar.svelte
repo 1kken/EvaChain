@@ -5,6 +5,7 @@
 	import SideBarEntities from './side-bar-entities.svelte';
 	import SideBarAttributes from './side-bar-attributes.svelte';
 	import SideBarData from './side-bar-data.svelte';
+	import SideBarRoleManagement from './side-bar-role-management.svelte';
 
 	let { sidebarOpen = $bindable() } = $props();
 
@@ -40,7 +41,9 @@
 		</Sidebar.Group>
 		<Sidebar.Group>
 			<Sidebar.GroupLabel>Role Management</Sidebar.GroupLabel>
-			<Sidebar.GroupContent></Sidebar.GroupContent>
+			<Sidebar.GroupContent>
+				<SideBarRoleManagement />
+			</Sidebar.GroupContent>
 		</Sidebar.Group>
 		<Sidebar.Group>
 			<Sidebar.GroupLabel>Data Management</Sidebar.GroupLabel>
