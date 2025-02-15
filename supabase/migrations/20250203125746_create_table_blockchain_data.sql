@@ -2,6 +2,7 @@
 CREATE TABLE blockchain_data (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     file_cid TEXT NOT NULL,
+    action TEXT NOT NULL DEFAULT 'backup',
     file_name TEXT NOT NULL,
     type TEXT NOT NULL DEFAULT 'data/evidence',
     blockchain_hash TEXT NOT NULL,

@@ -7,7 +7,6 @@ import {
 	backUpAccomplishmentReport,
 	backUpDpcr,
 	backUpIpcr,
-	backupIpcrEvidence,
 	backUpOpcr,
 	backUpOperationalPlan,
 	backUpStrategicPlan
@@ -35,8 +34,7 @@ export const actions: Actions = {
 				() => backUpDpcr(supabase, pinata, lastBackup?.created_at),
 				() => backUpOpcr(supabase, pinata, lastBackup?.created_at),
 				() => backUpStrategicPlan(supabase, pinata, lastBackup?.created_at),
-				() => backUpAccomplishmentReport(supabase, pinata, lastBackup?.created_at),
-				() => backupIpcrEvidence(supabase, pinata, lastBackup?.created_at)
+				() => backUpAccomplishmentReport(supabase, pinata, lastBackup?.created_at)
 			];
 
 			const results = [];

@@ -12,30 +12,6 @@ export async function fetchBlockChainData(supabase: SupabaseClient<Database>) {
 	return data ?? [];
 }
 
-export async function fetchIpcrIndicatorEvidence(
-	supabase: SupabaseClient<Database>,
-	lastBackupDate?: string
-) {
-	if (lastBackupDate === undefined) {
-		let { data, error: errorFetch } = await supabase.from('ipcr_indicator_evidence').select('*');
-		if (errorFetch) {
-			throw new Error(errorFetch.message);
-		}
-
-		return data;
-	}
-
-	let { data, error: errorFetch } = await supabase
-		.from('ipcr_indicator_evidence')
-		.select('*')
-		.or(`created_at.gt.${lastBackupDate},updated_at.gt.${lastBackupDate}`);
-	if (errorFetch) {
-		throw new Error(errorFetch.message);
-	}
-
-	return data ?? null;
-}
-
 export async function fetchLatestBlockchainData(supabase: SupabaseClient<Database>) {
 	let { data, error: errorFetch } = await supabase
 		.from('blockchain_data')

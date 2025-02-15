@@ -475,6 +475,7 @@ export type Database = {
       }
       blockchain_data: {
         Row: {
+          action: string
           blockchain_hash: string
           created_at: string
           file_cid: string
@@ -484,6 +485,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          action?: string
           blockchain_hash: string
           created_at?: string
           file_cid: string
@@ -493,6 +495,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          action?: string
           blockchain_hash?: string
           created_at?: string
           file_cid?: string

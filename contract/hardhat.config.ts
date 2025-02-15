@@ -18,8 +18,7 @@ const SEPOLIA_PRIVATE_KEY = vars.get("SEPOLIA_PRIVATE_KEY");
 
 const config: HardhatUserConfig = {
   typechain: {
-    outDir:
-      "../frontend/src/routes/(dashboard)/dashboard/(admin)/admin/block_chain/blockchain-helper/type-chain",
+    outDir: "../frontend/src/lib/type-chain",
     target: "ethers-v6",
   },
   gasReporter: {

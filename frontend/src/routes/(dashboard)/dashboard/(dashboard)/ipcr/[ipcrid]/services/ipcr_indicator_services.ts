@@ -15,6 +15,7 @@ import {
 	type UniversalDeleteSchema
 } from '$lib/schemas/universal_delete_schema';
 import { error } from '@sveltejs/kit';
+import { processIpcrEvidence } from '../utils/blockchain/pinata_helper';
 
 export async function createIpcrIndicator(request: Request, supabase: SupabaseClient<Database>) {
 	const form = await superValidate<Infer<CreateIpcrIndicatorSchema>, App.Superforms.Message>(
@@ -191,6 +192,16 @@ export async function markIpcrIndicatorDone(request: Request, supabase: Supabase
 		});
 	}
 
+	//lets do the block chain here
+	try {
+		await processIpcrEvidence(supabase, id, 0);
+	} catch (error) {
+		return message(form, {
+			status: 'error',
+			text: `Error processing evidence: ${error}`
+		});
+	}
+
 	// Update the indicator status and accomplishments
 	const { error: updateError, data: ipcrFunctionIndicator } = await supabase
 		.from('ipcr_indicator')
@@ -287,6 +298,16 @@ export async function editAccomplishment(request: Request, supabase: SupabaseCli
 		return message(form, {
 			status: 'error',
 			text: `Error updating storage: ${updateStorageError.message}`
+		});
+	}
+
+	//block chain
+	try {
+		await processIpcrEvidence(supabase, id, 1);
+	} catch (error) {
+		return message(form, {
+			status: 'error',
+			text: `Error processing evidence: ${error}`
 		});
 	}
 

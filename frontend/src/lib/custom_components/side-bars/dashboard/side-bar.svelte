@@ -4,6 +4,7 @@
 	import SideBarFooter from '$lib/custom_components/side-bars/side-bar-footer.svelte';
 	import SideBarDocuments from './side-bar-documents.svelte';
 	import { getAuthStore } from '$lib/utils/authStore';
+	import SideBarBlockChain from './side-bar-block-chain.svelte';
 
 	let { sidebarOpen = $bindable() } = $props();
 
@@ -35,6 +36,12 @@
 			<Sidebar.GroupLabel>Document Management</Sidebar.GroupLabel>
 			<Sidebar.GroupContent>
 				<SideBarDocuments />
+			</Sidebar.GroupContent>
+		</Sidebar.Group>
+		<Sidebar.Group>
+			<Sidebar.GroupLabel>Block Chain Monitoring</Sidebar.GroupLabel>
+			<Sidebar.GroupContent>
+				<SideBarBlockChain />
 			</Sidebar.GroupContent>
 		</Sidebar.Group>
 	</Sidebar.Content>

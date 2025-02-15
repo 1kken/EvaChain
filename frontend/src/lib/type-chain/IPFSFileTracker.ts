@@ -25,6 +25,7 @@ import type {
 export declare namespace IPFSFileTracker {
   export type FileReferenceStruct = {
     cid: string;
+    action: BigNumberish;
     fileType: BigNumberish;
     fileName: string;
     timestamp: BigNumberish;
@@ -34,6 +35,7 @@ export declare namespace IPFSFileTracker {
 
   export type FileReferenceStructOutput = [
     cid: string,
+    action: bigint,
     fileType: bigint,
     fileName: string,
     timestamp: bigint,
@@ -41,6 +43,7 @@ export declare namespace IPFSFileTracker {
     exists: boolean
   ] & {
     cid: string;
+    action: bigint;
     fileType: bigint;
     fileName: string;
     timestamp: bigint;
@@ -94,6 +97,7 @@ export interface IPFSFileTrackerInterface extends Interface {
 
 export namespace FileReferenceAddedEvent {
   export type InputTuple = [
+    action: BigNumberish,
     cid: string,
     fileType: BigNumberish,
     fileName: string,
@@ -101,6 +105,7 @@ export namespace FileReferenceAddedEvent {
     blockHash: BytesLike
   ];
   export type OutputTuple = [
+    action: bigint,
     cid: string,
     fileType: bigint,
     fileName: string,
@@ -108,6 +113,7 @@ export namespace FileReferenceAddedEvent {
     blockHash: string
   ];
   export interface OutputObject {
+    action: bigint;
     cid: string;
     fileType: bigint;
     fileName: string;
@@ -218,7 +224,7 @@ export interface IPFSFileTracker extends BaseContract {
   >;
 
   filters: {
-    "FileReferenceAdded(string,uint8,string,uint256,bytes32)": TypedContractEvent<
+    "FileReferenceAdded(uint8,string,uint8,string,uint256,bytes32)": TypedContractEvent<
       FileReferenceAddedEvent.InputTuple,
       FileReferenceAddedEvent.OutputTuple,
       FileReferenceAddedEvent.OutputObject

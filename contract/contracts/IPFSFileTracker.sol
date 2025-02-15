@@ -15,9 +15,17 @@ contract IPFSFileTracker {
         FILE
     }
 
+    enum Action {
+        ADD_EVIDENCE,
+        UPDATE_EVIDENCE,
+        DELETE_EVIDENCE,
+        BACKUP
+    }
+
     // Structure to store file information
     struct FileReference {
         string cid;
+        Action action;
         FileType fileType;
         string fileName;
         uint256 timestamp;
@@ -30,6 +38,7 @@ contract IPFSFileTracker {
 
     // Events
     event FileReferenceAdded(
+        Action action,
         string cid,
         FileType fileType,
         string fileName,
@@ -87,6 +96,7 @@ contract IPFSFileTracker {
 
         fileReferences[_cid] = FileReference({
             cid: _cid,
+            action: Action.ADD_EVIDENCE, // Added missing action field
             fileType: _fileType,
             fileName: _fileName,
             timestamp: currentTimestamp,
@@ -95,6 +105,7 @@ contract IPFSFileTracker {
         });
 
         emit FileReferenceAdded(
+            Action.ADD_EVIDENCE, // Added action parameter
             _cid,
             _fileType,
             _fileName,

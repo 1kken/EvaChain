@@ -1,5 +1,5 @@
-import { IPFSFileTracker__factory } from './type-chain/index';
 import { PRIVATE_KEY, RPC_URL, CONTRACT_ADDRESS } from '$env/static/private';
+import { IPFSFileTracker__factory } from '$lib/type-chain/index';
 import { ethers, JsonRpcProvider } from 'ethers';
 import type { BigNumberish } from 'ethers';
 
@@ -36,10 +36,18 @@ export async function uploadFileDetailsToBlockChain(fileDetails: FileDetails) {
 
 		const eventPromise = new Promise((resolve) => {
 			contract.once(
-				contract.filters['FileReferenceAdded(string,uint8,string,uint256,bytes32)'],
+				contract.filters['FileReferenceAdded(uint8,string,uint8,string,uint256,bytes32)'],
 				// These are the actual parameters passed by the event
-				(cid: string, fileType: bigint, fileName: string, timeStamp: bigint, blockHash: string) => {
+				(
+					action: bigint,
+					cid: string,
+					fileType: bigint,
+					fileName: string,
+					timeStamp: bigint,
+					blockHash: string
+				) => {
 					resolve({
+						action,
 						cid,
 						fileType,
 						fileName,

@@ -4,13 +4,12 @@ import {
 	fetchAccomplishmentReportBackUpData,
 	fetchDpcrBackUpData,
 	fetchIpcrBackUpData,
-	fetchIpcrIndicatorEvidence,
 	fetchOpcrBackUpData,
 	fetchOperationalPlanBackUpData,
 	fetchStrategicPlanBackUpData
 } from './helper';
 import type { PinataSDK, UploadOptions, UploadResponse } from 'pinata';
-import { uploadFileDetailsToBlockChain } from './blockchain-helper';
+import { uploadFileDetailsToBlockChain } from './blockchain_helper';
 
 const pinataCSVOptions: UploadOptions = {
 	groupId: '0194ccf0-2f4b-7b4b-b899-53414ee9cbc5'
@@ -312,71 +311,5 @@ export async function backUpAccomplishmentReport(
 			await pinata.files.delete([pinataUpload.cid]);
 		}
 		throw new Error(`Error uploading/or blockchain: ${error.message}`);
-	}
-}
-
-const pinataEvidenceOptions: UploadOptions = {
-	groupId: '0194cd06-03a1-7ea5-bbd5-847e65027455'
-};
-export async function backupIpcrEvidence(
-	supabase: SupabaseClient<Database>,
-	pinata: PinataSDK,
-	lastBackupDate?: string
-) {
-	const data = await fetchIpcrIndicatorEvidence(supabase, lastBackupDate);
-	console.log(data);
-	if (!data || data.length === 0 || data === null) {
-		return `No IPCR evidence data to backup`;
-	}
-
-	for (const evidence of data) {
-		const { data: fileData, error: downloadError } = await supabase.storage
-			.from('indicator_evidence')
-			.download(evidence.file_path);
-
-		if (downloadError) {
-			throw new Error(`Error downloading file: ${downloadError.name}`);
-		}
-
-		const file = new File([fileData], evidence.file_path.split('/').pop() || 'evidence.file', {
-			type: fileData.type
-		});
-
-		let pinataUpload: UploadResponse | null = null;
-
-		try {
-			pinataUpload = await pinata.upload.file(file, pinataEvidenceOptions);
-
-			const fileDetails = {
-				cid: pinataUpload.cid,
-				fileType: 1, // Type for IPCR evidence
-				fileName: file.name
-			};
-
-			const reason = await uploadFileDetailsToBlockChain(fileDetails);
-			if (reason === null) {
-				continue; // Skip if file already exists
-			}
-
-			const blockChainDetails = {
-				file_cid: reason.cid,
-				file_name: reason.fileName,
-				type: 'ipcr_evidence',
-				blockchain_hash: reason.currentBlockHash
-			};
-
-			const { error: insertError } = await supabase
-				.from('blockchain_data')
-				.insert(blockChainDetails);
-
-			if (insertError) {
-				throw new Error(insertError.message);
-			}
-		} catch (error: any) {
-			if (pinataUpload?.cid) {
-				await pinata.files.delete([pinataUpload.cid]);
-			}
-			throw new Error(`Error processing evidence ${evidence.id}: ${error}`);
-		}
 	}
 }

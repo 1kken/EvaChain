@@ -26,7 +26,6 @@
 	const latestBlockChainData = $state(data.latestBlockChainData);
 	const date = new Date(latestBlockChainData?.created_at ?? Date.now());
 	const formattedDate = date.toLocaleDateString('en-GB');
-	// const { blockChainData, latestBlockChainData } = data;
 
 	const backupData: SubmitFunction = ({ action }) => {
 		isLoading = true;

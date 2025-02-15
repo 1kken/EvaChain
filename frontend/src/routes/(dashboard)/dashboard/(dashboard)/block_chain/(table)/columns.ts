@@ -1,11 +1,17 @@
 import { renderComponent, renderSnippet } from '$lib/components/ui/data-table';
 import type { ColumnDef } from '@tanstack/table-core';
 import DataTableSortButton from '$lib/custom_components/data-table/data-table-sort-button.svelte';
-import DataLink from './dataLink.svelte';
 import DateCell from './dateCell.svelte';
-import type { Tables } from '$lib/types/database.types';
+
 // This type is used to define the shape of our data.
-export type BlockChainData = Tables<'blockchain_data'>;
+interface BlockChainData {
+	file_cid: string;
+	file_name: string;
+	type: string;
+	blockchain_hash: string;
+	action: string;
+	created_at: string; // or Date if you're parsing timestamps
+}
 
 export const createColumns = (): ColumnDef<BlockChainData>[] => [
 	{
@@ -17,10 +23,7 @@ export const createColumns = (): ColumnDef<BlockChainData>[] => [
 				onclick: () => column.toggleSorting(column.getIsSorted() === 'asc')
 			}),
 		cell: ({ getValue, row }) => {
-			//display a link to the IPCR  wiht id
-			const title = getValue<string>();
-			const cid = row.original.file_cid;
-			return renderComponent(DataLink, { cid, name: title });
+			return getValue();
 		}
 	},
 	{
