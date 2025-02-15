@@ -30,7 +30,7 @@ export const createRoleWithPermissionsSchema = z.object({
 		}),
 
 	// Default scope for all permissions
-	scope: ScopeEnum.default('all')
+	scope: ScopeEnum.default('office')
 });
 
 // Export the type

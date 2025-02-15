@@ -17,6 +17,7 @@
 
 	let { data }: { data: SuperValidated<Infer<CreateRoleWithPermissionsInput>> } = $props();
 
+	//states
 	let isOpen = $state(false);
 	let searchQuery = $state('');
 	let expandedModules = $state<Record<string, boolean>>({});
@@ -26,10 +27,13 @@
 		multipleSubmits: 'prevent',
 		invalidateAll: 'force'
 	});
+	//form setup
+	const { form: formData, enhance, message, delayed } = form;
 
+	//save the permsiions id whos gonna be selected
 	let selectedPermissionIds = $state<number[]>([]);
 
-	const { form: formData, enhance, message, delayed } = form;
+	//save the scopes index:module 0:strategic plan 1:opcr 2:dpcr 3:accomplishment report 4:operational plan 5:ipcr
 
 	let permissions: RoleFormData = $state({
 		name: '',
@@ -71,12 +75,21 @@
 				]
 			},
 			{
+				name: 'Operational Plan',
+				permissions: [
+					{ id: 17, name: 'Create Operational Plan', checked: false },
+					{ id: 18, name: 'View Operational Plans', checked: false },
+					{ id: 19, name: 'Edit Operational Plan', checked: false },
+					{ id: 20, name: 'Delete Operational Plan', checked: false }
+				]
+			},
+			{
 				name: 'Individual Performance Commitment Review (IPCR)',
 				permissions: [
-					{ id: 17, name: 'Create IPCR', checked: false },
-					{ id: 18, name: 'View IPCRs', checked: false },
-					{ id: 19, name: 'Edit IPCR', checked: false },
-					{ id: 20, name: 'Delete IPCR', checked: false }
+					{ id: 21, name: 'Create IPCR', checked: false },
+					{ id: 22, name: 'View IPCRs', checked: false },
+					{ id: 23, name: 'Edit IPCR', checked: false },
+					{ id: 24, name: 'Delete IPCR', checked: false }
 				]
 			}
 		]
@@ -94,7 +107,6 @@
 			.filter((module) => module.permissions.length > 0)
 	);
 
-	// Toggle module expansion
 	// Toggle module expansion
 	const toggleModule = (moduleName: string) => {
 		expandedModules[moduleName] = !expandedModules[moduleName];
@@ -131,13 +143,15 @@
 	$effect(() => {
 		$formData.selectedPermissions = selectedPermissionIds;
 	});
+
+	$inspect(selectedPermissionIds);
 </script>
 
 <Dialog.Root bind:open={isOpen}>
 	<Dialog.Trigger class={buttonVariants({ variant: 'default' })}>
 		<Plus /> Create roles
 	</Dialog.Trigger>
-	<Dialog.Content class="sm:max-w-[600px]">
+	<Dialog.Content class="max-h-[85vh] overflow-y-auto sm:max-w-[800px]">
 		<Dialog.Header>
 			<Dialog.Title>Create New Role</Dialog.Title>
 			<Dialog.Description>

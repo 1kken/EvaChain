@@ -10,6 +10,7 @@
 	import type { Module } from '..';
 	import { slide } from 'svelte/transition';
 	import { createEventDispatcher } from 'svelte';
+	import { Select, SelectContent, SelectItem, SelectTrigger } from '$lib/components/ui/select';
 
 	type Props = {
 		module: Module;
@@ -28,6 +29,9 @@
 		});
 	};
 
+	// Available scope options
+	const scopeOptions = ['All', 'Unit', 'Office', 'Program'];
+
 	// Compute if all permissions are checked
 	const allChecked = $derived(module.permissions.every((permission) => permission.checked));
 
@@ -38,8 +42,8 @@
 <Card>
 	<Collapsible open={isExpanded} onOpenChange={onToggleExpand}>
 		<CardHeader class="p-4">
-			<CollapsibleTrigger class="flex w-full items-center justify-between">
-				<div class="flex items-center gap-4">
+			<CollapsibleTrigger class="flex w-full items-center space-x-4">
+				<div class="flex flex-1 items-center gap-4">
 					<button
 						type="button"
 						onclick={(e) => {
@@ -56,9 +60,25 @@
 					>
 						<Checkbox checked={allChecked} data-state={someChecked ? 'indeterminate' : undefined} />
 					</button>
-					<span class="font-small font-bold">{module.name}</span>
+					<span class="text-sm font-medium">{module.name}</span>
 				</div>
-				<div class="flex h-4 w-4 items-center justify-center">
+
+				<!-- {#if module.scope}
+					<div class="flex items-center">
+						<Select type="single" bind:value={module.scope}>
+							<SelectTrigger class="w-[120px]" onclick={(e) => e.stopPropagation()}>
+								<span class="truncate">{module.scope}</span>
+							</SelectTrigger>
+							<SelectContent>
+								{#each scopeOptions as scope}
+									<SelectItem value={scope}>{scope}</SelectItem>
+								{/each}
+							</SelectContent>
+						</Select>
+					</div>
+				{/if} -->
+
+				<div class="ml-2 flex h-4 w-4 items-center justify-center">
 					{#if isExpanded}
 						<ChevronUpIcon class="h-4 w-4 transition-transform duration-200" />
 					{:else}
