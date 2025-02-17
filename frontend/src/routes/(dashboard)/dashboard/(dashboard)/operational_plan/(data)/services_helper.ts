@@ -104,6 +104,7 @@ async function copyOperationalPlan(
 	previousOpId: string,
 	newOpData: NewOpData
 ) {
+	// Create new operational plan
 	const { data: newOp, error: opError } = await supabase
 		.from('operational_plan')
 		.insert(newOpData)
@@ -112,37 +113,48 @@ async function copyOperationalPlan(
 
 	if (opError || !newOp) throw new Error('Failed to create new operational plan');
 
+	// Fetch existing structure with activities and indicators
 	const { data: headers, error: headerError } = await supabase
 		.from('op_header')
 		.select(
 			`
-      id,
-      title,
-      position,
-      op_annual_plan (
-        id,
-        description,
-        position,
-        op_activity (
-          id,
-          activity,
-          input_type,
-          performance_indicator,
-          former_state,
-          total,
-          responsible_officer_unit,
-          total_budgetary_requirements,
-          position
-        )
-      )
-    `
+            id,
+            title,
+            position,
+            op_annual_plan (
+                id,
+                description,
+                position,
+                op_activity (
+                    id,
+                    activity,
+                    position,
+                    op_activity_indicator (
+                        id,
+                        input_type,
+                        performance_indicator,
+                        former_state,
+                        q1_target,
+                        q2_target,
+                        q3_target,
+                        q4_target,
+                        total,
+                        responsible_officer_unit,
+                        total_budgetary_requirements,
+                        position
+                    )
+                )
+            )
+        `
 		)
 		.eq('operational_plan_id', previousOpId)
 		.order('position');
 
 	if (headerError || !headers) throw new Error('Failed to fetch headers');
 
+	// Copy the structure
 	for (const header of headers) {
+		// Create new header
 		const { data: newHeader, error: newHeaderError } = await supabase
 			.from('op_header')
 			.insert({
@@ -155,6 +167,7 @@ async function copyOperationalPlan(
 
 		if (newHeaderError || !newHeader) throw new Error('Failed to create header');
 
+		// Copy annual plans and their activities/indicators
 		for (const annualPlan of header.op_annual_plan) {
 			const { data: newAnnualPlan, error: annualPlanError } = await supabase
 				.from('op_annual_plan')
@@ -168,30 +181,51 @@ async function copyOperationalPlan(
 
 			if (annualPlanError || !newAnnualPlan) throw new Error('Failed to create annual plan');
 
-			const activities = annualPlan.op_activity.map((activity) => ({
-				op_annual_plan_id: newAnnualPlan.id,
-				activity: activity.activity,
-				input_type: activity.input_type,
-				performance_indicator: activity.performance_indicator,
-				former_state: activity.total || activity.former_state,
-				responsible_officer_unit: activity.responsible_officer_unit,
-				total_budgetary_requirements: activity.total_budgetary_requirements,
-				position: activity.position,
-				q1_target: null,
-				q2_target: null,
-				q3_target: null,
-				q4_target: null,
-				total: null
-			}));
+			// Copy activities
+			for (const activity of annualPlan.op_activity) {
+				// Create new activity
+				const { data: newActivity, error: activityError } = await supabase
+					.from('op_activity')
+					.insert({
+						op_annual_plan_id: newAnnualPlan.id,
+						activity: activity.activity,
+						position: activity.position
+					})
+					.select()
+					.single();
 
-			const { error: activitiesError } = await supabase.from('op_activity').insert(activities);
+				if (activityError || !newActivity) throw new Error('Failed to create activity');
 
-			if (activitiesError) throw new Error('Failed to create activities');
+				// Copy indicators for this activity
+				const indicators = activity.op_activity_indicator.map((indicator) => ({
+					op_activity_id: newActivity.id,
+					input_type: indicator.input_type,
+					performance_indicator: indicator.performance_indicator,
+					former_state: indicator.former_state,
+					q1_target: null, // Reset targets for new plan
+					q2_target: null,
+					q3_target: null,
+					q4_target: null,
+					total: null,
+					responsible_officer_unit: indicator.responsible_officer_unit,
+					total_budgetary_requirements: indicator.total_budgetary_requirements,
+					position: indicator.position
+				}));
+
+				if (indicators.length > 0) {
+					const { error: indicatorsError } = await supabase
+						.from('op_activity_indicator')
+						.insert(indicators);
+
+					if (indicatorsError) throw new Error('Failed to create indicators');
+				}
+			}
 		}
 	}
 
 	return newOp.id;
 }
+
 type NewOpData = {
 	title: string;
 	implementing_unit: string;

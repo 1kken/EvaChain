@@ -10,6 +10,10 @@ import {
 	createOpAnnualPlanSchema,
 	updateOpAnnualPlanSchema
 } from '../schema/op_annual_plan_schema';
+import {
+	createOpActivityIndicatorSchema,
+	updateOpActivityIndicatorSchema
+} from '../schema/op_indicator_schema';
 
 export async function getOperationalPlan(opid: string, supabase: SupabaseClient<Database>) {
 	const { data: operational_plan, error: fetchOpError } = await supabase
@@ -59,6 +63,14 @@ export async function getOpActivityForms() {
 	return {
 		createForm: await superValidate(zod(createOpActivitySchema)),
 		updateForm: await superValidate(zod(updateOpActivitySchema)),
+		deleteForm: await superValidate(zod(universalDeleteSchema))
+	};
+}
+
+export async function getOpIndicatorForms() {
+	return {
+		createForm: await superValidate(zod(createOpActivityIndicatorSchema)),
+		updateForm: await superValidate(zod(updateOpActivityIndicatorSchema)),
 		deleteForm: await superValidate(zod(universalDeleteSchema))
 	};
 }

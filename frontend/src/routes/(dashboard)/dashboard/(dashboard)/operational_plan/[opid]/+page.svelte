@@ -8,6 +8,7 @@
 	import { setOpActivityFormContext } from './states/op_activity_form_state';
 	import Header from '../../components/Header.svelte';
 	import { setOpAnnualPlanFormContext } from './states/op_annual_plan_form_state';
+	import { setOpIndicatorFormContext } from './states/op_indicator_form_state';
 
 	let { data }: { data: PageData } = $props();
 
@@ -20,6 +21,8 @@
 	setOpAnnualPlanFormContext(data.opAnnualPlanForms);
 	//activities
 	setOpActivityFormContext(data.opActivityForms);
+	//indicator
+	setOpIndicatorFormContext(data.opIndicatorForms);
 </script>
 
 <!-- Main wrapper -->

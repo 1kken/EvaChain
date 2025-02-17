@@ -14,3 +14,8 @@ export type OpActivityFormResult = {
 	form: any;
 	opActivity: Tables<'op_activity'>;
 };
+
+export type OpIndicatorFormResult = {
+	form: any;
+	opIndicator: Tables<'op_activity_indicator'>;
+};

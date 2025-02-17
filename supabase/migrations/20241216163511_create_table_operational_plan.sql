@@ -1,6 +1,9 @@
+CREATE TYPE op_status AS ENUM ('draft', 'submitted', 'reviewing', 'revision', 'approved');
+
 -- Create operational_plan table
 CREATE TABLE operational_plan (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    status op_status DEFAULT 'draft' NOT NULL,
     creator_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
     unit_id INTEGER REFERENCES unit(id) ON DELETE CASCADE NOT NULL,
     office_id INTEGER REFERENCES office(id) ON DELETE CASCADE,

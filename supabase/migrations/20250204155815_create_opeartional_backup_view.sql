@@ -1,4 +1,3 @@
--- Create a comprehensive view for operational plans and their activities
 CREATE
 OR REPLACE VIEW operational_backup_view AS
 SELECT
@@ -48,20 +47,27 @@ SELECT
     -- Activity details
     act.id as activity_id,
     act.activity,
-    act.input_type,
-    act.performance_indicator,
-    act.former_state,
-    act.q1_target,
-    act.q2_target,
-    act.q3_target,
-    act.q4_target,
-    act.total,
-    act.responsible_officer_unit,
-    act.total_budgetary_requirements,
     act.position as activity_position,
+    -- Indicator details
+    ind.id as indicator_id,
+    ind.input_type,
+    ind.performance_indicator,
+    ind.former_state,
+    ind.q1_target,
+    ind.q2_target,
+    ind.q3_target,
+    ind.q4_target,
+    ind.total,
+    ind.responsible_officer_unit,
+    ind.total_budgetary_requirements,
+    ind.position as indicator_position,
     -- Timestamps
     op.created_at,
-    op.updated_at
+    op.updated_at,
+    act.created_at as activity_created_at,
+    act.updated_at as activity_updated_at,
+    ind.created_at as indicator_created_at,
+    ind.updated_at as indicator_updated_at
 FROM
     operational_plan op
     -- Creator joins
@@ -79,7 +85,8 @@ FROM
     -- Operational Plan hierarchy joins
     LEFT JOIN op_header h ON op.id = h.operational_plan_id
     LEFT JOIN op_annual_plan ap ON h.id = ap.op_header_id
-    LEFT JOIN op_activity act ON ap.id = act.op_annual_plan_id;
+    LEFT JOIN op_activity act ON ap.id = act.op_annual_plan_id
+    LEFT JOIN op_activity_indicator ind ON act.id = ind.op_activity_id;
 
 -- Grant SELECT permission to authenticated users
 GRANT

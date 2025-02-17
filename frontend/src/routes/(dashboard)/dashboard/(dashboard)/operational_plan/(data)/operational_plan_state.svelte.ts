@@ -38,7 +38,7 @@ function createOperationalPlanStore(
 	};
 }
 
-export function getOperationalPlanStore(): OperationalPlanState {
+export function getOperationalPlansStore(): OperationalPlanState {
 	const store = getContext<OperationalPlanState>(OPERATIONAL_PLAN_STATE_KEY);
 	if (!store) {
 		throw new Error('Operational Plan store not found in context');

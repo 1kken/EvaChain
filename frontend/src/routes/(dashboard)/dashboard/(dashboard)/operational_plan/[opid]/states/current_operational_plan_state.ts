@@ -7,6 +7,7 @@ const OPERATIONAL_PLAN_STATE_KEY = Symbol('OPERATIONAL_PLAN_STATE_KEY');
 type OperationalPlanState = {
 	currentOperationalPlan: Writable<Tables<'operational_plan'> | null>;
 	setOperationalPlan: (plan: Tables<'operational_plan'>) => void;
+	updateOperationalPlan: (updates: Partial<Tables<'operational_plan'>>) => void;
 	resetOperationalPlan: () => void;
 };
 
@@ -19,6 +20,17 @@ function createOperationalPlanStore(
 		currentOperationalPlan.set(plan);
 	}
 
+	function updateOperationalPlan(updates: Partial<Tables<'operational_plan'>>) {
+		currentOperationalPlan.update((currentPlan) => {
+			if (!currentPlan) return null;
+			return {
+				...currentPlan,
+				...updates,
+				updated_at: new Date().toISOString()
+			};
+		});
+	}
+
 	function resetOperationalPlan() {
 		currentOperationalPlan.set(null);
 	}
@@ -26,6 +38,7 @@ function createOperationalPlanStore(
 	return {
 		currentOperationalPlan,
 		setOperationalPlan,
+		updateOperationalPlan,
 		resetOperationalPlan
 	};
 }

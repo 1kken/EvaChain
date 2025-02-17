@@ -12,7 +12,7 @@
 		universalDeleteSchema,
 		type UniversalDeleteInput
 	} from '$lib/schemas/universal_delete_schema';
-	import { getOperationalPlanStore } from '../(data)/operational_plan_state.svelte';
+	import { getOperationalPlansStore } from '../(data)/operational_plan_state.svelte';
 	import type { OPFormResult } from '../(data)/types';
 	interface Props {
 		deleteForm: SuperValidated<UniversalDeleteInput>;
@@ -21,7 +21,7 @@
 	}
 
 	let { deleteForm, id, dropDownOpen = $bindable() }: Props = $props();
-	const { removeOperationalPlan, currentOperationalPlans } = getOperationalPlanStore();
+	const { removeOperationalPlan, currentOperationalPlans } = getOperationalPlansStore();
 	const form = superForm(deleteForm, {
 		validators: zodClient(universalDeleteSchema),
 		multipleSubmits: 'prevent',

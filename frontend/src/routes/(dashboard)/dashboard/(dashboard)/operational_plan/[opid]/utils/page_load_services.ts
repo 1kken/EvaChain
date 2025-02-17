@@ -45,3 +45,26 @@ export async function fetchOpActivities(id: string): Promise<OpActivityResponse>
 		};
 	}
 }
+
+interface OpIndicatorResponse {
+	data: Tables<'op_activity_indicator'>[];
+	error?: string;
+}
+
+export async function fetchOpIndicators(id: string): Promise<OpIndicatorResponse> {
+	try {
+		const response = await fetch(`/api/operational_plan/indicator?activity_id=${id}`);
+		const result: OpIndicatorResponse = await response.json();
+		if (!response.ok) {
+			throw new Error(result.error || 'Failed to fetch indicators');
+		}
+
+		return result;
+	} catch (error) {
+		console.error('Error fetching indicators:', error);
+		return {
+			data: [],
+			error: error instanceof Error ? error.message : 'An unknown error occurred'
+		};
+	}
+}

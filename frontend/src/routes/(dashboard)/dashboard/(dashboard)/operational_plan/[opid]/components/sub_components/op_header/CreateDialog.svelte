@@ -81,12 +81,12 @@
 	<Dialog.Trigger class="focus-visible:outline-none" id="nav-2">
 		<span class="flex items-center gap-2">
 			<Plus class="h-5 w-5" />
-			<span class="hidden md:inline">Add Header</span>
+			<span class="hidden md:inline">Add Function Header</span>
 		</span>
 	</Dialog.Trigger>
 	<Dialog.Content class="max-h-[85vh] overflow-y-auto sm:max-w-[800px]">
 		<Dialog.Header>
-			<Dialog.Title>Add operational header</Dialog.Title>
+			<Dialog.Title>Add Operational Function Header</Dialog.Title>
 			<Dialog.Description>
 				Operational headers are Key areas supporting institutional growth, including instruction,
 				research, community management, faculty development, infrastructure, international linkages,

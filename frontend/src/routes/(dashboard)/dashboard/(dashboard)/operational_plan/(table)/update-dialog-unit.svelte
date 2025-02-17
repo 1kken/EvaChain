@@ -11,7 +11,7 @@
 		updateOperationalPlanSchema,
 		type UpdateOperationalPlanInput
 	} from '../(data)/operational_plan_schema';
-	import { getOperationalPlanStore } from '../(data)/operational_plan_state.svelte';
+	import { getOperationalPlansStore } from '../(data)/operational_plan_state.svelte';
 	import type { OPFormResult } from '../(data)/types';
 
 	let {
@@ -23,7 +23,7 @@
 		id: string;
 		dropDownOpen?: boolean;
 	} = $props();
-	const { updateOperationalPlan, currentOperationalPlans } = getOperationalPlanStore();
+	const { updateOperationalPlan, currentOperationalPlans } = getOperationalPlansStore();
 
 	let isOpen = $state(false);
 	const form = superForm(updateForm, {

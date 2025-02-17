@@ -16,6 +16,7 @@ export async function fetchLatestBlockchainData(supabase: SupabaseClient<Databas
 	let { data, error: errorFetch } = await supabase
 		.from('blockchain_data')
 		.select('created_at')
+		.eq('action', 'backup') // Filter for backup actions only
 		.order('created_at', { ascending: false })
 		.limit(1)
 		.single();

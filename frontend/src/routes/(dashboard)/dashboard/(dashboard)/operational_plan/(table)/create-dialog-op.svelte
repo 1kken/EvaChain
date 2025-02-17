@@ -17,7 +17,7 @@
 		createOperationalPlanSchema,
 		type CreateOperationalPlanSchema
 	} from '../(data)/operational_plan_schema';
-	import { getOperationalPlanStore } from '../(data)/operational_plan_state.svelte';
+	import { getOperationalPlansStore } from '../(data)/operational_plan_state.svelte';
 	import type { OPFormResult } from '../(data)/types';
 	import { getAuthStore } from '$lib/utils/authStore';
 	import { checkProfileCompletion } from '$lib/utils/missingDetailsToast';
@@ -26,9 +26,9 @@
 
 	let { data }: { data: SuperValidated<Infer<CreateOperationalPlanSchema>> } = $props();
 
-	const { addOperationalPlan } = getOperationalPlanStore();
+	const { addOperationalPlan } = getOperationalPlansStore();
 	const { currentProfile } = getAuthStore();
-	const { currentOperationalPlans } = getOperationalPlanStore();
+	const { currentOperationalPlans } = getOperationalPlansStore();
 
 	let isOpen = $state(false);
 	let isDrawerOpen = $state(false);

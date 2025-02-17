@@ -24,31 +24,39 @@ SELECT
     ap.position AS annual_plan_position,
     act.id AS activity_id,
     act.activity,
-    act.input_type,
-    act.performance_indicator,
-    act.former_state,
-    act.q1_target,
-    act.q2_target,
-    act.q3_target,
-    act.q4_target,
-    act.total,
-    act.responsible_officer_unit,
-    act.total_budgetary_requirements,
     act.position AS activity_position,
+    ind.id AS indicator_id,
+    ind.input_type,
+    ind.performance_indicator,
+    ind.former_state,
+    ind.q1_target,
+    ind.q2_target,
+    ind.q3_target,
+    ind.q4_target,
+    ind.total,
+    ind.responsible_officer_unit,
+    ind.total_budgetary_requirements,
+    ind.position AS indicator_position,
     act.created_at AS activity_created_at,
-    act.updated_at AS activity_updated_at
+    act.updated_at AS activity_updated_at,
+    ind.created_at AS indicator_created_at,
+    ind.updated_at AS indicator_updated_at
 FROM
     operational_plan op
     LEFT JOIN op_header h ON op.id = h.operational_plan_id
     LEFT JOIN op_annual_plan ap ON h.id = ap.op_header_id
     LEFT JOIN op_activity act ON ap.id = act.op_annual_plan_id
+    LEFT JOIN op_activity_indicator ind ON act.id = ind.op_activity_id
 ORDER BY
     op.id,
     h.position,
     ap.position,
-    act.position;
+    act.position,
+    ind.position;
 
 -- Grant select permission to authenticated users
 GRANT
 SELECT
     ON operational_plan_activities TO authenticated;
+
+;

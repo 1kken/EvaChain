@@ -58,6 +58,11 @@ export const updateOperationalPlanSchema = z
 		message: 'At least one field must be provided for update besides id'
 	});
 
+export const submitOPschema = z.object({
+	operationalPlanID: z.string().uuid()
+});
+
+export type SubmitOPSchema = typeof submitOPschema;
 export type CreateOperationalPlanSchema = typeof createOperationalPlanSchema;
 export type UpdateOperationalPlanSchema = typeof updateOperationalPlanSchema;
 export type UpdateOperationalPlanInput = z.infer<UpdateOperationalPlanSchema>;
