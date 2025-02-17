@@ -30,7 +30,7 @@
 <div class="rounded-lg border">
 	<header class=" top-0 flex h-10 items-center justify-between p-7 md:px-10">
 		<div class="flex items-center gap-2">
-			<Badge variant={'secondary'} class="h-5 bg-amber-500 text-xs">Activity</Badge>
+			<Badge variant={'secondary'} class="h-5 bg-amber-500 text-xs">Indicator</Badge>
 			<div class="min-w-0 flex-1">
 				<TruncatedDiv text={opIndicator.performance_indicator} maxLength={50} />
 			</div>

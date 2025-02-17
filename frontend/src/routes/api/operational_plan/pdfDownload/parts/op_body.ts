@@ -3,7 +3,8 @@ import type { Content, TableCell } from 'pdfmake/interfaces';
 import {
 	fetchOpActivitiesByOpObjectiveId,
 	fetchOpAnnualPlanByOpHeaderId,
-	fetchOpHeadersByOPId
+	fetchOpHeadersByOPId,
+	fetchOpIndicatorsByOpActivityId
 } from './op_body_helper';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
@@ -124,14 +125,25 @@ async function main(
 			let isFirstAnnualPlan = true;
 			const opActivities = await fetchOpActivitiesByOpObjectiveId(opAnnualPlan.id, supabase);
 			for (const opActivity of opActivities) {
-				rows.push(
-					generateBodyRow({
-						isFirstAnnualPlan,
-						annualPlansDescription: opAnnualPlan.description,
-						activity: opActivity
-					})
-				);
-				isFirstAnnualPlan = false;
+				let isFirstActivity = true;
+				const opIndicators = await fetchOpIndicatorsByOpActivityId(opActivity.id, supabase);
+				for (const opIndicator of opIndicators) {
+					rows.push([
+						{ text: isFirstAnnualPlan ? opAnnualPlan.description : '' },
+						{ text: isFirstActivity ? opActivity.activity : '' },
+						{ text: opIndicator.performance_indicator },
+						{ text: opIndicator.former_state, alignment: 'center' },
+						{ text: opIndicator.q1_target, alignment: 'center' },
+						{ text: opIndicator.q2_target, alignment: 'center' },
+						{ text: opIndicator.q3_target, alignment: 'center' },
+						{ text: opIndicator.q4_target, alignment: 'center' },
+						{ text: opIndicator.total, alignment: 'center' },
+						{ text: opIndicator.responsible_officer_unit, alignment: 'center' },
+						{ text: opIndicator.total_budgetary_requirements, alignment: 'center' }
+					]);
+					isFirstActivity = false;
+					isFirstAnnualPlan = false;
+				}
 			}
 		}
 	}
@@ -155,31 +167,5 @@ function generateOpHeaderRow(opHeader: string): TableCell[] {
 		{},
 		{},
 		{}
-	];
-}
-
-interface BodyRowParams {
-	isFirstAnnualPlan: boolean;
-	annualPlansDescription: string;
-	activity: Tables<'op_activity'>;
-}
-function generateBodyRow(params: BodyRowParams): TableCell[] {
-	return [
-		{ text: params.isFirstAnnualPlan ? params.annualPlansDescription : '' },
-		{ text: params.activity.activity },
-		{
-			text: params.activity.performance_indicator
-		},
-		{
-			text: params.activity.former_state,
-			alignment: 'center'
-		},
-		{ text: params.activity.q1_target, alignment: 'center' },
-		{ text: params.activity.q2_target, alignment: 'center' },
-		{ text: params.activity.q3_target, alignment: 'center' },
-		{ text: params.activity.q4_target, alignment: 'center' },
-		{ text: params.activity.total, alignment: 'center' },
-		{ text: params.activity.responsible_officer_unit, alignment: 'center' },
-		{ text: params.activity.total_budgetary_requirements, alignment: 'center' }
 	];
 }

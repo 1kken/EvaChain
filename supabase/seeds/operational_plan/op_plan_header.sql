@@ -20,36 +20,6 @@ VALUES
         3,
         'Extension and Community Management'
     ),
-    (
-        '123e4567-e89b-12d3-a456-426614174003',
-        'e99f935f-19c6-4d0e-9d7f-54c5b96f9db7',
-        4,
-        'Student Success and Support'
-    ),
-    (
-        '123e4567-e89b-12d3-a456-426614174004',
-        'e99f935f-19c6-4d0e-9d7f-54c5b96f9db7',
-        5,
-        'Faculty Development'
-    ),
-    (
-        '123e4567-e89b-12d3-a456-426614174005',
-        'e99f935f-19c6-4d0e-9d7f-54c5b96f9db7',
-        6,
-        'Infrastructure and Technology'
-    ),
-    (
-        '123e4567-e89b-12d3-a456-426614174006',
-        'e99f935f-19c6-4d0e-9d7f-54c5b96f9db7',
-        7,
-        'Internationalization and Linkages'
-    ),
-    (
-        '123e4567-e89b-12d3-a456-426614174007',
-        'e99f935f-19c6-4d0e-9d7f-54c5b96f9db7',
-        8,
-        'Administration'
-    ),
     --JUST FOR THE SEEDING FOR IPCR
     (
         'c392f75c-6f4e-4e34-a91e-6b1c7a590d4d',

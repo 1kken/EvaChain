@@ -201,7 +201,7 @@ async function copyOperationalPlan(
 					op_activity_id: newActivity.id,
 					input_type: indicator.input_type,
 					performance_indicator: indicator.performance_indicator,
-					former_state: indicator.former_state,
+					former_state: indicator.total ?? 'undefined',
 					q1_target: null, // Reset targets for new plan
 					q2_target: null,
 					q3_target: null,

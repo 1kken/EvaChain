@@ -51,3 +51,20 @@ export async function fetchOpActivitiesByOpObjectiveId(
 
 	return opActivities;
 }
+
+export async function fetchOpIndicatorsByOpActivityId(
+	activityId: string,
+	supabase: SupabaseClient<Database>
+) {
+	const { data: opIndicators, error } = await supabase
+		.from('op_activity_indicator')
+		.select('*')
+		.eq('op_activity_id', activityId)
+		.order('position', { ascending: true });
+
+	if (error) {
+		throw new Error(error.message);
+	}
+
+	return opIndicators;
+}
