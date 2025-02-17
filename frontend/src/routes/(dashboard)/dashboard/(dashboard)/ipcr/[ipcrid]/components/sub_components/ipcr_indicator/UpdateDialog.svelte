@@ -9,12 +9,7 @@
 	import type { IPCRFunctionIndicatorFormResult } from '../../../utils/types';
 	import { Input } from '$lib/components/ui/input';
 	import AutoCompleteOnlineInput from '$lib/custom_components/AutoCompleteOnlineInput.svelte';
-	import {
-		fetchOperationalPlanActivities,
-		fetchOperationalPlanActivityById,
-		fetchProfileById,
-		fetchProfileByname
-	} from '../../../utils/page_loader_services';
+	import { fetchProfileByname } from '../../../utils/page_loader_services';
 	import { getIpcrIndicatorFormContext } from '../../../states/ipcr_indicator_form_state';
 	import { getIpcrIndicatorStore } from '../../../states/ipcr_indicator_state';
 	import {
@@ -24,6 +19,7 @@
 	import IntelligentInput from '$lib/custom_components/IntelligentInput.svelte';
 	import type { Tables } from '$lib/types/database.types';
 	import { getAuthStore } from '$lib/utils/authStore';
+	import OpIndicator from './OpIndicator.svelte';
 	const { currentProfile } = getAuthStore();
 
 	//props
@@ -86,7 +82,7 @@
 	$formData.id = ipcrFunctionIndicator.id;
 	$formData.final_output = ipcrFunctionIndicator.final_output;
 	$formData.success_indicator = ipcrFunctionIndicator.success_indicator;
-	$formData.op_activity_id = ipcrFunctionIndicator.op_activity_id;
+	$formData.op_activity_indicator_id = ipcrFunctionIndicator.op_activity_indicator_id;
 	$formData.immediate_supervisor_id = ipcrFunctionIndicator.immediate_supervisor_id;
 	$formData.units = ipcrFunctionIndicator.units;
 
@@ -144,21 +140,12 @@
 					<Form.FieldErrors />
 				</Form.Field>
 			</div>
-			<Form.Field {form} name="op_activity_id">
-				<Form.Control>
-					{#snippet children({ props })}
-						<Form.Label>Operational Plan Activity</Form.Label>
-						<AutoCompleteOnlineInput
-							bind:selectedId={$formData.op_activity_id}
-							name={props.name}
-							placeholder={'Type Operational Plan Activity here'}
-							onSearch={fetchOperationalPlanActivities}
-							onFetchById={fetchOperationalPlanActivityById}
-						/>
-					{/snippet}
-				</Form.Control>
-				<Form.FieldErrors />
-			</Form.Field>
+			<OpIndicator
+				ipcrOpIndicatorId={$formData.op_activity_indicator_id}
+				handleIpcrOpIndicator={(e) => {
+					$formData.op_activity_indicator_id = e;
+				}}
+			/>
 			{#if ipcrFunctionIndicator.ipcr_function_id}
 				<div class="grid grid-cols-2 gap-2">
 					{#if $currentProfile!.nature_of_work_id === 1}

@@ -195,8 +195,8 @@ FROM
     LEFT JOIN profiles ind_sup_profile ON ind.immediate_supervisor_id = ind_sup_profile.id
     LEFT JOIN position ind_sup_pos ON ind_sup_profile.position_id = ind_sup_pos.id
     -- Operational plan activity and indicator joins
-    LEFT JOIN op_activity op_act ON ind.op_activity_id = op_act.id
-    LEFT JOIN op_activity_indicator op_ind ON op_act.id = op_ind.op_activity_id;
+    LEFT JOIN op_activity_indicator op_ind ON ind.op_activity_indicator_id = op_ind.id
+    LEFT JOIN op_activity op_act ON op_ind.op_activity_id = op_act.id;
 
 -- Grant permissions
 GRANT

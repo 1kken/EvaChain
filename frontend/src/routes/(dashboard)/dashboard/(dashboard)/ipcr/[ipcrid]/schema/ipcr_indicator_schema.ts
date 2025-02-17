@@ -18,7 +18,7 @@ export const createIpcrIndicatorSchema = z.object({
 		.nullable(),
 	final_output: z.string().min(1, 'Final output is required'),
 	success_indicator: z.string().min(1, 'Success indicator is required'),
-	op_activity_id: z.string().uuid('Invalid OP Activity ID'),
+	op_activity_indicator_id: z.string().uuid('Invalid OP Activity ID'),
 	position: z
 		.number()
 		.int('Position must be an integer')
@@ -37,7 +37,7 @@ export const updateIpcrIndicatorSchema = z
 		id: z.string().uuid('Invalid ID'),
 		final_output: z.string().min(1, 'Final output is required'),
 		success_indicator: z.string().min(1, 'Success indicator is required'),
-		op_activity_id: z.string().uuid('Invalid OP Activity ID'),
+		op_activity_indicator_id: z.string().uuid('Invalid OP Activity Indicator ID'),
 		immediate_supervisor_id: z.string().uuid('Invalid supervisor ID').nullable().optional(),
 		units: z
 			.number()

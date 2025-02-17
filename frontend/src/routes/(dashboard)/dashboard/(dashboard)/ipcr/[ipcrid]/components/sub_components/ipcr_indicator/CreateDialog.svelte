@@ -9,16 +9,13 @@
 	import type { IPCRFunctionIndicatorFormResult } from '../../../utils/types';
 	import { Input } from '$lib/components/ui/input';
 	import AutoCompleteOnlineInput from '$lib/custom_components/AutoCompleteOnlineInput.svelte';
-	import {
-		fetchOperationalPlanActivities,
-		fetchProfileByname
-	} from '../../../utils/page_loader_services';
+	import { fetchProfileByname } from '../../../utils/page_loader_services';
 	import { getIpcrIndicatorFormContext } from '../../../states/ipcr_indicator_form_state';
 	import { getIpcrIndicatorStore } from '../../../states/ipcr_indicator_state';
 	import { createIpcrIndicatorSchema } from '../../../schema/ipcr_indicator_schema';
 	import IntelligentInput from '$lib/custom_components/IntelligentInput.svelte';
 	import { getAuthStore } from '$lib/utils/authStore';
-	import { browser } from '$app/environment';
+	import OpIndicator from './OpIndicator.svelte';
 	const { currentProfile } = getAuthStore();
 
 	//props
@@ -131,6 +128,7 @@
 		<form action="?/createipcrindicator" method="POST" use:enhance class="space-y-6">
 			<input hidden name="position" value={$formData.position} />
 			<input hidden name="ipcr_function_id" value={$formData.ipcr_function_id} />
+			<input hidden name="ipcr_function_category_id" value={$formData.ipcr_function_category_id} />
 			<div class=" grid gap-2 md:grid-cols-2">
 				<Form.Field {form} name="final_output">
 					<Form.Control>
@@ -161,20 +159,11 @@
 					<Form.FieldErrors />
 				</Form.Field>
 			</div>
-			<Form.Field {form} name="op_activity_id">
-				<Form.Control>
-					{#snippet children({ props })}
-						<Form.Label>Operational Plan Activity</Form.Label>
-						<AutoCompleteOnlineInput
-							bind:selectedId={$formData.op_activity_id}
-							name={props.name}
-							placeholder={'Type Operational Plan Activity here'}
-							onSearch={fetchOperationalPlanActivities}
-						/>
-					{/snippet}
-				</Form.Control>
-				<Form.FieldErrors />
-			</Form.Field>
+			<OpIndicator
+				handleIpcrOpIndicator={(e) => {
+					$formData.op_activity_indicator_id = e;
+				}}
+			/>
 			{#if ipcrFunctionId}
 				<div class="grid grid-cols-2 gap-2">
 					{#if $currentProfile!.nature_of_work_id === 1}

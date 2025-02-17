@@ -59,7 +59,7 @@ sql_paths = [
     './seeds/operational_plan/op_plan_annual_plan.sql',
     './seeds/operational_plan/op_plan_activity.sql',
     './seeds/operational_plan/op_plan_indicator.sql',
-    # './seeds/ipcr/ipcr.sql',
+    './seeds/ipcr/ipcr.sql',
     # './seeds/ipcr/ipcr_function.sql',
     # './seeds/ipcr/ipcr_category.sql',
     # './seeds/ipcr/ipcr_sub_category.sql',

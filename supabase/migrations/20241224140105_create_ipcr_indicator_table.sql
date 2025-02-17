@@ -1,6 +1,6 @@
 -- Create status enum type
 CREATE TYPE ipcr_indicator_status AS ENUM ('draft', 'submitted', 'reviewing','revision', 'approved');
--- remove indicator date
+
 -- Create ipcr_indicator table
 CREATE TABLE ipcr_indicator (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -12,7 +12,7 @@ CREATE TABLE ipcr_indicator (
     success_indicator TEXT NOT NULL,
     actual_accomplishments TEXT,
     accomplishment_date DATE,
-    op_activity_id UUID REFERENCES op_activity(id) ON DELETE SET NULL NOT NULL,
+    op_activity_indicator_id UUID REFERENCES op_activity_indicator(id) ON DELETE SET NULL NOT NULL,
     quality_rating NUMERIC(3,2),
     efficiency_rating NUMERIC(3,2),
     timeliness_rating NUMERIC(3,2),
@@ -35,8 +35,8 @@ CREATE INDEX idx_ipcr_indicator_sub_category_id
 CREATE INDEX idx_ipcr_indicator_category_id 
     ON ipcr_indicator(ipcr_function_category_id);
 
-CREATE INDEX idx_ipcr_indicator_op_activity_id 
-    ON ipcr_indicator(op_activity_id);
+CREATE INDEX idx_ipcr_indicator_op_activity_indicator_id 
+    ON ipcr_indicator(op_activity_indicator_id);
 
 CREATE INDEX idx_ipcr_indicator_immediate_supervisor 
     ON ipcr_indicator(immediate_supervisor_id);
@@ -45,9 +45,8 @@ CREATE INDEX idx_ipcr_indicator_immediate_supervisor
 CREATE INDEX idx_ipcr_indicator_position 
     ON ipcr_indicator(position, ipcr_function_category_id);
 
-
 -- Add trigger for updating timestamps
-CREATE TRIGGER set_updated_at 
-    BEFORE UPDATE ON ipcr_indicator 
-    FOR EACH ROW 
+CREATE TRIGGER set_updated_at
+    BEFORE UPDATE ON ipcr_indicator
+    FOR EACH ROW
     EXECUTE FUNCTION fn_set_updated_at();

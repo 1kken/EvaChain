@@ -1,64 +1,5 @@
 import type { Tables } from '$lib/types/database.types';
 
-//activities
-interface SearchResult {
-	id: string; // UUID or any unique identifier
-	display: string; // Text to show in input (e.g., name)
-	[key: string]: any; // For additional fields
-}
-export async function fetchOperationalPlanActivities(text: string): Promise<SearchResult[]> {
-	try {
-		const response = await fetch(`/api/operational_plan_activity?text=${encodeURIComponent(text)}`);
-		const result = await response.json();
-
-		if (!response.ok) {
-			throw new Error(result.error || 'Failed to fetch operational plan activities');
-		}
-
-		// Assuming result.data[0].activities is an array of activities
-		const activities = result.data[0]?.activities || [];
-
-		// Map activities to SearchResult type
-		const mappedActivities: SearchResult[] = activities.map((activity: any) => ({
-			id: activity.activity_id, // Map to the id field
-			display: activity.activity, // Map to the display field (or any other field you'd like)
-			...activity // Spread the rest of the activity fields
-		}));
-
-		return mappedActivities;
-	} catch (error) {
-		console.error('Error fetching operational plan activities:', error);
-		return [
-			{
-				id: '',
-				display: 'Error fetching activities',
-				error: error instanceof Error ? error.message : 'An unknown error occurred'
-			}
-		];
-	}
-}
-
-//activities by id
-export async function fetchOperationalPlanActivityById(id: string): Promise<SearchResult> {
-	try {
-		const response = await fetch(`/api/operational_plan_activity/fetch_by_id?id=${id}`);
-		const result = await response.json();
-		if (!response.ok) {
-			throw new Error(result.error || 'Failed to fetch operational plan activity');
-		}
-		return {
-			id: result.data.id,
-			display: result.data.activity
-		};
-	} catch (error) {
-		console.error('Error fetching operational plan activity:', error);
-		return {
-			id: '',
-			display: 'Error fetching activity',
-			error: error instanceof Error ? error.message : 'An unknown error occurred'
-		};
-	}
-}
 //position update
 //category
 export async function updateCategoryPosition(ipcrCategories: Tables<'ipcr_function_category'>[]) {
@@ -251,6 +192,102 @@ export async function fetchIpcrFunctionIndicators(
 		return result;
 	} catch (error) {
 		console.error('Error fetching ipcr indicators:', error);
+		return {
+			data: [],
+			error: error instanceof Error ? error.message : 'An unknown error occurred'
+		};
+	}
+}
+
+//for the op headers
+// Type for the error response
+interface ErrorResponse {
+	data: [];
+	error: string;
+}
+export async function fetchOpHeaders(): Promise<Tables<'op_header'>[] | ErrorResponse> {
+	try {
+		const response = await fetch(`/api/operational_plan/ipcr_function_header`);
+		const result = await response.json();
+
+		if (!response.ok) {
+			throw new Error(result.error || 'Failed to fetch op headers');
+		}
+
+		return result.data;
+	} catch (error) {
+		console.error('Error fetching op headers:', error);
+		return {
+			data: [],
+			error: error instanceof Error ? error.message : 'An unknown error occurred'
+		};
+	}
+}
+
+// Type for the success response
+interface SuccessResponse {
+	data: Tables<'op_header_indicators'>[];
+}
+
+// Type for the error response
+interface ErrorResponse {
+	data: [];
+	error: string;
+}
+
+// Combined response type
+type FetchHeaderIndicatorsResponse = SuccessResponse | ErrorResponse;
+
+export async function fetchHeaderIndicators(
+	headerId: string
+): Promise<FetchHeaderIndicatorsResponse> {
+	try {
+		const response = await fetch(`/api/operational_plan/ipcr_indicator?headerId=${headerId}`);
+		const result = await response.json();
+		if (!response.ok) {
+			throw new Error(result.error || 'Failed to fetch indicators');
+		}
+		return { data: result.data };
+	} catch (error) {
+		console.error('Error fetching indicators:', error);
+		return {
+			data: [],
+			error: error instanceof Error ? error.message : 'An unknown error occurred'
+		};
+	}
+}
+
+//reverse
+// Type for the success response
+interface SuccessResponse {
+	data: Tables<'op_header_indicators'>[];
+}
+
+// Type for the error response
+interface ErrorResponse {
+	data: [];
+	error: string;
+}
+
+// Combined response type
+type FetchIndicatorsByIpcrActivityResponse = SuccessResponse | ErrorResponse;
+
+export async function fetchIndicatorsByIpcrActivityIndicator(
+	indicatorId: string
+): Promise<FetchIndicatorsByIpcrActivityResponse> {
+	try {
+		const response = await fetch(
+			`/api/operational_plan/ipcr_indicator_search_by_ipcr_activity_indicator_id?indicatorId=${indicatorId}`
+		);
+		const result = await response.json();
+
+		if (!response.ok) {
+			throw new Error(result.error || 'Failed to fetch indicators');
+		}
+
+		return { data: result.data };
+	} catch (error) {
+		console.error('Error fetching indicators:', error);
 		return {
 			data: [],
 			error: error instanceof Error ? error.message : 'An unknown error occurred'
