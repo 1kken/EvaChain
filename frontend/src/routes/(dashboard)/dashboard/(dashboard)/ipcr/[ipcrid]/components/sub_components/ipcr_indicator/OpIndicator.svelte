@@ -16,9 +16,11 @@
 	let isOpen = $state(false);
 	let opHeaders: Tables<'op_header'>[] = $state([]);
 	let opIndicators: Tables<'op_header_indicators'>[] = $state([]);
+
+	let selectedIndicator: Tables<'op_header_indicators'> | null = $state(null);
+
 	let selectedHeaderId = $state('');
 	let selectedHeader: Tables<'op_header'> | null = $state(null);
-	let selectedIndicator: Tables<'op_header_indicators'> | null = $state(null);
 
 	interface Props {
 		ipcrOpIndicatorId?: string;
@@ -34,31 +36,32 @@
 					showErrorToast(result.error);
 				} else {
 					opHeaders = result;
+					if (props.ipcrOpIndicatorId) {
+						fetchIndicatorsByIpcrActivityIndicator(props.ipcrOpIndicatorId)
+							.then((result) => {
+								if ('error' in result) {
+									showErrorToast(result.error);
+								} else {
+									//set the indicators
+									opIndicators = result.data;
+									selectedIndicator =
+										opIndicators.find(
+											(indicator) => indicator.indicator_id === props.ipcrOpIndicatorId
+										) ?? null;
+									selectedHeaderId = selectedIndicator?.header_id ?? '';
+									selectedHeader =
+										opHeaders.find((header) => header.id === selectedHeaderId) ?? null;
+								}
+							})
+							.catch((error) => {
+								showErrorToast('Failed to fetch indicators');
+							});
+					}
 				}
 			})
 			.catch((error) => {
 				showErrorToast('Failed to fetch headers');
 			});
-		if (props.ipcrOpIndicatorId) {
-			fetchIndicatorsByIpcrActivityIndicator(props.ipcrOpIndicatorId)
-				.then((result) => {
-					if ('error' in result) {
-						showErrorToast(result.error);
-					} else {
-						//set the indicators
-						opIndicators = result.data;
-						selectedIndicator =
-							opIndicators.find(
-								(indicator) => indicator.indicator_id === props.ipcrOpIndicatorId
-							) ?? null;
-						selectedHeaderId = selectedIndicator?.header_id ?? '';
-						selectedHeader = opHeaders.find((header) => header.id === selectedHeaderId) ?? null;
-					}
-				})
-				.catch((error) => {
-					showErrorToast('Failed to fetch indicators');
-				});
-		}
 	});
 
 	function handleHeaderChangeForIndicator(headerId: string) {
@@ -74,8 +77,6 @@
 				showErrorToast('Failed to fetch indicators');
 			});
 	}
-	// $inspect(selectedIndicator);
-	$inspect(selectedHeader);
 </script>
 
 <Dialog.Root bind:open={isOpen}>
