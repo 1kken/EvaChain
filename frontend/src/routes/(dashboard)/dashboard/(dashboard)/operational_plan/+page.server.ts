@@ -67,8 +67,5 @@ export const actions = {
 	},
 	updateop: async ({ request, locals: { supabase } }) => {
 		return updateOperationalPlan(request, supabase);
-	},
-	submitop: async ({ request, locals: { supabase } }) => {
-		return submitOperationalPlan(request, supabase);
 	}
 } satisfies Actions;

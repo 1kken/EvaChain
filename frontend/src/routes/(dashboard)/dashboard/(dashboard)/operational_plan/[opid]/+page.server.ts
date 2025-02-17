@@ -6,7 +6,8 @@ import {
 	getOperationalPlan,
 	getOpHeaderForms,
 	getOpHeaders,
-	getOpIndicatorForms
+	getOpIndicatorForms,
+	getOpSubmitForm
 } from './utils/load_services';
 import {
 	createOpActivity,
@@ -23,6 +24,7 @@ import {
 	deleteOpIndicator,
 	updateOpIndicator
 } from './services/op_indicator_services';
+import { submitOperationalPlan } from './services/op_submit_services';
 
 export const load = (async ({ params, locals: { supabase, session } }) => {
 	const { opid } = params;
@@ -32,13 +34,16 @@ export const load = (async ({ params, locals: { supabase, session } }) => {
 	const opAnnualPlanForms = await getOpAnnualPlanForms();
 	const opActivityForms = await getOpActivityForms();
 	const opIndicatorForms = await getOpIndicatorForms();
+	const submitOpForm = await getOpSubmitForm();
+
 	return {
 		operationalPlan,
 		opHeaders,
 		opHeaderForms,
 		opAnnualPlanForms,
 		opActivityForms,
-		opIndicatorForms
+		opIndicatorForms,
+		submitOpForm
 	};
 }) satisfies PageServerLoad;
 
@@ -83,5 +88,8 @@ export const actions = {
 	},
 	deleteopindicator: async ({ request, locals: { supabase, session } }) => {
 		return deleteOpIndicator(request, supabase);
+	},
+	submitop: async ({ request, locals: { supabase } }) => {
+		return submitOperationalPlan(request, supabase);
 	}
 } satisfies Actions;

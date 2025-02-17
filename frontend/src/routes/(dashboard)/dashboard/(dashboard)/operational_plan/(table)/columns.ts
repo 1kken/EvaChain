@@ -11,6 +11,7 @@ import DataLink from './data-link.svelte';
 export type OperationalPlan = {
 	id: string;
 	title: string;
+	status: string;
 	implementing_unit: string;
 	created_at: string;
 };
@@ -39,6 +40,15 @@ export const createColumns = (
 		header: ({ column }) =>
 			renderComponent(DataTableSortButton, {
 				text: 'Implementing Unit',
+				arrangement: column.getIsSorted(),
+				onclick: () => column.toggleSorting(column.getIsSorted() === 'asc')
+			})
+	},
+	{
+		accessorKey: 'status',
+		header: ({ column }) =>
+			renderComponent(DataTableSortButton, {
+				text: 'Operational Plan Status',
 				arrangement: column.getIsSorted(),
 				onclick: () => column.toggleSorting(column.getIsSorted() === 'asc')
 			})

@@ -9,9 +9,11 @@
 	import Header from '../../components/Header.svelte';
 	import { setOpAnnualPlanFormContext } from './states/op_annual_plan_form_state';
 	import { setOpIndicatorFormContext } from './states/op_indicator_form_state';
+	import { getOpSubmitForm } from './utils/load_services';
 
 	let { data }: { data: PageData } = $props();
 
+	const submitOpForm = data.submitOpForm;
 	//set states
 	setOperationalPlanStore(data.operationalPlan);
 	//header
@@ -38,6 +40,6 @@
 
 	<!-- Navigation dock -->
 	<div class="fixed bottom-6 left-0 right-0 z-50 flex justify-center">
-		<NavButton />
+		<NavButton {submitOpForm} />
 	</div>
 </div>

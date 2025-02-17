@@ -14,6 +14,7 @@ import {
 	createOpActivityIndicatorSchema,
 	updateOpActivityIndicatorSchema
 } from '../schema/op_indicator_schema';
+import { submitOPschema } from '../schema/op_submit_schema';
 
 export async function getOperationalPlan(opid: string, supabase: SupabaseClient<Database>) {
 	const { data: operational_plan, error: fetchOpError } = await supabase
@@ -73,4 +74,8 @@ export async function getOpIndicatorForms() {
 		updateForm: await superValidate(zod(updateOpActivityIndicatorSchema)),
 		deleteForm: await superValidate(zod(universalDeleteSchema))
 	};
+}
+
+export async function getOpSubmitForm() {
+	return await superValidate(zod(submitOPschema));
 }

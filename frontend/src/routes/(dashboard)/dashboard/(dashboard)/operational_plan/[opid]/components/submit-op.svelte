@@ -12,10 +12,10 @@
 	import { Input } from '$lib/components/ui/input';
 	import { goto } from '$app/navigation';
 	import { showErrorToast } from '$lib/utils/toast';
-	import { submitOPschema, type SubmitOPSchema } from '../../(data)/operational_plan_schema';
 	import { getOperationalPlanStore } from '../states/current_operational_plan_state';
 	import type { OPFormResult } from '../../(data)/types';
 	import { getOperationalPlansStore } from '../../(data)/operational_plan_state.svelte';
+	import { submitOPschema, type SubmitOPSchema } from '../schema/op_submit_schema';
 
 	interface Props {
 		submitIPCRForm: SuperValidated<Infer<SubmitOPSchema>>;
@@ -25,8 +25,6 @@
 	//you might get confused at this but this is different only i know becasue i code this damn project
 	//this is the current ipcr present to the user //single
 	const { currentOperationalPlan, updateOperationalPlan } = getOperationalPlanStore();
-	//this is the all of the operational plan present to the user //multiple
-	const { updateOperationalPlan: single } = getOperationalPlansStore();
 	let isOpen = $state(false);
 
 	//check if current ipcr is not null
@@ -38,9 +36,9 @@
 		async onUpdate({ form, result }) {
 			const action = result.data as FormResult<OPFormResult>;
 			if (form.valid && action.opData) {
+				console.log('test');
 				const opData = action.opData;
 				updateOperationalPlan(opData);
-				single(opData.id, opData);
 				await goto('/dashboard/operational_plan/');
 			}
 		}
@@ -71,7 +69,7 @@
 	<AlertDialog.Trigger class="focus-visible:outline-none" id="nav-3">
 		<span class="flex items-center gap-2">
 			<Send class="h-5 w-5" />
-			<span class="hidden md:inline">Submit IPCR</span>
+			<span class="hidden md:inline">Submit Operational Plan</span>
 		</span>
 	</AlertDialog.Trigger>
 	<AlertDialog.Content>
