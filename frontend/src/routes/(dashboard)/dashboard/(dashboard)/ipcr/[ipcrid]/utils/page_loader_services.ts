@@ -199,7 +199,7 @@ export async function fetchIpcrFunctionIndicators(
 	}
 }
 
-//for the op headers
+//for the op headers================================================
 // Type for the error response
 interface ErrorResponse {
 	data: [];
@@ -292,5 +292,58 @@ export async function fetchIndicatorsByIpcrActivityIndicator(
 			data: [],
 			error: error instanceof Error ? error.message : 'An unknown error occurred'
 		};
+	}
+}
+
+//fetch the acciomplishments
+interface ErrorResponse {
+	data: [];
+	error: string;
+}
+
+export async function fetchAccomplishments(
+	indicatorId: string
+): Promise<Tables<'ipcr_indicator_accomplishment'>[] | ErrorResponse> {
+	try {
+		const response = await fetch(`/api/ipcr/accomplishments?indicator_id=${indicatorId}`);
+		const result = await response.json();
+
+		if (!response.ok) {
+			throw new Error(result.error || 'Failed to fetch accomplishments');
+		}
+
+		return result.data;
+	} catch (error) {
+		return {
+			data: [],
+			error: error instanceof Error ? error.message : 'An unknown error occurred'
+		};
+	}
+}
+
+//fetch the evidence
+export type SignedUrlResponse = {
+	signedUrl: string;
+};
+
+export async function getIpcrIndicatorEvidence(
+	ipcrIndicatorId: string
+): Promise<SignedUrlResponse> {
+	try {
+		const response = await fetch(`/api/ipcr/evidence?ipcr_indicator_id=${ipcrIndicatorId}`);
+
+		if (!response.ok) {
+			if (response.status === 404) {
+				return { signedUrl: '' };
+			}
+			const error = await response.json();
+			throw new Error(error.error || 'Failed to fetch evidence records');
+		}
+
+		const { data } = await response.json();
+		return data;
+	} catch (error) {
+		console.error('Error fetching IPCR indicator evidence:', error);
+		return { signedUrl: '' }; // Return empty string URL on any error
 	}
 }

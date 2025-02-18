@@ -3,7 +3,7 @@
 	import * as Form from '$lib/components/ui/form/index.js';
 	import { LoaderCircle } from 'lucide-svelte';
 	import { Plus } from 'lucide-svelte';
-	import SuperDebug, { setError, superForm, type FormResult } from 'sveltekit-superforms';
+	import { setError, superForm, type FormResult } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';
 	import type { IPCRFunctionIndicatorFormResult } from '../../../utils/types';
@@ -160,7 +160,7 @@
 				</Form.Field>
 			</div>
 			<OpIndicator
-				handleIpcrOpIndicator={(e) => {
+				handleIpcrOpIndicator={(e: string) => {
 					$formData.op_activity_indicator_id = e;
 				}}
 			/>

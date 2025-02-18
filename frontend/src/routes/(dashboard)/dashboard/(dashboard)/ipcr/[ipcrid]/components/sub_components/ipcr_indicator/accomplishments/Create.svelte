@@ -4,146 +4,101 @@
 	import SuperDebug, { fileProxy, superForm, type FormResult } from 'sveltekit-superforms';
 	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
-	import { LoaderCircle } from 'lucide-svelte';
-	import { Pencil } from 'lucide-svelte';
+	import { LoaderCircle, Plus } from 'lucide-svelte';
 	import * as Form from '$lib/components/ui/form/index.js';
 	import IntelligentInput from '$lib/custom_components/IntelligentInput.svelte';
 	import CalendarIcon from 'lucide-svelte/icons/calendar';
-	import {
-		DateFormatter,
-		type DateValue,
-		getLocalTimeZone,
-		parseDate,
-		today
-	} from '@internationalized/date';
+	import { DateFormatter, type DateValue, getLocalTimeZone, today } from '@internationalized/date';
 	import { Calendar } from '$lib/components/ui/calendar';
 	import * as Popover from '$lib/components/ui/popover';
 	import { cn } from '$lib/utils';
 	import { buttonVariants } from '$lib/components/ui/button';
 	import DragAndDropFileWrapper from '$lib/custom_components/DragAndDropFilesWrapper/DragAndDropFileWrapper.svelte';
-	import { getIpcrIndicatorFormContext } from '../../../states/ipcr_indicator_form_state';
-	import { getIpcrIndicatorStore } from '../../../states/ipcr_indicator_state';
-	import { markIndicatorDoneSchema } from '../../../schema/ipcr_indicator_schema';
-	import type { IPCRFunctionIndicatorFormResult } from '../../../utils/types';
-	import { onMount } from 'svelte';
-	import { getIpcrIndicatorEvidence, type SignedUrlResponse } from './mark_as_done_helper';
+	import type { IPCRAccomplishmentFormResult } from '../../../../utils/types';
+	import { getIpcrAccomplishmentFormContext } from '../../../../states/ipcr_indicator_accomplishment_form_state';
+	import { getIpcrAccomplishmentStore } from '../../../../states/ipcr_indicator_accomplishment_state';
+	import { createAccomplishmentSchema } from '../../../../schema/ipcr_indicator_accomplishmet';
+	import { Input } from '$lib/components/ui/input';
 
 	interface Props {
 		indicator: Tables<'ipcr_indicator'>; // Updated table name
-		isDrawerOpen: boolean;
+		opIndicator: Tables<'op_header_indicators'>;
+		isOpen: boolean;
 	}
 
-	//evidence
-
-	let { indicator, isDrawerOpen = $bindable() }: Props = $props();
+	let { opIndicator, indicator, isOpen = $bindable() }: Props = $props();
 
 	// stores
-	const { markDoneForm } = getIpcrIndicatorFormContext();
-	const { updateIpcrIndicator } = getIpcrIndicatorStore();
+	const { createForm } = getIpcrAccomplishmentFormContext();
+	const { addAccomplishment } = getIpcrAccomplishmentStore();
 
 	// state
-	let isOpen = $state(false);
-	const form = superForm(markDoneForm, {
-		validators: zodClient(markIndicatorDoneSchema),
+	const form = superForm(createForm, {
+		validators: zodClient(createAccomplishmentSchema),
 		multipleSubmits: 'prevent',
 		id: crypto.randomUUID(),
 		onUpdate({ form, result }) {
-			const action = result.data as FormResult<IPCRFunctionIndicatorFormResult>;
-			if (form.valid && action.ipcrFunctionIndicator) {
-				const indicator = action.ipcrFunctionIndicator;
-				updateIpcrIndicator(indicator.id, indicator);
-				showSuccessToast(
-					`Updating accomplishment for ${indicator.success_indicator} is successful`
-				);
+			const action = result.data as FormResult<IPCRAccomplishmentFormResult>;
+			if (form.valid && action.ipcrAccomplishment) {
+				const accomplishment = action.ipcrAccomplishment;
+				addAccomplishment(accomplishment);
+				showSuccessToast('Accomplishment added successfully');
 				isOpen = false;
-				isDrawerOpen = false;
 			}
 		}
 	});
 
 	const { form: formData, enhance, message, delayed, reset } = form;
-
-	const evidenceProxy = fileProxy(form, 'pdf_evidence');
-
-	//get the File from the signedUrl File in this context is the blob
-	async function getFileFromEvidence(signedUrl: string): Promise<File> {
-		const response = await fetch(signedUrl);
-		const blob = await response.blob();
-		const filename = signedUrl.split('?')[0].split('/').pop() || 'evidence';
-		return new File([blob], filename, { type: 'application/pdf' });
-	}
-
-	onMount(() => {
-		getIpcrIndicatorEvidence(indicator.id)
-			.then((evidence) => {
-				if (evidence.signedUrl) {
-					getFileFromEvidence(evidence.signedUrl)
-						.then((file) => {
-							const dataTransfer = new DataTransfer();
-							dataTransfer.items.add(file);
-							$evidenceProxy = dataTransfer.files;
-						})
-						.catch((e) => {
-							showErrorToast(`Error getting file from evidence: ${e}`);
-						});
-				}
-			})
-			.catch((e) => {
-				showErrorToast(`Error fetching evidence ${e}`);
-			});
-	});
-
 	$effect(() => {
 		if ($message?.status === 'error') {
-			showErrorToast(`Error editing accomplishment ${$message.text}`);
+			showErrorToast(`Error marking indicator as done ${$message.text}`);
 		}
 	});
 	const df = new DateFormatter('en-US', { dateStyle: 'long' });
 
 	// Initialize form data
-	$formData.id = indicator.id;
+	$formData.ipcr_indicator_id = indicator.id;
+	$formData.input_type = opIndicator.input_type ?? 'text';
+
 	// Initialize date value
 	let dateValue = $state<DateValue | undefined>();
-	if (indicator.accomplishment_date) {
-		dateValue = parseDate(indicator.accomplishment_date);
-	}
 	let placeholder = $state<DateValue>(today(getLocalTimeZone()));
 
+	const evidenceProxy = fileProxy(form, 'pdf_evidence');
 	function onFileSelectAndHover(files: File[]) {
 		const dataTransfer = new DataTransfer();
 		files.forEach((file) => dataTransfer.items.add(file));
 		const fileList = dataTransfer.files;
 		$evidenceProxy = fileList;
 	}
-
-	//set Data
-	$effect(() => {
-		$formData.accomplishment_date = indicator.accomplishment_date || '';
-		$formData.actual_accomplishments = indicator.actual_accomplishments || '';
-	});
 </script>
 
 <Dialog.Root bind:open={isOpen}>
-	<Dialog.Trigger class="focus-visible:outline-none">
-		<span class="flex items-center gap-3 text-sm">
-			<Pencil size={16} /> Edit Accomplishment
+	<Dialog.Trigger
+		class=" mb-1 w-full rounded-lg border border-dashed p-1 text-center hover:bg-green-200"
+	>
+		<span class="flex items-center justify-center space-x-2 text-center text-sm">
+			<Plus size="16" /> Add Accomplishments
 		</span>
 	</Dialog.Trigger>
-	<Dialog.Content class="w-11/12 sm:max-w-md">
+	<Dialog.Content class="max-h-[85vh] overflow-y-auto sm:max-w-[800px]">
 		<Dialog.Header>
-			<Dialog.Title>Mark Indicator As Done</Dialog.Title>
+			<Dialog.Title>Add accomplishment</Dialog.Title>
 			<Dialog.Description>
-				Target indicator: {indicator.success_indicator}
+				Extra information about the indicator.
+				<br />
+				Operational Plan Indicator: {opIndicator.performance_indicator}
 			</Dialog.Description>
 		</Dialog.Header>
 		<form
 			method="POST"
-			action="?/editaccomplishment"
+			action="?/createaccomplishment"
 			use:enhance
 			class="space-y-6"
 			enctype="multipart/form-data"
 		>
-			<input hidden name="id" value={$formData.id} />
+			<input hidden name="ipcr_indicator_id" value={$formData.ipcr_indicator_id} />
+			<input hidden name="input_type" value={$formData.input_type} />
 			<Form.Field {form} name="actual_accomplishments">
 				<Form.Control>
 					{#snippet children({ props })}
@@ -158,6 +113,23 @@
 						>
 					{/snippet}
 				</Form.Control>
+				<Form.FieldErrors />
+			</Form.Field>
+			<Form.Field {form} name="quantity">
+				<Form.Control>
+					{#snippet children({ props })}
+						<Form.Label
+							>Quantity <span class="text-sm text-gray-600"
+								>current input type: {opIndicator.input_type}</span
+							></Form.Label
+						>
+						<Input {...props} bind:value={$formData.quantity} />
+					{/snippet}
+				</Form.Control>
+				<Form.Description
+					>This is used to calculate the accomplishment data. Example input percentage: 2/2, 3/5 |
+					Example input number: 2, 3 | Example input text: Done, Not Done | Example ratio: 2:2, 3:5
+				</Form.Description>
 				<Form.FieldErrors />
 			</Form.Field>
 			<!-- Rest of the form remains the same -->
@@ -186,7 +158,15 @@
 									onValueChange={(v) => {
 										dateValue = v;
 										if (v) {
-											$formData.accomplishment_date = v.toString();
+											const now = new Date();
+											const date = new Date(v.toDate(getLocalTimeZone()));
+											date.setHours(
+												now.getHours(),
+												now.getMinutes(),
+												now.getSeconds(),
+												now.getMilliseconds()
+											);
+											$formData.accomplishment_date = date.toISOString();
 										} else {
 											$formData.accomplishment_date = '';
 										}
@@ -204,7 +184,6 @@
 				<Form.Control>
 					{#snippet children({ props })}
 						<DragAndDropFileWrapper
-							oldFile={$evidenceProxy[0]}
 							onFileSelect={onFileSelectAndHover}
 							name="pdf_evidence"
 							text={'Upload PDF evidence'}

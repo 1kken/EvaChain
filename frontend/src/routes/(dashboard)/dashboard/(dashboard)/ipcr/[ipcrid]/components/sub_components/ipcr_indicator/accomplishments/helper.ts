@@ -4,10 +4,10 @@ export type SignedUrlResponse = {
 };
 
 export async function getIpcrIndicatorEvidence(
-	ipcrIndicatorId: string
+	ipcraccomplishmentId: string
 ): Promise<SignedUrlResponse> {
 	try {
-		const response = await fetch(`/api/ipcr/evidence?ipcr_indicator_id=${ipcrIndicatorId}`);
+		const response = await fetch(`/api/ipcr/evidence?accomplishment_id=${ipcraccomplishmentId}`);
 
 		if (!response.ok) {
 			if (response.status === 404) {

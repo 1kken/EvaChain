@@ -7,6 +7,7 @@
 	import { setIpcrFunctionCategoryFormContext } from './states/ipcr_category_form_state';
 	import { setIpcrFunctionFormContext } from './states/ipcr_function_form_state';
 	import { setIpcrFunctionStore } from './states/ipcr_function_state';
+	import { setIpcrAccomplishmentFormContext } from './states/ipcr_indicator_accomplishment_form_state';
 	import { setIpcrIndicatorFormContext } from './states/ipcr_indicator_form_state';
 	import { setIpcrFunctionSubCategoryFormContext } from './states/ipcr_sub_category_form_state';
 
@@ -19,6 +20,7 @@
 	setIpcrFunctionCategoryFormContext(data.ipcrFunctionCategoryForm);
 	setIpcrIndicatorFormContext(data.ipcrIndicatorForm);
 	setIpcrFunctionSubCategoryFormContext(data.ipcrFunctionSubCategoryForm);
+	setIpcrAccomplishmentFormContext(data.ipcrAccomplishmentForm);
 </script>
 
 <div class="relative min-h-screen pb-24">

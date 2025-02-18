@@ -3,12 +3,12 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 
 export async function fetchIndicatorEvidenceById(
 	supabase: SupabaseClient<Database>,
-	indicatorId: string
+	accomplsihmentId: string
 ) {
 	const { data, error } = await supabase
 		.from('ipcr_indicator_evidence')
 		.select()
-		.eq('ipcr_indicator_id', indicatorId)
+		.eq('ipcr_indicator_accomplishment_id', accomplsihmentId)
 		.single();
 
 	if (error) {

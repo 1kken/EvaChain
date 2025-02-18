@@ -23,7 +23,7 @@ export const GET: RequestHandler = async ({ locals: { supabase, session } }) => 
 		let planQuery = supabase
 			.from('operational_plan')
 			.select('id')
-			.eq('status', 'approved')
+			.eq('status', 'submitted')
 			.order('created_at', { ascending: false })
 			.limit(1);
 

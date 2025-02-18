@@ -10,7 +10,6 @@ type IpcrIndicatorState = {
 	addIpcrIndicator: (ipcrIndicator: Tables<'ipcr_indicator'>) => void;
 	updateIpcrIndicator: (id: string, updates: Partial<Tables<'ipcr_indicator'>>) => void;
 	removeIpcrIndicator: (id: string) => void;
-	updateIndicatorStatus: (id: string, status: Tables<'ipcr_indicator'>['status']) => void;
 	updateIndicatorRatings: (
 		id: string,
 		ratings: {
@@ -49,12 +48,6 @@ function createIpcrIndicatorStore(initialData?: Tables<'ipcr_indicator'>[]): Ipc
 		);
 	}
 
-	function updateIndicatorStatus(id: string, status: Tables<'ipcr_indicator'>['status']) {
-		currentIpcrIndicators.update((indicators) =>
-			indicators.map((indicator) => (indicator.id === id ? { ...indicator, status } : indicator))
-		);
-	}
-
 	function updateIndicatorRatings(
 		id: string,
 		ratings: {
@@ -77,7 +70,6 @@ function createIpcrIndicatorStore(initialData?: Tables<'ipcr_indicator'>[]): Ipc
 		addIpcrIndicator,
 		updateIpcrIndicator,
 		removeIpcrIndicator,
-		updateIndicatorStatus,
 		updateIndicatorRatings
 	};
 }

@@ -3,10 +3,8 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import { message, superValidate, withFiles, type Infer } from 'sveltekit-superforms';
 import {
 	createIpcrIndicatorSchema,
-	markIndicatorDoneSchema,
 	updateIpcrIndicatorSchema,
 	type CreateIpcrIndicatorSchema,
-	type MarkIndicatorDoneSchema,
 	type UpdateIpcrIndicatorSchema
 } from '../schema/ipcr_indicator_schema';
 import { zod } from 'sveltekit-superforms/adapters';
@@ -15,6 +13,12 @@ import {
 	type UniversalDeleteSchema
 } from '$lib/schemas/universal_delete_schema';
 import { error } from '@sveltejs/kit';
+import {
+	createAccomplishmentSchema,
+	updateAccomplishmentSchema,
+	type CreateAccomplishmentSchema,
+	type UpdateAccomplishmentSchema
+} from '../schema/ipcr_indicator_accomplishmet';
 import { processIpcrEvidence } from '../utils/blockchain/pinata_helper';
 
 export async function createIpcrIndicator(request: Request, supabase: SupabaseClient<Database>) {
@@ -111,7 +115,8 @@ export async function deleteIpcrIndicator(request: Request, supabase: SupabaseCl
 	return { form, ipcrFunctionIndicator };
 }
 
-export async function markIpcrIndicatorDone(request: Request, supabase: SupabaseClient<Database>) {
+//===== ADD ACCOMPLISHMENT =====/
+export async function createAccomplishment(request: Request, supabase: SupabaseClient<Database>) {
 	const {
 		data: { user }
 	} = await supabase.auth.getUser();
@@ -120,9 +125,9 @@ export async function markIpcrIndicatorDone(request: Request, supabase: Supabase
 	}
 	const user_id = user.id;
 
-	let form = await superValidate<Infer<MarkIndicatorDoneSchema>, App.Superforms.Message>(
+	let form = await superValidate<Infer<CreateAccomplishmentSchema>, App.Superforms.Message>(
 		request,
-		zod(markIndicatorDoneSchema)
+		zod(createAccomplishmentSchema)
 	);
 
 	if (!form.valid) {
@@ -131,8 +136,8 @@ export async function markIpcrIndicatorDone(request: Request, supabase: Supabase
 			text: 'Unprocessable input!'
 		});
 	}
-
-	const { id, actual_accomplishments, accomplishment_date, pdf_evidence } = form.data;
+	const { ipcr_indicator_id, actual_accomplishments, accomplishment_date, pdf_evidence, quantity } =
+		form.data;
 
 	if (!pdf_evidence) {
 		return message(form, {
@@ -141,8 +146,26 @@ export async function markIpcrIndicatorDone(request: Request, supabase: Supabase
 		});
 	}
 
+	const { data: ipcrAccomplishment, error: ipcrAccomplishmentError } = await supabase
+		.from('ipcr_indicator_accomplishment')
+		.insert({
+			ipcr_indicator_id,
+			actual_accomplishments,
+			accomplishment_date,
+			quantity
+		})
+		.select()
+		.single();
+
+	if (ipcrAccomplishmentError) {
+		return message(form, {
+			status: 'error',
+			text: `Error saving IPCR Accomplishment: ${ipcrAccomplishmentError.message}`
+		});
+	}
+
 	const { data, error: fetchError } = await supabase.rpc('get_ipcr_id_from_indicator', {
-		p_indicator_id: id
+		p_indicator_id: ipcr_indicator_id
 	});
 
 	if (fetchError || !data) {
@@ -152,9 +175,10 @@ export async function markIpcrIndicatorDone(request: Request, supabase: Supabase
 		});
 	}
 
-	// upload evidence
+	// // upload evidence
 	const { data: uploadEvidenceData, error: uploadEvidenceError } = await uploadEvidence(
-		id,
+		ipcrAccomplishment.id,
+		ipcr_indicator_id,
 		data,
 		user_id,
 		pdf_evidence,
@@ -179,7 +203,7 @@ export async function markIpcrIndicatorDone(request: Request, supabase: Supabase
 	const { error: saveIndicatorEvidenceError, data: saveIndicatorEvidenceData } = await supabase
 		.from('ipcr_indicator_evidence')
 		.insert({
-			ipcr_indicator_id: id,
+			ipcr_indicator_accomplishment_id: ipcrAccomplishment.id,
 			file_path: uploadEvidenceData.fullPath
 		})
 		.select()
@@ -194,37 +218,18 @@ export async function markIpcrIndicatorDone(request: Request, supabase: Supabase
 
 	//lets do the block chain here
 	try {
-		await processIpcrEvidence(supabase, id, 0);
+		await processIpcrEvidence(supabase, ipcrAccomplishment.id, 0);
 	} catch (error) {
 		return message(form, {
 			status: 'error',
 			text: `Error processing evidence: ${error}`
 		});
 	}
-
-	// Update the indicator status and accomplishments
-	const { error: updateError, data: ipcrFunctionIndicator } = await supabase
-		.from('ipcr_indicator')
-		.update({
-			actual_accomplishments,
-			accomplishment_date,
-			status: 'submitted'
-		})
-		.eq('id', id)
-		.select()
-		.single();
-
-	if (updateError) {
-		return message(form, {
-			status: 'error',
-			text: `Error updating indicator: ${updateError.message}`
-		});
-	}
-
-	return withFiles({ form, ipcrFunctionIndicator });
+	return withFiles({ form, ipcrAccomplishment });
 }
 
-export async function editAccomplishment(request: Request, supabase: SupabaseClient<Database>) {
+//===== UPDATE ACCOMPLISHMENT =====/
+export async function updateAccomplishment(request: Request, supabase: SupabaseClient<Database>) {
 	const {
 		data: { user }
 	} = await supabase.auth.getUser();
@@ -233,9 +238,9 @@ export async function editAccomplishment(request: Request, supabase: SupabaseCli
 	}
 	const user_id = user.id;
 
-	let form = await superValidate<Infer<MarkIndicatorDoneSchema>, App.Superforms.Message>(
+	let form = await superValidate<Infer<UpdateAccomplishmentSchema>, App.Superforms.Message>(
 		request,
-		zod(markIndicatorDoneSchema)
+		zod(updateAccomplishmentSchema)
 	);
 
 	if (!form.valid) {
@@ -245,31 +250,30 @@ export async function editAccomplishment(request: Request, supabase: SupabaseCli
 		});
 	}
 
-	//get the contents
-	const { id, actual_accomplishments, accomplishment_date, pdf_evidence } = form.data;
+	const { id, actual_accomplishments, accomplishment_date, pdf_evidence, quantity } = form.data;
 
-	//update the ipcr indicator
-	const { error: updateError, data: ipcrFunctionIndicator } = await supabase
-		.from('ipcr_indicator')
+	const { data: ipcrAccomplishment, error: ipcrAccomplishmentError } = await supabase
+		.from('ipcr_indicator_accomplishment')
 		.update({
 			actual_accomplishments,
-			accomplishment_date
+			accomplishment_date,
+			quantity
 		})
 		.eq('id', id)
 		.select()
 		.single();
 
-	if (updateError) {
+	if (ipcrAccomplishmentError) {
 		return message(form, {
 			status: 'error',
-			text: `Error updating indicator: ${updateError.message}`
+			text: `Error updating IPCR Accomplishment: ${ipcrAccomplishmentError.message}`
 		});
 	}
 
 	const { data: indicatorEvidence, error: fetchIndicatorEvidenceError } = await supabase
 		.from('ipcr_indicator_evidence')
 		.select('file_path')
-		.eq('ipcr_indicator_id', id)
+		.eq('ipcr_indicator_accomplishment_id', id)
 		.single();
 
 	if (fetchIndicatorEvidenceError) {
@@ -286,7 +290,7 @@ export async function editAccomplishment(request: Request, supabase: SupabaseCli
 		});
 	}
 
-	//update the storage
+	//update storage
 	const { data, error: updateStorageError } = await supabase.storage
 		.from('indicator_evidence')
 		.update(indicatorEvidence.file_path, pdf_evidence, {
@@ -311,11 +315,12 @@ export async function editAccomplishment(request: Request, supabase: SupabaseCli
 		});
 	}
 
-	return withFiles({ form, ipcrFunctionIndicator });
+	return withFiles({ form, ipcrAccomplishment });
 }
 
 // Helper function to upload evidence
 async function uploadEvidence(
+	ipcrAccomplishmentId: string,
 	indicatorId: string,
 	ipcrId: string,
 	userId: string,
@@ -324,7 +329,7 @@ async function uploadEvidence(
 ) {
 	const fileExt = file.name.split('.').pop();
 	//userId/ipcrID/indicator.fileExt
-	const filePath = `${userId}/${ipcrId}/${indicatorId}.${fileExt}`;
+	const filePath = `${userId}/${ipcrId}/${indicatorId}/${ipcrAccomplishmentId}.${fileExt}`;
 
 	const { data, error } = await supabase.storage.from('indicator_evidence').upload(filePath, file);
 

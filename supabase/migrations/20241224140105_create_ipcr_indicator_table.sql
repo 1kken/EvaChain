@@ -1,17 +1,11 @@
--- Create status enum type
-CREATE TYPE ipcr_indicator_status AS ENUM ('draft', 'submitted', 'reviewing','revision', 'approved');
-
 -- Create ipcr_indicator table
 CREATE TABLE ipcr_indicator (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    status ipcr_indicator_status DEFAULT 'draft' NOT NULL,
     ipcr_function_id UUID REFERENCES ipcr_function(id) ON DELETE CASCADE,
     ipcr_function_sub_category_id UUID REFERENCES ipcr_function_sub_category(id) ON DELETE CASCADE,
     ipcr_function_category_id UUID REFERENCES ipcr_function_category(id) ON DELETE CASCADE,
     final_output TEXT NOT NULL,
     success_indicator TEXT NOT NULL,
-    actual_accomplishments TEXT,
-    accomplishment_date DATE,
     op_activity_indicator_id UUID REFERENCES op_activity_indicator(id) ON DELETE SET NULL NOT NULL,
     quality_rating NUMERIC(3,2),
     efficiency_rating NUMERIC(3,2),

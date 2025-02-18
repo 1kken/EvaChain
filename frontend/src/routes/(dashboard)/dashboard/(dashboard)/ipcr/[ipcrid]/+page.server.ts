@@ -5,6 +5,7 @@ import {
 	getIPCRFunctionCategoryForms,
 	getIPCRFunctionForms,
 	getIPCRFunctionSubCategoryForms,
+	getIPCRIndicatorAccomplishmentForms,
 	getIPCRIndicatorForms,
 	getIPCRSubmitForm
 } from './utils/loader_services';
@@ -19,10 +20,10 @@ import {
 	updateIpcrFunctionCategory
 } from './services/ipcr_category_services';
 import {
+	createAccomplishment,
 	createIpcrIndicator,
 	deleteIpcrIndicator,
-	editAccomplishment,
-	markIpcrIndicatorDone,
+	updateAccomplishment,
 	updateIpcrIndicator
 } from './services/ipcr_indicator_services';
 import {
@@ -43,6 +44,7 @@ export const load = (async ({ params, locals: { supabase } }) => {
 	const ipcrFunctionSubCategoryForm = await getIPCRFunctionSubCategoryForms();
 	const ipcrIndicatorForm = await getIPCRIndicatorForms();
 	const ipcrSubmitForm = await getIPCRSubmitForm();
+	const ipcrAccomplishmentForm = await getIPCRIndicatorAccomplishmentForms();
 
 	return {
 		currentIpcr,
@@ -51,7 +53,8 @@ export const load = (async ({ params, locals: { supabase } }) => {
 		ipcrFunctionCategoryForm,
 		ipcrFunctionSubCategoryForm,
 		ipcrIndicatorForm,
-		ipcrSubmitForm
+		ipcrSubmitForm,
+		ipcrAccomplishmentForm
 	};
 }) satisfies PageServerLoad;
 
@@ -96,11 +99,12 @@ export const actions = {
 	deleteipcrindicator: async ({ request, locals: { supabase } }) => {
 		return await deleteIpcrIndicator(request, supabase);
 	},
-	markipcrindicatordone: async ({ request, locals: { supabase } }) => {
-		return await markIpcrIndicatorDone(request, supabase);
+	//adding accomplishments
+	createaccomplishment: async ({ request, locals: { supabase } }) => {
+		return await createAccomplishment(request, supabase);
 	},
-	editaccomplishment: async ({ request, locals: { supabase } }) => {
-		return await editAccomplishment(request, supabase);
+	updateaccomplishment: async ({ request, locals: { supabase } }) => {
+		return await updateAccomplishment(request, supabase);
 	},
 	//ipcr
 	submitipcr: async ({ request, locals: { supabase } }) => {

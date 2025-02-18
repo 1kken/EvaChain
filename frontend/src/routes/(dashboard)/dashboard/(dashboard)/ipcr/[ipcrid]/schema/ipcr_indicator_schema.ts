@@ -1,5 +1,4 @@
 import { z } from 'zod';
-const MAX_FILE_SIZE = 45 * 1024 * 1024;
 
 // Enum for IPCR indicator status
 const ipcrIndicatorStatusEnum = z.enum(['draft', 'submitted', 'reviewing', 'revision', 'approved']);
@@ -53,18 +52,8 @@ export const ipcrIndicatorDoneSchema = z.object({
 	id: z.string().uuid('Invalid ID')
 });
 
-export const markIndicatorDoneSchema = z.object({
-	id: z.string().uuid('Invalid Indicator ID'),
-	actual_accomplishments: z.string().min(10, 'IPCR must have at least 10 characters'),
-	accomplishment_date: z.string().refine((v) => v, { message: 'Accomplishment date is required.' }),
-	pdf_evidence: z
-		.instanceof(File, { message: 'Please upload a file.' })
-		.refine((f) => f.size < MAX_FILE_SIZE, 'Max 45mb upload size.')
-});
-
 // Type exports
 export type CreateIpcrIndicatorSchema = typeof createIpcrIndicatorSchema;
 export type UpdateIpcrIndicatorSchema = typeof updateIpcrIndicatorSchema;
-export type MarkIndicatorDoneSchema = typeof markIndicatorDoneSchema;
 // Helper type for the status enum
 export type IpcrIndicatorStatus = z.infer<typeof ipcrIndicatorStatusEnum>;

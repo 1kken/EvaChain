@@ -2,7 +2,6 @@
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
 	import { LoaderCircle, Pencil } from 'lucide-svelte';
-	import { Plus } from 'lucide-svelte';
 	import { setError, superForm, type FormResult } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';
@@ -12,10 +11,7 @@
 	import { fetchProfileByname } from '../../../utils/page_loader_services';
 	import { getIpcrIndicatorFormContext } from '../../../states/ipcr_indicator_form_state';
 	import { getIpcrIndicatorStore } from '../../../states/ipcr_indicator_state';
-	import {
-		createIpcrIndicatorSchema,
-		updateIpcrIndicatorSchema
-	} from '../../../schema/ipcr_indicator_schema';
+	import { updateIpcrIndicatorSchema } from '../../../schema/ipcr_indicator_schema';
 	import IntelligentInput from '$lib/custom_components/IntelligentInput.svelte';
 	import type { Tables } from '$lib/types/database.types';
 	import { getAuthStore } from '$lib/utils/authStore';
@@ -142,7 +138,7 @@
 			</div>
 			<OpIndicator
 				ipcrOpIndicatorId={$formData.op_activity_indicator_id}
-				handleIpcrOpIndicator={(e) => {
+				handleIpcrOpIndicator={(e: string) => {
 					$formData.op_activity_indicator_id = e;
 				}}
 			/>

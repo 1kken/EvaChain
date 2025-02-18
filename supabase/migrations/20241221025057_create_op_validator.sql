@@ -1,6 +1,12 @@
+-- First safely drop the type if it exists
+DO $$ 
+BEGIN
+    IF EXISTS (SELECT 1 FROM pg_type WHERE typname = 'validation_result') THEN
+        DROP TYPE validation_result CASCADE;
+    END IF;
+END $$;
 
--- First create the type if it doesn't exist
-DROP TYPE IF EXISTS validation_result CASCADE;
+-- Create the composite type
 CREATE TYPE validation_result AS (
     is_valid boolean,
     validation_message text

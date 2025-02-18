@@ -8,11 +8,9 @@
 	import { getIpcrIndicatorFormContext } from '../states/ipcr_indicator_form_state';
 	import { getIpcrIndicatorStore } from '../states/ipcr_indicator_state';
 	import type { IPCRFunctionIndicatorFormResult } from '../utils/types';
-	import MarkAsDone from './sub_components/ipcr_indicator/MarkAsDone.svelte';
-	import MarkAsDoneEdit from './sub_components/ipcr_indicator/MarkASDoneEdit.svelte';
 	import UpdateDialog from './sub_components/ipcr_indicator/UpdateDialog.svelte';
 	import ViewIndicator from './ViewIndicator.svelte';
-
+	import Accomplshments from './sub_components/ipcr_indicator/Accomplishments.svelte';
 	let { ipcrFunctionIndicator }: { ipcrFunctionIndicator: Tables<'ipcr_indicator'> } = $props();
 	let isDrawerOpen = $state(false);
 	//store
@@ -31,15 +29,11 @@
 
 <div class="rounded-lg border">
 	<div class="h-13 flex flex-col space-y-2 p-4">
-		<div class="w-full sm:w-auto">
-			{#if ipcrFunctionIndicator.status !== 'submitted' && !$canEdit}
-				<MarkAsDone indicator={ipcrFunctionIndicator} bind:isDrawerOpen />
-			{:else if ipcrFunctionIndicator.status === 'submitted'}
-				{#key ipcrFunctionIndicator.actual_accomplishments}
-					<MarkAsDoneEdit indicator={ipcrFunctionIndicator} bind:isDrawerOpen />
-				{/key}
-			{/if}
-		</div>
+		{#if !$canEdit}
+			<div class="w-full sm:w-auto">
+				<Accomplshments indicator={ipcrFunctionIndicator} />
+			</div>
+		{/if}
 		<div class="flex items-center justify-between">
 			<div class="flex items-center space-x-2">
 				<Badge variant={'secondary'} class="h-5 bg-amber-500 text-xs">Indicator</Badge>

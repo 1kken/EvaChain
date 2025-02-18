@@ -17,11 +17,11 @@ const pinata = new PinataSDK({
 //action 0:add , 1:update, 2:delete
 export async function processIpcrEvidence(
 	supabase: SupabaseClient<Database>,
-	indicatorId: string,
+	accomplsihmentId: string,
 	action: number
 ) {
 	//fetch the IpcrIndicatorEvidence based on Id of indicator
-	const evidence = await fetchIndicatorEvidenceById(supabase, indicatorId);
+	const evidence = await fetchIndicatorEvidenceById(supabase, accomplsihmentId);
 
 	//download the evidence
 	const { data: fileData, error: downloadError } = await supabase.storage

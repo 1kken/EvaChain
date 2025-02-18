@@ -52,7 +52,7 @@
 			if (form.valid && action.ipcrFunctionSubCategory) {
 				const ipcrFunctionSubCategory = action.ipcrFunctionSubCategory;
 				updateIpcrFunctionSubCategory(ipcrFunctionSubCategory.id, ipcrFunctionSubCategory);
-				showSuccessToast(`Succesfully added ipcr function sub category!`);
+				showSuccessToast(`Succesfully updated ipcr function sub category!`);
 				isOpen = false;
 				isDrawerOpen = false;
 				reset({

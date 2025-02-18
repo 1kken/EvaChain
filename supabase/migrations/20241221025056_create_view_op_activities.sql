@@ -1,7 +1,4 @@
--- Drop existing view if it exists
-DROP VIEW IF EXISTS operational_plan_activities;
-
--- Create view for operational plan activities
+-- Create updated operational plan activities view
 CREATE
 OR REPLACE VIEW operational_plan_activities AS
 SELECT
@@ -58,5 +55,3 @@ ORDER BY
 GRANT
 SELECT
     ON operational_plan_activities TO authenticated;
-
-;

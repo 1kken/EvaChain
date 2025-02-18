@@ -24,3 +24,8 @@ export type IPCRFormResult = {
 	form: any;
 	IpcrData: Tables<'ipcr'>;
 };
+
+export type IPCRAccomplishmentFormResult = {
+	form: any;
+	ipcrAccomplishment: Tables<'ipcr_indicator_accomplishment'>;
+};
