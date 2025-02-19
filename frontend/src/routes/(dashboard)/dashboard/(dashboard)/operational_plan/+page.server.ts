@@ -10,7 +10,6 @@ import { universalDeleteSchema } from '$lib/schemas/universal_delete_schema';
 import {
 	createOperationalPlan,
 	deleteOperationalPlan,
-	submitOperationalPlan,
 	updateOperationalPlan
 } from './(data)/op_services';
 

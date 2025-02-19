@@ -8,70 +8,50 @@
 	import { LoaderCircle } from 'lucide-svelte';
 	import { TriangleAlert } from 'lucide-svelte';
 	import { Trash2 } from 'lucide-svelte';
-	import { getIPCRStore } from '../(data)/state.svelte';
-	import { getAuthStore } from '$lib/utils/authStore';
-	import { goto, invalidateAll } from '$app/navigation';
-	import type { IPCRFormResult } from '../(data)/types';
-	import { deleteIPCRSchema, type DeleteIPCRSchema } from '../(data)/schema';
+	import { universalDeleteSchema } from '$lib/schemas/universal_delete_schema';
+	import type { IPCRAccomplishmentFormResult } from '../../../../utils/types';
+	import { getIpcrAccomplishmentFormContext } from '../../../../states/ipcr_indicator_accomplishment_form_state';
+	import { getIpcrAccomplishmentStore } from '../../../../states/ipcr_indicator_accomplishment_state';
+	import type { Tables } from '$lib/types/database.types';
+
 	interface Props {
-		deleteForm: SuperValidated<DeleteIPCRSchema>;
-		id: string;
-		dropDownOpen: boolean;
+		accomplishment: Tables<'ipcr_indicator_accomplishment'>; // Updated table name
 	}
 
-	let { deleteForm, id, dropDownOpen = $bindable() }: Props = $props();
-	const { currentUserIPCR, removeIPCR } = getIPCRStore();
-	const { currentProfile } = getAuthStore();
+	let { accomplishment }: Props = $props();
+	const { deleteForm } = getIpcrAccomplishmentFormContext();
+	const { removeAccomplishment } = getIpcrAccomplishmentStore();
 
+	let isOpen = $state(false);
+	console.log(accomplishment.id);
 	const form = superForm(deleteForm, {
-		validators: zodClient(deleteIPCRSchema),
+		validators: zodClient(universalDeleteSchema),
 		multipleSubmits: 'prevent',
 		dataType: 'json',
 		onUpdate({ form, result }) {
-			const action = result.data as FormResult<IPCRFormResult>;
-			if (form.valid && action) {
-				const ipcrData = action.ipcrData;
-				removeIPCR(ipcrData.id);
-				showWarningToast(`Succesfully deleted IPCR ${ipcrData.title}`);
-				closeAllTabs();
+			const action = result.data as FormResult<IPCRAccomplishmentFormResult>;
+			if (form.valid && action.ipcrAccomplishment) {
+				const accomplishment = action.ipcrAccomplishment;
+				removeAccomplishment(accomplishment.id);
+				showWarningToast(`Succesfully deleted IPCR Accomplishment`);
 			}
 		}
 	});
 	const { form: formData, enhance, message, delayed } = form;
-	const title = $currentUserIPCR.find((ip) => ip.id === id)?.title;
-
-	function closeAllTabs() {
-		isOpen = false;
-		dropDownOpen = false;
-	}
 
 	$effect(() => {
-		if ($message?.status == 'error') {
-			showErrorToast($message.text);
-			closeAllTabs();
+		if ($message?.status === 'error') {
+			showErrorToast($message?.text);
+			isOpen = false;
 		}
 	});
-
-	let isOpen = $state(false);
-	if (!$currentProfile) {
-		goto('/dashboard');
-		invalidateAll();
-	}
-
-	if (title) {
-		$formData.expectedTitle = title;
-	}
-	if ($currentProfile?.id) {
-		$formData.owner_id = $currentProfile?.id;
-	}
-	$formData.id = id;
+	$formData.id = accomplishment.id;
+	$formData.confirmText = 'delete';
 </script>
 
 <AlertDialog.Root bind:open={isOpen}>
 	<AlertDialog.Trigger class=" focus-visible:outline-none">
-		<span class="flex items-center gap-3">
-			<Trash2 size={16} />Delete
-		</span>
+		<Trash2 size={16} />
 	</AlertDialog.Trigger>
 	<AlertDialog.Content>
 		<AlertDialog.Header>
@@ -81,22 +61,22 @@
 				></AlertDialog.Title
 			>
 			<AlertDialog.Description>
-				This action cannot be undone. This will permanently delete {title} and all its dependants.
+				This action cannot be undone. This will permanently deletethis accomplishment and all its
+				dependants.
 			</AlertDialog.Description>
 		</AlertDialog.Header>
-		<form method="POST" action="?/deleteipcr" use:enhance>
-			<input hidden value={$formData.owner_id} name="owner_id" />
+		<form method="POST" action="?/deleteaccomplishment" use:enhance>
 			<Input name="id" class="hidden" bind:value={$formData.id} />
-			<Form.Field {form} name="confirmTitle">
+			<Form.Field {form} name="expectedText">
 				<Form.FieldErrors />
 				<Form.Control>
 					{#snippet children({ props })}
 						<Form.Label>Please Confirm</Form.Label>
-						<Input {...props} bind:value={$formData.confirmTitle} />
+						<Input {...props} bind:value={$formData.expectedText} />
 					{/snippet}
 				</Form.Control>
 				<Form.Description
-					>Please type <span class=" font-bold">{title}</span> to proceed.
+					>Please type <span class=" font-bold">delete</span> to proceed.
 				</Form.Description>
 			</Form.Field>
 			{#if $delayed}

@@ -5,6 +5,7 @@
 	import SideBarDocuments from './side-bar-documents.svelte';
 	import { getAuthStore } from '$lib/utils/authStore';
 	import SideBarBlockChain from './side-bar-block-chain.svelte';
+	import SideBarApproval from './side-bar-approval.svelte';
 
 	let { sidebarOpen = $bindable() } = $props();
 
@@ -36,6 +37,12 @@
 			<Sidebar.GroupLabel>Document Management</Sidebar.GroupLabel>
 			<Sidebar.GroupContent>
 				<SideBarDocuments />
+			</Sidebar.GroupContent>
+		</Sidebar.Group>
+		<Sidebar.Group>
+			<Sidebar.GroupLabel>Document Approval</Sidebar.GroupLabel>
+			<Sidebar.GroupContent>
+				<SideBarApproval />
 			</Sidebar.GroupContent>
 		</Sidebar.Group>
 		<Sidebar.Group>

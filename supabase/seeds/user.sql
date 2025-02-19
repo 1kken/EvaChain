@@ -246,6 +246,47 @@ VALUES
     );
 
 INSERT INTO
+    auth.users
+VALUES
+    (
+        '00000000-0000-0000-0000-000000000000',
+        'c29f33e3-ccf6-4862-8ab2-9608c2a4cdf8',
+        'authenticated',
+        'authenticated',
+        'headunit@dmmmsu.edu.ph',
+        '$2a$10$qG5ccOm/R/BhIp/T3msrQOtBYbqZDl5xNqvzziWneK8euKMBHG4Gu',
+        '2025-02-19 09:41:28.536029+00',
+        NULL,
+        '',
+        NULL,
+        '',
+        NULL,
+        '',
+        '',
+        NULL,
+        '2025-02-19 09:41:28.542569+00',
+        '{"provider": "email", "providers": ["email"]}',
+        '{"sub": "c29f33e3-ccf6-4862-8ab2-9608c2a4cdf8", "email": "headunit@dmmmsu.edu.ph", "last_name": "Unit", "first_name": "Head", "email_verified": true, "phone_verified": false}',
+        NULL,
+        '2025-02-19 09:41:28.52156+00',
+        '2025-02-19 09:41:28.544462+00',
+        NULL,
+        NULL,
+        '',
+        '',
+        NULL,
+        DEFAULT,
+        '',
+        0,
+        NULL,
+        '',
+        NULL,
+        false,
+        NULL,
+        false
+    );
+
+INSERT INTO
     auth.identities
 VALUES
     (
@@ -333,4 +374,19 @@ VALUES
         '2024-12-01 10:07:13.531282+00',
         DEFAULT,
         '1e7ec29c-33cd-4822-aee9-dff9e5e7b01b'
+    );
+
+INSERT INTO
+    auth.identities
+VALUES
+    (
+        'c29f33e3-ccf6-4862-8ab2-9608c2a4cdf8',
+        'c29f33e3-ccf6-4862-8ab2-9608c2a4cdf8',
+        '{"sub": "c29f33e3-ccf6-4862-8ab2-9608c2a4cdf8", "email": "headunit@dmmmsu.edu.ph", "last_name": "Unit", "first_name": "Head", "email_verified": false, "phone_verified": false}',
+        'email',
+        '2025-02-19 09:41:28.53233+00',
+        '2025-02-19 09:41:28.532391+00',
+        '2025-02-19 09:41:28.532391+00',
+        DEFAULT,
+        '719dedd6-5a29-4b04-b7d3-a49fbc082c35'
     );

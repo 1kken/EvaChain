@@ -126,7 +126,7 @@
 
 <Dialog.Root bind:open={isOpen}>
 	<Dialog.Trigger class="rounded-full p-1.5 hover:bg-gray-100">
-		<Pencil class="h-4 w-4 text-gray-500" />
+		<Pencil class="h-4 w-4 " />
 	</Dialog.Trigger>
 	<Dialog.Content class="max-h-[85vh] overflow-y-auto sm:max-w-[800px]">
 		<Dialog.Header>

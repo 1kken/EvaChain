@@ -22,6 +22,7 @@ import {
 import {
 	createAccomplishment,
 	createIpcrIndicator,
+	deleteAccomplishment,
 	deleteIpcrIndicator,
 	updateAccomplishment,
 	updateIpcrIndicator
@@ -105,6 +106,9 @@ export const actions = {
 	},
 	updateaccomplishment: async ({ request, locals: { supabase } }) => {
 		return await updateAccomplishment(request, supabase);
+	},
+	deleteaccomplishment: async ({ request, locals: { supabase } }) => {
+		return await deleteAccomplishment(request, supabase);
 	},
 	//ipcr
 	submitipcr: async ({ request, locals: { supabase } }) => {

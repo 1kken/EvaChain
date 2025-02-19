@@ -7,10 +7,12 @@
 	} from '../../../utils/page_loader_services';
 	import { setIpcrAccomplishmentStore } from '../../../states/ipcr_indicator_accomplishment_state';
 	import { onMount } from 'svelte';
-	import { showErrorToast } from '$lib/utils/toast';
+	import { showErrorToast, showWarningToast } from '$lib/utils/toast';
 	import Create from './accomplishments/Create.svelte';
 	import type { Tables } from '$lib/types/database.types';
 	import Update from './accomplishments/Update.svelte';
+	import { getIpcrAccomplishmentFormContext } from '../../../states/ipcr_indicator_accomplishment_form_state';
+	import Delete from './accomplishments/Delete.svelte';
 
 	interface Props {
 		indicator: Tables<'ipcr_indicator'>;
@@ -19,6 +21,8 @@
 	let props: Props = $props();
 
 	let { currentAccomplishments } = setIpcrAccomplishmentStore();
+	const { deleteForm } = getIpcrAccomplishmentFormContext();
+
 	let isLoading = $state(false);
 	let isOpen = $state(false);
 	let opIndicator: Tables<'op_header_indicators'> | null = $state(null);
@@ -83,13 +87,15 @@
 			<div class="space-y-2">
 				{#each $currentAccomplishments as accomplishment}
 					<div
-						class="group flex items-center justify-between rounded-md border bg-white p-3 shadow-sm hover:shadow-md"
+						class="group flex items-center justify-between rounded-md border bg-white p-3 shadow-sm hover:shadow-md dark:bg-inherit"
 					>
 						<div class="flex items-center space-x-3">
 							<div class="flex h-9 w-9 items-center justify-center rounded-full bg-gray-50">
 								<FileText class="h-4 w-4 text-gray-500" />
 							</div>
-							<span class="text-sm text-gray-700">{accomplishment.actual_accomplishments}</span>
+							<span class="text-sm text-gray-700 dark:text-white"
+								>{accomplishment.actual_accomplishments}</span
+							>
 						</div>
 						<div
 							class="flex items-center space-x-2 opacity-0 transition-opacity group-hover:opacity-100"
@@ -97,9 +103,9 @@
 							{#if opIndicator !== null}
 								<Update {accomplishment} {opIndicator} />
 							{/if}
-							<button class="rounded-full p-1.5 hover:bg-gray-100">
-								<Trash2 class="h-4 w-4 text-red-500" />
-							</button>
+							{#if opIndicator !== null}
+								<Delete {accomplishment} />
+							{/if}
 						</div>
 					</div>
 				{/each}

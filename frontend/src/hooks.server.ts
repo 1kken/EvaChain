@@ -55,6 +55,31 @@ const supabase: Handle = async ({ event, resolve }) => {
 		return { session, user };
 	};
 
+	// Get session
+	const { session, user } = await event.locals.safeGetSession();
+
+	if (session && user) {
+		event.locals.session = session;
+		event.locals.user = user;
+
+		// Get profile with joins
+		const { data: profile } = await event.locals.supabase
+			.from('profiles')
+			.select(
+				`
+        *,
+        position:position_id(name),
+        nature_of_work:nature_of_work_id(type),
+        employee_status:employee_status_id(type)
+      `
+			)
+			.eq('id', user.id)
+			.single();
+
+		if (profile) {
+			event.locals.profile = profile;
+		}
+	}
 	return resolve(event, {
 		filterSerializedResponseHeaders(name) {
 			/**

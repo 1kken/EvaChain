@@ -49,6 +49,8 @@ export async function processIpcrEvidence(
 		const reason = await uploadFileDetailsToBlockChain(fileDetails);
 
 		if (reason === null) {
+			if (action === 2) {
+			}
 			return;
 		}
 		let actions = ['add evidence', 'update evidence', 'delete evidence'];

@@ -318,6 +318,89 @@ export async function updateAccomplishment(request: Request, supabase: SupabaseC
 	return withFiles({ form, ipcrAccomplishment });
 }
 
+//DELETE ACCOMPLISHMENT==============--
+export async function deleteAccomplishment(request: Request, supabase: SupabaseClient<Database>) {
+	const {
+		data: { user }
+	} = await supabase.auth.getUser();
+	if (!user) return error(401, 'Unauthorized');
+
+	const form = await superValidate<Infer<UniversalDeleteSchema>>(
+		request,
+		zod(universalDeleteSchema)
+	);
+
+	if (!form.valid) {
+		return message(form, {
+			status: 'error',
+			text: 'Invalid input'
+		});
+	}
+
+	const { id } = form.data;
+
+	// Get accomplishment and evidence data before deletion
+	const { data: ipcrAccomplishment, error: accomplishmentError } = await supabase
+		.from('ipcr_indicator_accomplishment')
+		.select(
+			`
+     id,
+     actual_accomplishments,
+     accomplishment_date,
+     quantity,
+     ipcr_indicator_evidence (
+       file_path
+     )
+   `
+		)
+		.eq('id', id)
+		.single();
+
+	if (accomplishmentError || ipcrAccomplishment === null) {
+		return message(form, {
+			status: 'error',
+			text: `Error fetching accomplishment: ${accomplishmentError.message}`
+		});
+	}
+	console.log(ipcrAccomplishment);
+	// Upload to blockchain before deletion
+	try {
+		await processIpcrEvidence(supabase, id, 2);
+	} catch (error) {
+		return message(form, {
+			status: 'error',
+			text: `Error processing evidence: ${error}`
+		});
+	}
+
+	// Delete file from storage bucket
+	const { error: storageError } = await supabase.storage
+		.from('indicator_evidence')
+		.remove([ipcrAccomplishment.ipcr_indicator_evidence[0].file_path]);
+
+	if (storageError) {
+		return message(form, {
+			status: 'error',
+			text: `Error deleting file: ${storageError.message}`
+		});
+	}
+
+	// Delete accomplishment
+	const { error: deleteError } = await supabase
+		.from('ipcr_indicator_accomplishment')
+		.delete()
+		.eq('id', id);
+
+	if (deleteError) {
+		return message(form, {
+			status: 'error',
+			text: `Error deleting accomplishment: ${deleteError.message}`
+		});
+	}
+
+	return { form, ipcrAccomplishment };
+}
+
 // Helper function to upload evidence
 async function uploadEvidence(
 	ipcrAccomplishmentId: string,

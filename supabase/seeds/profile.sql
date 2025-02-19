@@ -113,6 +113,25 @@ SET
 WHERE
     id = '9f972be5-bacf-4e95-896b-4a68bf588420';
 
+UPDATE public.profiles
+SET
+    updated_at = '2025-02-19 10:10:00.000000+00',
+    employee_id = '211-0879-3',
+    email = 'headunit@dmmmsu.edu.ph',
+    first_name = 'Head',
+    middle_name = NULL,
+    last_name = 'Unit',
+    avatar_url = NULL,
+    unit_id = 2,
+    nature_of_work_id = 2,
+    office_id = 7,
+    program_id = NULL,
+    position_id = 5,
+    employee_status_id = 1,
+    created_at = '2025-02-19 10:05:22.893033+00'
+WHERE
+    id = 'c29f33e3-ccf6-4862-8ab2-9608c2a4cdf8';
+
 -- attach roles to users
 INSERT INTO
     public.user_roles (user_id, role_id)
