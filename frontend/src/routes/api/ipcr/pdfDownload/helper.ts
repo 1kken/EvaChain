@@ -326,3 +326,20 @@ export async function fetchDataCategory(categoryId: string, supabase: SupabaseCl
 		};
 	}
 }
+
+export async function getIpcrAccomplishments(
+	indicatorId: string,
+	supabase: SupabaseClient<Database>
+) {
+	const { data, error } = await supabase
+		.from('ipcr_indicator_accomplishment')
+		.select()
+		.eq('ipcr_indicator_id', indicatorId)
+		.order('created_at', { ascending: true });
+
+	if (error) {
+		throw new Error(`Error fetching IPCR accomplishments: ${error.message}`);
+	}
+
+	return { accomplishments: data };
+}

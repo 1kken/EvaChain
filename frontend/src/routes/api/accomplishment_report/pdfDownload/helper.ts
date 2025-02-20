@@ -67,6 +67,22 @@ export async function fetchActivitiesByAnnualPlanId(
 	return data;
 }
 
+export async function fetchActivityIndicatorsByActivityId(
+	id: string,
+	supabase: SupabaseClient<Database>
+): Promise<Tables<'accomplishment_activity_indicator'>[]> {
+	const { data, error: errorFetch } = await supabase
+		.from('accomplishment_activity_indicator')
+		.select()
+		.eq('accomplishment_activity_id', id)
+		.order('position', { ascending: true });
+	if (errorFetch) {
+		error(404, { message: errorFetch.message });
+	}
+	if (!data) throw new Error('Activity Indicators not found');
+	return data;
+}
+
 export interface Profile extends Tables<'profiles'> {
 	position: Tables<'position'> | null;
 	program: Tables<'program'> | null;

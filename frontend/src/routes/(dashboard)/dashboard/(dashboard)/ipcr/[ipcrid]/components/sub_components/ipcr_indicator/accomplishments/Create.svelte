@@ -99,11 +99,12 @@
 		>
 			<input hidden name="ipcr_indicator_id" value={$formData.ipcr_indicator_id} />
 			<input hidden name="input_type" value={$formData.input_type} />
-			<Form.Field {form} name="actual_accomplishments">
+			<Form.Field {form} name="actual_accomplishments" class="w-full">
 				<Form.Control>
 					{#snippet children({ props })}
 						<Form.Label>Accomplishment</Form.Label>
 						<IntelligentInput
+							textAreaWidth={'full'}
 							name="actual_accomplishments"
 							placeholder={'Please type your accomplishment'}
 							bind:content={$formData.actual_accomplishments!}

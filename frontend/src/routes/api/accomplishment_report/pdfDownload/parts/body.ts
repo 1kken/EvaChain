@@ -4,6 +4,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import {
 	fetchAccomplishmentHeadersById,
 	fetchActivitiesByAnnualPlanId,
+	fetchActivityIndicatorsByActivityId,
 	fetchAnnualPlanByHeadersId
 } from '../helper';
 
@@ -131,13 +132,31 @@ async function main(
 			let isFirstAnnualPlan = true;
 			const activities = await fetchActivitiesByAnnualPlanId(annualPlan.id, supabase);
 			for (const activity of activities) {
-				rows.push(
-					generateBodyRow({
-						isFirstAnnualPlan,
-						annualPlansDescription: annualPlan.description,
-						activity: activity
-					})
-				);
+				let isFirstActivity = true;
+				const indicators = await fetchActivityIndicatorsByActivityId(activity.id, supabase);
+
+				for (const indicator of indicators) {
+					rows.push([
+						{ text: isFirstAnnualPlan ? annualPlan.description : '' },
+						{ text: isFirstActivity ? activity.activity : '' },
+						{
+							text: indicator.performance_indicator
+						},
+						{
+							text: indicator.annual_target,
+							alignment: 'center'
+						},
+						{ text: indicator.q1_accomplishment, alignment: 'center' },
+						{ text: indicator.q2_accomplishment, alignment: 'center' },
+						{ text: indicator.q3_accomplishment, alignment: 'center' },
+						{ text: indicator.q4_accomplishment, alignment: 'center' },
+						{ text: indicator.total, alignment: 'center' },
+						{ text: indicator.accomplishment_rate, alignment: 'center' },
+						{ text: indicator.responsible_officer_unit },
+						{ text: indicator.remarks }
+					]);
+				}
+				isFirstActivity = false;
 				isFirstAnnualPlan = false;
 			}
 		}
@@ -166,29 +185,29 @@ function generateOpHeaderRow(opHeader: string): TableCell[] {
 	];
 }
 
-interface BodyRowParams {
-	isFirstAnnualPlan: boolean;
-	annualPlansDescription: string;
-	activity: Tables<'accomplishment_activity'>;
-}
-function generateBodyRow(params: BodyRowParams): TableCell[] {
-	return [
-		{ text: params.isFirstAnnualPlan ? params.annualPlansDescription : '' },
-		{ text: params.activity.activity },
-		{
-			text: params.activity.performance_indicator
-		},
-		{
-			text: params.activity.annual_target,
-			alignment: 'center'
-		},
-		{ text: params.activity.q1_accomplishment, alignment: 'center' },
-		{ text: params.activity.q2_accomplishment, alignment: 'center' },
-		{ text: params.activity.q3_accomplishment, alignment: 'center' },
-		{ text: params.activity.q4_accomplishment, alignment: 'center' },
-		{ text: params.activity.total, alignment: 'center' },
-		{ text: params.activity.accomplishment_rate, alignment: 'center' },
-		{ text: params.activity.responsible_officer_unit },
-		{ text: params.activity.remarks }
-	];
-}
+// interface BodyRowParams {
+// 	isFirstAnnualPlan: boolean;
+// 	annualPlansDescription: string;
+// 	activity: Tables<'accomplishment_activity'>;
+// }
+// function generateBodyRow(params: BodyRowParams): TableCell[] {
+// 	return [
+// 		{ text: params.isFirstAnnualPlan ? params.annualPlansDescription : '' },
+// 		{ text: params.activity.activity },
+// 		{
+// 			text: params.activity.performance_indicator
+// 		},
+// 		{
+// 			text: params.activity.annual_target,
+// 			alignment: 'center'
+// 		},
+// 		{ text: params.activity.q1_accomplishment, alignment: 'center' },
+// 		{ text: params.activity.q2_accomplishment, alignment: 'center' },
+// 		{ text: params.activity.q3_accomplishment, alignment: 'center' },
+// 		{ text: params.activity.q4_accomplishment, alignment: 'center' },
+// 		{ text: params.activity.total, alignment: 'center' },
+// 		{ text: params.activity.accomplishment_rate, alignment: 'center' },
+// 		{ text: params.activity.responsible_officer_unit },
+// 		{ text: params.activity.remarks }
+// 	];
+// }

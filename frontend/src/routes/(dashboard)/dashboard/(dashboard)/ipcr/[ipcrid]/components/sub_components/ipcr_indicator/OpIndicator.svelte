@@ -119,6 +119,10 @@
 						<Select.Item value={header.id} class="p-2 hover:bg-gray-100">
 							{header.title}
 						</Select.Item>
+					{:else}
+						<Select.Item value={''} disabled class="p-2 italic text-gray-400">
+							No Approved Operational Plan for this S.Y.
+						</Select.Item>
 					{/each}
 				</Select.Content>
 			</Select.Root>
@@ -137,17 +141,23 @@
 				<Select.Trigger
 					class="w-full rounded-md border p-3 transition-colors hover:border-gray-400"
 				>
-					{selectedIndicator?.performance_indicator ?? 'Select Indicator...'}
+					<span class="max-w-xs overflow-hidden truncate whitespace-nowrap">
+						{selectedIndicator?.performance_indicator ?? 'Select Indicator...'}
+					</span>
 				</Select.Trigger>
-				<Select.Content class="max-h-[200px] overflow-y-auto">
+				<Select.Content class="max-h-[200px] max-w-[500px] overflow-y-auto">
 					{#if selectedHeaderId}
 						{#each opIndicators as indicator}
-							<Select.Item value={indicator.indicator_id!} class="p-2 hover:bg-gray-100">
+							<Select.Item value={indicator.indicator_id!} class="hover:bg-green-700">
 								{indicator.performance_indicator}
 							</Select.Item>
 						{/each}
 					{:else}
-						<Select.Item value={''} disabled class="p-2 italic text-gray-400">
+						<Select.Item
+							value={''}
+							disabled
+							class="whitespace-normal break-words p-2 italic text-gray-400"
+						>
 							Please select function first
 						</Select.Item>
 					{/if}

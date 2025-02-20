@@ -3,7 +3,12 @@ import type { Database, Tables } from '$lib/types/database.types';
 import type { TableCell } from 'pdfmake/interfaces';
 import { calculateColspan, CategoryStore, createCategoryStore, type Category } from './ipcr_utils';
 import { romanize } from 'romans';
-import { fetchDataCategory, fetchDataFunction, getIndicatorsByParent } from '../helper';
+import {
+	fetchDataCategory,
+	fetchDataFunction,
+	getIndicatorsByParent,
+	getIpcrAccomplishments
+} from '../helper';
 import { parse } from 'date-fns';
 
 type BodyResult = {
@@ -97,14 +102,23 @@ async function main(
 
 						// Process subcategory indicators
 						for (const indicator of subCategoryIndicators.indicators) {
-							rows.push(...generateIndicator(indicator));
+							const accomplishments = await getIpcrAccomplishments(indicator.id, supabase);
+							const text = accomplishments.accomplishments
+								.map((accomplishment) => accomplishment.actual_accomplishments)
+								.join(',\n');
+
+							rows.push(...generateIndicator(indicator, text));
 							const rating = indicator.average_rating ?? 0;
 							averagePerIndicatorInFunction.push(rating);
 							currentCategoryAverages.push(rating);
 						}
 					} else {
 						const indicator = categoryChildData.data as Tables<'ipcr_indicator'>;
-						rows.push(...generateIndicator(indicator));
+						const accomplishments = await getIpcrAccomplishments(indicator.id, supabase);
+						const text = accomplishments.accomplishments
+							.map((accomplishment) => accomplishment.actual_accomplishments)
+							.join(',\n');
+						rows.push(...generateIndicator(indicator, text));
 						const rating = indicator.average_rating ?? 0;
 						averagePerIndicatorInFunction.push(rating);
 						currentCategoryAverages.push(rating);
@@ -112,7 +126,11 @@ async function main(
 				}
 			} else {
 				const indicator = data.data as Tables<'ipcr_indicator'>;
-				rows.push(...generateIndicator(indicator));
+				const accomplishments = await getIpcrAccomplishments(indicator.id, supabase);
+				const text = accomplishments.accomplishments
+					.map((accomplishment) => accomplishment.actual_accomplishments)
+					.join(',\n');
+				rows.push(...generateIndicator(indicator, text));
 				averagePerIndicatorInFunction.push(indicator.average_rating ?? 0);
 			}
 		}
@@ -254,7 +272,10 @@ function generateSubCategory(
 	return context;
 }
 
-function generateIndicator(indicator: Tables<'ipcr_indicator'>): TableCell[][] {
+function generateIndicator(
+	indicator: Tables<'ipcr_indicator'>,
+	accomplishments: string
+): TableCell[][] {
 	const context: TableCell[][] = [];
 	const marginTop = 5;
 	// Add indicator title as a row
@@ -270,7 +291,7 @@ function generateIndicator(indicator: Tables<'ipcr_indicator'>): TableCell[][] {
 			marginTop: marginTop
 		},
 		{
-			text: indicator.actual_accomplishments,
+			text: accomplishments,
 			alignment: 'left',
 			marginTop: marginTop
 		},

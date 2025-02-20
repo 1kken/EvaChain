@@ -20,10 +20,16 @@ export const GET: RequestHandler = async ({ locals: { supabase, session } }) => 
 		}
 
 		// First get the latest approved operational plan id
+		const currentYear = new Date().getFullYear();
+		const startOfYear = new Date(currentYear, 0, 1).toISOString(); // January 1st of current year
+		const endOfYear = new Date(currentYear, 11, 31, 23, 59, 59, 999).toISOString(); // December 31st of current year
+
 		let planQuery = supabase
 			.from('operational_plan')
 			.select('id')
-			.eq('status', 'submitted')
+			.eq('status', 'approved')
+			.gte('created_at', startOfYear)
+			.lte('created_at', endOfYear)
 			.order('created_at', { ascending: false })
 			.limit(1);
 
