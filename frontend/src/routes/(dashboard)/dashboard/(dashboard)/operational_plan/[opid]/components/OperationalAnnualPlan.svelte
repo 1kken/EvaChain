@@ -17,6 +17,7 @@
 	import UpdateDialog from './sub_components/op_annual_plan/UpdateDialog.svelte';
 	import DropDownWrapper from '$lib/custom_components/DropDownWrapper.svelte';
 	import CreateDialog from './sub_components/op_activity/CreateDialog.svelte';
+	import { getOperationalPlanStore } from '../states/current_operational_plan_state';
 
 	//props
 	interface Iprops {
@@ -35,6 +36,7 @@
 	const { removeOpAnnualPlan } = getOpAnnualPlanStore();
 	const { deleteForm } = getOpAnnualPlanFormContext();
 	const { currentOpActivities } = setOpActivityStore();
+	const { canEdit } = getOperationalPlanStore();
 
 	// Separate fetch function
 	async function fetchData() {
@@ -130,10 +132,12 @@
 			{#snippet updateAction()}
 				<UpdateDialog bind:isDrawerOpen {opAnnualPlan} />
 			{/snippet}
-			<div class="flex gap-4">
-				<CreateDialog opAnnualPlanId={opAnnualPlan.id} onToggle={fetchData} bind:isExpanded />
-				<DropDownWrapper bind:isDrawerOpen childrens={[updateAction, deleteAction]} />
-			</div>
+			{#if $canEdit}
+				<div class="flex gap-4">
+					<CreateDialog opAnnualPlanId={opAnnualPlan.id} onToggle={fetchData} bind:isExpanded />
+					<DropDownWrapper bind:isDrawerOpen childrens={[updateAction, deleteAction]} />
+				</div>
+			{/if}
 		</div>
 	</div>
 

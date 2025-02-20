@@ -18,6 +18,7 @@
 	import UpdateDialog from './sub_components/op_activity/UpdateDialog.svelte';
 	import CreateDialog from './sub_components/op_indicator/CreateDialog.svelte';
 	import OpIndicator from './OpIndicator.svelte';
+	import { getOperationalPlanStore } from '../states/current_operational_plan_state';
 
 	//props
 	let { opActivity }: { opActivity: Tables<'op_activity'> } = $props();
@@ -33,6 +34,7 @@
 	const { removeOpActivity } = getOpActivityStore();
 	const { deleteForm } = getOpActivityFormContext();
 	const { currentOpIndicators } = setOpIndicatorStore();
+	const { canEdit } = getOperationalPlanStore();
 
 	// Separate fetch function
 	async function fetchData() {
@@ -128,10 +130,12 @@
 			{#snippet updateAction()}
 				<UpdateDialog bind:isDrawerOpen {opActivity} />
 			{/snippet}
-			<div class="flex gap-4">
-				<CreateDialog opActivityId={opActivity.id} onToggle={fetchData} bind:isExpanded />
-				<DropDownWrapper bind:isDrawerOpen childrens={[updateAction, deleteAction]} />
-			</div>
+			{#if $canEdit}
+				<div class="flex gap-4">
+					<CreateDialog opActivityId={opActivity.id} onToggle={fetchData} bind:isExpanded />
+					<DropDownWrapper bind:isDrawerOpen childrens={[updateAction, deleteAction]} />
+				</div>
+			{/if}
 		</div>
 	</div>
 

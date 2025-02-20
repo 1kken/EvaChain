@@ -8,14 +8,15 @@
 	import type { UpdateOperationalPlanInput } from '../(data)/operational_plan_schema';
 	import UpdateDialogUnit from './update-dialog-unit.svelte';
 	import { Download, SquareArrowOutUpRight } from 'lucide-svelte';
+	import type { OperationalPlan } from './columns';
 
 	interface Props {
 		deleteForm: SuperValidated<UniversalDeleteInput>;
 		updateForm: SuperValidated<UpdateOperationalPlanInput>;
-		id: string;
+		op: OperationalPlan;
 	}
 
-	let { deleteForm, updateForm, id }: Props = $props();
+	let { deleteForm, updateForm, op }: Props = $props();
 	let dropDownOpen = $state(false);
 	function handleDownload(e: { preventDefault: () => void }) {
 		// Prevent DropdownMenu from closing
@@ -38,23 +39,27 @@
 		</DropdownMenu.Group>
 		<DropdownMenu.Separator />
 
-		<DropdownMenu.Item
-			onSelect={(e) => {
-				e.preventDefault();
-			}}><UpdateDialogUnit {updateForm} {id} bind:dropDownOpen /></DropdownMenu.Item
-		>
-		<DropdownMenu.Item onSelect={(e) => e.preventDefault()}
-			><DeleteActionUnit {deleteForm} {id} bind:dropDownOpen /></DropdownMenu.Item
-		>
 		<DropdownMenu.Item onSelect={(e) => e.preventDefault()}>
-			<a href={`/dashboard/operational_plan/${id}`}>
+			<a href={`/dashboard/operational_plan/${op.id}`}>
 				<span class="flex items-center gap-3">
 					<SquareArrowOutUpRight size={16} /> Open
 				</span>
 			</a>
 		</DropdownMenu.Item>
+		{#if op.status === 'draft' || op.status === 'revision'}
+			<DropdownMenu.Item
+				onSelect={(e) => {
+					e.preventDefault();
+				}}><UpdateDialogUnit {updateForm} id={op.id} bind:dropDownOpen /></DropdownMenu.Item
+			>
+		{/if}
+		{#if op.status === 'draft'}
+			<DropdownMenu.Item onSelect={(e) => e.preventDefault()}
+				><DeleteActionUnit {deleteForm} id={op.id} bind:dropDownOpen /></DropdownMenu.Item
+			>
+		{/if}
 		<DropdownMenu.Item onselect={handleDownload}>
-			<form action={`/api/operational_plan/pdfDownload?id=${id}`} method="POST" class="w-full">
+			<form action={`/api/operational_plan/pdfDownload?id=${op.id}`} method="POST" class="w-full">
 				<button type="submit" class="flex w-full items-center gap-3">
 					<Download size={16} />
 					Download PDF

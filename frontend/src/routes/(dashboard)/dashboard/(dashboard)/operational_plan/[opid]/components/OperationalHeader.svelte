@@ -16,6 +16,7 @@
 	import OperationalAnnualPlan from './OperationalAnnualPlan.svelte';
 	import { setOpAnnualPlanStore } from '../states/op_annual_plan_state';
 	import DropDownWrapper from '$lib/custom_components/DropDownWrapper.svelte';
+	import { getOperationalPlanStore } from '../states/current_operational_plan_state';
 
 	//props
 	interface Iprops {
@@ -27,6 +28,7 @@
 	const { removeOpHeader } = getOpHeaderStore();
 	const { deleteForm } = getOpHeaderFormContext();
 	const { currentOpAnnualPlans } = setOpAnnualPlanStore();
+	const { canEdit } = getOperationalPlanStore();
 
 	//states
 	let dndItems = $state<Tables<'op_annual_plan'>[]>([]);
@@ -124,10 +126,12 @@
 			{#snippet updateAction()}
 				<UpdateDialog bind:isDrawerOpen {opHeader} />
 			{/snippet}
-			<div class="flex gap-4">
-				<CreateDialogAnnualPlan opHeaderId={opHeader.id} onToggle={fetchData} bind:isExpanded />
-				<DropDownWrapper bind:isDrawerOpen childrens={[updateAction, deleteAction]} />
-			</div>
+			{#if $canEdit}
+				<div class="flex gap-4">
+					<CreateDialogAnnualPlan opHeaderId={opHeader.id} onToggle={fetchData} bind:isExpanded />
+					<DropDownWrapper bind:isDrawerOpen childrens={[updateAction, deleteAction]} />
+				</div>
+			{/if}
 		</div>
 	</header>
 

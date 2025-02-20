@@ -83,9 +83,9 @@ export const createColumns = (
 		id: 'actions',
 		header: 'Actions',
 		cell: ({ row }) => {
-			const id = row.original.id;
+			const op = row.original;
 			// You can pass whatever you need from `row.original` to the component
-			return renderComponent(DataTableActions, { deleteForm, updateForm, id });
+			return renderComponent(DataTableActions, { deleteForm, updateForm, op });
 		}
 	}
 ];

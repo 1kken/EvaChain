@@ -2,8 +2,10 @@
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import type { Tables } from '$lib/types/database.types';
 	import TruncatedDiv from '../../../components/TruncatedDiv.svelte';
+	import DetailsSection from '../../../operational_plan/[opid]/components/sub_components/view_indicator/DetailsSection.svelte';
+	import StatusSection from '../../../operational_plan/[opid]/components/sub_components/view_indicator/StatusSection.svelte';
+	import TimestampSection from '../../../operational_plan/[opid]/components/sub_components/view_indicator/TimestampSection.svelte';
 	import { getAccomplishmentActivityIndicatorStore } from '../states/activity_indicator_state';
-	import indicatorHeader from './sub_components/view_indicator/IndicatorHeader.svelte';
 	import IndicatorHeader from './sub_components/view_indicator/IndicatorHeader.svelte';
 
 	let { indicator }: { indicator: Tables<'accomplishment_activity_indicator'> } = $props();
@@ -62,19 +64,15 @@
 			<IndicatorHeader indicator={currentindicator.performance_indicator} />
 
 			<!-- Status Section -->
-			<!-- <StatusSection
-				{progress}
-				total={currentindicator.total}
-				annualTarget={currentindicator.annual_target}
-			/> -->
+			<StatusSection {progress} />
 
-			<!-- <DetailsSection {itemDetail} /> -->
+			<DetailsSection {itemDetail} />
 
 			<!-- Timestamp Section -->
-			<!-- <TimestampSection
+			<TimestampSection
 				createdAt={currentindicator.created_at}
 				updatedAt={currentindicator.updated_at}
-			/> -->
+			/>
 		</div>
 	</Dialog.Content>
 </Dialog.Root>
