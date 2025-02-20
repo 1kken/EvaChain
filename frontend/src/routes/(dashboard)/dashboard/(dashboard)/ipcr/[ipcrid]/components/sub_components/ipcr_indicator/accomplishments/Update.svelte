@@ -4,7 +4,7 @@
 	import SuperDebug, { fileProxy, superForm, type FormResult } from 'sveltekit-superforms';
 	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
-	import { LoaderCircle } from 'lucide-svelte';
+	import { LoaderCircle, Save } from 'lucide-svelte';
 	import { Pencil } from 'lucide-svelte';
 	import * as Form from '$lib/components/ui/form/index.js';
 	import IntelligentInput from '$lib/custom_components/IntelligentInput.svelte';
@@ -54,6 +54,14 @@
 				const accomplishment = action.ipcrAccomplishment;
 				updateAccomplishment(accomplishment.id, accomplishment);
 				showSuccessToast(`Succesfully updated accomplishment`);
+				reset({
+					data: {
+						...accomplishment
+					},
+					newState: {
+						...accomplishment
+					}
+				});
 				isOpen = false;
 			}
 		}
@@ -151,6 +159,7 @@
 					{#snippet children({ props })}
 						<Form.Label>Accomplishment</Form.Label>
 						<IntelligentInput
+							textAreaWidth={'full'}
 							name="actual_accomplishments"
 							placeholder={'Please type your accomplishment'}
 							bind:content={$formData.actual_accomplishments!}
@@ -246,9 +255,11 @@
 			</Form.Field>
 			<div class="flex w-full justify-end">
 				{#if $delayed}
-					<Form.Button disabled><LoaderCircle class="animate-spin" />Processing...</Form.Button>
+					<Form.Button disabled class="w-full"
+						><LoaderCircle class="animate-spin" />Processing...</Form.Button
+					>
 				{:else}
-					<Form.Button>Save</Form.Button>
+					<Form.Button class="w-full"><Save />Save</Form.Button>
 				{/if}
 			</div>
 		</form>

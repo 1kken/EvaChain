@@ -43,6 +43,16 @@
 				const accomplishment = action.ipcrAccomplishment;
 				addAccomplishment(accomplishment);
 				showSuccessToast('Accomplishment added successfully');
+				reset({
+					data: {
+						ipcr_indicator_id: indicator.id,
+						input_type: opIndicator.input_type ?? 'text'
+					},
+					newState: {
+						ipcr_indicator_id: indicator.id,
+						input_type: opIndicator.input_type ?? 'text'
+					}
+				});
 				isOpen = false;
 			}
 		}

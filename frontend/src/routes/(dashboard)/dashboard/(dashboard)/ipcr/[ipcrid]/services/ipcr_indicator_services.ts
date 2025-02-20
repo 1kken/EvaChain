@@ -20,6 +20,10 @@ import {
 	type UpdateAccomplishmentSchema
 } from '../schema/ipcr_indicator_accomplishmet';
 import { processIpcrEvidence } from '../utils/blockchain/pinata_helper';
+import {
+	deleteAccomplishmentWithHistory,
+	updateAccomplishmentWithHistory
+} from './accomplishment_helper';
 
 export async function createIpcrIndicator(request: Request, supabase: SupabaseClient<Database>) {
 	const form = await superValidate<Infer<CreateIpcrIndicatorSchema>, App.Superforms.Message>(
@@ -115,7 +119,7 @@ export async function deleteIpcrIndicator(request: Request, supabase: SupabaseCl
 	return { form, ipcrFunctionIndicator };
 }
 
-//===== ADD ACCOMPLISHMENT =====/
+//===== CREATE ACCOMPLISHMENT =====/
 export async function createAccomplishment(request: Request, supabase: SupabaseClient<Database>) {
 	const {
 		data: { user }
@@ -136,6 +140,7 @@ export async function createAccomplishment(request: Request, supabase: SupabaseC
 			text: 'Unprocessable input!'
 		});
 	}
+
 	const { ipcr_indicator_id, actual_accomplishments, accomplishment_date, pdf_evidence, quantity } =
 		form.data;
 
@@ -146,6 +151,7 @@ export async function createAccomplishment(request: Request, supabase: SupabaseC
 		});
 	}
 
+	// Create the accomplishment first
 	const { data: ipcrAccomplishment, error: ipcrAccomplishmentError } = await supabase
 		.from('ipcr_indicator_accomplishment')
 		.insert({
@@ -164,6 +170,24 @@ export async function createAccomplishment(request: Request, supabase: SupabaseC
 		});
 	}
 
+	// Now update the history with the newly created accomplishment ID
+	try {
+		await updateAccomplishmentWithHistory(
+			supabase,
+			ipcrAccomplishment.id, // Use the new accomplishment's ID
+			quantity,
+			ipcr_indicator_id
+		);
+	} catch (error) {
+		// If history update fails, clean up the created accomplishment
+		await supabase.from('ipcr_indicator_accomplishment').delete().eq('id', ipcrAccomplishment.id);
+
+		return message(form, {
+			status: 'error',
+			text: `Error updating IPCR: ${error}`
+		});
+	}
+
 	const { data, error: fetchError } = await supabase.rpc('get_ipcr_id_from_indicator', {
 		p_indicator_id: ipcr_indicator_id
 	});
@@ -175,7 +199,7 @@ export async function createAccomplishment(request: Request, supabase: SupabaseC
 		});
 	}
 
-	// // upload evidence
+	// Upload evidence
 	const { data: uploadEvidenceData, error: uploadEvidenceError } = await uploadEvidence(
 		ipcrAccomplishment.id,
 		ipcr_indicator_id,
@@ -185,22 +209,20 @@ export async function createAccomplishment(request: Request, supabase: SupabaseC
 		supabase
 	);
 
-	if (uploadEvidenceError) {
+	if (uploadEvidenceError || !uploadEvidenceData) {
+		// Clean up if evidence upload fails
+		await supabase.from('ipcr_indicator_accomplishment').delete().eq('id', ipcrAccomplishment.id);
+
 		return message(form, {
 			status: 'error',
-			text: `Error saving IPCR: ${uploadEvidenceError.message}`
+			text: uploadEvidenceError
+				? `Error saving IPCR: ${uploadEvidenceError.message}`
+				: 'Error saving IPCR: No upload data received'
 		});
 	}
 
-	if (!uploadEvidenceData) {
-		return message(form, {
-			status: 'error',
-			text: 'Error saving IPCR: No upload data received'
-		});
-	}
-
-	// save to ipcr_indicator_evidence
-	const { error: saveIndicatorEvidenceError, data: saveIndicatorEvidenceData } = await supabase
+	// Save to ipcr_indicator_evidence
+	const { error: saveIndicatorEvidenceError } = await supabase
 		.from('ipcr_indicator_evidence')
 		.insert({
 			ipcr_indicator_accomplishment_id: ipcrAccomplishment.id,
@@ -210,13 +232,18 @@ export async function createAccomplishment(request: Request, supabase: SupabaseC
 		.single();
 
 	if (saveIndicatorEvidenceError) {
+		// Clean up if evidence save fails
+		await supabase.storage.from('indicator_evidence').remove([uploadEvidenceData.fullPath]);
+
+		await supabase.from('ipcr_indicator_accomplishment').delete().eq('id', ipcrAccomplishment.id);
+
 		return message(form, {
 			status: 'error',
 			text: `Error saving evidence: ${saveIndicatorEvidenceError.message}`
 		});
 	}
 
-	//lets do the block chain here
+	// Process blockchain
 	try {
 		await processIpcrEvidence(supabase, ipcrAccomplishment.id, 0);
 	} catch (error) {
@@ -225,6 +252,7 @@ export async function createAccomplishment(request: Request, supabase: SupabaseC
 			text: `Error processing evidence: ${error}`
 		});
 	}
+
 	return withFiles({ form, ipcrAccomplishment });
 }
 
@@ -236,7 +264,6 @@ export async function updateAccomplishment(request: Request, supabase: SupabaseC
 	if (!user) {
 		return error(401, 'Unauthorized');
 	}
-	const user_id = user.id;
 
 	let form = await superValidate<Infer<UpdateAccomplishmentSchema>, App.Superforms.Message>(
 		request,
@@ -252,6 +279,7 @@ export async function updateAccomplishment(request: Request, supabase: SupabaseC
 
 	const { id, actual_accomplishments, accomplishment_date, pdf_evidence, quantity } = form.data;
 
+	// First update the accomplishment
 	const { data: ipcrAccomplishment, error: ipcrAccomplishmentError } = await supabase
 		.from('ipcr_indicator_accomplishment')
 		.update({
@@ -270,6 +298,22 @@ export async function updateAccomplishment(request: Request, supabase: SupabaseC
 		});
 	}
 
+	// Update history and totals
+	try {
+		await updateAccomplishmentWithHistory(
+			supabase,
+			id, // accomplishment id
+			quantity,
+			ipcrAccomplishment.ipcr_indicator_id
+		);
+	} catch (error) {
+		return message(form, {
+			status: 'error',
+			text: `Error updating IPCR: ${error}`
+		});
+	}
+
+	// Handle file update
 	const { data: indicatorEvidence, error: fetchIndicatorEvidenceError } = await supabase
 		.from('ipcr_indicator_evidence')
 		.select('file_path')
@@ -286,11 +330,11 @@ export async function updateAccomplishment(request: Request, supabase: SupabaseC
 	if (!indicatorEvidence.file_path) {
 		return message(form, {
 			status: 'error',
-			text: 'No indicator evidence found Which ios unexpected behavior please contact developer'
+			text: 'No indicator evidence found Which is unexpected behavior please contact developer'
 		});
 	}
 
-	//update storage
+	// Update storage
 	const { data, error: updateStorageError } = await supabase.storage
 		.from('indicator_evidence')
 		.update(indicatorEvidence.file_path, pdf_evidence, {
@@ -305,7 +349,7 @@ export async function updateAccomplishment(request: Request, supabase: SupabaseC
 		});
 	}
 
-	//block chain
+	// Update blockchain
 	try {
 		await processIpcrEvidence(supabase, id, 1);
 	} catch (error) {
@@ -344,14 +388,15 @@ export async function deleteAccomplishment(request: Request, supabase: SupabaseC
 		.from('ipcr_indicator_accomplishment')
 		.select(
 			`
-     id,
-     actual_accomplishments,
-     accomplishment_date,
-     quantity,
-     ipcr_indicator_evidence (
-       file_path
-     )
-   `
+      id,
+      ipcr_indicator_id,
+      actual_accomplishments,
+      accomplishment_date,
+      quantity,
+      ipcr_indicator_evidence (
+        file_path
+      )
+    `
 		)
 		.eq('id', id)
 		.single();
@@ -362,7 +407,17 @@ export async function deleteAccomplishment(request: Request, supabase: SupabaseC
 			text: `Error fetching accomplishment: ${accomplishmentError.message}`
 		});
 	}
-	console.log(ipcrAccomplishment);
+
+	// Update quarterly totals before deletion
+	try {
+		await deleteAccomplishmentWithHistory(supabase, id, ipcrAccomplishment.ipcr_indicator_id);
+	} catch (error) {
+		return message(form, {
+			status: 'error',
+			text: `Error updating accomplishment totals: ${error}`
+		});
+	}
+
 	// Upload to blockchain before deletion
 	try {
 		await processIpcrEvidence(supabase, id, 2);
@@ -385,7 +440,7 @@ export async function deleteAccomplishment(request: Request, supabase: SupabaseC
 		});
 	}
 
-	// Delete accomplishment
+	// Delete accomplishment (this will cascade delete the history records)
 	const { error: deleteError } = await supabase
 		.from('ipcr_indicator_accomplishment')
 		.delete()

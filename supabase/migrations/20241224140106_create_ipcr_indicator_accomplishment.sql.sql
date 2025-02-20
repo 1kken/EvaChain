@@ -2,8 +2,8 @@
 CREATE TABLE ipcr_indicator_accomplishment (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     ipcr_indicator_id UUID REFERENCES ipcr_indicator(id) ON DELETE CASCADE NOT NULL,
-    actual_accomplishments TEXT,
-    accomplishment_date DATE,
+    actual_accomplishments TEXT NOT NULL,
+    accomplishment_date DATE NOT NULL,
     quantity TEXT NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL

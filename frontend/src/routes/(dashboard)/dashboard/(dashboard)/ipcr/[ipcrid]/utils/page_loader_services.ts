@@ -307,12 +307,11 @@ export async function fetchAccomplishments(
 	try {
 		const response = await fetch(`/api/ipcr/accomplishments?indicator_id=${indicatorId}`);
 		const result = await response.json();
-
 		if (!response.ok) {
 			throw new Error(result.error || 'Failed to fetch accomplishments');
 		}
 
-		return result.data;
+		return result;
 	} catch (error) {
 		return {
 			data: [],

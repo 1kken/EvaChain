@@ -21,7 +21,6 @@
 	let props: Props = $props();
 
 	let { currentAccomplishments } = setIpcrAccomplishmentStore();
-	const { deleteForm } = getIpcrAccomplishmentFormContext();
 
 	let isLoading = $state(false);
 	let isOpen = $state(false);

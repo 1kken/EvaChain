@@ -23,8 +23,8 @@
 	const { removeAccomplishment } = getIpcrAccomplishmentStore();
 
 	let isOpen = $state(false);
-	console.log(accomplishment.id);
 	const form = superForm(deleteForm, {
+		id: crypto.randomUUID(),
 		validators: zodClient(universalDeleteSchema),
 		multipleSubmits: 'prevent',
 		dataType: 'json',

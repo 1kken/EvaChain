@@ -3,7 +3,7 @@ import { z } from 'zod';
 const MAX_FILE_SIZE = 45 * 1024 * 1024;
 const percentageRegex = /^-?\d+(\.\d+)?%$/;
 const numberRegex = /^-?\d+(\.\d+)?$/;
-const ratioRegex = /^\d+(\.\d+)?\/\d*[1-9]\d*(\.\d+)?$/;
+const ratioRegex = /^(\d+(\.\d+)?):([1-9]\d*(\.\d+)?)$/;
 
 const fieldsToValidate = ['quantity'];
 
@@ -53,7 +53,7 @@ export const createAccomplishmentSchema = z
 				if (!ratioRegex.test(value)) {
 					ctx.addIssue({
 						code: z.ZodIssueCode.custom,
-						message: 'Must be in ratio format (e.g., 3/5 or 1.5/2.5)',
+						message: 'Must be in ratio format (e.g., 3:5 or 1.5:2.5)',
 						path: [field]
 					});
 				} else {
@@ -89,7 +89,7 @@ export const updateAccomplishmentSchema = z
 				if (!percentageRegex.test(data[field])) {
 					ctx.addIssue({
 						code: z.ZodIssueCode.custom,
-						message: 'Must be in percentage format (e.g., 50% or -50.5%)',
+						message: 'Must be in percentage format (e.g., 3:5 or 1.5:2.5)',
 						path: [field]
 					});
 				}
