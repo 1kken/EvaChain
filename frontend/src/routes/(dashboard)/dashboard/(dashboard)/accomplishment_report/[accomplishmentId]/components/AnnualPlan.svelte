@@ -29,7 +29,6 @@
 	const { deleteForm } = getAccomplishmentAnnualPlanFormContext();
 	const { removeAccomplishmentAnnualPlan } = getAccomplishmentAnnualPlanStore();
 	const { currentAccomplishmentActivities } = setAccomplishmentActivityStore();
-	// const { currentAccomplishmentAnnualPlans } = setAccomplishmentAnnualPlanStore(); set activities
 
 	//states
 	let dndItems = $state<Tables<'accomplishment_activity'>[]>([]);
@@ -112,7 +111,7 @@
 				/>
 			</Button>
 			<div class="flex items-center gap-2">
-				<Badge variant={'secondary'} class="h-5 flex-shrink-0 bg-green-400 text-xs"
+				<Badge variant={'secondary'} class="h-5 flex-shrink-0 bg-teal-400 text-xs"
 					>Annual Plan</Badge
 				>
 				<div class="min-w-0 flex-1">

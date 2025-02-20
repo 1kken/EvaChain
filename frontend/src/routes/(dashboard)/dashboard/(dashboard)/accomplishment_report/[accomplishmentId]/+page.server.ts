@@ -15,10 +15,16 @@ import {
 	updateAccomplishmentHeader
 } from './services/header_services';
 import {
+	createAccomplishmentActivityIndicator,
+	deleteAccomplishmentActivityIndicator,
+	updateAccomplishmentActivityIndicator
+} from './services/indicator_services';
+import {
 	getAccomplishmentActivityForms,
 	getAccomplishmentAnnualPlanForms,
 	getAccomplishmentHeaderForms,
 	getAccomplishmentHeaders,
+	getAccomplishmentIndicatorForms,
 	getCurrentAccomplishmentReport
 } from './utils/page_server_loader_helper';
 
@@ -33,6 +39,7 @@ export const load = (async ({ params, locals: { supabase, session } }) => {
 	const accomplishmentHeaderForms = await getAccomplishmentHeaderForms();
 	const accomplishmentAnnualPlanForms = await getAccomplishmentAnnualPlanForms();
 	const accomplishmentActivityForms = await getAccomplishmentActivityForms();
+	const accomplishmentActivityIndicatorForms = await getAccomplishmentIndicatorForms();
 
 	return {
 		accomplishmentReport,
@@ -40,7 +47,8 @@ export const load = (async ({ params, locals: { supabase, session } }) => {
 		form: {
 			accomplishmentHeaderForms,
 			accomplishmentAnnualPlanForms,
-			accomplishmentActivityForms
+			accomplishmentActivityForms,
+			accomplishmentActivityIndicatorForms
 		}
 	};
 }) satisfies PageServerLoad;
@@ -75,5 +83,15 @@ export const actions = {
 	},
 	deleteactivity: async ({ request, locals: { supabase } }) => {
 		return deleteAccomplishmentActivity(request, supabase);
+	},
+	//indicator
+	createindicator: async ({ request, locals: { supabase } }) => {
+		return createAccomplishmentActivityIndicator(request, supabase);
+	},
+	updateindicator: async ({ request, locals: { supabase } }) => {
+		return updateAccomplishmentActivityIndicator(request, supabase);
+	},
+	deleteindicator: async ({ request, locals: { supabase } }) => {
+		return deleteAccomplishmentActivityIndicator(request, supabase);
 	}
 } satisfies Actions;

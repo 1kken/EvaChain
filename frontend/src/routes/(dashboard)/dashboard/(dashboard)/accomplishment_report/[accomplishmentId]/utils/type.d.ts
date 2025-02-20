@@ -14,3 +14,8 @@ export type ActivityFormResult = {
 	form: any;
 	accActivity: Tables<'accomplishment_activity'>;
 };
+
+export type ActivityIndicatorFormResult = {
+	form: any;
+	accIndicator: Tables<'accomplishment_activity_indicator'>;
+};

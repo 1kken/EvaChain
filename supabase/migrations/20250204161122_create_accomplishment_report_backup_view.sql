@@ -46,18 +46,21 @@ SELECT
     -- Activity details
     act.id as activity_id,
     act.activity,
-    act.input_type,
-    act.performance_indicator,
-    act.annual_target,
-    act.q1_accomplishment,
-    act.q2_accomplishment,
-    act.q3_accomplishment,
-    act.q4_accomplishment,
-    act.total,
-    act.accomplishment_rate,
-    act.responsible_officer_unit,
-    act.remarks as activity_remarks,
     act.position as activity_position,
+    -- Activity Indicator details
+    act_ind.id as indicator_id,
+    act_ind.input_type,
+    act_ind.performance_indicator,
+    act_ind.annual_target,
+    act_ind.q1_accomplishment,
+    act_ind.q2_accomplishment,
+    act_ind.q3_accomplishment,
+    act_ind.q4_accomplishment,
+    act_ind.total,
+    act_ind.accomplishment_rate,
+    act_ind.responsible_officer_unit,
+    act_ind.remarks as indicator_remarks,
+    act_ind.position as indicator_position,
     -- Related IPCR indicators
     (
         SELECT
@@ -126,7 +129,8 @@ FROM
     LEFT JOIN program ar_program ON ar.program_id = ar_program.id
     LEFT JOIN accomplishment_header h ON ar.id = h.accomplishment_report_id
     LEFT JOIN accomplishment_annual_plan ap ON h.id = ap.accomplishment_header_id
-    LEFT JOIN accomplishment_activity act ON ap.id = act.accomplishment_annual_plan_id;
+    LEFT JOIN accomplishment_activity act ON ap.id = act.accomplishment_annual_plan_id
+    LEFT JOIN accomplishment_activity_indicator act_ind ON act.id = act_ind.accomplishment_activity_id;
 
 GRANT
 SELECT

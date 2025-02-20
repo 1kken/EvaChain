@@ -29,7 +29,8 @@ export async function generateOpBody(
 				ratingWidth,
 				ratingWidth, //Target
 				'*', // REsponsible officer/units
-				'*' // Total budget requirements
+				'*', // Total budget requirements
+				'*'
 			],
 			headerRows: 1,
 			body: [
@@ -101,7 +102,8 @@ export async function generateOpBody(
 					{},
 					{},
 					{ text: 'Responsible \n Officer/Units', style: 'header' },
-					{ text: 'Total Budget \n Requirements', style: 'header' }
+					{ text: 'Total Budget \n Requirements', style: 'header' },
+					{ text: 'Remarks', style: 'header' }
 				],
 				...(await main(opHeaders, supabase))
 			]
@@ -139,7 +141,8 @@ async function main(
 						{ text: opIndicator.q4_target, alignment: 'center' },
 						{ text: opIndicator.total, alignment: 'center' },
 						{ text: opIndicator.responsible_officer_unit, alignment: 'center' },
-						{ text: opIndicator.total_budgetary_requirements, alignment: 'center' }
+						{ text: opIndicator.total_budgetary_requirements, alignment: 'center' },
+						{ text: opIndicator.remarks ?? '', alignment: 'left' }
 					]);
 					isFirstActivity = false;
 					isFirstAnnualPlan = false;
@@ -154,9 +157,10 @@ function generateOpHeaderRow(opHeader: string): TableCell[] {
 	return [
 		{
 			text: opHeader,
-			colSpan: 11,
+			colSpan: 12,
 			bold: true
 		},
+		{},
 		{},
 		{},
 		{},

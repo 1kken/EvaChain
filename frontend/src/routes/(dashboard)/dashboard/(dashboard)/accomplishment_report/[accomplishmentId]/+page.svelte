@@ -4,6 +4,7 @@
 	import Index from './components/Index.svelte';
 	import NavButton from './components/NavButton.svelte';
 	import { setAccomplishmentActivityFormContext } from './states/activity_form_state';
+	import { setAccomplishmentActivityIndicatorFormContext } from './states/activity_indicator_form_state';
 	import { setAccomplishmentAnnualPlanFormContext } from './states/annual_plan_form_state';
 	import { setCurrentAccomplishmentReportStore } from './states/current_accomplishment_report_state';
 	import { setAccomplishmentHeaderFormContext } from './states/header_form_state';
@@ -14,7 +15,7 @@
 	setAccomplishmentHeaderFormContext(data.form.accomplishmentHeaderForms);
 	setAccomplishmentAnnualPlanFormContext(data.form.accomplishmentAnnualPlanForms);
 	setAccomplishmentActivityFormContext(data.form.accomplishmentActivityForms);
-
+	setAccomplishmentActivityIndicatorFormContext(data.form.accomplishmentActivityIndicatorForms);
 	//data store
 	setCurrentAccomplishmentReportStore(data.accomplishmentReport);
 	setAccomplishmentHeaderStore(data.accomplishmentHeader);

@@ -7,20 +7,20 @@ import {
 	type UniversalDeleteSchema
 } from '$lib/schemas/universal_delete_schema';
 import {
-	createAccomplishmentActivitySchema,
-	updateAccomplishmentActivitySchema,
-	type CreateAccomplishmentActivitySchema,
-	type UpdateAccomplishmentActivitySchema
-} from '../schema/activity_schema';
+	createAccomplishmentActivityIndicatorSchema,
+	updateAccomplishmentActivityIndicatorSchema,
+	type CreateAccomplishmentActivityIndicatorSchema,
+	type UpdateAccomplishmentActivityIndicatorSchema
+} from '../schema/indicator_schema';
 
-export async function createAccomplishmentActivity(
+export async function createAccomplishmentActivityIndicator(
 	request: Request,
 	supabase: SupabaseClient<Database>
 ) {
 	const form = await superValidate<
-		Infer<CreateAccomplishmentActivitySchema>,
+		Infer<CreateAccomplishmentActivityIndicatorSchema>,
 		App.Superforms.Message
-	>(request, zod(createAccomplishmentActivitySchema));
+	>(request, zod(createAccomplishmentActivityIndicatorSchema));
 
 	if (!form.valid) {
 		return message(form, {
@@ -29,25 +29,25 @@ export async function createAccomplishmentActivity(
 		});
 	}
 
-	const { data: accActivity, error: accActivityError } = await supabase
-		.from('accomplishment_activity')
+	const { data: accIndicator, error: accIndicatorError } = await supabase
+		.from('accomplishment_activity_indicator')
 		.insert({
 			...form.data
 		})
 		.select()
 		.single();
 
-	if (accActivityError) {
+	if (accIndicatorError) {
 		return message(form, {
 			status: 'error',
-			text: `Error saving activity, ${accActivityError.message}`
+			text: `Error saving indicator, ${accIndicatorError.message}`
 		});
 	}
 
-	return { form, accActivity };
+	return { form, accIndicator };
 }
 
-export async function deleteAccomplishmentActivity(
+export async function deleteAccomplishmentActivityIndicator(
 	request: Request,
 	supabase: SupabaseClient<Database>
 ) {
@@ -65,31 +65,31 @@ export async function deleteAccomplishmentActivity(
 
 	let { id } = form.data;
 
-	const { data: accActivity, error: accActivityError } = await supabase
-		.from('accomplishment_activity')
+	const { data: accIndicator, error: accIndicatorError } = await supabase
+		.from('accomplishment_activity_indicator')
 		.delete()
 		.eq('id', id)
 		.select()
 		.single();
 
-	if (accActivityError) {
+	if (accIndicatorError) {
 		return message(form, {
 			status: 'error',
-			text: `Error deleting activity, ${accActivityError.message}`
+			text: `Error deleting indicator, ${accIndicatorError.message}`
 		});
 	}
 
-	return { form, accActivity };
+	return { form, accIndicator };
 }
 
-export async function updateAccomplishmentActivity(
+export async function updateAccomplishmentActivityIndicator(
 	request: Request,
 	supabase: SupabaseClient<Database>
 ) {
 	const form = await superValidate<
-		Infer<UpdateAccomplishmentActivitySchema>,
+		Infer<UpdateAccomplishmentActivityIndicatorSchema>,
 		App.Superforms.Message
-	>(request, zod(updateAccomplishmentActivitySchema));
+	>(request, zod(updateAccomplishmentActivityIndicatorSchema));
 
 	if (!form.valid) {
 		return message(form, {
@@ -98,10 +98,10 @@ export async function updateAccomplishmentActivity(
 		});
 	}
 
-	let { id, activity } = form.data;
+	let { id } = form.data;
 
-	const { data: accActivity, error: accActivityError } = await supabase
-		.from('accomplishment_activity')
+	const { data: accIndicator, error: accIndicatorError } = await supabase
+		.from('accomplishment_activity_indicator')
 		.update({
 			...form.data
 		})
@@ -109,12 +109,12 @@ export async function updateAccomplishmentActivity(
 		.select()
 		.single();
 
-	if (accActivityError) {
+	if (accIndicatorError) {
 		return message(form, {
 			status: 'error',
-			text: `Error updating activity, ${accActivityError.message}`
+			text: `Error updating indicator, ${accIndicatorError.message}`
 		});
 	}
 
-	return { form, accActivity };
+	return { form, accIndicator };
 }

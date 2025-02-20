@@ -78,6 +78,7 @@
 	$formData.total = opIndicator.total;
 	$formData.responsible_officer_unit = opIndicator.responsible_officer_unit;
 	$formData.total_budgetary_requirements = opIndicator.total_budgetary_requirements;
+	$formData.remarks = opIndicator.remarks;
 
 	//effect for message
 	$effect(() => {
@@ -275,6 +276,20 @@
 						<Form.FieldErrors />
 					</Form.Field>
 				</div>
+				<Form.Field {form} name="remarks">
+					<Form.Control>
+						{#snippet children({ props })}
+							<Form.Label>Remarks</Form.Label>
+							<IntelligentInput
+								textAreaWidth={'full'}
+								placeholder="Enter remarks"
+								bind:content={$formData.remarks}
+								name={props.name}
+							/>
+						{/snippet}
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
 			</FormSection>
 			<div class="flex w-full justify-end">
 				{#if $delayed}

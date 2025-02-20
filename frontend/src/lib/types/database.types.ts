@@ -37,59 +37,26 @@ export type Database = {
       accomplishment_activity: {
         Row: {
           accomplishment_annual_plan_id: string
-          accomplishment_rate: string | null
           activity: string
-          annual_target: string
           created_at: string
           id: string
-          input_type: Database["public"]["Enums"]["input_type_accomplishment"]
-          performance_indicator: string
           position: number
-          q1_accomplishment: string | null
-          q2_accomplishment: string | null
-          q3_accomplishment: string | null
-          q4_accomplishment: string | null
-          remarks: string
-          responsible_officer_unit: string
-          total: string | null
           updated_at: string
         }
         Insert: {
           accomplishment_annual_plan_id: string
-          accomplishment_rate?: string | null
           activity: string
-          annual_target: string
           created_at?: string
           id?: string
-          input_type?: Database["public"]["Enums"]["input_type_accomplishment"]
-          performance_indicator: string
           position: number
-          q1_accomplishment?: string | null
-          q2_accomplishment?: string | null
-          q3_accomplishment?: string | null
-          q4_accomplishment?: string | null
-          remarks: string
-          responsible_officer_unit: string
-          total?: string | null
           updated_at?: string
         }
         Update: {
           accomplishment_annual_plan_id?: string
-          accomplishment_rate?: string | null
           activity?: string
-          annual_target?: string
           created_at?: string
           id?: string
-          input_type?: Database["public"]["Enums"]["input_type_accomplishment"]
-          performance_indicator?: string
           position?: number
-          q1_accomplishment?: string | null
-          q2_accomplishment?: string | null
-          q3_accomplishment?: string | null
-          q4_accomplishment?: string | null
-          remarks?: string
-          responsible_officer_unit?: string
-          total?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -106,6 +73,78 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "accomplishment_report_backup_view"
             referencedColumns: ["annual_plan_id"]
+          },
+        ]
+      }
+      accomplishment_activity_indicator: {
+        Row: {
+          accomplishment_activity_id: string
+          accomplishment_rate: string | null
+          annual_target: string
+          created_at: string
+          id: string
+          input_type: Database["public"]["Enums"]["input_type_accomplishment"]
+          performance_indicator: string
+          position: number
+          q1_accomplishment: string | null
+          q2_accomplishment: string | null
+          q3_accomplishment: string | null
+          q4_accomplishment: string | null
+          remarks: string | null
+          responsible_officer_unit: string
+          total: string | null
+          updated_at: string
+        }
+        Insert: {
+          accomplishment_activity_id: string
+          accomplishment_rate?: string | null
+          annual_target: string
+          created_at?: string
+          id?: string
+          input_type?: Database["public"]["Enums"]["input_type_accomplishment"]
+          performance_indicator: string
+          position: number
+          q1_accomplishment?: string | null
+          q2_accomplishment?: string | null
+          q3_accomplishment?: string | null
+          q4_accomplishment?: string | null
+          remarks?: string | null
+          responsible_officer_unit: string
+          total?: string | null
+          updated_at?: string
+        }
+        Update: {
+          accomplishment_activity_id?: string
+          accomplishment_rate?: string | null
+          annual_target?: string
+          created_at?: string
+          id?: string
+          input_type?: Database["public"]["Enums"]["input_type_accomplishment"]
+          performance_indicator?: string
+          position?: number
+          q1_accomplishment?: string | null
+          q2_accomplishment?: string | null
+          q3_accomplishment?: string | null
+          q4_accomplishment?: string | null
+          remarks?: string | null
+          responsible_officer_unit?: string
+          total?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "accomplishment_activity_indicat_accomplishment_activity_id_fkey"
+            columns: ["accomplishment_activity_id"]
+            isOneToOne: false
+            referencedRelation: "accomplishment_activity"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "accomplishment_activity_indicat_accomplishment_activity_id_fkey"
+            columns: ["accomplishment_activity_id"]
+            isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["activity_id"]
           },
         ]
       }
@@ -259,13 +298,20 @@ export type Database = {
             columns: ["office_id"]
             isOneToOne: false
             referencedRelation: "dpcr_backup_view"
-            referencedColumns: ["dpcr_office_id"]
+            referencedColumns: ["owner_office_id"]
           },
           {
             foreignKeyName: "accomplishment_report_office_id_fkey"
             columns: ["office_id"]
             isOneToOne: false
             referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["dpcr_office_id"]
+          },
+          {
+            foreignKeyName: "accomplishment_report_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
             referencedColumns: ["owner_office_id"]
           },
           {
@@ -274,13 +320,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "ipcr_backup_view"
             referencedColumns: ["ipcr_office_id"]
-          },
-          {
-            foreignKeyName: "accomplishment_report_office_id_fkey"
-            columns: ["office_id"]
-            isOneToOne: false
-            referencedRelation: "ipcr_backup_view"
-            referencedColumns: ["owner_office_id"]
           },
           {
             foreignKeyName: "accomplishment_report_office_id_fkey"
@@ -336,14 +375,14 @@ export type Database = {
             columns: ["program_id"]
             isOneToOne: false
             referencedRelation: "dpcr_backup_view"
-            referencedColumns: ["dpcr_program_id"]
+            referencedColumns: ["owner_program_id"]
           },
           {
             foreignKeyName: "accomplishment_report_program_id_fkey"
             columns: ["program_id"]
             isOneToOne: false
             referencedRelation: "dpcr_backup_view"
-            referencedColumns: ["owner_program_id"]
+            referencedColumns: ["dpcr_program_id"]
           },
           {
             foreignKeyName: "accomplishment_report_program_id_fkey"
@@ -364,14 +403,14 @@ export type Database = {
             columns: ["program_id"]
             isOneToOne: false
             referencedRelation: "opcr_backup_view"
-            referencedColumns: ["owner_program_id"]
+            referencedColumns: ["opcr_program_id"]
           },
           {
             foreignKeyName: "accomplishment_report_program_id_fkey"
             columns: ["program_id"]
             isOneToOne: false
             referencedRelation: "opcr_backup_view"
-            referencedColumns: ["opcr_program_id"]
+            referencedColumns: ["owner_program_id"]
           },
           {
             foreignKeyName: "accomplishment_report_program_id_fkey"
@@ -399,14 +438,21 @@ export type Database = {
             columns: ["unit_id"]
             isOneToOne: false
             referencedRelation: "accomplishment_report_backup_view"
-            referencedColumns: ["owner_unit_id"]
+            referencedColumns: ["ar_unit_id"]
           },
           {
             foreignKeyName: "accomplishment_report_unit_id_fkey"
             columns: ["unit_id"]
             isOneToOne: false
             referencedRelation: "accomplishment_report_backup_view"
-            referencedColumns: ["ar_unit_id"]
+            referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "accomplishment_report_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["owner_unit_id"]
           },
           {
             foreignKeyName: "accomplishment_report_unit_id_fkey"
@@ -419,20 +465,6 @@ export type Database = {
             foreignKeyName: "accomplishment_report_unit_id_fkey"
             columns: ["unit_id"]
             isOneToOne: false
-            referencedRelation: "dpcr_backup_view"
-            referencedColumns: ["owner_unit_id"]
-          },
-          {
-            foreignKeyName: "accomplishment_report_unit_id_fkey"
-            columns: ["unit_id"]
-            isOneToOne: false
-            referencedRelation: "ipcr_backup_view"
-            referencedColumns: ["owner_unit_id"]
-          },
-          {
-            foreignKeyName: "accomplishment_report_unit_id_fkey"
-            columns: ["unit_id"]
-            isOneToOne: false
             referencedRelation: "ipcr_backup_view"
             referencedColumns: ["ipcr_unit_id"]
           },
@@ -440,8 +472,8 @@ export type Database = {
             foreignKeyName: "accomplishment_report_unit_id_fkey"
             columns: ["unit_id"]
             isOneToOne: false
-            referencedRelation: "opcr_backup_view"
-            referencedColumns: ["opcr_unit_id"]
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["owner_unit_id"]
           },
           {
             foreignKeyName: "accomplishment_report_unit_id_fkey"
@@ -449,6 +481,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "opcr_backup_view"
             referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "accomplishment_report_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["opcr_unit_id"]
           },
           {
             foreignKeyName: "accomplishment_report_unit_id_fkey"
@@ -563,13 +602,20 @@ export type Database = {
             columns: ["office_id"]
             isOneToOne: false
             referencedRelation: "dpcr_backup_view"
-            referencedColumns: ["dpcr_office_id"]
+            referencedColumns: ["owner_office_id"]
           },
           {
             foreignKeyName: "dpcr_office_id_fkey"
             columns: ["office_id"]
             isOneToOne: false
             referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["dpcr_office_id"]
+          },
+          {
+            foreignKeyName: "dpcr_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
             referencedColumns: ["owner_office_id"]
           },
           {
@@ -578,13 +624,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "ipcr_backup_view"
             referencedColumns: ["ipcr_office_id"]
-          },
-          {
-            foreignKeyName: "dpcr_office_id_fkey"
-            columns: ["office_id"]
-            isOneToOne: false
-            referencedRelation: "ipcr_backup_view"
-            referencedColumns: ["owner_office_id"]
           },
           {
             foreignKeyName: "dpcr_office_id_fkey"
@@ -640,14 +679,14 @@ export type Database = {
             columns: ["program_id"]
             isOneToOne: false
             referencedRelation: "dpcr_backup_view"
-            referencedColumns: ["dpcr_program_id"]
+            referencedColumns: ["owner_program_id"]
           },
           {
             foreignKeyName: "dpcr_program_id_fkey"
             columns: ["program_id"]
             isOneToOne: false
             referencedRelation: "dpcr_backup_view"
-            referencedColumns: ["owner_program_id"]
+            referencedColumns: ["dpcr_program_id"]
           },
           {
             foreignKeyName: "dpcr_program_id_fkey"
@@ -668,14 +707,14 @@ export type Database = {
             columns: ["program_id"]
             isOneToOne: false
             referencedRelation: "opcr_backup_view"
-            referencedColumns: ["owner_program_id"]
+            referencedColumns: ["opcr_program_id"]
           },
           {
             foreignKeyName: "dpcr_program_id_fkey"
             columns: ["program_id"]
             isOneToOne: false
             referencedRelation: "opcr_backup_view"
-            referencedColumns: ["opcr_program_id"]
+            referencedColumns: ["owner_program_id"]
           },
           {
             foreignKeyName: "dpcr_program_id_fkey"
@@ -703,14 +742,21 @@ export type Database = {
             columns: ["unit_id"]
             isOneToOne: false
             referencedRelation: "accomplishment_report_backup_view"
-            referencedColumns: ["owner_unit_id"]
+            referencedColumns: ["ar_unit_id"]
           },
           {
             foreignKeyName: "dpcr_unit_id_fkey"
             columns: ["unit_id"]
             isOneToOne: false
             referencedRelation: "accomplishment_report_backup_view"
-            referencedColumns: ["ar_unit_id"]
+            referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "dpcr_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["owner_unit_id"]
           },
           {
             foreignKeyName: "dpcr_unit_id_fkey"
@@ -723,20 +769,6 @@ export type Database = {
             foreignKeyName: "dpcr_unit_id_fkey"
             columns: ["unit_id"]
             isOneToOne: false
-            referencedRelation: "dpcr_backup_view"
-            referencedColumns: ["owner_unit_id"]
-          },
-          {
-            foreignKeyName: "dpcr_unit_id_fkey"
-            columns: ["unit_id"]
-            isOneToOne: false
-            referencedRelation: "ipcr_backup_view"
-            referencedColumns: ["owner_unit_id"]
-          },
-          {
-            foreignKeyName: "dpcr_unit_id_fkey"
-            columns: ["unit_id"]
-            isOneToOne: false
             referencedRelation: "ipcr_backup_view"
             referencedColumns: ["ipcr_unit_id"]
           },
@@ -744,8 +776,8 @@ export type Database = {
             foreignKeyName: "dpcr_unit_id_fkey"
             columns: ["unit_id"]
             isOneToOne: false
-            referencedRelation: "opcr_backup_view"
-            referencedColumns: ["opcr_unit_id"]
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["owner_unit_id"]
           },
           {
             foreignKeyName: "dpcr_unit_id_fkey"
@@ -753,6 +785,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "opcr_backup_view"
             referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "dpcr_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["opcr_unit_id"]
           },
           {
             foreignKeyName: "dpcr_unit_id_fkey"
@@ -1082,13 +1121,20 @@ export type Database = {
             columns: ["office_id"]
             isOneToOne: false
             referencedRelation: "dpcr_backup_view"
-            referencedColumns: ["dpcr_office_id"]
+            referencedColumns: ["owner_office_id"]
           },
           {
             foreignKeyName: "ipcr_office_id_fkey"
             columns: ["office_id"]
             isOneToOne: false
             referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["dpcr_office_id"]
+          },
+          {
+            foreignKeyName: "ipcr_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
             referencedColumns: ["owner_office_id"]
           },
           {
@@ -1097,13 +1143,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "ipcr_backup_view"
             referencedColumns: ["ipcr_office_id"]
-          },
-          {
-            foreignKeyName: "ipcr_office_id_fkey"
-            columns: ["office_id"]
-            isOneToOne: false
-            referencedRelation: "ipcr_backup_view"
-            referencedColumns: ["owner_office_id"]
           },
           {
             foreignKeyName: "ipcr_office_id_fkey"
@@ -1159,14 +1198,14 @@ export type Database = {
             columns: ["program_id"]
             isOneToOne: false
             referencedRelation: "dpcr_backup_view"
-            referencedColumns: ["dpcr_program_id"]
+            referencedColumns: ["owner_program_id"]
           },
           {
             foreignKeyName: "ipcr_program_id_fkey"
             columns: ["program_id"]
             isOneToOne: false
             referencedRelation: "dpcr_backup_view"
-            referencedColumns: ["owner_program_id"]
+            referencedColumns: ["dpcr_program_id"]
           },
           {
             foreignKeyName: "ipcr_program_id_fkey"
@@ -1187,14 +1226,14 @@ export type Database = {
             columns: ["program_id"]
             isOneToOne: false
             referencedRelation: "opcr_backup_view"
-            referencedColumns: ["owner_program_id"]
+            referencedColumns: ["opcr_program_id"]
           },
           {
             foreignKeyName: "ipcr_program_id_fkey"
             columns: ["program_id"]
             isOneToOne: false
             referencedRelation: "opcr_backup_view"
-            referencedColumns: ["opcr_program_id"]
+            referencedColumns: ["owner_program_id"]
           },
           {
             foreignKeyName: "ipcr_program_id_fkey"
@@ -1222,14 +1261,21 @@ export type Database = {
             columns: ["unit_id"]
             isOneToOne: false
             referencedRelation: "accomplishment_report_backup_view"
-            referencedColumns: ["owner_unit_id"]
+            referencedColumns: ["ar_unit_id"]
           },
           {
             foreignKeyName: "ipcr_unit_id_fkey"
             columns: ["unit_id"]
             isOneToOne: false
             referencedRelation: "accomplishment_report_backup_view"
-            referencedColumns: ["ar_unit_id"]
+            referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "ipcr_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["owner_unit_id"]
           },
           {
             foreignKeyName: "ipcr_unit_id_fkey"
@@ -1242,20 +1288,6 @@ export type Database = {
             foreignKeyName: "ipcr_unit_id_fkey"
             columns: ["unit_id"]
             isOneToOne: false
-            referencedRelation: "dpcr_backup_view"
-            referencedColumns: ["owner_unit_id"]
-          },
-          {
-            foreignKeyName: "ipcr_unit_id_fkey"
-            columns: ["unit_id"]
-            isOneToOne: false
-            referencedRelation: "ipcr_backup_view"
-            referencedColumns: ["owner_unit_id"]
-          },
-          {
-            foreignKeyName: "ipcr_unit_id_fkey"
-            columns: ["unit_id"]
-            isOneToOne: false
             referencedRelation: "ipcr_backup_view"
             referencedColumns: ["ipcr_unit_id"]
           },
@@ -1263,8 +1295,8 @@ export type Database = {
             foreignKeyName: "ipcr_unit_id_fkey"
             columns: ["unit_id"]
             isOneToOne: false
-            referencedRelation: "opcr_backup_view"
-            referencedColumns: ["opcr_unit_id"]
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["owner_unit_id"]
           },
           {
             foreignKeyName: "ipcr_unit_id_fkey"
@@ -1272,6 +1304,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "opcr_backup_view"
             referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "ipcr_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["opcr_unit_id"]
           },
           {
             foreignKeyName: "ipcr_unit_id_fkey"
@@ -1698,14 +1737,21 @@ export type Database = {
             columns: ["unit_id"]
             isOneToOne: false
             referencedRelation: "accomplishment_report_backup_view"
-            referencedColumns: ["owner_unit_id"]
+            referencedColumns: ["ar_unit_id"]
           },
           {
             foreignKeyName: "office_unit_id_fkey"
             columns: ["unit_id"]
             isOneToOne: false
             referencedRelation: "accomplishment_report_backup_view"
-            referencedColumns: ["ar_unit_id"]
+            referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "office_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["owner_unit_id"]
           },
           {
             foreignKeyName: "office_unit_id_fkey"
@@ -1718,20 +1764,6 @@ export type Database = {
             foreignKeyName: "office_unit_id_fkey"
             columns: ["unit_id"]
             isOneToOne: false
-            referencedRelation: "dpcr_backup_view"
-            referencedColumns: ["owner_unit_id"]
-          },
-          {
-            foreignKeyName: "office_unit_id_fkey"
-            columns: ["unit_id"]
-            isOneToOne: false
-            referencedRelation: "ipcr_backup_view"
-            referencedColumns: ["owner_unit_id"]
-          },
-          {
-            foreignKeyName: "office_unit_id_fkey"
-            columns: ["unit_id"]
-            isOneToOne: false
             referencedRelation: "ipcr_backup_view"
             referencedColumns: ["ipcr_unit_id"]
           },
@@ -1739,8 +1771,8 @@ export type Database = {
             foreignKeyName: "office_unit_id_fkey"
             columns: ["unit_id"]
             isOneToOne: false
-            referencedRelation: "opcr_backup_view"
-            referencedColumns: ["opcr_unit_id"]
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["owner_unit_id"]
           },
           {
             foreignKeyName: "office_unit_id_fkey"
@@ -1748,6 +1780,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "opcr_backup_view"
             referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "office_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["opcr_unit_id"]
           },
           {
             foreignKeyName: "office_unit_id_fkey"
@@ -1841,6 +1880,7 @@ export type Database = {
           q2_target: string | null
           q3_target: string | null
           q4_target: string | null
+          remarks: string | null
           responsible_officer_unit: string
           total: string | null
           total_budgetary_requirements: string
@@ -1858,6 +1898,7 @@ export type Database = {
           q2_target?: string | null
           q3_target?: string | null
           q4_target?: string | null
+          remarks?: string | null
           responsible_officer_unit: string
           total?: string | null
           total_budgetary_requirements: string
@@ -1875,6 +1916,7 @@ export type Database = {
           q2_target?: string | null
           q3_target?: string | null
           q4_target?: string | null
+          remarks?: string | null
           responsible_officer_unit?: string
           total?: string | null
           total_budgetary_requirements?: string
@@ -2082,13 +2124,20 @@ export type Database = {
             columns: ["office_id"]
             isOneToOne: false
             referencedRelation: "dpcr_backup_view"
-            referencedColumns: ["dpcr_office_id"]
+            referencedColumns: ["owner_office_id"]
           },
           {
             foreignKeyName: "opcr_office_id_fkey"
             columns: ["office_id"]
             isOneToOne: false
             referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["dpcr_office_id"]
+          },
+          {
+            foreignKeyName: "opcr_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
             referencedColumns: ["owner_office_id"]
           },
           {
@@ -2097,13 +2146,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "ipcr_backup_view"
             referencedColumns: ["ipcr_office_id"]
-          },
-          {
-            foreignKeyName: "opcr_office_id_fkey"
-            columns: ["office_id"]
-            isOneToOne: false
-            referencedRelation: "ipcr_backup_view"
-            referencedColumns: ["owner_office_id"]
           },
           {
             foreignKeyName: "opcr_office_id_fkey"
@@ -2159,14 +2201,14 @@ export type Database = {
             columns: ["program_id"]
             isOneToOne: false
             referencedRelation: "dpcr_backup_view"
-            referencedColumns: ["dpcr_program_id"]
+            referencedColumns: ["owner_program_id"]
           },
           {
             foreignKeyName: "opcr_program_id_fkey"
             columns: ["program_id"]
             isOneToOne: false
             referencedRelation: "dpcr_backup_view"
-            referencedColumns: ["owner_program_id"]
+            referencedColumns: ["dpcr_program_id"]
           },
           {
             foreignKeyName: "opcr_program_id_fkey"
@@ -2187,14 +2229,14 @@ export type Database = {
             columns: ["program_id"]
             isOneToOne: false
             referencedRelation: "opcr_backup_view"
-            referencedColumns: ["owner_program_id"]
+            referencedColumns: ["opcr_program_id"]
           },
           {
             foreignKeyName: "opcr_program_id_fkey"
             columns: ["program_id"]
             isOneToOne: false
             referencedRelation: "opcr_backup_view"
-            referencedColumns: ["opcr_program_id"]
+            referencedColumns: ["owner_program_id"]
           },
           {
             foreignKeyName: "opcr_program_id_fkey"
@@ -2222,14 +2264,21 @@ export type Database = {
             columns: ["unit_id"]
             isOneToOne: false
             referencedRelation: "accomplishment_report_backup_view"
-            referencedColumns: ["owner_unit_id"]
+            referencedColumns: ["ar_unit_id"]
           },
           {
             foreignKeyName: "opcr_unit_id_fkey"
             columns: ["unit_id"]
             isOneToOne: false
             referencedRelation: "accomplishment_report_backup_view"
-            referencedColumns: ["ar_unit_id"]
+            referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "opcr_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["owner_unit_id"]
           },
           {
             foreignKeyName: "opcr_unit_id_fkey"
@@ -2242,20 +2291,6 @@ export type Database = {
             foreignKeyName: "opcr_unit_id_fkey"
             columns: ["unit_id"]
             isOneToOne: false
-            referencedRelation: "dpcr_backup_view"
-            referencedColumns: ["owner_unit_id"]
-          },
-          {
-            foreignKeyName: "opcr_unit_id_fkey"
-            columns: ["unit_id"]
-            isOneToOne: false
-            referencedRelation: "ipcr_backup_view"
-            referencedColumns: ["owner_unit_id"]
-          },
-          {
-            foreignKeyName: "opcr_unit_id_fkey"
-            columns: ["unit_id"]
-            isOneToOne: false
             referencedRelation: "ipcr_backup_view"
             referencedColumns: ["ipcr_unit_id"]
           },
@@ -2263,8 +2298,8 @@ export type Database = {
             foreignKeyName: "opcr_unit_id_fkey"
             columns: ["unit_id"]
             isOneToOne: false
-            referencedRelation: "opcr_backup_view"
-            referencedColumns: ["opcr_unit_id"]
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["owner_unit_id"]
           },
           {
             foreignKeyName: "opcr_unit_id_fkey"
@@ -2272,6 +2307,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "opcr_backup_view"
             referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "opcr_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["opcr_unit_id"]
           },
           {
             foreignKeyName: "opcr_unit_id_fkey"
@@ -2532,13 +2574,20 @@ export type Database = {
             columns: ["office_id"]
             isOneToOne: false
             referencedRelation: "dpcr_backup_view"
-            referencedColumns: ["dpcr_office_id"]
+            referencedColumns: ["owner_office_id"]
           },
           {
             foreignKeyName: "operational_plan_office_id_fkey"
             columns: ["office_id"]
             isOneToOne: false
             referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["dpcr_office_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
             referencedColumns: ["owner_office_id"]
           },
           {
@@ -2547,13 +2596,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "ipcr_backup_view"
             referencedColumns: ["ipcr_office_id"]
-          },
-          {
-            foreignKeyName: "operational_plan_office_id_fkey"
-            columns: ["office_id"]
-            isOneToOne: false
-            referencedRelation: "ipcr_backup_view"
-            referencedColumns: ["owner_office_id"]
           },
           {
             foreignKeyName: "operational_plan_office_id_fkey"
@@ -2609,14 +2651,14 @@ export type Database = {
             columns: ["program_id"]
             isOneToOne: false
             referencedRelation: "dpcr_backup_view"
-            referencedColumns: ["dpcr_program_id"]
+            referencedColumns: ["owner_program_id"]
           },
           {
             foreignKeyName: "operational_plan_program_id_fkey"
             columns: ["program_id"]
             isOneToOne: false
             referencedRelation: "dpcr_backup_view"
-            referencedColumns: ["owner_program_id"]
+            referencedColumns: ["dpcr_program_id"]
           },
           {
             foreignKeyName: "operational_plan_program_id_fkey"
@@ -2637,14 +2679,14 @@ export type Database = {
             columns: ["program_id"]
             isOneToOne: false
             referencedRelation: "opcr_backup_view"
-            referencedColumns: ["owner_program_id"]
+            referencedColumns: ["opcr_program_id"]
           },
           {
             foreignKeyName: "operational_plan_program_id_fkey"
             columns: ["program_id"]
             isOneToOne: false
             referencedRelation: "opcr_backup_view"
-            referencedColumns: ["opcr_program_id"]
+            referencedColumns: ["owner_program_id"]
           },
           {
             foreignKeyName: "operational_plan_program_id_fkey"
@@ -2672,14 +2714,21 @@ export type Database = {
             columns: ["unit_id"]
             isOneToOne: false
             referencedRelation: "accomplishment_report_backup_view"
-            referencedColumns: ["owner_unit_id"]
+            referencedColumns: ["ar_unit_id"]
           },
           {
             foreignKeyName: "operational_plan_unit_id_fkey"
             columns: ["unit_id"]
             isOneToOne: false
             referencedRelation: "accomplishment_report_backup_view"
-            referencedColumns: ["ar_unit_id"]
+            referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["owner_unit_id"]
           },
           {
             foreignKeyName: "operational_plan_unit_id_fkey"
@@ -2692,20 +2741,6 @@ export type Database = {
             foreignKeyName: "operational_plan_unit_id_fkey"
             columns: ["unit_id"]
             isOneToOne: false
-            referencedRelation: "dpcr_backup_view"
-            referencedColumns: ["owner_unit_id"]
-          },
-          {
-            foreignKeyName: "operational_plan_unit_id_fkey"
-            columns: ["unit_id"]
-            isOneToOne: false
-            referencedRelation: "ipcr_backup_view"
-            referencedColumns: ["owner_unit_id"]
-          },
-          {
-            foreignKeyName: "operational_plan_unit_id_fkey"
-            columns: ["unit_id"]
-            isOneToOne: false
             referencedRelation: "ipcr_backup_view"
             referencedColumns: ["ipcr_unit_id"]
           },
@@ -2713,8 +2748,8 @@ export type Database = {
             foreignKeyName: "operational_plan_unit_id_fkey"
             columns: ["unit_id"]
             isOneToOne: false
-            referencedRelation: "opcr_backup_view"
-            referencedColumns: ["opcr_unit_id"]
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["owner_unit_id"]
           },
           {
             foreignKeyName: "operational_plan_unit_id_fkey"
@@ -2722,6 +2757,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "opcr_backup_view"
             referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["opcr_unit_id"]
           },
           {
             foreignKeyName: "operational_plan_unit_id_fkey"
@@ -2888,13 +2930,20 @@ export type Database = {
             columns: ["office_id"]
             isOneToOne: false
             referencedRelation: "dpcr_backup_view"
-            referencedColumns: ["dpcr_office_id"]
+            referencedColumns: ["owner_office_id"]
           },
           {
             foreignKeyName: "profiles_office_id_fkey"
             columns: ["office_id"]
             isOneToOne: false
             referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["dpcr_office_id"]
+          },
+          {
+            foreignKeyName: "profiles_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
             referencedColumns: ["owner_office_id"]
           },
           {
@@ -2903,13 +2952,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "ipcr_backup_view"
             referencedColumns: ["ipcr_office_id"]
-          },
-          {
-            foreignKeyName: "profiles_office_id_fkey"
-            columns: ["office_id"]
-            isOneToOne: false
-            referencedRelation: "ipcr_backup_view"
-            referencedColumns: ["owner_office_id"]
           },
           {
             foreignKeyName: "profiles_office_id_fkey"
@@ -2972,14 +3014,14 @@ export type Database = {
             columns: ["program_id"]
             isOneToOne: false
             referencedRelation: "dpcr_backup_view"
-            referencedColumns: ["dpcr_program_id"]
+            referencedColumns: ["owner_program_id"]
           },
           {
             foreignKeyName: "profiles_program_id_fkey"
             columns: ["program_id"]
             isOneToOne: false
             referencedRelation: "dpcr_backup_view"
-            referencedColumns: ["owner_program_id"]
+            referencedColumns: ["dpcr_program_id"]
           },
           {
             foreignKeyName: "profiles_program_id_fkey"
@@ -3000,14 +3042,14 @@ export type Database = {
             columns: ["program_id"]
             isOneToOne: false
             referencedRelation: "opcr_backup_view"
-            referencedColumns: ["owner_program_id"]
+            referencedColumns: ["opcr_program_id"]
           },
           {
             foreignKeyName: "profiles_program_id_fkey"
             columns: ["program_id"]
             isOneToOne: false
             referencedRelation: "opcr_backup_view"
-            referencedColumns: ["opcr_program_id"]
+            referencedColumns: ["owner_program_id"]
           },
           {
             foreignKeyName: "profiles_program_id_fkey"
@@ -3035,14 +3077,21 @@ export type Database = {
             columns: ["unit_id"]
             isOneToOne: false
             referencedRelation: "accomplishment_report_backup_view"
-            referencedColumns: ["owner_unit_id"]
+            referencedColumns: ["ar_unit_id"]
           },
           {
             foreignKeyName: "profiles_unit_id_fkey"
             columns: ["unit_id"]
             isOneToOne: false
             referencedRelation: "accomplishment_report_backup_view"
-            referencedColumns: ["ar_unit_id"]
+            referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "profiles_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["owner_unit_id"]
           },
           {
             foreignKeyName: "profiles_unit_id_fkey"
@@ -3055,20 +3104,6 @@ export type Database = {
             foreignKeyName: "profiles_unit_id_fkey"
             columns: ["unit_id"]
             isOneToOne: false
-            referencedRelation: "dpcr_backup_view"
-            referencedColumns: ["owner_unit_id"]
-          },
-          {
-            foreignKeyName: "profiles_unit_id_fkey"
-            columns: ["unit_id"]
-            isOneToOne: false
-            referencedRelation: "ipcr_backup_view"
-            referencedColumns: ["owner_unit_id"]
-          },
-          {
-            foreignKeyName: "profiles_unit_id_fkey"
-            columns: ["unit_id"]
-            isOneToOne: false
             referencedRelation: "ipcr_backup_view"
             referencedColumns: ["ipcr_unit_id"]
           },
@@ -3076,8 +3111,8 @@ export type Database = {
             foreignKeyName: "profiles_unit_id_fkey"
             columns: ["unit_id"]
             isOneToOne: false
-            referencedRelation: "opcr_backup_view"
-            referencedColumns: ["opcr_unit_id"]
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["owner_unit_id"]
           },
           {
             foreignKeyName: "profiles_unit_id_fkey"
@@ -3085,6 +3120,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "opcr_backup_view"
             referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "profiles_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["opcr_unit_id"]
           },
           {
             foreignKeyName: "profiles_unit_id_fkey"
@@ -3154,13 +3196,20 @@ export type Database = {
             columns: ["office_id"]
             isOneToOne: false
             referencedRelation: "dpcr_backup_view"
-            referencedColumns: ["dpcr_office_id"]
+            referencedColumns: ["owner_office_id"]
           },
           {
             foreignKeyName: "program_office_id_fkey"
             columns: ["office_id"]
             isOneToOne: false
             referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["dpcr_office_id"]
+          },
+          {
+            foreignKeyName: "program_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
             referencedColumns: ["owner_office_id"]
           },
           {
@@ -3169,13 +3218,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "ipcr_backup_view"
             referencedColumns: ["ipcr_office_id"]
-          },
-          {
-            foreignKeyName: "program_office_id_fkey"
-            columns: ["office_id"]
-            isOneToOne: false
-            referencedRelation: "ipcr_backup_view"
-            referencedColumns: ["owner_office_id"]
           },
           {
             foreignKeyName: "program_office_id_fkey"
@@ -3217,14 +3259,21 @@ export type Database = {
             columns: ["unit_id"]
             isOneToOne: false
             referencedRelation: "accomplishment_report_backup_view"
-            referencedColumns: ["owner_unit_id"]
+            referencedColumns: ["ar_unit_id"]
           },
           {
             foreignKeyName: "program_unit_id_fkey"
             columns: ["unit_id"]
             isOneToOne: false
             referencedRelation: "accomplishment_report_backup_view"
-            referencedColumns: ["ar_unit_id"]
+            referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "program_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["owner_unit_id"]
           },
           {
             foreignKeyName: "program_unit_id_fkey"
@@ -3237,20 +3286,6 @@ export type Database = {
             foreignKeyName: "program_unit_id_fkey"
             columns: ["unit_id"]
             isOneToOne: false
-            referencedRelation: "dpcr_backup_view"
-            referencedColumns: ["owner_unit_id"]
-          },
-          {
-            foreignKeyName: "program_unit_id_fkey"
-            columns: ["unit_id"]
-            isOneToOne: false
-            referencedRelation: "ipcr_backup_view"
-            referencedColumns: ["owner_unit_id"]
-          },
-          {
-            foreignKeyName: "program_unit_id_fkey"
-            columns: ["unit_id"]
-            isOneToOne: false
             referencedRelation: "ipcr_backup_view"
             referencedColumns: ["ipcr_unit_id"]
           },
@@ -3258,8 +3293,8 @@ export type Database = {
             foreignKeyName: "program_unit_id_fkey"
             columns: ["unit_id"]
             isOneToOne: false
-            referencedRelation: "opcr_backup_view"
-            referencedColumns: ["opcr_unit_id"]
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["owner_unit_id"]
           },
           {
             foreignKeyName: "program_unit_id_fkey"
@@ -3267,6 +3302,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "opcr_backup_view"
             referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "program_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["opcr_unit_id"]
           },
           {
             foreignKeyName: "program_unit_id_fkey"
@@ -3599,13 +3641,20 @@ export type Database = {
             columns: ["office_id"]
             isOneToOne: false
             referencedRelation: "dpcr_backup_view"
-            referencedColumns: ["dpcr_office_id"]
+            referencedColumns: ["owner_office_id"]
           },
           {
             foreignKeyName: "strategic_plan_office_id_fkey"
             columns: ["office_id"]
             isOneToOne: false
             referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["dpcr_office_id"]
+          },
+          {
+            foreignKeyName: "strategic_plan_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
             referencedColumns: ["owner_office_id"]
           },
           {
@@ -3614,13 +3663,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "ipcr_backup_view"
             referencedColumns: ["ipcr_office_id"]
-          },
-          {
-            foreignKeyName: "strategic_plan_office_id_fkey"
-            columns: ["office_id"]
-            isOneToOne: false
-            referencedRelation: "ipcr_backup_view"
-            referencedColumns: ["owner_office_id"]
           },
           {
             foreignKeyName: "strategic_plan_office_id_fkey"
@@ -3676,14 +3718,14 @@ export type Database = {
             columns: ["program_id"]
             isOneToOne: false
             referencedRelation: "dpcr_backup_view"
-            referencedColumns: ["dpcr_program_id"]
+            referencedColumns: ["owner_program_id"]
           },
           {
             foreignKeyName: "strategic_plan_program_id_fkey"
             columns: ["program_id"]
             isOneToOne: false
             referencedRelation: "dpcr_backup_view"
-            referencedColumns: ["owner_program_id"]
+            referencedColumns: ["dpcr_program_id"]
           },
           {
             foreignKeyName: "strategic_plan_program_id_fkey"
@@ -3704,14 +3746,14 @@ export type Database = {
             columns: ["program_id"]
             isOneToOne: false
             referencedRelation: "opcr_backup_view"
-            referencedColumns: ["owner_program_id"]
+            referencedColumns: ["opcr_program_id"]
           },
           {
             foreignKeyName: "strategic_plan_program_id_fkey"
             columns: ["program_id"]
             isOneToOne: false
             referencedRelation: "opcr_backup_view"
-            referencedColumns: ["opcr_program_id"]
+            referencedColumns: ["owner_program_id"]
           },
           {
             foreignKeyName: "strategic_plan_program_id_fkey"
@@ -3739,14 +3781,21 @@ export type Database = {
             columns: ["unit_id"]
             isOneToOne: false
             referencedRelation: "accomplishment_report_backup_view"
-            referencedColumns: ["owner_unit_id"]
+            referencedColumns: ["ar_unit_id"]
           },
           {
             foreignKeyName: "strategic_plan_unit_id_fkey"
             columns: ["unit_id"]
             isOneToOne: false
             referencedRelation: "accomplishment_report_backup_view"
-            referencedColumns: ["ar_unit_id"]
+            referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "strategic_plan_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["owner_unit_id"]
           },
           {
             foreignKeyName: "strategic_plan_unit_id_fkey"
@@ -3759,20 +3808,6 @@ export type Database = {
             foreignKeyName: "strategic_plan_unit_id_fkey"
             columns: ["unit_id"]
             isOneToOne: false
-            referencedRelation: "dpcr_backup_view"
-            referencedColumns: ["owner_unit_id"]
-          },
-          {
-            foreignKeyName: "strategic_plan_unit_id_fkey"
-            columns: ["unit_id"]
-            isOneToOne: false
-            referencedRelation: "ipcr_backup_view"
-            referencedColumns: ["owner_unit_id"]
-          },
-          {
-            foreignKeyName: "strategic_plan_unit_id_fkey"
-            columns: ["unit_id"]
-            isOneToOne: false
             referencedRelation: "ipcr_backup_view"
             referencedColumns: ["ipcr_unit_id"]
           },
@@ -3780,8 +3815,8 @@ export type Database = {
             foreignKeyName: "strategic_plan_unit_id_fkey"
             columns: ["unit_id"]
             isOneToOne: false
-            referencedRelation: "opcr_backup_view"
-            referencedColumns: ["opcr_unit_id"]
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["owner_unit_id"]
           },
           {
             foreignKeyName: "strategic_plan_unit_id_fkey"
@@ -3789,6 +3824,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "opcr_backup_view"
             referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "strategic_plan_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["opcr_unit_id"]
           },
           {
             foreignKeyName: "strategic_plan_unit_id_fkey"
@@ -3999,7 +4041,6 @@ export type Database = {
           activity: string | null
           activity_id: string | null
           activity_position: number | null
-          activity_remarks: string | null
           annual_plan_description: string | null
           annual_plan_id: string | null
           annual_plan_position: number | null
@@ -4019,6 +4060,9 @@ export type Database = {
           header_position: number | null
           header_title: string | null
           implementing_unit: string | null
+          indicator_id: string | null
+          indicator_position: number | null
+          indicator_remarks: string | null
           input_type:
             | Database["public"]["Enums"]["input_type_accomplishment"]
             | null
@@ -4411,13 +4455,20 @@ export type Database = {
             columns: ["office_id"]
             isOneToOne: false
             referencedRelation: "dpcr_backup_view"
-            referencedColumns: ["dpcr_office_id"]
+            referencedColumns: ["owner_office_id"]
           },
           {
             foreignKeyName: "operational_plan_office_id_fkey"
             columns: ["office_id"]
             isOneToOne: false
             referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["dpcr_office_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
             referencedColumns: ["owner_office_id"]
           },
           {
@@ -4426,13 +4477,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "ipcr_backup_view"
             referencedColumns: ["ipcr_office_id"]
-          },
-          {
-            foreignKeyName: "operational_plan_office_id_fkey"
-            columns: ["office_id"]
-            isOneToOne: false
-            referencedRelation: "ipcr_backup_view"
-            referencedColumns: ["owner_office_id"]
           },
           {
             foreignKeyName: "operational_plan_office_id_fkey"
@@ -4488,14 +4532,14 @@ export type Database = {
             columns: ["program_id"]
             isOneToOne: false
             referencedRelation: "dpcr_backup_view"
-            referencedColumns: ["dpcr_program_id"]
+            referencedColumns: ["owner_program_id"]
           },
           {
             foreignKeyName: "operational_plan_program_id_fkey"
             columns: ["program_id"]
             isOneToOne: false
             referencedRelation: "dpcr_backup_view"
-            referencedColumns: ["owner_program_id"]
+            referencedColumns: ["dpcr_program_id"]
           },
           {
             foreignKeyName: "operational_plan_program_id_fkey"
@@ -4516,14 +4560,14 @@ export type Database = {
             columns: ["program_id"]
             isOneToOne: false
             referencedRelation: "opcr_backup_view"
-            referencedColumns: ["owner_program_id"]
+            referencedColumns: ["opcr_program_id"]
           },
           {
             foreignKeyName: "operational_plan_program_id_fkey"
             columns: ["program_id"]
             isOneToOne: false
             referencedRelation: "opcr_backup_view"
-            referencedColumns: ["opcr_program_id"]
+            referencedColumns: ["owner_program_id"]
           },
           {
             foreignKeyName: "operational_plan_program_id_fkey"
@@ -4551,14 +4595,21 @@ export type Database = {
             columns: ["unit_id"]
             isOneToOne: false
             referencedRelation: "accomplishment_report_backup_view"
-            referencedColumns: ["owner_unit_id"]
+            referencedColumns: ["ar_unit_id"]
           },
           {
             foreignKeyName: "operational_plan_unit_id_fkey"
             columns: ["unit_id"]
             isOneToOne: false
             referencedRelation: "accomplishment_report_backup_view"
-            referencedColumns: ["ar_unit_id"]
+            referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["owner_unit_id"]
           },
           {
             foreignKeyName: "operational_plan_unit_id_fkey"
@@ -4571,20 +4622,6 @@ export type Database = {
             foreignKeyName: "operational_plan_unit_id_fkey"
             columns: ["unit_id"]
             isOneToOne: false
-            referencedRelation: "dpcr_backup_view"
-            referencedColumns: ["owner_unit_id"]
-          },
-          {
-            foreignKeyName: "operational_plan_unit_id_fkey"
-            columns: ["unit_id"]
-            isOneToOne: false
-            referencedRelation: "ipcr_backup_view"
-            referencedColumns: ["owner_unit_id"]
-          },
-          {
-            foreignKeyName: "operational_plan_unit_id_fkey"
-            columns: ["unit_id"]
-            isOneToOne: false
             referencedRelation: "ipcr_backup_view"
             referencedColumns: ["ipcr_unit_id"]
           },
@@ -4592,8 +4629,8 @@ export type Database = {
             foreignKeyName: "operational_plan_unit_id_fkey"
             columns: ["unit_id"]
             isOneToOne: false
-            referencedRelation: "opcr_backup_view"
-            referencedColumns: ["opcr_unit_id"]
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["owner_unit_id"]
           },
           {
             foreignKeyName: "operational_plan_unit_id_fkey"
@@ -4601,6 +4638,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "opcr_backup_view"
             referencedColumns: ["owner_unit_id"]
+          },
+          {
+            foreignKeyName: "operational_plan_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["opcr_unit_id"]
           },
           {
             foreignKeyName: "operational_plan_unit_id_fkey"

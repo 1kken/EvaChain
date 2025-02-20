@@ -13,8 +13,14 @@
 	);
 
 	/** Toggle expanded state */
-	const toggleExpand = () => {
+	const toggleExpand = (
+		e:
+			| (MouseEvent & { currentTarget: EventTarget & HTMLButtonElement })
+			| (MouseEvent & { currentTarget: EventTarget & HTMLAnchorElement })
+	) => {
 		isExpanded = !isExpanded;
+		e.preventDefault();
+		e.stopPropagation();
 	};
 </script>
 
@@ -22,7 +28,14 @@
 	<p class="text-sm leading-7">
 		{truncatedText}
 		{#if text.length > maxLength}
-			<Button variant="link" size="sm" onclick={toggleExpand} class="h-auto px-0 font-medium">
+			<Button
+				variant="link"
+				size="sm"
+				onclick={(e) => {
+					toggleExpand(e);
+				}}
+				class="h-auto px-0 font-medium"
+			>
 				{isExpanded ? 'see less' : 'see more'}
 			</Button>
 		{/if}

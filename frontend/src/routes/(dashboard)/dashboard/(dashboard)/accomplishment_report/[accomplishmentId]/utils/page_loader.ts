@@ -57,3 +57,32 @@ export async function fetchActivity(id: string): Promise<ActivityResponse> {
 		};
 	}
 }
+
+interface IndicatorResponse {
+	data: Tables<'accomplishment_activity_indicator'>[];
+	error?: string;
+}
+
+export async function fetchIndicator(id: string): Promise<IndicatorResponse> {
+	try {
+		const response = await fetch(
+			`/api/accomplishment_report/indicator/?accomplishment_activity_id=${id}`
+		);
+		const result = await response.json();
+
+		if (!response.ok) {
+			throw new Error(result.error || 'Failed to fetch indicators');
+		}
+
+		return {
+			data: result.data,
+			error: undefined
+		};
+	} catch (error) {
+		console.error('Error fetching indicators:', error);
+		return {
+			data: [],
+			error: error instanceof Error ? error.message : 'An unknown error occurred'
+		};
+	}
+}

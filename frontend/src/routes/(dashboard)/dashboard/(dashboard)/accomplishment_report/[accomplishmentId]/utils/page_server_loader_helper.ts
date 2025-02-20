@@ -15,6 +15,10 @@ import {
 	createAccomplishmentActivitySchema,
 	updateAccomplishmentActivitySchema
 } from '../schema/activity_schema';
+import {
+	createAccomplishmentActivityIndicatorSchema,
+	updateAccomplishmentActivityIndicatorSchema
+} from '../schema/indicator_schema';
 
 //load data
 export async function getCurrentAccomplishmentReport(
@@ -71,6 +75,14 @@ export async function getAccomplishmentActivityForms() {
 	return {
 		createForm: await superValidate(zod(createAccomplishmentActivitySchema)),
 		updateForm: await superValidate(zod(updateAccomplishmentActivitySchema)),
+		deleteForm: await superValidate(zod(universalDeleteSchema))
+	};
+}
+
+export async function getAccomplishmentIndicatorForms() {
+	return {
+		createForm: await superValidate(zod(createAccomplishmentActivityIndicatorSchema)),
+		updateForm: await superValidate(zod(updateAccomplishmentActivityIndicatorSchema)),
 		deleteForm: await superValidate(zod(universalDeleteSchema))
 	};
 }

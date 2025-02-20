@@ -15,6 +15,7 @@ CREATE TABLE op_activity_indicator (
     total TEXT,
     responsible_officer_unit TEXT NOT NULL,
     total_budgetary_requirements TEXT NOT NULL,
+    remarks TEXT,
     position INTEGER NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
