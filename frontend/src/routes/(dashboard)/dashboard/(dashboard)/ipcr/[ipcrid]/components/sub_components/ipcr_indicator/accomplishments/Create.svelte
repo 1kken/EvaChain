@@ -4,7 +4,7 @@
 	import SuperDebug, { fileProxy, superForm, type FormResult } from 'sveltekit-superforms';
 	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
-	import { LoaderCircle, Plus } from 'lucide-svelte';
+	import { LoaderCircle, Plus, Save } from 'lucide-svelte';
 	import * as Form from '$lib/components/ui/form/index.js';
 	import IntelligentInput from '$lib/custom_components/IntelligentInput.svelte';
 	import CalendarIcon from 'lucide-svelte/icons/calendar';
@@ -199,9 +199,11 @@
 			</Form.Field>
 			<div class="flex w-full justify-end">
 				{#if $delayed}
-					<Form.Button disabled><LoaderCircle class="animate-spin" />Processing...</Form.Button>
+					<Form.Button disabled class="w-full"
+						><LoaderCircle class="animate-spin" />Processing...</Form.Button
+					>
 				{:else}
-					<Form.Button>Save</Form.Button>
+					<Form.Button class="w-full"><Save />Save</Form.Button>
 				{/if}
 			</div>
 		</form>

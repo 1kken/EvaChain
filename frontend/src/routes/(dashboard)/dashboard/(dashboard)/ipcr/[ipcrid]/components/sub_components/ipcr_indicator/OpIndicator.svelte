@@ -82,7 +82,7 @@
 <Dialog.Root bind:open={isOpen}>
 	<Dialog.Trigger
 		type="button"
-		class="w-full rounded border border-dashed p-4 transition-colors hover:bg-green-200"
+		class="w-full rounded border border-dashed p-4 transition-colors hover:bg-green-700"
 	>
 		{selectedIndicator
 			? selectedIndicator.performance_indicator
@@ -166,10 +166,7 @@
 		</div>
 
 		<div class="flex justify-end">
-			<Button
-				onclick={() => (isOpen = false)}
-				class="rounded-md bg-green-600 px-4 py-2 text-white transition-colors hover:bg-green-700"
-			>
+			<Button onclick={() => (isOpen = false)} class="w-full">
 				<Save class="mr-2 h-4 w-4" />Save
 			</Button>
 		</div>

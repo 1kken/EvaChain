@@ -77,7 +77,6 @@ export async function createOperationalPlan(
 		})
 		.select()
 		.single();
-
 	if (error) {
 		return message(form, { status: 'error', text: 'Error creating Operational plan' });
 	}
