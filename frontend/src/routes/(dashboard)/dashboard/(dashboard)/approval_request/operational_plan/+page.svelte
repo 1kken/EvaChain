@@ -6,9 +6,8 @@
 	let { data }: { data: PageData } = $props();
 
 	let operationalPlan = $derived(data.op);
-	let form = data.form;
-
-	let columns = createColumns(form);
+	const { uuidForm, revisionForm } = data;
+	let columns = createColumns(uuidForm, revisionForm);
 </script>
 
 <DataTable

@@ -36,7 +36,6 @@
 		async onUpdate({ form, result }) {
 			const action = result.data as FormResult<OPFormResult>;
 			if (form.valid && action.opData) {
-				console.log('test');
 				const opData = action.opData;
 				updateOperationalPlan(opData);
 				await goto('/dashboard/operational_plan/');

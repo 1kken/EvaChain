@@ -5,9 +5,13 @@ import DataTableSortButton from '$lib/custom_components/data-table/data-table-so
 import DateCell from './date-cell.svelte';
 import DataLink from './data-link.svelte';
 import type { Tables } from '$lib/types/database.types';
-import type { UuidSchemaInput } from '../(data)/zod_schema';
+import type { RevisionSchemaInput, UuidSchemaInput } from '../(data)/zod_schema';
+import type { SuperValidated } from 'sveltekit-superforms';
 
-export const createColumns = (form: UuidSchemaInput): ColumnDef<Tables<'operational_plan'>>[] => [
+export const createColumns = (
+	uuidForm: SuperValidated<UuidSchemaInput>,
+	revisionForm: SuperValidated<RevisionSchemaInput>
+): ColumnDef<Tables<'operational_plan'>>[] => [
 	{
 		accessorKey: 'title',
 		header: ({ column }) =>
@@ -82,7 +86,7 @@ export const createColumns = (form: UuidSchemaInput): ColumnDef<Tables<'operatio
 		header: 'Actions',
 		cell: ({ row }) => {
 			const op = row.original;
-			return renderComponent(DataTableActions, { form, op });
+			return renderComponent(DataTableActions, { op, uuidForm, revisionForm });
 		}
 	}
 ];

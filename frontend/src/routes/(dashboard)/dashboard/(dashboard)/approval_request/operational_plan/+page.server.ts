@@ -36,17 +36,17 @@ export const load = (async ({ locals: { supabase, session, profile } }) => {
 	}
 
 	//forms
-	const form = await getActionForms();
-
-	return { op, offices, form };
+	const { revisionForm, uuidForm } = await getActionForms();
+	return { op, offices, revisionForm, uuidForm };
 }) satisfies PageServerLoad;
 
 export const actions = {
 	setstatusreview: async ({ request, locals: { supabase } }) => {
 		return setStatusReview(request, supabase);
 	},
-	setstatusrevision: async ({ request, locals: { supabase } }) => {
-		return setStatusRevision(request, supabase);
+	setstatusrevision: async ({ request, locals: { supabase, session } }) => {
+		if (!session) throw error(401, { message: 'Unauthorized' });
+		return setStatusRevision(request, supabase, session);
 	},
 	setstatusapproved: async ({ request, locals: { supabase } }) => {
 		return setStatusApproved(request, supabase);

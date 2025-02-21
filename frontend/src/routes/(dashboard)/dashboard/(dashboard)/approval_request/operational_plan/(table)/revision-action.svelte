@@ -1,25 +1,26 @@
 <script lang="ts">
 	import * as Form from '$lib/components/ui/form';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
-	import { showErrorToast, showWarningToast } from '$lib/utils/toast';
-	import { superForm, type FormResult } from 'sveltekit-superforms';
+	import { showErrorToast, showSuccessToast, showWarningToast } from '$lib/utils/toast';
+	import { superForm, type FormResult, type SuperValidated } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { Input } from '$lib/components/ui/input';
 	import { CircleFadingArrowUp, LoaderCircle, RotateCw } from 'lucide-svelte';
 	import { TriangleAlert } from 'lucide-svelte';
 	import type { OPFormResult } from '../(data)/types';
 	import type { Tables } from '$lib/types/database.types';
-	import { uuidSchema, type UuidSchemaInput } from '../(data)/zod_schema';
+	import { revisionSchema, uuidSchema, type RevisionSchemaInput } from '../(data)/zod_schema';
+	import IntelligentInput from '$lib/custom_components/IntelligentInput.svelte';
 
 	interface Props {
 		op: Tables<'operational_plan'>;
+		revisionForm: SuperValidated<RevisionSchemaInput>;
 		dropDownOpen: boolean;
-		formSchema: UuidSchemaInput;
 	}
 
-	let { dropDownOpen = $bindable(), op, formSchema }: Props = $props();
-	const form = superForm(formSchema, {
-		validators: zodClient(uuidSchema),
+	let { dropDownOpen = $bindable(), op, revisionForm }: Props = $props();
+	const form = superForm(revisionForm, {
+		validators: zodClient(revisionSchema),
 		multipleSubmits: 'prevent',
 		dataType: 'json',
 		invalidateAll: true,
@@ -27,9 +28,7 @@
 			const action = result.data as FormResult<OPFormResult>;
 			if (form.valid && action.opData) {
 				const opData = action.opData;
-				showSuccessfullToast(
-					`Succesfully Set Status as Under Review Operational Plan ${opData.title}`
-				);
+				showSuccessToast('Operational Plan status set to For Revision');
 				closeAllTabs();
 			}
 		}
@@ -55,11 +54,8 @@
 	});
 
 	$formData.id = op.id;
+	$formData.op_creator_id = op.creator_id;
 	let isOpen = $state(false);
-
-	function showSuccessfullToast(arg0: string) {
-		throw new Error('Function not implemented.');
-	}
 </script>
 
 <AlertDialog.Root bind:open={isOpen}>
@@ -83,6 +79,21 @@
 		</AlertDialog.Header>
 		<form method="POST" action="?/setstatusrevision" use:enhance>
 			<Input name="id" class="hidden" bind:value={$formData.id} />
+			<Input name="op_creator_id" class="hidden" bind:value={$formData.op_creator_id} />
+			<Form.Field {form} name="message">
+				<Form.Control>
+					{#snippet children({ props })}
+						<Form.Label>Message</Form.Label>
+						<IntelligentInput
+							textAreaWidth={'full'}
+							placeholder="Enter a message discussing why the operational plan is being set for revision..."
+							bind:content={$formData.message}
+							name={props.name}
+						/>
+					{/snippet}
+				</Form.Control>
+				<Form.FieldErrors />
+			</Form.Field>
 			{#if $delayed}
 				<div class="flex justify-between">
 					<AlertDialog.Cancel disabled class="text-gray-500" type="button"

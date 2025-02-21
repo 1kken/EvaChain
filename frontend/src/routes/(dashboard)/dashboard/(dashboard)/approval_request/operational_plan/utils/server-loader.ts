@@ -1,7 +1,10 @@
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import { uuidSchema } from '../(data)/zod_schema';
+import { revisionSchema, uuidSchema } from '../(data)/zod_schema';
 
 export async function getActionForms() {
-	return await superValidate(zod(uuidSchema));
+	return {
+		revisionForm: await superValidate(zod(revisionSchema), {}),
+		uuidForm: await superValidate(zod(uuidSchema), {})
+	};
 }

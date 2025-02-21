@@ -4,17 +4,19 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import { Download, SquareArrowOutUpRight } from 'lucide-svelte';
 	import type { Tables } from '$lib/types/database.types';
-	import type { UuidSchemaInput } from '../(data)/zod_schema';
 	import ReviewAction from './review-action.svelte';
 	import RevisionAction from './revision-action.svelte';
 	import ApproveAction from './approve-action.svelte';
+	import type { SuperValidated } from 'sveltekit-superforms';
+	import type { RevisionSchemaInput, UuidSchemaInput } from '../(data)/zod_schema';
 
 	interface Props {
-		form: UuidSchemaInput;
+		uuidForm: SuperValidated<UuidSchemaInput>;
+		revisionForm: SuperValidated<RevisionSchemaInput>;
 		op: Tables<'operational_plan'>;
 	}
 
-	let { op, form }: Props = $props();
+	let { op, uuidForm, revisionForm }: Props = $props();
 	let dropDownOpen = $state(false);
 
 	const viewPdf = async (id: string) => {
@@ -69,12 +71,15 @@
 		</DropdownMenu.Item>
 		{#if op.status === 'submitted'}
 			<DropdownMenu.Item onSelect={(e) => e.preventDefault()}>
-				<ReviewAction formSchema={form} {op} bind:dropDownOpen />
+				<ReviewAction formSchema={uuidForm} {op} bind:dropDownOpen />
 			</DropdownMenu.Item>
 		{/if}
 		{#if op.status === 'reviewing'}
 			<DropdownMenu.Item onSelect={(e) => e.preventDefault()}>
-				<ApproveAction formSchema={form} {op} bind:dropDownOpen />
+				<ApproveAction formSchema={uuidForm} {op} bind:dropDownOpen />
+			</DropdownMenu.Item>
+			<DropdownMenu.Item onSelect={(e) => e.preventDefault()}>
+				<RevisionAction {revisionForm} {op} bind:dropDownOpen />
 			</DropdownMenu.Item>
 		{/if}
 	</DropdownMenu.Content>

@@ -1,13 +1,13 @@
 <!-- $lib/custom_components/dashboard/layout/nav-bar-dashboard.svelte -->
-<script>
-	import { Bell } from 'lucide-svelte';
+<script lang="ts">
 	import { ChevronsRight } from 'lucide-svelte';
-	import { Button } from '$lib/components/ui/button';
 	import { page } from '$app/stores';
 	import ThemeToggle from '$lib/custom_components/theme-toggle.svelte';
+	import Notification from './components/notification.svelte';
 
-	let notificationCount = $state(3);
+	//states
 	let currentPath = $state(['Dashboard']);
+	//store
 
 	$effect(() => {
 		currentPath = $page.url.pathname.split('/').slice(1);
@@ -47,15 +47,8 @@
 					</div>
 				</div>
 			</div>
-			<div class="flex flex-shrink-0 items-center gap-4">
-				<Button variant="ghost" size="icon" class="relative">
-					<Bell class="h-5 w-5" />
-					{#if notificationCount > 0}
-						<span
-							class="absolute right-0 top-0 block h-2 w-2 rounded-full bg-red-400 ring-2 ring-white"
-						></span>
-					{/if}
-				</Button>
+			<div class="flex flex-shrink-0 items-center justify-between gap-8">
+				<Notification />
 				<ThemeToggle />
 			</div>
 		</div>

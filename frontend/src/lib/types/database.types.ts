@@ -1762,6 +1762,45 @@ export type Database = {
         }
         Relationships: []
       }
+      notifications: {
+        Row: {
+          created_at: string
+          id: string
+          is_global: boolean
+          is_read: boolean | null
+          message: string | null
+          receiver_id: string | null
+          sender_id: string
+          title: string
+          type: Database["public"]["Enums"]["notification_type"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_global?: boolean
+          is_read?: boolean | null
+          message?: string | null
+          receiver_id?: string | null
+          sender_id: string
+          title: string
+          type: Database["public"]["Enums"]["notification_type"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_global?: boolean
+          is_read?: boolean | null
+          message?: string | null
+          receiver_id?: string | null
+          sender_id?: string
+          title?: string
+          type?: Database["public"]["Enums"]["notification_type"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
       office: {
         Row: {
           code: string
@@ -4877,6 +4916,7 @@ export type Database = {
       input_type_op: "percentage" | "number" | "ratio" | "text"
       input_type_strategic_plan: "percentage" | "number" | "ratio" | "text"
       ipcr_status: "draft" | "submitted" | "reviewing" | "revision" | "approved"
+      notification_type: "success" | "warning" | "fail" | "notification"
       op_status: "draft" | "submitted" | "reviewing" | "revision" | "approved"
       scope_type: "all" | "office" | "program" | "unit"
       strategic_major_output:

@@ -1,7 +1,12 @@
 import type { Database } from '$lib/types/database.types';
-import type { SupabaseClient } from '@supabase/supabase-js';
+import type { Session, SupabaseClient } from '@supabase/supabase-js';
 import { message, superValidate, type Infer } from 'sveltekit-superforms';
-import { uuidSchema, type UuidSchema } from '../(data)/zod_schema';
+import {
+	revisionSchema,
+	uuidSchema,
+	type RevisionSchema,
+	type UuidSchema
+} from '../(data)/zod_schema';
 import { zod } from 'sveltekit-superforms/adapters';
 
 export async function setStatusReview(request: Request, supabase: SupabaseClient<Database>) {
@@ -33,10 +38,14 @@ export async function setStatusReview(request: Request, supabase: SupabaseClient
 	return { form, opData };
 }
 
-export async function setStatusRevision(request: Request, supabase: SupabaseClient<Database>) {
-	const form = await superValidate<Infer<UuidSchema>, App.Superforms.Message>(
+export async function setStatusRevision(
+	request: Request,
+	supabase: SupabaseClient<Database>,
+	session: Session
+) {
+	const form = await superValidate<Infer<RevisionSchema>, App.Superforms.Message>(
 		request,
-		zod(uuidSchema)
+		zod(revisionSchema)
 	);
 	if (!form.valid) {
 		return message(form, {
@@ -45,7 +54,23 @@ export async function setStatusRevision(request: Request, supabase: SupabaseClie
 		});
 	}
 
-	const { id } = form.data;
+	const { id, message: messageInput, op_creator_id } = form.data;
+
+	const { data, error: notifError } = await supabase.from('notifications').insert({
+		type: 'warning',
+		title: 'Operational Plan Revision Request',
+		sender_id: session.user.id,
+		receiver_id: op_creator_id,
+		message: messageInput
+	});
+
+	if (notifError) {
+		return message(form, {
+			status: 'error',
+			text: 'Error sending notification'
+		});
+	}
+
 	const { data: opData, error: opDataError } = await supabase
 		.from('operational_plan')
 		.update({ status: 'revision' })
