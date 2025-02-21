@@ -54,7 +54,6 @@
 	});
 
 	$formData.id = op.id;
-	$formData.op_creator_id = op.creator_id;
 	let isOpen = $state(false);
 </script>
 
@@ -79,7 +78,6 @@
 		</AlertDialog.Header>
 		<form method="POST" action="?/setstatusrevision" use:enhance>
 			<Input name="id" class="hidden" bind:value={$formData.id} />
-			<Input name="op_creator_id" class="hidden" bind:value={$formData.op_creator_id} />
 			<Form.Field {form} name="message">
 				<Form.Control>
 					{#snippet children({ props })}

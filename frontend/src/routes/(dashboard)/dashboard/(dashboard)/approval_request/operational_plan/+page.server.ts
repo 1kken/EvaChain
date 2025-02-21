@@ -41,14 +41,16 @@ export const load = (async ({ locals: { supabase, session, profile } }) => {
 }) satisfies PageServerLoad;
 
 export const actions = {
-	setstatusreview: async ({ request, locals: { supabase } }) => {
-		return setStatusReview(request, supabase);
+	setstatusreview: async ({ request, locals: { supabase, session } }) => {
+		if (!session) throw error(401, { message: 'Unauthorized' });
+		return setStatusReview(request, supabase, session);
 	},
 	setstatusrevision: async ({ request, locals: { supabase, session } }) => {
 		if (!session) throw error(401, { message: 'Unauthorized' });
 		return setStatusRevision(request, supabase, session);
 	},
-	setstatusapproved: async ({ request, locals: { supabase } }) => {
-		return setStatusApproved(request, supabase);
+	setstatusapproved: async ({ request, locals: { supabase, session } }) => {
+		if (!session) throw error(401, { message: 'Unauthorized' });
+		return setStatusApproved(request, supabase, session);
 	}
 } satisfies Actions;

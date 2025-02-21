@@ -9,7 +9,11 @@ import {
 } from '../(data)/zod_schema';
 import { zod } from 'sveltekit-superforms/adapters';
 
-export async function setStatusReview(request: Request, supabase: SupabaseClient<Database>) {
+export async function setStatusReview(
+	request: Request,
+	supabase: SupabaseClient<Database>,
+	session: Session
+) {
 	const form = await superValidate<Infer<UuidSchema>, App.Superforms.Message>(
 		request,
 		zod(uuidSchema)
@@ -22,16 +26,33 @@ export async function setStatusReview(request: Request, supabase: SupabaseClient
 	}
 
 	const { id } = form.data;
+
 	const { data: opData, error: opDataError } = await supabase
 		.from('operational_plan')
 		.update({ status: 'reviewing' })
 		.eq('id', id)
 		.select()
 		.single();
+
 	if (opDataError) {
 		return message(form, {
 			status: 'error',
 			text: 'Error updating operational plan'
+		});
+	}
+
+	const { data, error: notifError } = await supabase.from('notifications').insert({
+		type: 'notification',
+		title: 'Operational Plan Under Review',
+		sender_id: session.user.id,
+		receiver_id: opData?.creator_id,
+		message: `Your operational plan titled ${opData?.title} is now under review`
+	});
+
+	if (notifError) {
+		return message(form, {
+			status: 'error',
+			text: 'Error sending notification'
 		});
 	}
 
@@ -54,22 +75,7 @@ export async function setStatusRevision(
 		});
 	}
 
-	const { id, message: messageInput, op_creator_id } = form.data;
-
-	const { data, error: notifError } = await supabase.from('notifications').insert({
-		type: 'warning',
-		title: 'Operational Plan Revision Request',
-		sender_id: session.user.id,
-		receiver_id: op_creator_id,
-		message: messageInput
-	});
-
-	if (notifError) {
-		return message(form, {
-			status: 'error',
-			text: 'Error sending notification'
-		});
-	}
+	const { id, message: messageInput } = form.data;
 
 	const { data: opData, error: opDataError } = await supabase
 		.from('operational_plan')
@@ -85,10 +91,29 @@ export async function setStatusRevision(
 		});
 	}
 
+	const { data, error: notifError } = await supabase.from('notifications').insert({
+		type: 'warning',
+		title: `Operational Plan Revision Request for ${opData?.title}`,
+		sender_id: session.user.id,
+		receiver_id: opData?.creator_id,
+		message: messageInput
+	});
+
+	if (notifError) {
+		return message(form, {
+			status: 'error',
+			text: 'Error sending notification'
+		});
+	}
+
 	return { form, opData };
 }
 
-export async function setStatusApproved(request: Request, supabase: SupabaseClient<Database>) {
+export async function setStatusApproved(
+	request: Request,
+	supabase: SupabaseClient<Database>,
+	session: Session
+) {
 	const form = await superValidate<Infer<UuidSchema>, App.Superforms.Message>(
 		request,
 		zod(uuidSchema)
@@ -127,6 +152,22 @@ export async function setStatusApproved(request: Request, supabase: SupabaseClie
 		return message(form, {
 			status: 'error',
 			text: `Operational plan approved but failed to create accomplishment report: ${copyResult.message}`
+		});
+	}
+
+	//NOTIF
+	const { data, error: notifError } = await supabase.from('notifications').insert({
+		type: 'success',
+		title: 'Operational Plan Approved',
+		sender_id: session.user.id,
+		receiver_id: opData?.creator_id,
+		message: `Your operational plan titled ${opData?.title} is now approved.`
+	});
+
+	if (notifError) {
+		return message(form, {
+			status: 'error',
+			text: 'Error sending notification'
 		});
 	}
 

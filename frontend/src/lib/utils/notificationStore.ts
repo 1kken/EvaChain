@@ -87,7 +87,6 @@ function createNotificationStore(
 				}
 			});
 
-		console.log(userId);
 		const subscription = supabase
 			.channel('notifications')
 			.on(
@@ -96,7 +95,7 @@ function createNotificationStore(
 					event: 'INSERT',
 					schema: 'public',
 					table: 'notifications',
-					filter: `receiver_id=eq.${userId} `
+					filter: `receiver_id=eq.${userId}`
 				},
 				(payload) => {
 					console.log('New notification:', payload.new);

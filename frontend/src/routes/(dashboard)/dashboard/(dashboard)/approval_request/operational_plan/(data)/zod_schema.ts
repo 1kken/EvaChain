@@ -6,7 +6,6 @@ export const uuidSchema = z.object({
 
 export const revisionSchema = z.object({
 	id: z.string().uuid(),
-	op_creator_id: z.string().uuid(),
 	message: z.string()
 });
 

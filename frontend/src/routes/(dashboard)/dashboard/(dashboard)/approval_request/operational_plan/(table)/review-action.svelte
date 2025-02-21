@@ -2,7 +2,7 @@
 	import * as Form from '$lib/components/ui/form';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
 	import { showErrorToast, showSuccessToast, showWarningToast } from '$lib/utils/toast';
-	import { superForm, type FormResult } from 'sveltekit-superforms';
+	import { superForm, type FormResult, type SuperValidated } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { Input } from '$lib/components/ui/input';
 	import { CircleFadingArrowUp, LoaderCircle, Star } from 'lucide-svelte';
@@ -13,7 +13,7 @@
 	interface Props {
 		op: Tables<'operational_plan'>;
 		dropDownOpen: boolean;
-		formSchema: UuidSchemaInput;
+		formSchema: SuperValidated<UuidSchemaInput>;
 	}
 
 	let { dropDownOpen = $bindable(), op, formSchema }: Props = $props();
