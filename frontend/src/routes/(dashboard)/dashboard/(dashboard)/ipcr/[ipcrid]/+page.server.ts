@@ -20,11 +20,8 @@ import {
 	updateIpcrFunctionCategory
 } from './services/ipcr_category_services';
 import {
-	createAccomplishment,
 	createIpcrIndicator,
-	deleteAccomplishment,
 	deleteIpcrIndicator,
-	updateAccomplishment,
 	updateIpcrIndicator
 } from './services/ipcr_indicator_services';
 import {
@@ -33,6 +30,11 @@ import {
 	updateIpcrFunctionSubCategory
 } from './services/ipcr_sub_category_services';
 import { submitIpcr } from './services/ipcr_submit_services';
+import {
+	createAccomplishment,
+	deleteAccomplishment,
+	updateAccomplishment
+} from './services/ipcr_indicator_accomplsihments';
 
 export const load = (async ({ params, locals: { supabase } }) => {
 	//states

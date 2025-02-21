@@ -34,6 +34,7 @@
 				const accomplishment = action.ipcrAccomplishment;
 				removeAccomplishment(accomplishment.id);
 				showWarningToast(`Succesfully deleted IPCR Accomplishment`);
+				isOpen = false;
 			}
 		}
 	});

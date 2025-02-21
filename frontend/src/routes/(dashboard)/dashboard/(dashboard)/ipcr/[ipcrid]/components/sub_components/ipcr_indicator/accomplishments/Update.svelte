@@ -56,9 +56,11 @@
 				showSuccessToast(`Succesfully updated accomplishment`);
 				reset({
 					data: {
+						input_type: opIndicator.input_type || 'text',
 						...accomplishment
 					},
 					newState: {
+						input_type: opIndicator.input_type || 'text',
 						...accomplishment
 					}
 				});
@@ -183,7 +185,7 @@
 					{/snippet}
 				</Form.Control>
 				<Form.Description
-					>This is used to calculate the accomplishment data. Example input percentage: 2/2, 3/5 |
+					>This is used to calculate the accomplishment data. Example input percentage: 80%, 20% |
 					Example input number: 2, 3 | Example input text: Done, Not Done | Example ratio: 2:2, 3:5
 				</Form.Description>
 				<Form.FieldErrors />
