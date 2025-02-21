@@ -58,7 +58,7 @@
 			if (form.valid && action.ipcrFunctionIndicator) {
 				const ipcrFunctionIndicator = action.ipcrFunctionIndicator;
 				updateIpcrIndicator(ipcrFunctionIndicator.id, ipcrFunctionIndicator);
-				showSuccessToast(`Succesfully updated ipcr function indicator `);
+				showSuccessToast(`Successfully updated ipcr function indicator `);
 				isOpen = false;
 				isDrawerOpen = false;
 				reset({
@@ -98,7 +98,7 @@
 	</Dialog.Trigger>
 	<Dialog.Content class="max-h-[85vh] overflow-y-auto sm:max-w-[800px]">
 		<Dialog.Header>
-			<Dialog.Title>Add IPCR Function Indicator</Dialog.Title>
+			<Dialog.Title>Edit IPCR Function Indicator</Dialog.Title>
 			<Dialog.Description>
 				An indicator is a measurable criterion used to assess the performance and success of a
 				specific task or objective, aligning efforts with organizational goals.

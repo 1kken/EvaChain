@@ -114,7 +114,7 @@
 		onOpenAutoFocus={(e) => e.preventDefault()}
 	>
 		<Dialog.Header>
-			<Dialog.Title>Add IPCR Function Category</Dialog.Title>
+			<Dialog.Title>Edit IPCR Function Category</Dialog.Title>
 			<Dialog.Description>
 				Classifies responsibilities like higher education, advanced education services, and related
 				tasks.

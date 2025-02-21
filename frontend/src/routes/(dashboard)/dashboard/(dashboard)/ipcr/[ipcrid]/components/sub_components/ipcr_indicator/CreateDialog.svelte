@@ -59,7 +59,7 @@
 			if (form.valid && action.ipcrFunctionIndicator) {
 				const ipcrFunctionIndicator = action.ipcrFunctionIndicator;
 				addIpcrIndicator(ipcrFunctionIndicator);
-				showSuccessToast(`Succesfully added ipcr function indicator `);
+				showSuccessToast(`Successfully added ipcr function indicator `);
 				isOpen = false;
 				isDrawerOpen = false;
 				reset({
@@ -217,7 +217,9 @@
 			{/if}
 			<div class="flex w-full justify-end">
 				{#if $delayed}
-					<Form.Button disabled class="w-full"><LoaderCircle class="animate-spin" />Processing...</Form.Button>
+					<Form.Button disabled class="w-full"
+						><LoaderCircle class="animate-spin" />Processing...</Form.Button
+					>
 				{:else}
 					<Form.Button class="w-full"><Save />Save</Form.Button>
 				{/if}

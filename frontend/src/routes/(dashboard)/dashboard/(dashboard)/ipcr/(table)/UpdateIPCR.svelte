@@ -39,7 +39,7 @@
 			if (form.valid && action.ipcrData) {
 				const ipcrData = action.ipcrData;
 				updateIPCR(ipcrData.id, ipcrData);
-				showSuccessToast(`Succesfully updated IPCR ${ipcrData.title}`);
+				showSuccessToast(`Successfully updated IPCR ${ipcrData.title}`);
 				isOpen = false;
 				dropDownOpen = false;
 				reset({

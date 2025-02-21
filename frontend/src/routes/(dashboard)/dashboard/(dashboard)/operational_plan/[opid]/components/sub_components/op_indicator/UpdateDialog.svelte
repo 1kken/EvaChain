@@ -107,10 +107,9 @@
 	</Dialog.Trigger>
 	<Dialog.Content class="max-h-[85vh] overflow-y-auto sm:max-w-[800px]">
 		<Dialog.Header>
-			<Dialog.Title>Add Objectives & Activities</Dialog.Title>
+			<Dialog.Title>Edit Indicator</Dialog.Title>
 			<Dialog.Description>
-				Program/Project Objective: A concise statement outlining the goals and intended outcomes of
-				the program or project.
+				Indicator: A concise statement outlining the goals and intended outcomes of the activity.
 			</Dialog.Description>
 		</Dialog.Header>
 		<form action="?/updateopindicator" method="POST" use:enhance class="space-y-6">

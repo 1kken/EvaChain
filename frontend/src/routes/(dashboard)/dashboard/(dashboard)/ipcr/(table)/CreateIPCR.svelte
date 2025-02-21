@@ -34,7 +34,7 @@
 			if (form.valid && action.ipcrData) {
 				const ipcrData = action.ipcrData;
 				addIPCR(ipcrData);
-				showSuccessToast(`Succesfully added IPCR ${ipcrData.title}`);
+				showSuccessToast(`Successfully added IPCR ${ipcrData.title}`);
 				isOpen = false;
 			}
 		}

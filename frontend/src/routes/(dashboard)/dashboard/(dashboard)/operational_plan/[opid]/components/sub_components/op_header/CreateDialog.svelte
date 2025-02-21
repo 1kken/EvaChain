@@ -40,7 +40,7 @@
 			if (form.valid && action.opHeader) {
 				const opHeader = action.opHeader;
 				addOpHeader(opHeader);
-				showSuccessToast(`Succesfully added operational header ${opHeader.title}`);
+				showSuccessToast(`Successfully added operational header. ${opHeader.title}`);
 				isOpen = false;
 				reset({
 					data: { operational_plan_id: opHeader.operational_plan_id, position: $size + 1 },

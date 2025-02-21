@@ -3,19 +3,18 @@
 	import * as Form from '$lib/components/ui/form/index.js';
 	import { LoaderCircle, Save } from 'lucide-svelte';
 	import { Plus } from 'lucide-svelte';
-	import SuperDebug, { setError, superForm, type FormResult } from 'sveltekit-superforms';
+	import { setError, superForm, type FormResult } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';
 	import IntelligentInput from '$lib/custom_components/IntelligentInput.svelte';
 	import FormSection from './FormSection.svelte';
 	import { Input } from '$lib/components/ui/input';
-	import type { OpActivityFormResult, OpIndicatorFormResult } from '../../../utils/type';
+	import type { OpIndicatorFormResult } from '../../../utils/type';
 	import * as Select from '$lib/components/ui/select/index.js';
 	import { calculateTotal } from './helper';
 	import { getOpIndicatorFormContext } from '../../../states/op_indicator_form_state';
 	import { getOpIndicatorStore } from '../../../states/op_indicator_state';
 	import { createOpcrIndicatorSchema } from '../../../../../opcr/[opcrid]/schema/indicator_schema';
-	import { browser } from '$app/environment';
 	import { createOpActivityIndicatorSchema } from '../../../schema/op_indicator_schema';
 
 	//props

@@ -51,7 +51,7 @@
 					...$currentProfile,
 					...profile
 				};
-				showSuccessToast(`Sucessfully update profile!`);
+				showSuccessToast(`Sucessfully updated profile!`);
 			}
 		}
 	});

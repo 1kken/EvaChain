@@ -235,7 +235,7 @@
 							<Input
 								{...props}
 								bind:value={$formData.implementing_unit}
-								placeholder="Office of the vice president, Sout La Unio..."
+								placeholder="Office of the vice president, South La Unio..."
 							/>
 						{/snippet}
 					</Form.Control>

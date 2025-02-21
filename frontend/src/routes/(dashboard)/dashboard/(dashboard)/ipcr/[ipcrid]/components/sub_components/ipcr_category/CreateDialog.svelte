@@ -14,7 +14,6 @@
 	import { Input } from '$lib/components/ui/input';
 	import AutoCompleteOnlineInput from '$lib/custom_components/AutoCompleteOnlineInput.svelte';
 	import { fetchProfileByname } from '../../../utils/page_loader_services';
-	import { browser } from '$app/environment';
 
 	//props
 	interface Iprops {

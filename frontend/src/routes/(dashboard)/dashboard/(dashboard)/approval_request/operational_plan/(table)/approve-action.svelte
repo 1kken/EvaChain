@@ -26,7 +26,7 @@
 			const action = result.data as FormResult<OPFormResult>;
 			if (form.valid && action.opData) {
 				const opData = action.opData;
-				showSuccessToast(`Succesfully Set Status as Approved Plan ${opData.title}`);
+				showSuccessToast(`Successfully set "${opData.title}" to "Under Review."`);
 				closeAllTabs();
 			}
 		}
