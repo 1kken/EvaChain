@@ -4,7 +4,6 @@ import { expect } from "chai";
 import hre from "hardhat";
 
 describe("IPFSFileTracker", function () {
-  // We define a fixture to reuse the same setup in every test
   async function deployIPFSTrackerFixture() {
     const [owner, otherAccount] = await hre.ethers.getSigners();
     const IPFSFileTracker = await hre.ethers.getContractFactory(
@@ -15,7 +14,6 @@ describe("IPFSFileTracker", function () {
     return { ipfsTracker, owner, otherAccount };
   }
 
-  // Enum values
   const Action = {
     ADD_EVIDENCE: 0,
     UPDATE_EVIDENCE: 1,
@@ -41,24 +39,30 @@ describe("IPFSFileTracker", function () {
     const testCID = "QmXnnyufdzAWL5CqZ2RnSNgPbvCc1ALT73s6epPrRnZ1Xy";
     const testFileName = "test.txt";
 
-    it("Should allow owner to add file reference", async function () {
+    it("Should allow owner to record file action", async function () {
       const { ipfsTracker } = await loadFixture(deployIPFSTrackerFixture);
 
       await expect(
-        ipfsTracker.addFileReference(testCID, FileType.FILE, testFileName)
+        ipfsTracker.recordFileAction(
+          testCID,
+          Action.ADD_EVIDENCE,
+          FileType.FILE,
+          testFileName
+        )
       )
-        .to.emit(ipfsTracker, "FileReferenceAdded")
+        .to.emit(ipfsTracker, "FileActionRecorded")
         .withArgs(
+          anyValue, // fileId
           Action.ADD_EVIDENCE,
           testCID,
           FileType.FILE,
           testFileName,
-          anyValue,
-          anyValue
+          anyValue, // timestamp
+          anyValue // blockHash
         );
     });
 
-    it("Should revert when non-owner tries to add file reference", async function () {
+    it("Should revert when non-owner tries to record file action", async function () {
       const { ipfsTracker, otherAccount } = await loadFixture(
         deployIPFSTrackerFixture
       );
@@ -66,32 +70,13 @@ describe("IPFSFileTracker", function () {
       await expect(
         ipfsTracker
           .connect(otherAccount)
-          .addFileReference(testCID, FileType.FILE, testFileName)
+          .recordFileAction(
+            testCID,
+            Action.ADD_EVIDENCE,
+            FileType.FILE,
+            testFileName
+          )
       )
-        .to.be.revertedWithCustomError(ipfsTracker, "UnauthorizedAccess")
-        .withArgs(otherAccount.address);
-    });
-
-    it("Should allow owner to get file reference", async function () {
-      const { ipfsTracker } = await loadFixture(deployIPFSTrackerFixture);
-
-      await ipfsTracker.addFileReference(testCID, FileType.FILE, testFileName);
-      const fileRef = await ipfsTracker.getFileReference(testCID);
-
-      expect(fileRef.cid).to.equal(testCID);
-      expect(fileRef[1]).to.equal(Action.ADD_EVIDENCE); // Accessing action by index
-      expect(fileRef.fileType).to.equal(FileType.FILE);
-      expect(fileRef.fileName).to.equal(testFileName);
-      expect(fileRef.exists).to.be.true;
-    });
-
-    it("Should revert when non-owner tries to get file reference", async function () {
-      const { ipfsTracker, otherAccount } = await loadFixture(
-        deployIPFSTrackerFixture
-      );
-
-      await ipfsTracker.addFileReference(testCID, FileType.FILE, testFileName);
-      await expect(ipfsTracker.connect(otherAccount).getFileReference(testCID))
         .to.be.revertedWithCustomError(ipfsTracker, "UnauthorizedAccess")
         .withArgs(otherAccount.address);
     });
@@ -107,7 +92,12 @@ describe("IPFSFileTracker", function () {
       const { ipfsTracker } = await loadFixture(deployIPFSTrackerFixture);
 
       await expect(
-        ipfsTracker.addFileReference(emptyCID, FileType.FILE, testFileName)
+        ipfsTracker.recordFileAction(
+          emptyCID,
+          Action.ADD_EVIDENCE,
+          FileType.FILE,
+          testFileName
+        )
       ).to.be.revertedWithCustomError(ipfsTracker, "EmptyCID");
     });
 
@@ -115,49 +105,106 @@ describe("IPFSFileTracker", function () {
       const { ipfsTracker } = await loadFixture(deployIPFSTrackerFixture);
 
       await expect(
-        ipfsTracker.addFileReference(testCID, FileType.FILE, emptyFileName)
+        ipfsTracker.recordFileAction(
+          testCID,
+          Action.ADD_EVIDENCE,
+          FileType.FILE,
+          emptyFileName
+        )
       ).to.be.revertedWithCustomError(ipfsTracker, "EmptyFileName");
     });
 
-    it("Should revert when adding duplicate CID", async function () {
+    it("Should allow multiple actions on the same CID", async function () {
       const { ipfsTracker } = await loadFixture(deployIPFSTrackerFixture);
 
-      await ipfsTracker.addFileReference(testCID, FileType.FILE, testFileName);
+      // Add initial file
+      const addTx = await ipfsTracker.recordFileAction(
+        testCID,
+        Action.ADD_EVIDENCE,
+        FileType.FILE,
+        testFileName
+      );
+      const addReceipt = await addTx.wait();
+      const addEvent = addReceipt?.logs[0];
+      const initialFileId = addEvent?.args?.[0];
+
+      // Update the same file
+      const updateTx = await ipfsTracker.recordFileAction(
+        testCID,
+        Action.UPDATE_EVIDENCE,
+        FileType.FILE,
+        "updated.txt"
+      );
+      const updateReceipt = await updateTx.wait();
+      const updateEvent = updateReceipt?.logs[0];
+      const updatedFileId = updateEvent?.args?.[0];
+
+      // Check that the fileIds are different
+      expect(initialFileId).to.not.equal(updatedFileId);
+
+      // Get latest reference
+      const latestRef = await ipfsTracker.getLatestFileReference(testCID);
+      expect(latestRef.fileName).to.equal("updated.txt");
+    });
+
+    it("Should handle deletion correctly", async function () {
+      const { ipfsTracker } = await loadFixture(deployIPFSTrackerFixture);
+
+      // Add file
+      await ipfsTracker.recordFileAction(
+        testCID,
+        Action.ADD_EVIDENCE,
+        FileType.FILE,
+        testFileName
+      );
+
+      // Delete file
+      await ipfsTracker.recordFileAction(
+        testCID,
+        Action.DELETE_EVIDENCE,
+        FileType.FILE,
+        testFileName
+      );
+
+      // Check deletion status
+      expect(await ipfsTracker.isFileDeleted(testCID)).to.be.true;
+
+      // Attempt to add new action after deletion
       await expect(
-        ipfsTracker.addFileReference(testCID, FileType.FILE, testFileName)
-      )
-        .to.be.revertedWithCustomError(
-          ipfsTracker,
-          "FileReferenceAlreadyExists"
+        ipfsTracker.recordFileAction(
+          testCID,
+          Action.UPDATE_EVIDENCE,
+          FileType.FILE,
+          "new.txt"
         )
-        .withArgs(testCID);
+      ).to.be.revertedWithCustomError(ipfsTracker, "FileAlreadyDeleted");
+    });
+
+    it("Should get latest file reference", async function () {
+      const { ipfsTracker } = await loadFixture(deployIPFSTrackerFixture);
+
+      await ipfsTracker.recordFileAction(
+        testCID,
+        Action.ADD_EVIDENCE,
+        FileType.FILE,
+        testFileName
+      );
+
+      const latestRef = await ipfsTracker.getLatestFileReference(testCID);
+      expect(latestRef.cid).to.equal(testCID);
+      expect(latestRef.action).to.equal(Action.ADD_EVIDENCE);
+      expect(latestRef.fileType).to.equal(FileType.FILE);
+      expect(latestRef.fileName).to.equal(testFileName);
+      expect(latestRef.exists).to.be.true;
+      expect(latestRef.isDeleted).to.be.false;
     });
 
     it("Should revert when getting non-existent file reference", async function () {
       const { ipfsTracker } = await loadFixture(deployIPFSTrackerFixture);
 
-      await expect(ipfsTracker.getFileReference(testCID))
-        .to.be.revertedWithCustomError(ipfsTracker, "FileReferenceNotFound")
-        .withArgs(testCID);
-    });
-
-    it("Should handle both DATA and FILE types correctly", async function () {
-      const { ipfsTracker } = await loadFixture(deployIPFSTrackerFixture);
-      const dataCID = "QmDataCID";
-      const fileCID = "QmFileCID";
-      const dataFileName = "data.json";
-      const fileFileName = "document.pdf";
-
-      await ipfsTracker.addFileReference(dataCID, FileType.DATA, dataFileName);
-      await ipfsTracker.addFileReference(fileCID, FileType.FILE, fileFileName);
-
-      const dataRef = await ipfsTracker.getFileReference(dataCID);
-      const fileRef = await ipfsTracker.getFileReference(fileCID);
-
-      expect(dataRef.fileType).to.equal(FileType.DATA);
-      expect(dataRef[1]).to.equal(Action.ADD_EVIDENCE); // Accessing action by index
-      expect(fileRef.fileType).to.equal(FileType.FILE);
-      expect(fileRef[1]).to.equal(Action.ADD_EVIDENCE); // Accessing action by index
+      await expect(
+        ipfsTracker.getLatestFileReference(testCID)
+      ).to.be.revertedWithCustomError(ipfsTracker, "FileNotFound");
     });
   });
 
@@ -165,36 +212,27 @@ describe("IPFSFileTracker", function () {
     const testCID = "QmXnnyufdzAWL5CqZ2RnSNgPbvCc1ALT73s6epPrRnZ1Xy";
     const testFileName = "test.txt";
 
-    it("Should emit FileReferenceAdded event with correct parameters", async function () {
+    it("Should emit FileActionRecorded event with correct parameters", async function () {
       const { ipfsTracker } = await loadFixture(deployIPFSTrackerFixture);
 
       await expect(
-        ipfsTracker.addFileReference(testCID, FileType.FILE, testFileName)
+        ipfsTracker.recordFileAction(
+          testCID,
+          Action.ADD_EVIDENCE,
+          FileType.FILE,
+          testFileName
+        )
       )
-        .to.emit(ipfsTracker, "FileReferenceAdded")
+        .to.emit(ipfsTracker, "FileActionRecorded")
         .withArgs(
+          anyValue, // fileId
           Action.ADD_EVIDENCE,
           testCID,
           FileType.FILE,
           testFileName,
-          anyValue,
-          anyValue
+          anyValue, // timestamp
+          anyValue // blockHash
         );
-    });
-  });
-
-  describe("File Existence Check", function () {
-    const testCID = "QmXnnyufdzAWL5CqZ2RnSNgPbvCc1ALT73s6epPrRnZ1Xy";
-    const testFileName = "test.txt";
-
-    it("Should correctly report file existence", async function () {
-      const { ipfsTracker } = await loadFixture(deployIPFSTrackerFixture);
-
-      expect(await ipfsTracker.fileExists(testCID)).to.be.false;
-
-      await ipfsTracker.addFileReference(testCID, FileType.FILE, testFileName);
-
-      expect(await ipfsTracker.fileExists(testCID)).to.be.true;
     });
   });
 });

@@ -24,6 +24,7 @@ import type {
 
 export declare namespace IPFSFileTracker {
   export type FileReferenceStruct = {
+    fileId: BytesLike;
     cid: string;
     action: BigNumberish;
     fileType: BigNumberish;
@@ -31,17 +32,21 @@ export declare namespace IPFSFileTracker {
     timestamp: BigNumberish;
     blockHash: BytesLike;
     exists: boolean;
+    isDeleted: boolean;
   };
 
   export type FileReferenceStructOutput = [
+    fileId: string,
     cid: string,
     action: bigint,
     fileType: bigint,
     fileName: string,
     timestamp: bigint,
     blockHash: string,
-    exists: boolean
+    exists: boolean,
+    isDeleted: boolean
   ] & {
+    fileId: string;
     cid: string;
     action: bigint;
     fileType: bigint;
@@ -49,54 +54,62 @@ export declare namespace IPFSFileTracker {
     timestamp: bigint;
     blockHash: string;
     exists: boolean;
+    isDeleted: boolean;
   };
 }
 
 export interface IPFSFileTrackerInterface extends Interface {
   getFunction(
     nameOrSignature:
-      | "addFileReference"
-      | "fileExists"
-      | "getCurrentBlockHash"
       | "getFileReference"
+      | "getLatestFileReference"
       | "getOwner"
+      | "isFileDeleted"
+      | "recordFileAction"
   ): FunctionFragment;
 
-  getEvent(nameOrSignatureOrTopic: "FileReferenceAdded"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "FileActionRecorded"): EventFragment;
 
   encodeFunctionData(
-    functionFragment: "addFileReference",
-    values: [string, BigNumberish, string]
-  ): string;
-  encodeFunctionData(functionFragment: "fileExists", values: [string]): string;
-  encodeFunctionData(
-    functionFragment: "getCurrentBlockHash",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "getFileReference",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getLatestFileReference",
     values: [string]
   ): string;
   encodeFunctionData(functionFragment: "getOwner", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "isFileDeleted",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "recordFileAction",
+    values: [string, BigNumberish, BigNumberish, string]
+  ): string;
 
-  decodeFunctionResult(
-    functionFragment: "addFileReference",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "fileExists", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "getCurrentBlockHash",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "getFileReference",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "getLatestFileReference",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "getOwner", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "isFileDeleted",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "recordFileAction",
+    data: BytesLike
+  ): Result;
 }
 
-export namespace FileReferenceAddedEvent {
+export namespace FileActionRecordedEvent {
   export type InputTuple = [
+    fileId: BytesLike,
     action: BigNumberish,
     cid: string,
     fileType: BigNumberish,
@@ -105,6 +118,7 @@ export namespace FileReferenceAddedEvent {
     blockHash: BytesLike
   ];
   export type OutputTuple = [
+    fileId: string,
     action: bigint,
     cid: string,
     fileType: bigint,
@@ -113,6 +127,7 @@ export namespace FileReferenceAddedEvent {
     blockHash: string
   ];
   export interface OutputObject {
+    fileId: string;
     action: bigint;
     cid: string;
     fileType: bigint;
@@ -169,17 +184,13 @@ export interface IPFSFileTracker extends BaseContract {
     event?: TCEvent
   ): Promise<this>;
 
-  addFileReference: TypedContractMethod<
-    [_cid: string, _fileType: BigNumberish, _fileName: string],
-    [void],
-    "nonpayable"
+  getFileReference: TypedContractMethod<
+    [_fileId: BytesLike],
+    [IPFSFileTracker.FileReferenceStructOutput],
+    "view"
   >;
 
-  fileExists: TypedContractMethod<[_cid: string], [boolean], "view">;
-
-  getCurrentBlockHash: TypedContractMethod<[], [string], "view">;
-
-  getFileReference: TypedContractMethod<
+  getLatestFileReference: TypedContractMethod<
     [_cid: string],
     [IPFSFileTracker.FileReferenceStructOutput],
     "view"
@@ -187,25 +198,32 @@ export interface IPFSFileTracker extends BaseContract {
 
   getOwner: TypedContractMethod<[], [string], "view">;
 
+  isFileDeleted: TypedContractMethod<[_cid: string], [boolean], "view">;
+
+  recordFileAction: TypedContractMethod<
+    [
+      _cid: string,
+      _action: BigNumberish,
+      _fileType: BigNumberish,
+      _fileName: string
+    ],
+    [void],
+    "nonpayable"
+  >;
+
   getFunction<T extends ContractMethod = ContractMethod>(
     key: string | FunctionFragment
   ): T;
 
   getFunction(
-    nameOrSignature: "addFileReference"
+    nameOrSignature: "getFileReference"
   ): TypedContractMethod<
-    [_cid: string, _fileType: BigNumberish, _fileName: string],
-    [void],
-    "nonpayable"
+    [_fileId: BytesLike],
+    [IPFSFileTracker.FileReferenceStructOutput],
+    "view"
   >;
   getFunction(
-    nameOrSignature: "fileExists"
-  ): TypedContractMethod<[_cid: string], [boolean], "view">;
-  getFunction(
-    nameOrSignature: "getCurrentBlockHash"
-  ): TypedContractMethod<[], [string], "view">;
-  getFunction(
-    nameOrSignature: "getFileReference"
+    nameOrSignature: "getLatestFileReference"
   ): TypedContractMethod<
     [_cid: string],
     [IPFSFileTracker.FileReferenceStructOutput],
@@ -214,25 +232,40 @@ export interface IPFSFileTracker extends BaseContract {
   getFunction(
     nameOrSignature: "getOwner"
   ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "isFileDeleted"
+  ): TypedContractMethod<[_cid: string], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "recordFileAction"
+  ): TypedContractMethod<
+    [
+      _cid: string,
+      _action: BigNumberish,
+      _fileType: BigNumberish,
+      _fileName: string
+    ],
+    [void],
+    "nonpayable"
+  >;
 
   getEvent(
-    key: "FileReferenceAdded"
+    key: "FileActionRecorded"
   ): TypedContractEvent<
-    FileReferenceAddedEvent.InputTuple,
-    FileReferenceAddedEvent.OutputTuple,
-    FileReferenceAddedEvent.OutputObject
+    FileActionRecordedEvent.InputTuple,
+    FileActionRecordedEvent.OutputTuple,
+    FileActionRecordedEvent.OutputObject
   >;
 
   filters: {
-    "FileReferenceAdded(uint8,string,uint8,string,uint256,bytes32)": TypedContractEvent<
-      FileReferenceAddedEvent.InputTuple,
-      FileReferenceAddedEvent.OutputTuple,
-      FileReferenceAddedEvent.OutputObject
+    "FileActionRecorded(bytes32,uint8,string,uint8,string,uint256,bytes32)": TypedContractEvent<
+      FileActionRecordedEvent.InputTuple,
+      FileActionRecordedEvent.OutputTuple,
+      FileActionRecordedEvent.OutputObject
     >;
-    FileReferenceAdded: TypedContractEvent<
-      FileReferenceAddedEvent.InputTuple,
-      FileReferenceAddedEvent.OutputTuple,
-      FileReferenceAddedEvent.OutputObject
+    FileActionRecorded: TypedContractEvent<
+      FileActionRecordedEvent.InputTuple,
+      FileActionRecordedEvent.OutputTuple,
+      FileActionRecordedEvent.OutputObject
     >;
   };
 }

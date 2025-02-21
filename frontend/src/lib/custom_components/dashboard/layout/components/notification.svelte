@@ -13,8 +13,10 @@
 		<Bell class="h-5 w-5" />
 		{#if $unreadCount > 0}
 			<span
-				class="absolute -right-1 -top-1 block h-2.5 w-2.5 rounded-full bg-red-400 ring-2 ring-white"
-			></span>
+				class="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-400 text-xs text-white ring-2 ring-white"
+			>
+				{$unreadCount}
+			</span>
 		{/if}
 	</Popover.Trigger>
 	<Popover.Content

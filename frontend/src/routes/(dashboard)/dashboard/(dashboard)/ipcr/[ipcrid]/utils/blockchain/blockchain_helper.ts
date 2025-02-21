@@ -22,24 +22,23 @@ interface FileReferenceAddedEvent {
 	currentTimeStamp: BigNumberish;
 	currentBlockHash: string;
 }
-export async function uploadFileDetailsToBlockChain(fileDetails: FileDetails) {
-	try {
-		const exists = await contract.fileExists(fileDetails.cid);
-		if (exists) {
-			return null;
-		}
 
-		const tx = await contract.addFileReference(
+export async function uploadFileDetailsToBlockChain(
+	fileDetails: FileDetails
+): Promise<FileReferenceAddedEvent | null> {
+	try {
+		const tx = await contract.recordFileAction(
 			fileDetails.cid,
+			fileDetails.action,
 			fileDetails.fileType,
 			fileDetails.fileName
 		);
 
 		const eventPromise = new Promise((resolve) => {
 			contract.once(
-				contract.filters['FileReferenceAdded(uint8,string,uint8,string,uint256,bytes32)'],
-				// These are the actual parameters passed by the event
+				contract.filters['FileActionRecorded(bytes32,uint8,string,uint8,string,uint256,bytes32)'],
 				(
+					fileId: string,
 					action: bigint,
 					cid: string,
 					fileType: bigint,
@@ -48,7 +47,6 @@ export async function uploadFileDetailsToBlockChain(fileDetails: FileDetails) {
 					blockHash: string
 				) => {
 					resolve({
-						action,
 						cid,
 						fileType,
 						fileName,
@@ -58,6 +56,7 @@ export async function uploadFileDetailsToBlockChain(fileDetails: FileDetails) {
 				}
 			);
 		});
+
 		// Wait for transaction confirmation
 		await tx.wait();
 

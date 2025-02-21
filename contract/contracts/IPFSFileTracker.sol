@@ -3,18 +3,15 @@ pragma solidity ^0.8.28;
 
 /**
  * @title IPFSFileTracker
- * @dev Contract for tracking IPFS file references with timestamps, file types, and names
+ * @dev Contract for tracking IPFS file references with unique identifiers
  */
 contract IPFSFileTracker {
-    // Contract owner address
     address private immutable owner;
 
-    // Enum to represent file types
     enum FileType {
         DATA,
         FILE
     }
-
     enum Action {
         ADD_EVIDENCE,
         UPDATE_EVIDENCE,
@@ -22,22 +19,27 @@ contract IPFSFileTracker {
         BACKUP
     }
 
-    // Structure to store file information
     struct FileReference {
-        string cid;
-        Action action;
-        FileType fileType;
-        string fileName;
-        uint256 timestamp;
-        bytes32 blockHash;
-        bool exists;
+        bytes32 fileId; // Unique identifier for this specific file action
+        string cid; // IPFS Content Identifier
+        Action action; // Type of action performed
+        FileType fileType; // Type of file
+        string fileName; // Name of file
+        uint256 timestamp; // When the action was performed
+        bytes32 blockHash; // Block hash at time of action
+        bool exists; // Whether this reference exists
+        bool isDeleted; // Whether the file is marked as deleted
     }
 
-    // Mapping to store file references by CID
-    mapping(string => FileReference) private fileReferences;
+    // Primary mapping using fileId as key
+    mapping(bytes32 => FileReference) private fileReferences;
+
+    // Mapping to track latest fileId for each CID
+    mapping(string => bytes32) private latestFileIds;
 
     // Events
-    event FileReferenceAdded(
+    event FileActionRecorded(
+        bytes32 indexed fileId,
         Action action,
         string cid,
         FileType fileType,
@@ -50,19 +52,13 @@ contract IPFSFileTracker {
     error UnauthorizedAccess(address caller);
     error EmptyCID();
     error EmptyFileName();
-    error FileReferenceAlreadyExists(string cid);
-    error FileReferenceNotFound(string cid);
+    error FileNotFound(string cid);
+    error FileAlreadyDeleted(string cid);
 
-    /**
-     * @dev Constructor to set the contract owner
-     */
     constructor() {
         owner = msg.sender;
     }
 
-    /**
-     * @dev Modifier to restrict functions to contract owner
-     */
     modifier onlyOwner() {
         if (msg.sender != owner) {
             revert UnauthorizedAccess(msg.sender);
@@ -71,41 +67,57 @@ contract IPFSFileTracker {
     }
 
     /**
-     * @dev Add a new file reference
-     * @param _cid IPFS Content Identifier
-     * @param _fileType Type of the file (DATA or FILE)
-     * @param _fileName Name of the file
+     * @dev Generate a unique fileId for each action
      */
-    function addFileReference(
+    function generateFileId(
         string memory _cid,
+        uint256 _timestamp,
+        Action _action
+    ) private pure returns (bytes32) {
+        return keccak256(abi.encodePacked(_cid, _timestamp, uint8(_action)));
+    }
+
+    /**
+     * @dev Record a file action (add/update/delete)
+     */
+    function recordFileAction(
+        string memory _cid,
+        Action _action,
         FileType _fileType,
         string memory _fileName
     ) external onlyOwner {
-        if (bytes(_cid).length == 0) {
-            revert EmptyCID();
-        }
-        if (bytes(_fileName).length == 0) {
-            revert EmptyFileName();
-        }
-        if (fileReferences[_cid].exists) {
-            revert FileReferenceAlreadyExists(_cid);
+        if (bytes(_cid).length == 0) revert EmptyCID();
+        if (bytes(_fileName).length == 0) revert EmptyFileName();
+
+        bytes32 lastFileId = latestFileIds[_cid];
+        if (lastFileId != bytes32(0)) {
+            FileReference storage lastRef = fileReferences[lastFileId];
+            if (lastRef.isDeleted && _action != Action.DELETE_EVIDENCE) {
+                revert FileAlreadyDeleted(_cid);
+            }
         }
 
         uint256 currentTimestamp = block.timestamp;
         bytes32 currentBlockHash = blockhash(block.number - 1);
+        bytes32 fileId = generateFileId(_cid, currentTimestamp, _action);
 
-        fileReferences[_cid] = FileReference({
+        fileReferences[fileId] = FileReference({
+            fileId: fileId,
             cid: _cid,
-            action: Action.ADD_EVIDENCE, // Added missing action field
+            action: _action,
             fileType: _fileType,
             fileName: _fileName,
             timestamp: currentTimestamp,
             blockHash: currentBlockHash,
-            exists: true
+            exists: true,
+            isDeleted: _action == Action.DELETE_EVIDENCE
         });
 
-        emit FileReferenceAdded(
-            Action.ADD_EVIDENCE, // Added action parameter
+        latestFileIds[_cid] = fileId;
+
+        emit FileActionRecorded(
+            fileId,
+            _action,
             _cid,
             _fileType,
             _fileName,
@@ -115,42 +127,46 @@ contract IPFSFileTracker {
     }
 
     /**
-     * @dev Get file reference details
-     * @param _cid IPFS Content Identifier
-     * @return Complete FileReference struct
+     * @dev Get file reference by fileId
      */
     function getFileReference(
-        string memory _cid
+        bytes32 _fileId
     ) external view onlyOwner returns (FileReference memory) {
-        FileReference memory fileRef = fileReferences[_cid];
+        FileReference memory fileRef = fileReferences[_fileId];
         if (!fileRef.exists) {
-            revert FileReferenceNotFound(_cid);
+            revert FileNotFound(fileRef.cid);
         }
         return fileRef;
     }
 
     /**
+     * @dev Get the latest file reference for a CID
+     */
+    function getLatestFileReference(
+        string memory _cid
+    ) external view onlyOwner returns (FileReference memory) {
+        bytes32 fileId = latestFileIds[_cid];
+        if (fileId == bytes32(0)) {
+            revert FileNotFound(_cid);
+        }
+        return fileReferences[fileId];
+    }
+
+    /**
+     * @dev Check if a file is currently marked as deleted
+     */
+    function isFileDeleted(string memory _cid) external view returns (bool) {
+        bytes32 fileId = latestFileIds[_cid];
+        if (fileId == bytes32(0)) {
+            revert FileNotFound(_cid);
+        }
+        return fileReferences[fileId].isDeleted;
+    }
+
+    /**
      * @dev Get the owner address
-     * @return address The owner's address
      */
     function getOwner() external view returns (address) {
         return owner;
-    }
-
-    /**
-     * @dev Check if a file reference exists
-     * @param _cid IPFS Content Identifier
-     * @return bool Whether the file reference exists
-     */
-    function fileExists(string memory _cid) external view returns (bool) {
-        return fileReferences[_cid].exists;
-    }
-
-    /**
-     * @dev Get current block hash
-     * @return bytes32 The hash of the previous block
-     */
-    function getCurrentBlockHash() external view returns (bytes32) {
-        return blockhash(block.number - 1);
     }
 }
