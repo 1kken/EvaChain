@@ -1,32 +1,48 @@
 <script lang="ts">
 	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
-	import { buttonVariants } from '$lib/components/ui/button/index.js';
 	import type { Tables } from '$lib/types/database.types';
+	import { getNotificationStore } from '$lib/utils/notificationStore';
+	import { showErrorToast } from '$lib/utils/toast';
 	import { Check, CircleX, Info, MailCheck, TriangleAlert } from 'lucide-svelte';
 
 	let { notification }: { notification: Tables<'notifications'> } = $props();
 
-	type NotificationType = 'success' | 'warning' | 'fail' | 'notification';
+	type NotificationType = 'success' | 'warning' | 'fail' | 'notification' | 'read';
 	const colorScheme: Record<NotificationType, string> = {
 		success: 'bg-green-500',
 		warning: 'bg-yellow-500',
 		fail: 'bg-red-500',
-		notification: 'bg-blue-500'
+		notification: 'bg-blue-500',
+		read: 'bg-gray-500'
 	};
 
+	const { markAsRead } = getNotificationStore();
+
 	let isOpen = $state(false);
+
+	function handleMarkAsRead() {
+		markAsRead(notification.id)
+			.then(() => {
+				isOpen = false;
+			})
+			.catch((error) => {
+				showErrorToast('Error marking notification as read');
+			});
+	}
 </script>
 
-<AlertDialog.Root>
-	<AlertDialog.Trigger
-		class={buttonVariants({ variant: 'ghost' }) + ' w-full outline-none focus-visible:outline-none'}
-	>
-		<div class="flex items-center">
-			<div class="h-2 w-2 shrink-0">
+<AlertDialog.Root bind:open={isOpen}>
+	<AlertDialog.Trigger class="w-full rounded-md hover:bg-green-600 focus:outline-none">
+		<div class="flex w-full items-start p-2">
+			<div class="mt-1.5 h-2 w-2 flex-shrink-0">
 				<!-- svelte-ignore element_invalid_self_closing_tag -->
-				<div class={`h-full w-full rounded-full ${colorScheme[notification.type]}`} />
+				<div
+					class={`h-full w-full rounded-full ${notification.is_read ? colorScheme['read'] : colorScheme[notification.type]}`}
+				/>
 			</div>
-			<span class="ml-2">{notification.title}</span>
+			<span class={`ml-2 break-words text-left ${notification.is_read ? 'text-gray-500' : ''}`}>
+				{notification.title}
+			</span>
 		</div>
 	</AlertDialog.Trigger>
 	<AlertDialog.Content class="max-h-[85vh] overflow-y-auto sm:max-w-[700px]">
@@ -55,7 +71,11 @@
 		</AlertDialog.Header>
 		<AlertDialog.Footer>
 			<AlertDialog.Cancel>Close</AlertDialog.Cancel>
-			<AlertDialog.Action><MailCheck />Mark as Read</AlertDialog.Action>
+			{#if !notification.is_read}
+				<AlertDialog.Action onclick={() => handleMarkAsRead()}
+					><MailCheck />Mark as Read</AlertDialog.Action
+				>
+			{/if}
 		</AlertDialog.Footer>
 	</AlertDialog.Content>
 </AlertDialog.Root>
