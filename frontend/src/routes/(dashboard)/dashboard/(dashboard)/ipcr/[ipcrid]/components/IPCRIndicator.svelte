@@ -24,12 +24,17 @@
 			showWarningToast(`Successfully deleted indicator`);
 		}
 	}
-	const { canEdit } = getIpcrStore();
+	const { isDraft, isRevisionRaw, isReviewedRaw, isRevision } = getIpcrStore();
+	//* This is where ther user can edit the indicator as a whole edit delete
+	let canEditIndicator = $state($isDraft);
+
+	//* This is where the user can edit the indicator but cannot delete
+	let canEditButCannotDelete = $state($isRevisionRaw || $isRevision);
 </script>
 
 <div class="rounded-lg border">
 	<div class="h-13 flex flex-col space-y-2 p-4">
-		{#if !$canEdit}
+		{#if $isReviewedRaw}
 			<div class="w-full sm:w-auto">
 				<Accomplshments indicator={ipcrFunctionIndicator} />
 			</div>
@@ -40,7 +45,12 @@
 				<ViewIndicator ipcrId={ipcrFunctionIndicator.id} />
 			</div>
 			<div>
-				{#if $canEdit}
+				{#snippet updateDialog()}
+					<UpdateDialog {ipcrFunctionIndicator} bind:isDrawerOpen />
+				{/snippet}
+
+				<!-- This when the user can literally edit anything-->
+				{#if canEditIndicator}
 					{#snippet deleteAction()}
 						<UniversalDeleteAction
 							id={ipcrFunctionIndicator.id}
@@ -49,10 +59,12 @@
 							onDelete={handleDelete}
 						/>
 					{/snippet}
-					{#snippet updateDialog()}
-						<UpdateDialog {ipcrFunctionIndicator} bind:isDrawerOpen />
-					{/snippet}
 					<DropDownWrapper childrens={[updateDialog, deleteAction]} bind:isDrawerOpen />
+				{/if}
+
+				<!-- This when the user can edit but cannot delete-->
+				{#if canEditButCannotDelete}
+					<DropDownWrapper childrens={[updateDialog]} bind:isDrawerOpen />
 				{/if}
 			</div>
 		</div>

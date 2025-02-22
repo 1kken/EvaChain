@@ -1,5 +1,15 @@
 -- Create status enum type if it doesn't exist already
-CREATE TYPE ipcr_status AS ENUM ('draft', 'submitted', 'reviewing', 'revision', 'approved');
+CREATE TYPE ipcr_status AS ENUM (
+    'draft',
+    'submitted_raw',
+    'under_review_raw',
+    'revision_raw',
+    'reviewed_raw',
+    'submitted',
+    'under_review',
+    'revision',
+    'approved'
+);
 
 -- Create ipcr table
 CREATE TABLE ipcr (

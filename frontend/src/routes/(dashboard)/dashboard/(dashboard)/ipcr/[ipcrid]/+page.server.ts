@@ -35,6 +35,7 @@ import {
 	deleteAccomplishment,
 	updateAccomplishment
 } from './services/ipcr_indicator_accomplsihments';
+import { error } from '@sveltejs/kit';
 
 export const load = (async ({ params, locals: { supabase } }) => {
 	//states
@@ -113,7 +114,10 @@ export const actions = {
 		return await deleteAccomplishment(request, supabase);
 	},
 	//ipcr
-	submitipcr: async ({ request, locals: { supabase } }) => {
-		return submitIpcr(request, supabase);
+	submitipcr: async ({ request, locals: { supabase, session } }) => {
+		//if session is empty redirect to /login
+		if (!session) throw error(401, { message: 'Unauthorized' });
+
+		return submitIpcr(request, supabase, session);
 	}
 } satisfies Actions;

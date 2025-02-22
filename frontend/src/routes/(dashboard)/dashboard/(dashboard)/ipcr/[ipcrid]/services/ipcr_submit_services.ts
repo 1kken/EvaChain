@@ -1,9 +1,13 @@
-import type { SupabaseClient } from '@supabase/supabase-js';
+import type { Session, SupabaseClient } from '@supabase/supabase-js';
 import { message, superValidate, type Infer } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import type { Database } from '$lib/types/database.types';
 import { submitIPCRschema, type SubmitIPCRSchema } from '../schema/ipcr_submit_schema';
-export async function submitIpcr(request: Request, supabase: SupabaseClient<Database>) {
+export async function submitIpcr(
+	request: Request,
+	supabase: SupabaseClient<Database>,
+	session: Session
+) {
 	const form = await superValidate<Infer<SubmitIPCRSchema>, App.Superforms.Message>(
 		request,
 		zod(submitIPCRschema)
@@ -38,7 +42,7 @@ export async function submitIpcr(request: Request, supabase: SupabaseClient<Data
 
 	const { data: IpcrData, error: updateError } = await supabase
 		.from('ipcr')
-		.update({ status: 'submitted' })
+		.update({ status: 'submitted_raw' })
 		.eq('id', ipcrID)
 		.select()
 		.single();
@@ -46,6 +50,43 @@ export async function submitIpcr(request: Request, supabase: SupabaseClient<Data
 		return message(form, {
 			status: 'error',
 			text: `error submitting ipcr ${updateError.message}`
+		});
+	}
+
+	const { data: makingSupervisorData, error: createSupervisorError } = await supabase.rpc(
+		'create_supervisor_data',
+		{
+			p_ipcr_id: ipcrID
+		}
+	);
+
+	if (createSupervisorError) {
+		return message(form, {
+			status: 'error',
+			text: `error creating supervisor data ${createSupervisorError.message}`
+		});
+	}
+
+	const ipcrImmediateSupervisor = makingSupervisorData.map((supervisor) => {
+		return {
+			receiver_id: supervisor.supervisor_id,
+			sender_id: session.user.id,
+			type: 'notification' as const,
+			title:
+				'You have been assigned as the immediate supervisor for the submitted IPCR ' +
+				IpcrData.title,
+			message: `You have been assigned as the immediate supervisor for the submitted IPCR ${IpcrData.title}.`
+		};
+	});
+
+	const { data: notificationData, error: notificationError } = await supabase
+		.from('notifications')
+		.insert([...ipcrImmediateSupervisor]);
+
+	if (notificationError) {
+		return message(form, {
+			status: 'error',
+			text: `error creating notification ${notificationError.message}`
 		});
 	}
 
