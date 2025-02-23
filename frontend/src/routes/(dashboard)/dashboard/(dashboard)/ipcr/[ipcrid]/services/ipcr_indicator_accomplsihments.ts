@@ -51,7 +51,7 @@ export async function createAccomplishment(request: Request, supabase: SupabaseC
 		});
 	}
 
-	// Create the accomplishment first
+	// Create the accomplishment first //! NO ERRORS HERE
 	const { data: ipcrAccomplishment, error: ipcrAccomplishmentError } = await supabase
 		.from('ipcr_indicator_accomplishment')
 		.insert({
@@ -70,7 +70,7 @@ export async function createAccomplishment(request: Request, supabase: SupabaseC
 		});
 	}
 
-	// Now update the history with the newly created accomplishment ID
+	// Now update the history with the newly created accomplishment ID //! Errors Here
 	try {
 		await createAccomplishmentWithHistory(
 			supabase,
@@ -84,7 +84,7 @@ export async function createAccomplishment(request: Request, supabase: SupabaseC
 
 		return message(form, {
 			status: 'error',
-			text: `Error uploading to history and updating Accomplishment Report Totals`
+			text: `Error uploading to history and updating Accomplishment Report Totals ${error}`
 		});
 	}
 
@@ -149,12 +149,13 @@ export async function createAccomplishment(request: Request, supabase: SupabaseC
 	} catch (error) {
 		return message(form, {
 			status: 'error',
-			text: `Error in blockchain processing`
+			text: `Error in blockchain processing ${error}`
 		});
 	}
 
 	return withFiles({ form, ipcrAccomplishment });
 }
+
 //DELETE ACCOMPLISHMENT==============--
 export async function deleteAccomplishment(request: Request, supabase: SupabaseClient<Database>) {
 	const {

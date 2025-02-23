@@ -27,7 +27,7 @@
 	});
 </script>
 
-<Toaster richColors position="top-right" closeButton />
+<Toaster richColors position="top-right" closeButton duration={5000} />
 <ModeWatcher />
 {@render children()}
 <Footer />
