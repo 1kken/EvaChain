@@ -20,6 +20,15 @@
 
 	let isOpen = $state(false);
 
+	const formatDate = (dateString: string) => {
+		const date = new Date(dateString);
+		return date.toLocaleDateString('en-GB', {
+			day: '2-digit',
+			month: '2-digit',
+			year: 'numeric'
+		});
+	};
+
 	function handleMarkAsRead() {
 		markAsRead(notification.id)
 			.then(() => {
@@ -40,9 +49,14 @@
 					class={`h-full w-full rounded-full ${notification.is_read ? colorScheme['read'] : colorScheme[notification.type]}`}
 				/>
 			</div>
-			<span class={`ml-2 break-words text-left ${notification.is_read ? 'text-gray-500' : ''}`}>
-				{notification.title}
-			</span>
+			<div class="ml-2 flex flex-grow flex-col items-start">
+				<span class={`break-words text-left ${notification.is_read ? 'text-gray-500' : ''}`}>
+					{notification.title}
+				</span>
+				<span class="text-xs text-gray-500">
+					{formatDate(notification.created_at)}
+				</span>
+			</div>
 		</div>
 	</AlertDialog.Trigger>
 	<AlertDialog.Content class="max-h-[85vh] overflow-y-auto sm:max-w-[700px]">

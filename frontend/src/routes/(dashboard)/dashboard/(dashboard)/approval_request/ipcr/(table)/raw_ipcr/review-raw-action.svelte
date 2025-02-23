@@ -9,7 +9,6 @@
 	import { TriangleAlert } from 'lucide-svelte';
 	import type { Tables } from '$lib/types/database.types';
 	import { uuidSchema, type UuidSchemaInput } from '../../(data)/zod_schema';
-	import type { IPCRFormResult } from '../../(data)/types';
 	interface Props {
 		ipcr_details: Tables<'ipcr_supervisor_details_view'>;
 		uuidForm: SuperValidated<UuidSchemaInput>;

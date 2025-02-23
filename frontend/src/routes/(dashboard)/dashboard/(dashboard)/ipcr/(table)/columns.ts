@@ -37,7 +37,23 @@ export const createColumns = (
 				text: 'IPCR status',
 				arrangement: column.getIsSorted(),
 				onclick: () => column.toggleSorting(column.getIsSorted() === 'asc')
-			})
+			}),
+		cell: ({ getValue }) => {
+			const status = getValue<string>();
+			const displayStatus =
+				{
+					draft: 'Draft',
+					submitted_raw: 'Submitted (Raw w/o Accomplishment and Self-Rating)',
+					under_review_raw: 'Under Review',
+					revision_raw: 'For Revision (Raw w/o Accomplishment and Self-Rating)',
+					reviewed_raw: 'Reviewed (Can upload accomplishments) w/ Self-Rating',
+					submitted: 'Submitted (w/ Self-Rating)',
+					under_review: 'Under Review (w/ Self-Rating)',
+					revision: 'For Revision (w/ Self-Rating)',
+					approved: 'Approved'
+				}[status] || 'Pending Action';
+			return displayStatus;
+		}
 	},
 	{
 		accessorKey: 'created_at',

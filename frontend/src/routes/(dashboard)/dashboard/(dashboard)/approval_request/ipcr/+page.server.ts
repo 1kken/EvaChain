@@ -1,7 +1,11 @@
 import { redirect, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { fetchIpcrDetailsWithUserId, getActionForms } from './utils/server-loader';
-import { setStatusReviewRaw } from './utils/ipcr-raw-services';
+import {
+	setStatusReviewedRaw,
+	setStatusReviewRaw,
+	setStatusRevisionRaw
+} from './utils/ipcr-raw-services';
 
 export const load = (async ({ locals: { supabase, session } }) => {
 	if (!session) {
@@ -21,5 +25,17 @@ export const actions: Actions = {
 			redirect(401, '/login');
 		}
 		return setStatusReviewRaw(request, supabase, session);
+	},
+	reviewedraw: async ({ request, params, locals: { supabase, session } }) => {
+		if (!session) {
+			redirect(401, '/login');
+		}
+		return setStatusReviewedRaw(request, supabase, session);
+	},
+	revisionraw: async ({ request, params, locals: { supabase, session } }) => {
+		if (!session) {
+			redirect(401, '/login');
+		}
+		return setStatusRevisionRaw(request, supabase, session);
 	}
 };

@@ -6,6 +6,8 @@
 	import type { SuperValidated } from 'sveltekit-superforms';
 	import type { RevisionSchemaInput, UuidSchemaInput } from '../(data)/zod_schema';
 	import ReviewRawAction from './raw_ipcr/review-raw-action.svelte';
+	import ReviewedRawAction from './raw_ipcr/reviewed-raw-action.svelte';
+	import RevisionRawAction from './raw_ipcr/revision-raw-action.svelte';
 
 	interface Props {
 		uuidForm: SuperValidated<UuidSchemaInput>;
@@ -34,6 +36,14 @@
 		{#if ipcr_details.supervisor_review_status === null}
 			<DropdownMenu.Item onSelect={(e) => e.preventDefault()}>
 				<ReviewRawAction {ipcr_details} {uuidForm} bind:dropDownOpen />
+			</DropdownMenu.Item>
+		{/if}
+		{#if ipcr_details.supervisor_review_status === 'under_review_raw' || ipcr_details.ipcr_status === 'submitted_raw'}
+			<DropdownMenu.Item onSelect={(e) => e.preventDefault()}>
+				<ReviewedRawAction {ipcr_details} {uuidForm} bind:dropDownOpen />
+			</DropdownMenu.Item>
+			<DropdownMenu.Item onSelect={(e) => e.preventDefault()}>
+				<RevisionRawAction {ipcr_details} {revisionForm} bind:dropDownOpen />
 			</DropdownMenu.Item>
 		{/if}
 		<!-- {#if op.status === 'submitted'}
