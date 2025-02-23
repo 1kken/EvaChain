@@ -53,41 +53,55 @@ export async function submitIpcr(
 		});
 	}
 
-	const { data: makingSupervisorData, error: createSupervisorError } = await supabase.rpc(
-		'create_supervisor_data',
-		{
-			p_ipcr_id: ipcrID
-		}
-	);
+	const { data: ipcrSupervisor, error: ipcrSupervisorError } = await supabase
+		.from('ipcr_immediate_supervisor')
+		.select()
+		.eq('ipcr_id', ipcrID)
+		.limit(1);
 
-	if (createSupervisorError) {
+	if (ipcrSupervisorError) {
 		return message(form, {
 			status: 'error',
-			text: `error creating supervisor data ${createSupervisorError.message}`
+			text: `error fetching ipcr immediate supervisor ${ipcrSupervisorError.message}`
 		});
 	}
 
-	const ipcrImmediateSupervisor = makingSupervisorData.map((supervisor) => {
-		return {
-			receiver_id: supervisor.supervisor_id,
-			sender_id: session.user.id,
-			type: 'notification' as const,
-			title:
-				'You have been assigned as the immediate supervisor for the submitted IPCR ' +
-				IpcrData.title,
-			message: `You have been assigned as the immediate supervisor for the submitted IPCR ${IpcrData.title}.`
-		};
-	});
-
-	const { data: notificationData, error: notificationError } = await supabase
-		.from('notifications')
-		.insert([...ipcrImmediateSupervisor]);
-
-	if (notificationError) {
-		return message(form, {
-			status: 'error',
-			text: `error creating notification ${notificationError.message}`
+	console.log(ipcrSupervisor);
+	if (ipcrSupervisor.length === 0) {
+		const { data: makingSupervisorData, error: createSupervisorError } = await supabase.rpc(
+			'create_supervisor_data',
+			{
+				p_ipcr_id: ipcrID
+			}
+		);
+		if (createSupervisorError) {
+			return message(form, {
+				status: 'error',
+				text: `error creating supervisor data ${createSupervisorError.message}`
+			});
+		}
+		const ipcrImmediateSupervisor = makingSupervisorData.map((supervisor) => {
+			return {
+				receiver_id: supervisor.supervisor_id,
+				sender_id: session.user.id,
+				type: 'notification' as const,
+				title:
+					'You have been assigned as the immediate supervisor for the submitted IPCR ' +
+					IpcrData.title,
+				message: `You have been assigned as the immediate supervisor for the submitted IPCR ${IpcrData.title}.`
+			};
 		});
+
+		const { data: notificationData, error: notificationError } = await supabase
+			.from('notifications')
+			.insert([...ipcrImmediateSupervisor]);
+
+		if (notificationError) {
+			return message(form, {
+				status: 'error',
+				text: `error creating notification ${notificationError.message}`
+			});
+		}
 	}
 
 	return { form, IpcrData };

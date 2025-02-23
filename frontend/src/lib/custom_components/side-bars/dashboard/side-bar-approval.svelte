@@ -8,6 +8,10 @@
 		{
 			title: 'Operational Plan',
 			url: `/dashboard/approval_request/operational_plan`
+		},
+		{
+			title: 'IPCR',
+			url: `/dashboard/approval_request/ipcr`
 		}
 	];
 	function isActive(itemUrl: string) {

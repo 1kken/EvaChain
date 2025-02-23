@@ -6,18 +6,15 @@
 	import SubmitIpcr from './SubmitIpcr.svelte';
 
 	let { data } = $props();
-	let isSubmitVisible = $state(false);
 
-	const { canEdit } = getIpcrStore();
-	$effect(() => {
-		isSubmitVisible = $canEdit;
-	});
+	const { isDraft, isReviewedRaw, isRevisionRaw, isRevision } = getIpcrStore();
+	let canSubmit = $state($isDraft || $isReviewedRaw || $isRevisionRaw || $isRevision);
 </script>
 
 <NavButtonGroup currentPath={$page.url.pathname}>
 	<div class="group relative">
 		<CreateDialog />
-		{#if isSubmitVisible}
+		{#if canSubmit}
 			<SubmitIpcr submitIPCRForm={data.submitForm} />
 		{/if}
 	</div>
