@@ -42,7 +42,7 @@ export const createColumns = (
 		}
 	},
 	{
-		accessorKey: 'status',
+		accessorKey: 'supervisor_review_status',
 		header: ({ column }) =>
 			renderComponent(DataTableSortButton, {
 				text: 'IPCR status',

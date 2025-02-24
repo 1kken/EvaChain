@@ -10,12 +10,26 @@ export const GET = (async ({ url, locals }) => {
 	}
 
 	try {
-		const { data, error } = await locals.supabase
+		// Get current user session
+		const {
+			data: { session }
+		} = await locals.supabase.auth.getSession();
+		const currentUserId = session?.user?.id;
+
+		// Build the query
+		const supabaseQuery = locals.supabase
 			.from('profiles')
 			.select('*')
 			.or(`first_name.ilike.%${query}%,last_name.ilike.%${query}%`)
 			.order('first_name', { ascending: true })
 			.limit(10);
+
+		// Exclude current user if we have their ID
+		if (currentUserId) {
+			supabaseQuery.neq('id', currentUserId);
+		}
+
+		const { data, error } = await supabaseQuery;
 
 		if (error) throw error;
 

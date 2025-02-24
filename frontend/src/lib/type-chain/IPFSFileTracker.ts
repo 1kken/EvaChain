@@ -32,7 +32,6 @@ export declare namespace IPFSFileTracker {
     timestamp: BigNumberish;
     blockHash: BytesLike;
     exists: boolean;
-    isDeleted: boolean;
   };
 
   export type FileReferenceStructOutput = [
@@ -43,8 +42,7 @@ export declare namespace IPFSFileTracker {
     fileName: string,
     timestamp: bigint,
     blockHash: string,
-    exists: boolean,
-    isDeleted: boolean
+    exists: boolean
   ] & {
     fileId: string;
     cid: string;
@@ -54,7 +52,6 @@ export declare namespace IPFSFileTracker {
     timestamp: bigint;
     blockHash: string;
     exists: boolean;
-    isDeleted: boolean;
   };
 }
 
@@ -64,7 +61,6 @@ export interface IPFSFileTrackerInterface extends Interface {
       | "getFileReference"
       | "getLatestFileReference"
       | "getOwner"
-      | "isFileDeleted"
       | "recordFileAction"
   ): FunctionFragment;
 
@@ -80,10 +76,6 @@ export interface IPFSFileTrackerInterface extends Interface {
   ): string;
   encodeFunctionData(functionFragment: "getOwner", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "isFileDeleted",
-    values: [string]
-  ): string;
-  encodeFunctionData(
     functionFragment: "recordFileAction",
     values: [string, BigNumberish, BigNumberish, string]
   ): string;
@@ -97,10 +89,6 @@ export interface IPFSFileTrackerInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getOwner", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "isFileDeleted",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "recordFileAction",
     data: BytesLike
@@ -198,8 +186,6 @@ export interface IPFSFileTracker extends BaseContract {
 
   getOwner: TypedContractMethod<[], [string], "view">;
 
-  isFileDeleted: TypedContractMethod<[_cid: string], [boolean], "view">;
-
   recordFileAction: TypedContractMethod<
     [
       _cid: string,
@@ -232,9 +218,6 @@ export interface IPFSFileTracker extends BaseContract {
   getFunction(
     nameOrSignature: "getOwner"
   ): TypedContractMethod<[], [string], "view">;
-  getFunction(
-    nameOrSignature: "isFileDeleted"
-  ): TypedContractMethod<[_cid: string], [boolean], "view">;
   getFunction(
     nameOrSignature: "recordFileAction"
   ): TypedContractMethod<

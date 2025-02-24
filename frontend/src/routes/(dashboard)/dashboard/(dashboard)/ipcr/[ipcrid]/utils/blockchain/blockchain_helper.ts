@@ -86,15 +86,10 @@ export async function uploadFileDetailsToBlockChain(
 						console.error('EmptyFileName: Filename cannot be empty');
 						throw new Error('EmptyFileName: Filename cannot be empty');
 
-					case 'FileReferenceAlreadyExists':
-						const [cid] = parsedError.args;
-						console.error(`FileReferenceAlreadyExists: ${cid} already exists`);
-						throw new Error(`FileReferenceAlreadyExists: ${cid} already exists`);
-
-					case 'FileReferenceNotFound':
+					case 'FileNotFound':
 						const [missingCid] = parsedError.args;
-						console.error(`FileReferenceNotFound: ${missingCid} not found`);
-						throw new Error(`FileReferenceNotFound: ${missingCid} not found`);
+						console.error(`FileNotFound: ${missingCid} not found`);
+						throw new Error(`FileNotFound: ${missingCid} not found`);
 
 					default:
 						console.error('Unknown contract error:', parsedError);
@@ -109,4 +104,5 @@ export async function uploadFileDetailsToBlockChain(
 			throw error;
 		}
 	}
+	return null;
 }

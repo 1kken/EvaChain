@@ -4,6 +4,7 @@ pragma solidity ^0.8.28;
 /**
  * @title IPFSFileTracker
  * @dev Contract for tracking IPFS file references with unique identifiers
+ *      Modified to remove duplicate CID checking and deletion tracking
  */
 contract IPFSFileTracker {
     address private immutable owner;
@@ -28,13 +29,12 @@ contract IPFSFileTracker {
         uint256 timestamp; // When the action was performed
         bytes32 blockHash; // Block hash at time of action
         bool exists; // Whether this reference exists
-        bool isDeleted; // Whether the file is marked as deleted
     }
 
     // Primary mapping using fileId as key
     mapping(bytes32 => FileReference) private fileReferences;
 
-    // Mapping to track latest fileId for each CID
+    // Mapping to track latest fileId for each CID (maintained for backward compatibility)
     mapping(string => bytes32) private latestFileIds;
 
     // Events
@@ -53,7 +53,6 @@ contract IPFSFileTracker {
     error EmptyCID();
     error EmptyFileName();
     error FileNotFound(string cid);
-    error FileAlreadyDeleted(string cid);
 
     constructor() {
         owner = msg.sender;
@@ -78,7 +77,7 @@ contract IPFSFileTracker {
     }
 
     /**
-     * @dev Record a file action (add/update/delete)
+     * @dev Record a file action (add/update/delete) without checking for duplicates
      */
     function recordFileAction(
         string memory _cid,
@@ -88,14 +87,6 @@ contract IPFSFileTracker {
     ) external onlyOwner {
         if (bytes(_cid).length == 0) revert EmptyCID();
         if (bytes(_fileName).length == 0) revert EmptyFileName();
-
-        bytes32 lastFileId = latestFileIds[_cid];
-        if (lastFileId != bytes32(0)) {
-            FileReference storage lastRef = fileReferences[lastFileId];
-            if (lastRef.isDeleted && _action != Action.DELETE_EVIDENCE) {
-                revert FileAlreadyDeleted(_cid);
-            }
-        }
 
         uint256 currentTimestamp = block.timestamp;
         bytes32 currentBlockHash = blockhash(block.number - 1);
@@ -109,8 +100,7 @@ contract IPFSFileTracker {
             fileName: _fileName,
             timestamp: currentTimestamp,
             blockHash: currentBlockHash,
-            exists: true,
-            isDeleted: _action == Action.DELETE_EVIDENCE
+            exists: true
         });
 
         latestFileIds[_cid] = fileId;
@@ -150,17 +140,6 @@ contract IPFSFileTracker {
             revert FileNotFound(_cid);
         }
         return fileReferences[fileId];
-    }
-
-    /**
-     * @dev Check if a file is currently marked as deleted
-     */
-    function isFileDeleted(string memory _cid) external view returns (bool) {
-        bytes32 fileId = latestFileIds[_cid];
-        if (fileId == bytes32(0)) {
-            revert FileNotFound(_cid);
-        }
-        return fileReferences[fileId].isDeleted;
     }
 
     /**

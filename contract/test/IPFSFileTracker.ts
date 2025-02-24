@@ -80,6 +80,48 @@ describe("IPFSFileTracker", function () {
         .to.be.revertedWithCustomError(ipfsTracker, "UnauthorizedAccess")
         .withArgs(otherAccount.address);
     });
+
+    it("Should revert when non-owner tries to get file reference", async function () {
+      const { ipfsTracker, otherAccount } = await loadFixture(
+        deployIPFSTrackerFixture
+      );
+
+      // First, add a file as owner
+      const tx = await ipfsTracker.recordFileAction(
+        testCID,
+        Action.ADD_EVIDENCE,
+        FileType.FILE,
+        testFileName
+      );
+      const receipt = await tx.wait();
+      const fileId = receipt.logs[0].args[0];
+
+      // Try to get the file reference as non-owner
+      await expect(ipfsTracker.connect(otherAccount).getFileReference(fileId))
+        .to.be.revertedWithCustomError(ipfsTracker, "UnauthorizedAccess")
+        .withArgs(otherAccount.address);
+    });
+
+    it("Should revert when non-owner tries to get latest file reference", async function () {
+      const { ipfsTracker, otherAccount } = await loadFixture(
+        deployIPFSTrackerFixture
+      );
+
+      // First, add a file as owner
+      await ipfsTracker.recordFileAction(
+        testCID,
+        Action.ADD_EVIDENCE,
+        FileType.FILE,
+        testFileName
+      );
+
+      // Try to get the latest file reference as non-owner
+      await expect(
+        ipfsTracker.connect(otherAccount).getLatestFileReference(testCID)
+      )
+        .to.be.revertedWithCustomError(ipfsTracker, "UnauthorizedAccess")
+        .withArgs(otherAccount.address);
+    });
   });
 
   describe("File Reference Management", function () {
@@ -147,7 +189,7 @@ describe("IPFSFileTracker", function () {
       expect(latestRef.fileName).to.equal("updated.txt");
     });
 
-    it("Should handle deletion correctly", async function () {
+    it("Should allow deletion operations to be recorded", async function () {
       const { ipfsTracker } = await loadFixture(deployIPFSTrackerFixture);
 
       // Add file
@@ -158,18 +200,17 @@ describe("IPFSFileTracker", function () {
         testFileName
       );
 
-      // Delete file
-      await ipfsTracker.recordFileAction(
-        testCID,
-        Action.DELETE_EVIDENCE,
-        FileType.FILE,
-        testFileName
-      );
+      // Delete file operation still succeeds but doesn't prevent further actions
+      await expect(
+        ipfsTracker.recordFileAction(
+          testCID,
+          Action.DELETE_EVIDENCE,
+          FileType.FILE,
+          testFileName
+        )
+      ).to.not.be.reverted;
 
-      // Check deletion status
-      expect(await ipfsTracker.isFileDeleted(testCID)).to.be.true;
-
-      // Attempt to add new action after deletion
+      // Should be able to perform new actions on the same CID after a delete operation
       await expect(
         ipfsTracker.recordFileAction(
           testCID,
@@ -177,7 +218,59 @@ describe("IPFSFileTracker", function () {
           FileType.FILE,
           "new.txt"
         )
-      ).to.be.revertedWithCustomError(ipfsTracker, "FileAlreadyDeleted");
+      ).to.not.be.reverted;
+    });
+
+    it("Should always allow new actions on existing CIDs", async function () {
+      const { ipfsTracker } = await loadFixture(deployIPFSTrackerFixture);
+
+      // Add initial file
+      await ipfsTracker.recordFileAction(
+        testCID,
+        Action.ADD_EVIDENCE,
+        FileType.FILE,
+        testFileName
+      );
+
+      // Multiple updates should be allowed
+      await expect(
+        ipfsTracker.recordFileAction(
+          testCID,
+          Action.UPDATE_EVIDENCE,
+          FileType.FILE,
+          "updated.txt"
+        )
+      ).to.not.be.reverted;
+
+      // Even after updating, more updates should be allowed
+      await expect(
+        ipfsTracker.recordFileAction(
+          testCID,
+          Action.UPDATE_EVIDENCE,
+          FileType.FILE,
+          "updated_again.txt"
+        )
+      ).to.not.be.reverted;
+
+      // Deletion should be allowed
+      await expect(
+        ipfsTracker.recordFileAction(
+          testCID,
+          Action.DELETE_EVIDENCE,
+          FileType.FILE,
+          "deleted.txt"
+        )
+      ).to.not.be.reverted;
+
+      // Even after deletion, more updates should be allowed
+      await expect(
+        ipfsTracker.recordFileAction(
+          testCID,
+          Action.UPDATE_EVIDENCE,
+          FileType.FILE,
+          "updated_after_deletion.txt"
+        )
+      ).to.not.be.reverted;
     });
 
     it("Should get latest file reference", async function () {
@@ -196,7 +289,6 @@ describe("IPFSFileTracker", function () {
       expect(latestRef.fileType).to.equal(FileType.FILE);
       expect(latestRef.fileName).to.equal(testFileName);
       expect(latestRef.exists).to.be.true;
-      expect(latestRef.isDeleted).to.be.false;
     });
 
     it("Should revert when getting non-existent file reference", async function () {
@@ -207,13 +299,25 @@ describe("IPFSFileTracker", function () {
       ).to.be.revertedWithCustomError(ipfsTracker, "FileNotFound");
     });
 
-    it("Should revert when checking deletion status of non-existent file", async function () {
+    it("Should handle special characters in CID and filename", async function () {
       const { ipfsTracker } = await loadFixture(deployIPFSTrackerFixture);
-      const nonExistentCID = "QmNonExistentCID";
+      const specialCID = "QmX!@#$%^&*()_+=";
+      const specialFileName = "test-!@#$%^&*()_+=.txt";
 
+      // This should work despite special characters
       await expect(
-        ipfsTracker.isFileDeleted(nonExistentCID)
-      ).to.be.revertedWithCustomError(ipfsTracker, "FileNotFound");
+        ipfsTracker.recordFileAction(
+          specialCID,
+          Action.ADD_EVIDENCE,
+          FileType.FILE,
+          specialFileName
+        )
+      ).to.not.be.reverted;
+
+      // Verify we can retrieve it
+      const fileRef = await ipfsTracker.getLatestFileReference(specialCID);
+      expect(fileRef.cid).to.equal(specialCID);
+      expect(fileRef.fileName).to.equal(specialFileName);
     });
 
     it("Should revert when getting non-existent file reference by fileId", async function () {
@@ -222,6 +326,15 @@ describe("IPFSFileTracker", function () {
 
       await expect(
         ipfsTracker.getFileReference(nonExistentFileId)
+      ).to.be.revertedWithCustomError(ipfsTracker, "FileNotFound");
+    });
+
+    it("Should handle edge case with zero hash fileId", async function () {
+      const { ipfsTracker } = await loadFixture(deployIPFSTrackerFixture);
+      const zeroFileId = ethers.ZeroHash;
+
+      await expect(
+        ipfsTracker.getFileReference(zeroFileId)
       ).to.be.revertedWithCustomError(ipfsTracker, "FileNotFound");
     });
 
@@ -240,27 +353,6 @@ describe("IPFSFileTracker", function () {
       const fileRef = await ipfsTracker.getFileReference(fileId);
       expect(fileRef.fileId).to.equal(fileId);
       expect(fileRef.blockHash).to.not.equal(ethers.ZeroHash);
-    });
-
-    it("Should allow new action when file exists but isn't deleted", async function () {
-      const { ipfsTracker } = await loadFixture(deployIPFSTrackerFixture);
-
-      await ipfsTracker.recordFileAction(
-        testCID,
-        Action.ADD_EVIDENCE,
-        FileType.FILE,
-        testFileName
-      );
-
-      // This should succeed since file exists but isn't deleted
-      await expect(
-        ipfsTracker.recordFileAction(
-          testCID,
-          Action.UPDATE_EVIDENCE,
-          FileType.FILE,
-          "updated.txt"
-        )
-      ).to.not.be.reverted;
     });
   });
 
@@ -289,6 +381,75 @@ describe("IPFSFileTracker", function () {
           anyValue, // timestamp
           anyValue // blockHash
         );
+    });
+
+    it("Should emit events for all action types", async function () {
+      const { ipfsTracker } = await loadFixture(deployIPFSTrackerFixture);
+
+      // Test ADD_EVIDENCE
+      await expect(
+        ipfsTracker.recordFileAction(
+          testCID,
+          Action.ADD_EVIDENCE,
+          FileType.FILE,
+          testFileName
+        )
+      ).to.emit(ipfsTracker, "FileActionRecorded");
+
+      // Test UPDATE_EVIDENCE
+      await expect(
+        ipfsTracker.recordFileAction(
+          testCID,
+          Action.UPDATE_EVIDENCE,
+          FileType.FILE,
+          testFileName
+        )
+      ).to.emit(ipfsTracker, "FileActionRecorded");
+
+      // Test DELETE_EVIDENCE
+      await expect(
+        ipfsTracker.recordFileAction(
+          testCID,
+          Action.DELETE_EVIDENCE,
+          FileType.FILE,
+          testFileName
+        )
+      ).to.emit(ipfsTracker, "FileActionRecorded");
+
+      // Test BACKUP
+      await expect(
+        ipfsTracker.recordFileAction(
+          testCID,
+          Action.BACKUP,
+          FileType.FILE,
+          testFileName
+        )
+      ).to.emit(ipfsTracker, "FileActionRecorded");
+    });
+
+    it("Should emit events for both file types", async function () {
+      const { ipfsTracker } = await loadFixture(deployIPFSTrackerFixture);
+
+      // Test FileType.FILE
+      await expect(
+        ipfsTracker.recordFileAction(
+          testCID,
+          Action.ADD_EVIDENCE,
+          FileType.FILE,
+          testFileName
+        )
+      ).to.emit(ipfsTracker, "FileActionRecorded");
+
+      // Test FileType.DATA with a different CID
+      const dataCID = "QmDataTypeTest";
+      await expect(
+        ipfsTracker.recordFileAction(
+          dataCID,
+          Action.ADD_EVIDENCE,
+          FileType.DATA,
+          "data.json"
+        )
+      ).to.emit(ipfsTracker, "FileActionRecorded");
     });
   });
 });
