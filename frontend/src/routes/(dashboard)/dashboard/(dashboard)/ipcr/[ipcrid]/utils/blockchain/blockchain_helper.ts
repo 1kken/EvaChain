@@ -66,6 +66,47 @@ export async function uploadFileDetailsToBlockChain(
 		return eventData as FileReferenceAddedEvent;
 	} catch (error: any) {
 		console.error(error);
-		throw new Error(`error ${error}`);
+		if (error instanceof Error && 'data' in error) {
+			const errorData = error.data as string;
+
+			try {
+				const parsedError = contract.interface.parseError(errorData);
+
+				switch (parsedError?.name) {
+					case 'UnauthorizedAccess':
+						const [caller] = parsedError.args;
+						console.error(`UnauthorizedAccess: ${caller} is not the owner`);
+						throw new Error(`UnauthorizedAccess: ${caller} is not the owner`);
+
+					case 'EmptyCID':
+						console.error('EmptyCID: CID cannot be empty');
+						throw new Error('EmptyCID: CID cannot be empty');
+
+					case 'EmptyFileName':
+						console.error('EmptyFileName: Filename cannot be empty');
+						throw new Error('EmptyFileName: Filename cannot be empty');
+
+					case 'FileReferenceAlreadyExists':
+						const [cid] = parsedError.args;
+						console.error(`FileReferenceAlreadyExists: ${cid} already exists`);
+						throw new Error(`FileReferenceAlreadyExists: ${cid} already exists`);
+
+					case 'FileReferenceNotFound':
+						const [missingCid] = parsedError.args;
+						console.error(`FileReferenceNotFound: ${missingCid} not found`);
+						throw new Error(`FileReferenceNotFound: ${missingCid} not found`);
+
+					default:
+						console.error('Unknown contract error:', parsedError);
+						throw new Error(`Unknown contract error: ${parsedError?.name}`);
+				}
+			} catch (parseError) {
+				console.error('Failed to parse error:', parseError);
+				throw parseError;
+			}
+		} else {
+			console.error('Non-contract error:', error);
+			throw error;
+		}
 	}
 }

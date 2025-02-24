@@ -8,7 +8,7 @@
 	import type { IPCRFunctionIndicatorFormResult } from '../../../utils/types';
 	import { Input } from '$lib/components/ui/input';
 	import AutoCompleteOnlineInput from '$lib/custom_components/AutoCompleteOnlineInput.svelte';
-	import { fetchProfileByname } from '../../../utils/page_loader_services';
+	import { fetchProfileById, fetchProfileByname } from '../../../utils/page_loader_services';
 	import { getIpcrIndicatorFormContext } from '../../../states/ipcr_indicator_form_state';
 	import { getIpcrIndicatorStore } from '../../../states/ipcr_indicator_state';
 	import { updateIpcrIndicatorSchema } from '../../../schema/ipcr_indicator_schema';
@@ -16,6 +16,7 @@
 	import type { Tables } from '$lib/types/database.types';
 	import { getAuthStore } from '$lib/utils/authStore';
 	import OpIndicator from './OpIndicator.svelte';
+	import { getIpcrStore } from '../../../states/current_ipcr_state';
 	const { currentProfile } = getAuthStore();
 
 	//props
@@ -154,6 +155,7 @@
 										name={props.name}
 										placeholder={'Type Immediate Supervisor here'}
 										onSearch={fetchProfileByname}
+										onFetchById={fetchProfileById}
 									/>
 								{/snippet}
 							</Form.Control>

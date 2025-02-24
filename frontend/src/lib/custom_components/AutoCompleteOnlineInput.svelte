@@ -23,6 +23,7 @@
 		displayText?: string;
 		debounceMs?: number;
 		minSearchLength?: number;
+		disabled?: boolean;
 	}
 
 	let {
@@ -34,7 +35,8 @@
 		debounceMs = 300,
 		minSearchLength = 2,
 		selectedId = $bindable(''),
-		displayText = $bindable('')
+		displayText = $bindable(''),
+		disabled
 	}: Props = $props();
 
 	// Effect to handle initial data loading when selectedId is present
@@ -135,6 +137,7 @@
 			<input type="hidden" {name} value={selectedId} />
 
 			<Input
+				{disabled}
 				type="text"
 				name={`${name}_display`}
 				{placeholder}
@@ -177,11 +180,17 @@
 
 			<div class="absolute right-2 top-1/2 -translate-y-1/2">
 				{#if displayText}
-					<Button variant="ghost" size="icon" class="h-6 w-6" onclick={clearSearch}>
-						<X class="h-4 w-4" />
+					<Button variant="ghost" size="icon" class="h-6 w-6" onclick={clearSearch} {disabled}>
+						<X class={cn('h-4 w-4', disabled && 'opacity-50')} />
 					</Button>
 				{:else}
-					<Search class={cn('text-muted-foreground h-4 w-4', isLoading && 'animate-spin')} />
+					<Search
+						class={cn(
+							'text-muted-foreground h-4 w-4',
+							isLoading && 'animate-spin',
+							disabled && 'opacity-50'
+						)}
+					/>
 				{/if}
 			</div>
 		</div>

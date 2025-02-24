@@ -26,10 +26,10 @@
 	}
 	const { isDraft, isRevisionRaw, isReviewedRaw, isRevision } = getIpcrStore();
 	//* This is where ther user can edit the indicator as a whole edit delete
-	let canEditIndicator = $state($isDraft);
+	let canEditIndicator = $state($isDraft || $isRevisionRaw);
 
 	//* This is where the user can edit the indicator but cannot delete
-	let canEditButCannotDelete = $state($isRevisionRaw || $isRevision || $isReviewedRaw);
+	let canEditButCannotDelete = $state($isRevision || $isReviewedRaw);
 </script>
 
 <div class="rounded-lg border">

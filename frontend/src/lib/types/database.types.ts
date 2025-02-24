@@ -5075,16 +5075,6 @@ export type Database = {
         }
         Returns: boolean
       }
-      create_supervisor_data: {
-        Args: {
-          p_ipcr_id: string
-        }
-        Returns: {
-          supervisor_id: string
-          ipcr_id: string
-          created_at: string
-        }[]
-      }
       get_ipcr_id_from_indicator: {
         Args: {
           p_indicator_id: string
@@ -5125,6 +5115,15 @@ export type Database = {
           p_ipcr_id: string
         }
         Returns: undefined
+      }
+      sync_ipcr_supervisors: {
+        Args: {
+          p_ipcr_id: string
+        }
+        Returns: {
+          supervisor_id: string
+          action: string
+        }[]
       }
       validate_ipcr: {
         Args: {

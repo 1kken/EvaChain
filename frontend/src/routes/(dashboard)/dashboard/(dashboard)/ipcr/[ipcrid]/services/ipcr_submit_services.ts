@@ -66,42 +66,39 @@ export async function submitIpcr(
 		});
 	}
 
-	console.log(ipcrSupervisor);
-	if (ipcrSupervisor.length === 0) {
-		const { data: makingSupervisorData, error: createSupervisorError } = await supabase.rpc(
-			'create_supervisor_data',
-			{
-				p_ipcr_id: ipcrID
-			}
-		);
-		if (createSupervisorError) {
-			return message(form, {
-				status: 'error',
-				text: `error creating supervisor data ${createSupervisorError.message}`
-			});
+	const { data: makingSupervisorData, error: createSupervisorError } = await supabase.rpc(
+		'sync_ipcr_supervisors',
+		{
+			p_ipcr_id: ipcrID
 		}
-		const ipcrImmediateSupervisor = makingSupervisorData.map((supervisor) => {
-			return {
-				receiver_id: supervisor.supervisor_id,
-				sender_id: session.user.id,
-				type: 'notification' as const,
-				title:
-					'You have been assigned as the immediate supervisor for the submitted IPCR ' +
-					IpcrData.title,
-				message: `You have been assigned as the immediate supervisor for the submitted IPCR ${IpcrData.title}.`
-			};
+	);
+
+	if (createSupervisorError) {
+		return message(form, {
+			status: 'error',
+			text: `error creating supervisor data ${createSupervisorError.message}`
 		});
+	}
 
-		const { data: notificationData, error: notificationError } = await supabase
-			.from('notifications')
-			.insert([...ipcrImmediateSupervisor]);
+	const ipcrImmediateSupervisor = makingSupervisorData
+		.filter((supervisor) => supervisor.action === 'removed' || supervisor.action === 'added')
+		.map((supervisor) => ({
+			receiver_id: supervisor.supervisor_id,
+			sender_id: session.user.id,
+			type: supervisor.action === 'removed' ? ('warning' as const) : ('notification' as const),
+			title: `You have been "${supervisor.action}" as the immediate supervisor for the IPCR titled ${IpcrData.title}`,
+			message: `You have been assigned as the immediate supervisor for the submitted IPCR ${IpcrData.title}.`
+		}));
 
-		if (notificationError) {
-			return message(form, {
-				status: 'error',
-				text: `error creating notification ${notificationError.message}`
-			});
-		}
+	const { data: notificationData, error: notificationError } = await supabase
+		.from('notifications')
+		.insert([...ipcrImmediateSupervisor]);
+
+	if (notificationError) {
+		return message(form, {
+			status: 'error',
+			text: `error creating notification ${notificationError.message}`
+		});
 	}
 
 	return { form, IpcrData };

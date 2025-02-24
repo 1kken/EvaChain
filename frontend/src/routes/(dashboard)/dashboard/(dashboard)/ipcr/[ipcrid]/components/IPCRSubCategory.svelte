@@ -38,7 +38,8 @@
 	const { currentIpcrIndicators } = setIpcrIndicatorStore();
 	const { removeIpcrFunctionSubCategory } = getIpcrFunctionSubCategoryStore();
 	const { deleteForm } = getIpcrFunctionSubCategoryFormContext();
-	const { canEdit } = getIpcrStore();
+	const { isDraft, isRevisionRaw } = getIpcrStore();
+	let canEdit = $state($isDraft || $isRevisionRaw);
 
 	// API Functions
 	const updateIndicatorPositions = async (items: Tables<'ipcr_indicator'>[]): Promise<void> => {
@@ -108,7 +109,7 @@
 				<h1 class="text-sm">{ipcrSubCategory.sub_category}</h1>
 			</div>
 		</div>
-		{#if $canEdit}
+		{#if canEdit}
 			{#snippet deleteAction()}
 				<UniversalDeleteAction
 					id={ipcrSubCategory.id}

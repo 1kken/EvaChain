@@ -37,8 +37,9 @@
 	const { deleteForm } = getIpcrFunctionCategoryFormContext();
 	const { currentIpcrFunctionSubCategories } = setIpcrFunctionSubCategoryStore();
 	const { currentIpcrIndicators } = setIpcrIndicatorStore();
-	const { canEdit } = getIpcrStore();
+	const { isDraft, isRevisionRaw } = getIpcrStore();
 
+	let canEdit = $state($isDraft || $isRevisionRaw);
 	//states
 	type DndItem =
 		| (Tables<'ipcr_function_sub_category'> & { itemType: 'sub_category' })
@@ -162,7 +163,7 @@
 			</div>
 		</div>
 		<div class="flex items-center gap-5">
-			{#if $canEdit}
+			{#if canEdit}
 				{#snippet createDialog()}
 					<CreateDialog
 						bind:isDrawerOpen={isAddDrawerOpen}

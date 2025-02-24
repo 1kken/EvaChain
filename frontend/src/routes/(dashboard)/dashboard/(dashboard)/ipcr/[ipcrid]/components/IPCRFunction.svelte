@@ -38,9 +38,10 @@
 	const { removeIpcrFunction } = getIpcrFunctionStore();
 	const { currentIpcrFunctionCategories } = setIpcrFunctionCategoryStore();
 	const { currentIpcrIndicators } = setIpcrIndicatorStore();
-	const { canEdit } = getIpcrStore();
+	const { isDraft, isRevisionRaw } = getIpcrStore();
 
 	//states
+	let canEdit = $state($isDraft || $isRevisionRaw);
 	type DndItem =
 		| (Tables<'ipcr_function_category'> & { itemType: 'category' })
 		| (Tables<'ipcr_indicator'> & { itemType: 'indicator' });
@@ -164,7 +165,7 @@
 			<h2 class="text-md md:text-md text-base font-bold">{ipcrFunction.title}</h2>
 		</div>
 		<div class="flex items-center gap-5">
-			{#if $canEdit}
+			{#if canEdit}
 				{#snippet createDialog()}
 					<CreateDialog bind:isDrawerOpen={isAddDrawerOpen} ipcrFunctionId={ipcrFunction.id} />
 				{/snippet}
