@@ -98,7 +98,6 @@ function createNotificationStore(
 					filter: `receiver_id=eq.${userId}`
 				},
 				(payload) => {
-					console.log('New notification:', payload.new);
 					updateNotifications(payload.new as Notification);
 				}
 			)

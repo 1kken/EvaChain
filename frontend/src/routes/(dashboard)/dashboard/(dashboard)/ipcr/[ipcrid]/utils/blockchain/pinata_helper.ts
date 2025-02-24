@@ -54,6 +54,7 @@ export async function processIpcrEvidence(
 			return;
 		}
 		let actions = ['add evidence', 'update evidence', 'delete evidence'];
+
 		const blockChainDetails = {
 			action: actions[action],
 			file_cid: reason.cid,
@@ -71,6 +72,7 @@ export async function processIpcrEvidence(
 		if (pinataUpload?.cid) {
 			await pinata.files.delete([pinataUpload.cid]);
 		}
+		console.error('here');
 		throw new Error(`Error processing evidence ${evidence.id}: ${error}`);
 	}
 }
