@@ -26,6 +26,7 @@ interface FileReferenceAddedEvent {
 export async function uploadFileDetailsToBlockChain(
 	fileDetails: FileDetails
 ): Promise<FileReferenceAddedEvent | null> {
+	console.log(fileDetails);
 	try {
 		const tx = await contract.recordFileAction(
 			fileDetails.cid,
