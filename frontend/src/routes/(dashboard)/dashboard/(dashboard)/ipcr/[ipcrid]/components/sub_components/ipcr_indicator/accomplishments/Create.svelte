@@ -19,6 +19,7 @@
 	import { getIpcrAccomplishmentStore } from '../../../../states/ipcr_indicator_accomplishment_state';
 	import { createAccomplishmentSchema } from '../../../../schema/ipcr_indicator_accomplishmet';
 	import { Input } from '$lib/components/ui/input';
+	import { browser } from '$app/environment';
 
 	interface Props {
 		indicator: Tables<'ipcr_indicator'>; // Updated table name
@@ -217,5 +218,8 @@
 				{/if}
 			</div>
 		</form>
+		{#if browser}
+			<SuperDebug data={$formData} />
+		{/if}
 	</Dialog.Content>
 </Dialog.Root>
