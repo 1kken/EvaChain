@@ -1,7 +1,7 @@
 import { loadFixture } from "@nomicfoundation/hardhat-toolbox/network-helpers";
 import { anyValue } from "@nomicfoundation/hardhat-chai-matchers/withArgs";
 import { expect } from "chai";
-import hre from "hardhat";
+import hre, { ethers } from "hardhat";
 
 describe("IPFSFileTracker", function () {
   async function deployIPFSTrackerFixture() {
@@ -205,6 +205,62 @@ describe("IPFSFileTracker", function () {
       await expect(
         ipfsTracker.getLatestFileReference(testCID)
       ).to.be.revertedWithCustomError(ipfsTracker, "FileNotFound");
+    });
+
+    it("Should revert when checking deletion status of non-existent file", async function () {
+      const { ipfsTracker } = await loadFixture(deployIPFSTrackerFixture);
+      const nonExistentCID = "QmNonExistentCID";
+
+      await expect(
+        ipfsTracker.isFileDeleted(nonExistentCID)
+      ).to.be.revertedWithCustomError(ipfsTracker, "FileNotFound");
+    });
+
+    it("Should revert when getting non-existent file reference by fileId", async function () {
+      const { ipfsTracker } = await loadFixture(deployIPFSTrackerFixture);
+      const nonExistentFileId = ethers.randomBytes(32);
+
+      await expect(
+        ipfsTracker.getFileReference(nonExistentFileId)
+      ).to.be.revertedWithCustomError(ipfsTracker, "FileNotFound");
+    });
+
+    it("Should get file reference by fileId", async function () {
+      const { ipfsTracker } = await loadFixture(deployIPFSTrackerFixture);
+
+      const tx = await ipfsTracker.recordFileAction(
+        testCID,
+        Action.ADD_EVIDENCE,
+        FileType.FILE,
+        testFileName
+      );
+      const receipt = await tx.wait();
+      const fileId = receipt.logs[0].args[0];
+
+      const fileRef = await ipfsTracker.getFileReference(fileId);
+      expect(fileRef.fileId).to.equal(fileId);
+      expect(fileRef.blockHash).to.not.equal(ethers.ZeroHash);
+    });
+
+    it("Should allow new action when file exists but isn't deleted", async function () {
+      const { ipfsTracker } = await loadFixture(deployIPFSTrackerFixture);
+
+      await ipfsTracker.recordFileAction(
+        testCID,
+        Action.ADD_EVIDENCE,
+        FileType.FILE,
+        testFileName
+      );
+
+      // This should succeed since file exists but isn't deleted
+      await expect(
+        ipfsTracker.recordFileAction(
+          testCID,
+          Action.UPDATE_EVIDENCE,
+          FileType.FILE,
+          "updated.txt"
+        )
+      ).to.not.be.reverted;
     });
   });
 

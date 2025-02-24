@@ -5121,8 +5121,8 @@ export type Database = {
           p_ipcr_id: string
         }
         Returns: {
-          supervisor_id: string
-          action: string
+          sup_id: string
+          sup_action: string
         }[]
       }
       validate_ipcr: {

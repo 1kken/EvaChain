@@ -79,14 +79,17 @@ export async function submitIpcr(
 			text: `error creating supervisor data ${createSupervisorError.message}`
 		});
 	}
+	console.log('makingSupervisorData', makingSupervisorData[0]);
 
 	const ipcrImmediateSupervisor = makingSupervisorData
-		.filter((supervisor) => supervisor.action === 'removed' || supervisor.action === 'added')
+		.filter(
+			(supervisor) => supervisor.sup_action === 'removed' || supervisor.sup_action === 'added'
+		)
 		.map((supervisor) => ({
-			receiver_id: supervisor.supervisor_id,
+			receiver_id: supervisor.sup_id,
 			sender_id: session.user.id,
-			type: supervisor.action === 'removed' ? ('warning' as const) : ('notification' as const),
-			title: `You have been "${supervisor.action}" as the immediate supervisor for the IPCR titled ${IpcrData.title}`,
+			type: supervisor.sup_action === 'removed' ? ('warning' as const) : ('notification' as const),
+			title: `You have been "${supervisor.sup_action}" as the immediate supervisor for the IPCR titled ${IpcrData.title}`,
 			message: `You have been assigned as the immediate supervisor for the submitted IPCR ${IpcrData.title}.`
 		}));
 

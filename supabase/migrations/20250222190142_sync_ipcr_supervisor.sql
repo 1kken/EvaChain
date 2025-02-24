@@ -1,65 +1,81 @@
+DROP FUNCTION IF EXISTS sync_ipcr_supervisors(uuid);
+
 CREATE OR REPLACE FUNCTION sync_ipcr_supervisors(p_ipcr_id UUID) 
 RETURNS TABLE (
-    supervisor_id UUID,
-    action TEXT
+    sup_id UUID,
+    sup_action TEXT
 ) 
 LANGUAGE plpgsql
 SECURITY DEFINER
 AS $$
-DECLARE
-    current_supervisors UUID[];
-    needed_supervisors UUID[];
 BEGIN
-    -- Get all current supervisors for this IPCR
-    SELECT ARRAY_AGG(supervisor_id)
-    INTO current_supervisors
-    FROM ipcr_immediate_supervisor
-    WHERE ipcr_id = p_ipcr_id;
-
-    -- Get all supervisors that should be assigned based on indicators and categories
-    WITH combined_supervisors AS (
-        -- Get supervisors from indicators
-        SELECT DISTINCT i.immediate_supervisor_id
-        FROM ipcr_indicator i
-        JOIN ipcr_function f ON i.ipcr_function_id = f.id
-        WHERE f.ipcr_id = p_ipcr_id
-        AND i.immediate_supervisor_id IS NOT NULL
-        
-        UNION
-        
-        -- Get supervisors from categories
-        SELECT DISTINCT fc.immediate_supervisor_id
-        FROM ipcr_function_category fc
-        JOIN ipcr_function f ON fc.ipcr_function_id = f.id
-        WHERE f.ipcr_id = p_ipcr_id
-        AND fc.immediate_supervisor_id IS NOT NULL
-    )
-    SELECT ARRAY_AGG(immediate_supervisor_id)
-    INTO needed_supervisors
-    FROM combined_supervisors;
-
-    -- Remove supervisors that are no longer needed
-    IF current_supervisors IS NOT NULL THEN
-        DELETE FROM ipcr_immediate_supervisor
-        WHERE ipcr_id = p_ipcr_id
-        AND supervisor_id = ANY(current_supervisors)
-        AND (needed_supervisors IS NULL OR supervisor_id != ALL(needed_supervisors))
-        RETURNING supervisor_id, 'removed' AS action;
-    END IF;
-
-    -- Add new supervisors that aren't yet in the table
-    IF needed_supervisors IS NOT NULL THEN
-        INSERT INTO ipcr_immediate_supervisor (supervisor_id, ipcr_id)
-        SELECT DISTINCT ns.supervisor_id, p_ipcr_id
-        FROM unnest(needed_supervisors) AS ns(supervisor_id)
-        WHERE ns.supervisor_id != ALL(COALESCE(current_supervisors, ARRAY[]::UUID[]))
-        RETURNING supervisor_id, 'added' AS action;
-    END IF;
-
-    RETURN QUERY
-    SELECT s.supervisor_id, 'unchanged' AS action
-    FROM ipcr_immediate_supervisor s
-    WHERE s.ipcr_id = p_ipcr_id;
+    RETURN QUERY WITH 
+        -- Get current supervisors
+        current_supervisors AS (
+            SELECT DISTINCT supervisor_id AS curr_id
+            FROM ipcr_immediate_supervisor 
+            WHERE ipcr_id = p_ipcr_id
+        ),
+        -- Get needed supervisors from both indicators and categories
+        needed_supervisors AS (
+            SELECT DISTINCT immediate_supervisor_id AS needed_id
+            FROM ipcr_indicator ii
+            JOIN ipcr_function f ON ii.ipcr_function_id = f.id
+            WHERE f.ipcr_id = p_ipcr_id
+            AND ii.immediate_supervisor_id IS NOT NULL
+            
+            UNION
+            
+            SELECT DISTINCT immediate_supervisor_id AS needed_id
+            FROM ipcr_function_category fc
+            JOIN ipcr_function f ON fc.ipcr_function_id = f.id
+            WHERE f.ipcr_id = p_ipcr_id
+            AND fc.immediate_supervisor_id IS NOT NULL
+        ),
+        -- Identify supervisors to remove
+        to_remove AS (
+            DELETE FROM ipcr_immediate_supervisor iis
+            WHERE iis.ipcr_id = p_ipcr_id
+            AND EXISTS (
+                SELECT 1 FROM current_supervisors cs
+                WHERE cs.curr_id = iis.supervisor_id
+                AND NOT EXISTS (
+                    SELECT 1 FROM needed_supervisors ns
+                    WHERE ns.needed_id = cs.curr_id
+                )
+            )
+            RETURNING supervisor_id AS removed_id
+        ),
+        -- Identify supervisors to add
+        to_add AS (
+            INSERT INTO ipcr_immediate_supervisor (supervisor_id, ipcr_id)
+            SELECT ns.needed_id, p_ipcr_id
+            FROM needed_supervisors ns
+            WHERE NOT EXISTS (
+                SELECT 1 FROM current_supervisors cs
+                WHERE cs.curr_id = ns.needed_id
+            )
+            RETURNING supervisor_id AS added_id
+        ),
+        -- Identify unchanged supervisors
+        unchanged AS (
+            SELECT cs.curr_id AS unchanged_id
+            FROM current_supervisors cs
+            WHERE EXISTS (
+                SELECT 1 FROM needed_supervisors ns
+                WHERE ns.needed_id = cs.curr_id
+            )
+            AND NOT EXISTS (
+                SELECT 1 FROM to_remove
+                WHERE removed_id = cs.curr_id
+            )
+        )
+        -- Combine all results
+        SELECT removed_id AS sup_id, 'removed'::text AS sup_action FROM to_remove
+        UNION ALL
+        SELECT added_id AS sup_id, 'added'::text AS sup_action FROM to_add
+        UNION ALL
+        SELECT unchanged_id AS sup_id, 'unchanged'::text AS sup_action FROM unchanged;
 END;
 $$;
 
