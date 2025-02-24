@@ -32,7 +32,7 @@ export const deleteAccomplishmentWithHistory = async (
 
 		// Get matching accomplishment indicator
 		const { data: matchingIndicator, error: matchError } = await supabase
-			.from('op_acc_indicators_view')
+			.from('op_acc_indicators')
 			.select('accomplishment_activity_indicator_id')
 			.eq('op_activity_indicator_id', indicator.op_activity_indicator_id)
 			.single();

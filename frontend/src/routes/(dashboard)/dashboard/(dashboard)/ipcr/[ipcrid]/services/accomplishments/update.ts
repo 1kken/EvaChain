@@ -40,7 +40,7 @@ export const updateAccomplishmentWithHistory = async (
 
 		// Get matching accomplishment indicator
 		const { data: matchingIndicator, error: matchError } = await supabase
-			.from('op_acc_indicators_view')
+			.from('op_acc_indicators')
 			.select('accomplishment_activity_indicator_id')
 			.eq('op_activity_indicator_id', indicator.op_activity_indicator_id)
 			.single();
@@ -53,7 +53,7 @@ export const updateAccomplishmentWithHistory = async (
 		const { data: accIndicator, error: accError } = await supabase
 			.from('accomplishment_activity_indicator')
 			.select('*')
-			.eq('id', matchingIndicator.accomplishment_activity_indicator_id!)
+			.eq('id', matchingIndicator.accomplishment_activity_indicator_id)
 			.single();
 
 		if (accError || !accIndicator) {

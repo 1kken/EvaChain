@@ -19,33 +19,35 @@ export const createAccomplishmentWithHistory = async (
 			.single();
 
 		if (indicatorError || !indicator) {
-			throw new Error('Failed to fetch ipcr indicator');
+			throw new Error(`Failed to fetch ipcr indicator: ${indicatorError?.message || 'Not found'}`);
 		}
 
 		// Get matching accomplishment indicator
 		const { data: matchingIndicator, error: matchError } = await supabase
-			.from('op_acc_indicators_view')
+			.from('op_acc_indicators')
 			.select('accomplishment_activity_indicator_id')
 			.eq('op_activity_indicator_id', indicator.op_activity_indicator_id)
 			.single();
 
 		if (matchError || !matchingIndicator) {
-			throw new Error('Failed to find matching indicator');
+			throw new Error(`Failed to find matching indicator: ${matchError?.message || 'Not found'}`);
 		}
 
 		// Get current indicator values
 		const { data: accIndicator, error: accError } = await supabase
 			.from('accomplishment_activity_indicator')
 			.select('*')
-			.eq('id', matchingIndicator.accomplishment_activity_indicator_id!)
+			.eq('id', matchingIndicator.accomplishment_activity_indicator_id)
 			.single();
 
 		if (accError || !accIndicator) {
-			throw new Error('Failed to fetch accomplishment indicator');
+			throw new Error(
+				`Failed to fetch accomplishment indicator: ${accError?.message || 'Not found'}`
+			);
 		}
 
 		const quarterField = `q${quarter}_accomplishment` as QuarterFieldName;
-		const currentValue = accIndicator[quarterField as keyof typeof accIndicator] as string | null;
+		const currentValue = accIndicator[quarterField];
 
 		// Create history record
 		const { error: historyError } = await supabase.from('accomplishment_history').insert({
@@ -65,7 +67,7 @@ export const createAccomplishmentWithHistory = async (
 		const { error: updateError } = await supabase
 			.from('accomplishment_activity_indicator')
 			.update({ [quarterField]: newValue })
-			.eq('id', matchingIndicator.accomplishment_activity_indicator_id!);
+			.eq('id', matchingIndicator.accomplishment_activity_indicator_id);
 
 		if (updateError) {
 			throw new Error(`Failed to update indicator: ${updateError.message}`);
