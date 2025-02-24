@@ -10,7 +10,6 @@
 	import type { IPCRFunctionIndicatorFormResult } from '../utils/types';
 	import UpdateDialog from './sub_components/ipcr_indicator/UpdateDialog.svelte';
 	import ViewIndicator from './ViewIndicator.svelte';
-	import Accomplshments from './sub_components/ipcr_indicator/Accomplishments.svelte';
 	let { ipcrFunctionIndicator }: { ipcrFunctionIndicator: Tables<'ipcr_indicator'> } = $props();
 	let isDrawerOpen = $state(false);
 	//store
@@ -34,11 +33,6 @@
 
 <div class="rounded-lg border">
 	<div class="h-13 flex flex-col space-y-2 p-4">
-		{#if $isReviewedRaw || $isRevision}
-			<div class="w-full sm:w-auto">
-				<Accomplshments indicator={ipcrFunctionIndicator} />
-			</div>
-		{/if}
 		<div class="flex items-center justify-between">
 			<div class="flex items-center space-x-2">
 				<Badge variant={'secondary'} class="h-5 bg-amber-500 text-xs">Indicator</Badge>

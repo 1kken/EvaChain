@@ -33,16 +33,56 @@
 			<DropdownMenu.GroupHeading>Actions</DropdownMenu.GroupHeading>
 		</DropdownMenu.Group>
 		<DropdownMenu.Separator />
+		<!--RULES IPCR STATUS before SUPERVISOR STATUS-->
+
 		<!--Initial State-->
 		{#if ipcr_details.supervisor_review_status === null}
 			<DropdownMenu.Item onSelect={(e) => e.preventDefault()}>
 				<ReviewRawAction {ipcr_details} {uuidForm} bind:dropDownOpen />
 			</DropdownMenu.Item>
 		{/if}
+		<!-- If ipcr is submitted  and supervisor status review is revision raw-->
+		{#if ipcr_details.ipcr_status === 'submitted_raw' && ipcr_details.supervisor_review_status === 'revision_raw'}
+			<DropdownMenu.Item onSelect={(e) => e.preventDefault()}>
+				<ReviewRawAction {ipcr_details} {uuidForm} bind:dropDownOpen />
+			</DropdownMenu.Item>
+		{/if}
 
-		<DropdownMenu.Item onSelect={(e) => e.preventDefault()}>
-			<ReviewedRawAction {ipcr_details} {uuidForm} bind:dropDownOpen />
-		</DropdownMenu.Item>
+		<!-- If ipcr is submitted  and supervisor status review is reviewed raw-->
+		{#if ipcr_details.ipcr_status === 'revision_raw' && ipcr_details.supervisor_review_status === 'under_review_raw'}
+			<DropdownMenu.Item disabled onSelect={(e) => e.preventDefault()}>
+				<h1>Awaiting supervisor review.</h1>
+			</DropdownMenu.Item>
+		{/if}
+
+		<!-- If ipcr is submitted  and supervisor status review is reviewed raw-->
+		{#if ipcr_details.ipcr_status === 'submitted_raw' && ipcr_details.supervisor_review_status === 'reviewed_raw'}
+			<DropdownMenu.Item disabled onSelect={(e) => e.preventDefault()}>
+				<h1>Awaiting supervisor review.</h1>
+			</DropdownMenu.Item>
+		{/if}
+
+		<!--If ipcr is under revision raw and supervisor status review is under revision -->
+		{#if ipcr_details.ipcr_status === 'revision_raw' && ipcr_details.supervisor_review_status === 'revision_raw'}
+			<DropdownMenu.Item disabled onSelect={(e) => e.preventDefault()}>
+				<h1>Awaiting for revision.</h1>
+			</DropdownMenu.Item>
+		{/if}
+
+		<!-- If ipcr is under reviosion raw and supervisor status review is reviwed raw-->
+		{#if ipcr_details.ipcr_status === 'revision_raw' && ipcr_details.supervisor_review_status === 'reviewed_raw'}
+			<DropdownMenu.Item disabled onSelect={(e) => e.preventDefault()}>
+				<h1>Awaiting supervisor revision.</h1>
+			</DropdownMenu.Item>
+		{/if}
+
+		<!-- If ipcr is under_review_raw  and supervisor status review is reviewed raw-->
+		{#if ipcr_details.ipcr_status === 'under_review_raw' && ipcr_details.supervisor_review_status === 'reviewed_raw'}
+			<DropdownMenu.Item disabled onSelect={(e) => e.preventDefault()}>
+				<h1>Awaiting supervisor review.</h1>
+			</DropdownMenu.Item>
+		{/if}
+
 		{#if ipcr_details.ipcr_status === 'under_review_raw' && ipcr_details.supervisor_review_status === 'under_review_raw'}
 			<DropdownMenu.Item onSelect={(e) => e.preventDefault()}>
 				<ReviewedRawAction {ipcr_details} {uuidForm} bind:dropDownOpen />
@@ -51,41 +91,5 @@
 				<RevisionRawAction {ipcr_details} {revisionForm} bind:dropDownOpen />
 			</DropdownMenu.Item>
 		{/if}
-
-		<!--If ipcr status is submitted_raw -->
-		{#if ipcr_details.ipcr_status === 'submitted_raw'}
-			<!--And the supervisor current status is for revision raw-->
-			<!--The supervisor has two action either to be reviewed or another revision-->
-			{#if ipcr_details.supervisor_review_status === 'revision_raw'}
-				<DropdownMenu.Item onSelect={(e) => e.preventDefault()}>
-					<ReviewedRawAction {ipcr_details} {uuidForm} bind:dropDownOpen />
-				</DropdownMenu.Item>
-				<DropdownMenu.Item onSelect={(e) => e.preventDefault()}>
-					<RevisionRawAction {ipcr_details} {revisionForm} bind:dropDownOpen />
-				</DropdownMenu.Item>
-			{/if}
-		{/if}
-		<!---->
-		<!-- {#if ipcr_details.supervisor_review_status === 'under_review_raw'}
-			<DropdownMenu.Item onSelect={(e) => e.preventDefault()}>
-				<ReviewedRawAction {ipcr_details} {uuidForm} bind:dropDownOpen />
-			</DropdownMenu.Item>
-			<DropdownMenu.Item onSelect={(e) => e.preventDefault()}>
-				<RevisionRawAction {ipcr_details} {revisionForm} bind:dropDownOpen />
-			</DropdownMenu.Item>
-		{/if} -->
-		<!-- {#if op.status === 'submitted'}
-			<DropdownMenu.Item onSelect={(e) => e.preventDefault()}>
-				<ReviewAction formSchema={uuidForm} {op} bind:dropDownOpen />
-			</DropdownMenu.Item>
-		{/if} -->
-		<!-- {#if op.status === 'reviewing'}
-			<DropdownMenu.Item onSelect={(e) => e.preventDefault()}>
-				<ApproveAction formSchema={uuidForm} {op} bind:dropDownOpen />
-			</DropdownMenu.Item>
-			<DropdownMenu.Item onSelect={(e) => e.preventDefault()}>
-				<RevisionAction {revisionForm} {op} bind:dropDownOpen />
-			</DropdownMenu.Item>
-		{/if} -->
 	</DropdownMenu.Content>
 </DropdownMenu.Root>

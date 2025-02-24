@@ -11,7 +11,6 @@
 	import Create from './accomplishments/Create.svelte';
 	import type { Tables } from '$lib/types/database.types';
 	import Update from './accomplishments/Update.svelte';
-	import { getIpcrAccomplishmentFormContext } from '../../../states/ipcr_indicator_accomplishment_form_state';
 	import Delete from './accomplishments/Delete.svelte';
 
 	interface Props {
@@ -60,9 +59,12 @@
 </script>
 
 <Dialog.Root>
-	<Dialog.Trigger class="mb-1 rounded-lg border border-dashed p-1 hover:bg-green-200">
-		<span class="flex items-center space-x-2 text-sm">
-			<Plus size="16" /> Add Accomplishments
+	<Dialog.Trigger
+		type="button"
+		class="mb-1 w-full rounded-lg border border-dashed p-1 text-center hover:bg-green-200"
+	>
+		<span class="text-md flex w-full items-center justify-center text-center">
+			<Plus size="16" class="mr-2" /> Add Accomplishments
 		</span>
 	</Dialog.Trigger>
 

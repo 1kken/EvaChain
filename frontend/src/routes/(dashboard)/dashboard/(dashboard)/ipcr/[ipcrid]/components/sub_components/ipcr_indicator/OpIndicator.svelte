@@ -23,6 +23,7 @@
 	let selectedHeader: Tables<'op_header'> | null = $state(null);
 
 	interface Props {
+		disabled?: boolean;
 		ipcrOpIndicatorId?: string;
 		handleIpcrOpIndicator: (e: string) => void;
 	}
@@ -81,14 +82,18 @@
 
 <Dialog.Root bind:open={isOpen}>
 	<Dialog.Trigger
+		disabled={props.disabled}
 		type="button"
-		class="w-full rounded border border-dashed p-4 transition-colors hover:bg-green-700"
+		class={`w-full rounded border border-dashed p-4 transition-colors ${
+			props.disabled
+				? 'cursor-not-allowed border-gray-300 bg-gray-100 text-gray-400 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-500'
+				: 'border-gray-300 hover:bg-green-700 hover:text-white dark:border-gray-700 dark:hover:bg-green-600'
+		}`}
 	>
 		{selectedIndicator
 			? selectedIndicator.performance_indicator
 			: 'Select Operational Plan Indicator'}
 	</Dialog.Trigger>
-
 	<Dialog.Content class="space-y-4">
 		<Dialog.Header>
 			<Dialog.Title>Select Operational Plan</Dialog.Title>
