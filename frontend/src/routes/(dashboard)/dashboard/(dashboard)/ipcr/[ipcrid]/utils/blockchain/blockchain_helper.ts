@@ -65,6 +65,7 @@ export async function uploadFileDetailsToBlockChain(
 		const eventData = await eventPromise;
 		return eventData as FileReferenceAddedEvent;
 	} catch (error: any) {
+		console.error(error);
 		throw new Error(`error ${error}`);
 	}
 }

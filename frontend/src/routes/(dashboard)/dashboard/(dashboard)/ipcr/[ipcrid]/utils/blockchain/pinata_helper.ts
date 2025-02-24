@@ -72,7 +72,6 @@ export async function processIpcrEvidence(
 		if (pinataUpload?.cid) {
 			await pinata.files.delete([pinataUpload.cid]);
 		}
-		console.error('here');
 		throw new Error(`Error processing evidence ${evidence.id}: ${error}`);
 	}
 }
