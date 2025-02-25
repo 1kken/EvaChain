@@ -136,10 +136,7 @@
 
 		{#if ipcr_details.ipcr_status === 'submitted' && ipcr_details.supervisor_review_status === 'revision'}
 			<DropdownMenu.Item onSelect={(e) => e.preventDefault()}>
-				<ApproveAction {ipcr_details} {uuidForm} bind:dropDownOpen />
-			</DropdownMenu.Item>
-			<DropdownMenu.Item onSelect={(e) => e.preventDefault()}>
-				<RevisionNonRaw {ipcr_details} {revisionForm} bind:dropDownOpen />
+				<ReviewNonRaw {ipcr_details} {uuidForm} bind:dropDownOpen />
 			</DropdownMenu.Item>
 		{/if}
 

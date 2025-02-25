@@ -7,8 +7,11 @@
 		title,
 		description,
 		supervisors
-	}: { title: String; description: String; supervisors: Tables<'ipcr_supervisor_details_view'>[] } =
-		$props();
+	}: {
+		title: String;
+		description: String;
+		supervisors?: Tables<'ipcr_supervisor_details_view'>[];
+	} = $props();
 </script>
 
 <div class="bg-background/50 w-full p-4 backdrop-blur">
@@ -23,9 +26,10 @@
 				</p>
 			</div>
 		</div>
-
-		<div class="ml-auto">
-			<IpcrSupervisorDetails {supervisors} title={'IPCR Status'} />
-		</div>
+		{#if supervisors}
+			<div class="ml-auto">
+				<IpcrSupervisorDetails {supervisors} title={'IPCR Status'} />
+			</div>
+		{/if}
 	</div>
 </div>

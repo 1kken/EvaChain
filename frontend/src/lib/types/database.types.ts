@@ -5075,6 +5075,21 @@ export type Database = {
         }
         Returns: boolean
       }
+      get_ipcr_functions_by_supervisor: {
+        Args: {
+          p_ipcr_id: string
+          p_supervisor_id: string
+        }
+        Returns: {
+          created_at: string
+          id: string
+          ipcr_id: string
+          percentage: number
+          position: number
+          title: string
+          updated_at: string
+        }[]
+      }
       get_ipcr_id_from_indicator: {
         Args: {
           p_indicator_id: string
@@ -5109,6 +5124,47 @@ export type Database = {
       is_system_admin: {
         Args: Record<PropertyKey, never>
         Returns: boolean
+      }
+      return_ipcr_function_category_if_immediate_supervisor_same: {
+        Args: {
+          p_ipcr_function_id: string
+          p_supervisor_id: string
+        }
+        Returns: {
+          category: string
+          created_at: string
+          id: string
+          immediate_supervisor_id: string | null
+          ipcr_function_id: string
+          position: number
+          unit: number | null
+          updated_at: string
+        }[]
+      }
+      return_ipcr_indicator_if_immediate_supervisor_same: {
+        Args: {
+          p_ipcr_function_id: string
+          p_supervisor_id: string
+        }
+        Returns: {
+          average_rating: number | null
+          created_at: string
+          efficiency_rating: number | null
+          final_output: string
+          id: string
+          immediate_supervisor_id: string | null
+          ipcr_function_category_id: string | null
+          ipcr_function_id: string | null
+          ipcr_function_sub_category_id: string | null
+          op_activity_indicator_id: string
+          position: number
+          quality_rating: number | null
+          remarks: string | null
+          success_indicator: string
+          timeliness_rating: number | null
+          units: number | null
+          updated_at: string
+        }[]
       }
       sync_ipcr_status: {
         Args: {

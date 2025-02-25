@@ -66,7 +66,11 @@
 		'relative w-64 overflow-hidden rounded-md border transition-all duration-300 ease-in-out',
 		'border-border bg-card dark:border-border/80 shadow-sm hover:shadow-md'
 	)}
-	style:max-height={isExpanded ? '200px' : '40px'}
+	style:max-height={isExpanded
+		? props.supervisors.length > 5
+			? '250px'
+			: `${Math.min(200, 40 + props.supervisors.length * 40)}px`
+		: '40px'}
 	onmouseenter={() => (isExpanded = true)}
 	onmouseleave={() => (isExpanded = false)}
 >
@@ -74,22 +78,22 @@
 		<span id="supervisor-details-title" class="text-foreground font-semibold">{props.title}</span>
 		<ChevronRight
 			class={cn(
-				'text-muted-foreground h-6 w-6 transition-transform duration-300',
+				'text-muted-foreground h-6 w-6 flex-shrink-0 transition-transform duration-300',
 				isExpanded && 'rotate-90'
 			)}
 		/>
 	</div>
 
-	<div class="overflow-y-auto" style:max-height="160px">
+	<div class="overflow-y-auto" style:max-height={props.supervisors.length > 5 ? '210px' : 'auto'}>
 		{#each props.supervisors as supervisor}
 			<div class="border-border/40 flex items-center justify-between border-t p-2">
-				<div class="flex items-center space-x-2">
+				<div class="flex min-w-0 flex-1 items-center space-x-2">
 					<div
-						class={`h-3 w-3 rounded-full ${getStatusColor(supervisor.supervisor_review_status)}`}
+						class={`h-3 w-3 flex-shrink-0 rounded-full ${getStatusColor(supervisor.supervisor_review_status)}`}
 					></div>
 					<span class="text-foreground truncate text-sm">{supervisor.supervisor_full_name}</span>
 				</div>
-				<span class="text-muted-foreground text-sm font-medium capitalize">
+				<span class="text-muted-foreground ml-1 whitespace-nowrap text-sm font-medium capitalize">
 					{getStatusLabel(supervisor.supervisor_review_status)}
 				</span>
 			</div>
