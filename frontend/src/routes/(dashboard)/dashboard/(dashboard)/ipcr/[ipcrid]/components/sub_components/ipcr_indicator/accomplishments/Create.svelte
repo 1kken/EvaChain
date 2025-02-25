@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Tables } from '$lib/types/database.types';
 	import { zodClient } from 'sveltekit-superforms/adapters';
-	import SuperDebug, { fileProxy, superForm, type FormResult } from 'sveltekit-superforms';
+	import { fileProxy, superForm, type FormResult } from 'sveltekit-superforms';
 	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import { LoaderCircle, Plus, Save } from 'lucide-svelte';
@@ -218,8 +218,5 @@
 				{/if}
 			</div>
 		</form>
-		{#if browser}
-			<SuperDebug data={$formData} />
-		{/if}
 	</Dialog.Content>
 </Dialog.Root>

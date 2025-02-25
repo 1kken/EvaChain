@@ -54,35 +54,35 @@
 		<!-- If ipcr is submitted  and supervisor status review is reviewed raw-->
 		{#if ipcr_details.ipcr_status === 'revision_raw' && ipcr_details.supervisor_review_status === 'under_review_raw'}
 			<DropdownMenu.Item disabled onSelect={(e) => e.preventDefault()}>
-				<h1>Awaiting supervisor review.</h1>
+				<h1>Awaiting Supervisor's Review.</h1>
 			</DropdownMenu.Item>
 		{/if}
 
 		<!-- If ipcr is submitted  and supervisor status review is reviewed raw-->
 		{#if ipcr_details.ipcr_status === 'submitted_raw' && ipcr_details.supervisor_review_status === 'reviewed_raw'}
 			<DropdownMenu.Item disabled onSelect={(e) => e.preventDefault()}>
-				<h1>Awaiting supervisor review.</h1>
+				<h1>Awaiting Supervisor's Review.</h1>
 			</DropdownMenu.Item>
 		{/if}
 
 		<!--If ipcr is under revision raw and supervisor status review is under revision -->
 		{#if ipcr_details.ipcr_status === 'revision_raw' && ipcr_details.supervisor_review_status === 'revision_raw'}
 			<DropdownMenu.Item disabled onSelect={(e) => e.preventDefault()}>
-				<h1>Awaiting for revision.</h1>
+				<h1>Awaiting for Revision.</h1>
 			</DropdownMenu.Item>
 		{/if}
 
 		<!-- If ipcr is under reviosion raw and supervisor status review is reviwed raw-->
 		{#if ipcr_details.ipcr_status === 'revision_raw' && ipcr_details.supervisor_review_status === 'reviewed_raw'}
 			<DropdownMenu.Item disabled onSelect={(e) => e.preventDefault()}>
-				<h1>Awaiting supervisor revision.</h1>
+				<h1>Awaiting Supervisor's Review.</h1>
 			</DropdownMenu.Item>
 		{/if}
 
 		<!-- If ipcr is under_review_raw  and supervisor status review is reviewed raw-->
 		{#if ipcr_details.ipcr_status === 'under_review_raw' && ipcr_details.supervisor_review_status === 'reviewed_raw'}
 			<DropdownMenu.Item disabled onSelect={(e) => e.preventDefault()}>
-				<h1>Awaiting supervisor review.</h1>
+				<h1>Awaiting Supervisor's Review.</h1>
 			</DropdownMenu.Item>
 		{/if}
 

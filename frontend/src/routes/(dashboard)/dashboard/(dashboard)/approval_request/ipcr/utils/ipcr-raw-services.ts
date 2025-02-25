@@ -195,13 +195,13 @@ export async function setStatusRevisionRaw(
 
 	const { data: notfication, error: notifError } = await supabase.from('notifications').insert({
 		type: 'warning',
-		title: 'IPCR Revision Request',
+		title: 'You have been requested to revise your IPCR',
 		sender_id: session.user.id,
 		receiver_id: imSpDetails.owner_id,
 		message: `Your IPCR, titled '${imSpDetails.ipcr_title},'
         has been reviewed by ${imSpDetails.supervisor_full_name}.
         And Concluded that Revisions are required.
-        Please review the feedback and make the necessary updates accordingly.\n comments: ${messageInput}`
+        Please review the feedback and make the necessary updates accordingly.\n comments:\n ${messageInput}`
 	});
 
 	if (notifError) {

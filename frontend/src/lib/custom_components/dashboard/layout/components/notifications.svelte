@@ -79,7 +79,7 @@
 					{notification.title}
 				</span>
 			</AlertDialog.Title>
-			<AlertDialog.Description>
+			<AlertDialog.Description style="white-space: pre-line">
 				{notification.message}
 			</AlertDialog.Description>
 		</AlertDialog.Header>
