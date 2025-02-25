@@ -48,6 +48,18 @@ export async function getCurrentIPCR(ipcrId: string, supabase: SupabaseClient<Da
 	return ipcr;
 }
 
+//fetch ipcr suopervisor details
+export async function getSupervisors(supabase: SupabaseClient<Database>, ipcrId: string) {
+	const { data: supervisors, error: supervisorsError } = await supabase
+		.from('ipcr_supervisor_details_view')
+		.select()
+		.eq('ipcr_id', ipcrId);
+	if (supervisorsError) {
+		error(500, supervisorsError.message);
+	}
+	return supervisors;
+}
+
 //forms
 export async function getIPCRFunctionForms() {
 	return {

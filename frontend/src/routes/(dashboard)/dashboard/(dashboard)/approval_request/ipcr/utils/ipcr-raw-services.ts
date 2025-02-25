@@ -200,7 +200,7 @@ export async function setStatusRevisionRaw(
 		receiver_id: imSpDetails.owner_id,
 		message: `Your IPCR, titled '${imSpDetails.ipcr_title},'
         has been reviewed by ${imSpDetails.supervisor_full_name}.
-        Revisions are required.
+        And Concluded that Revisions are required.
         Please review the feedback and make the necessary updates accordingly.\n comments: ${messageInput}`
 	});
 

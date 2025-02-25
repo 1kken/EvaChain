@@ -2,11 +2,9 @@
 	import { Badge } from '$lib/components/ui/badge';
 
 	let {
-		status,
 		finalOutput,
 		successIndicator
 	}: {
-		status: string;
 		finalOutput: string;
 		successIndicator: string;
 	} = $props();
@@ -33,7 +31,6 @@
 <div class="space-y-4">
 	<div class="flex items-center justify-between">
 		<h1 class="text-3xl font-bold tracking-tight md:text-4xl">IPCR Indicator</h1>
-		<Badge variant={getBadgeVariant(status)}>{status}</Badge>
 	</div>
 	<div class="space-y-2">
 		<div>

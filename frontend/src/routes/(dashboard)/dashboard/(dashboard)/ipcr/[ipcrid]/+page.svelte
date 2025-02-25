@@ -27,6 +27,7 @@
 	<!-- Main content -->
 	<div class="h-full w-full">
 		<Header
+			supervisors={data.supervisors}
 			title={'Individual Performance Commitment and Review'}
 			description={'View and manage your IPCR here.'}
 		/>

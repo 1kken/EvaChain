@@ -5,30 +5,34 @@
 	import { superForm, type FormResult, type SuperValidated } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { Input } from '$lib/components/ui/input';
-	import { CircleFadingArrowUp, LoaderCircle, Star } from 'lucide-svelte';
+	import { CircleFadingArrowUp, LoaderCircle, RotateCw } from 'lucide-svelte';
 	import { TriangleAlert } from 'lucide-svelte';
 	import type { Tables } from '$lib/types/database.types';
-	import { uuidSchema, type UuidSchemaInput } from '../../(data)/zod_schema';
+	import { revisionSchema, uuidSchema, type RevisionSchemaInput } from '../../(data)/zod_schema';
+	import IntelligentInput from '$lib/custom_components/IntelligentInput.svelte';
+
 	interface Props {
 		ipcr_details: Tables<'ipcr_supervisor_details_view'>;
-		uuidForm: SuperValidated<UuidSchemaInput>;
+		revisionForm: SuperValidated<RevisionSchemaInput>;
 		dropDownOpen: boolean;
 	}
 
-	let { ipcr_details, dropDownOpen = $bindable(), uuidForm }: Props = $props();
-	const form = superForm(uuidForm, {
-		validators: zodClient(uuidSchema),
+	let { dropDownOpen = $bindable(), ipcr_details, revisionForm }: Props = $props();
+
+	const form = superForm(revisionForm, {
+		validators: zodClient(revisionSchema),
 		multipleSubmits: 'prevent',
 		dataType: 'json',
 		invalidateAll: true,
 		onUpdate({ form, result }) {
-			if (form.valid && result.type === 'success')
+			if (form.valid && result.type === 'success') {
 				if (form.valid) {
 					showSuccessToast(
-						`Successfully set the status of "${ipcr_details.ipcr_title}" to "Under Review."`
+						`Successfully set the status of "${ipcr_details.ipcr_title}" to "For Revision."`
 					);
 					closeAllTabs();
 				}
+			}
 		}
 	});
 
@@ -56,9 +60,9 @@
 </script>
 
 <AlertDialog.Root bind:open={isOpen}>
-	<AlertDialog.Trigger class="focus-visible:outline-none">
+	<AlertDialog.Trigger class=" focus-visible:outline-none">
 		<span class="flex items-center gap-3">
-			<Star size="16" /> Set Status as Reviewing
+			<RotateCw size="16" /> Set Status as For Revision
 		</span>
 	</AlertDialog.Trigger>
 	<AlertDialog.Content>
@@ -69,11 +73,29 @@
 				></AlertDialog.Title
 			>
 			<AlertDialog.Description>
-				This will set the status of the IPCR as <span class="font-bold">Reviewing.</span>
+				This will set the status of the IPCR as <span class="font-bold">For Revision.</span>
+				<br />
+				This will allow <span class=" font-bold italic">{ipcr_details.owner_full_name}.</span>
+				<br />
+				To revise <span class="font-bold"> Ratings and Accomplishments. </span>
 			</AlertDialog.Description>
 		</AlertDialog.Header>
-		<form method="POST" action="?/reviewraw" use:enhance>
+		<form method="POST" action="?/revision" use:enhance>
 			<Input name="id" class="hidden" bind:value={$formData.id} />
+			<Form.Field {form} name="message">
+				<Form.Control>
+					{#snippet children({ props })}
+						<Form.Label>Message</Form.Label>
+						<IntelligentInput
+							textAreaWidth={'full'}
+							placeholder="Enter a message discussing why the IPCR is being set for revision..."
+							bind:content={$formData.message}
+							name={props.name}
+						/>
+					{/snippet}
+				</Form.Control>
+				<Form.FieldErrors />
+			</Form.Field>
 			{#if $delayed}
 				<div class="flex justify-between">
 					<AlertDialog.Cancel disabled class="text-gray-500" type="button"

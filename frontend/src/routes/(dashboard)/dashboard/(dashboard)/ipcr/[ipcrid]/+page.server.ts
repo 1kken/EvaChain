@@ -7,7 +7,8 @@ import {
 	getIPCRFunctionSubCategoryForms,
 	getIPCRIndicatorAccomplishmentForms,
 	getIPCRIndicatorForms,
-	getIPCRSubmitForm
+	getIPCRSubmitForm,
+	getSupervisors
 } from './utils/loader_services';
 import {
 	createIpcrFunction,
@@ -41,6 +42,7 @@ export const load = (async ({ params, locals: { supabase } }) => {
 	//states
 	const ipcrFunction = await getCurrentIPCRFunction(params.ipcrid, supabase);
 	const currentIpcr = await getCurrentIPCR(params.ipcrid, supabase);
+	const supervisors = await getSupervisors(supabase, params.ipcrid);
 
 	//forms
 	const ipcrFunctionForm = await getIPCRFunctionForms();
@@ -51,6 +53,7 @@ export const load = (async ({ params, locals: { supabase } }) => {
 	const ipcrAccomplishmentForm = await getIPCRIndicatorAccomplishmentForms();
 
 	return {
+		supervisors: supervisors,
 		currentIpcr,
 		ipcrFunction,
 		ipcrFunctionForm,

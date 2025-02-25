@@ -6,6 +6,11 @@ import {
 	setStatusReviewRaw,
 	setStatusRevisionRaw
 } from './utils/ipcr-raw-services';
+import {
+	setStatusApprove,
+	setStatusReview,
+	setStatusRevision
+} from './utils/ipcr-non-raw-services';
 
 export const load = (async ({ locals: { supabase, session } }) => {
 	if (!session) {
@@ -37,5 +42,24 @@ export const actions: Actions = {
 			redirect(401, '/login');
 		}
 		return setStatusRevisionRaw(request, supabase, session);
+	},
+	//NON RAW FUNCTION
+	review: async ({ request, params, locals: { supabase, session } }) => {
+		if (!session) {
+			redirect(401, '/login');
+		}
+		return setStatusReview(request, supabase, session);
+	},
+	revision: async ({ request, params, locals: { supabase, session } }) => {
+		if (!session) {
+			redirect(401, '/login');
+		}
+		return setStatusRevision(request, supabase, session);
+	},
+	approve: async ({ request, params, locals: { supabase, session } }) => {
+		if (!session) {
+			redirect(401, '/login');
+		}
+		return setStatusApprove(request, supabase, session);
 	}
 };

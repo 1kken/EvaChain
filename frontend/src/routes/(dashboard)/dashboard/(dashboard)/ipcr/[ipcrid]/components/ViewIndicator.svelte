@@ -27,7 +27,6 @@
 			<div class="mx-auto max-w-4xl space-y-8">
 				<!-- Header Section -->
 				<Header
-					status={currentIndicator.status ?? 'draft'}
 					finalOutput={currentIndicator.final_output}
 					successIndicator={currentIndicator.success_indicator}
 				/>
@@ -42,11 +41,7 @@
 				/>
 
 				<!-- Accomplishment Section -->
-				<Accomplishment
-					accomplishments={currentIndicator.actual_accomplishments}
-					accomplishmentDate={currentIndicator.accomplishment_date}
-					remarks={currentIndicator.remarks ?? 'No remarks'}
-				/>
+				<Accomplishment remarks={currentIndicator.remarks ?? 'No remarks'} />
 
 				<!-- Timestamp Section -->
 				<TimeStamp

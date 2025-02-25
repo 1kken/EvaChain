@@ -31,12 +31,12 @@
 	//stores
 	const { updateForm } = getIpcrIndicatorFormContext();
 	const { currentIpcrIndicators, updateIpcrIndicator } = getIpcrIndicatorStore();
-	const { isReviewedRaw } = getIpcrStore();
+	const { isReviewedRaw, isRevision } = getIpcrStore();
 
 	//states
 	let isOpen = $state(false);
 
-	let isReviewedDisabled = $state($isReviewedRaw);
+	let isReviewedDisabled = $state($isReviewedRaw || $isRevision);
 	//form
 	const form = superForm(updateForm, {
 		id: crypto.randomUUID(),
@@ -94,6 +94,10 @@
 	$formData.immediate_supervisor_id = ipcrFunctionIndicator.immediate_supervisor_id;
 	$formData.units = ipcrFunctionIndicator.units;
 	$formData.quality_rating = ipcrFunctionIndicator.quality_rating;
+	$formData.efficiency_rating = ipcrFunctionIndicator.efficiency_rating;
+	$formData.timeliness_rating = ipcrFunctionIndicator.timeliness_rating;
+	$formData.average_rating = ipcrFunctionIndicator.average_rating;
+	$formData.remarks = ipcrFunctionIndicator.remarks;
 
 	//effect for message
 	$effect(() => {
@@ -205,63 +209,63 @@
 					}}
 				/>
 			{/if}
-			{#if !$isReviewedRaw}
+			{#if $isReviewedRaw || $isRevision}
 				{#if ipcrFunctionIndicator.ipcr_function_id}
-					<div class="grid grid-cols-2 gap-2">
-						<Form.Field {form} name="immediate_supervisor_id">
-							<Form.Control>
-								{#snippet children({ props })}
-									<Form.Label>Immediate Supervisor</Form.Label>
-									<AutoCompleteOnlineInput
-										disabled={isReviewedDisabled}
-										bind:selectedId={$formData.immediate_supervisor_id}
-										name={props.name}
-										placeholder={'Type Immediate Supervisor here'}
-										onSearch={fetchProfileByname}
-										onFetchById={fetchProfileById}
-									/>
-								{/snippet}
-							</Form.Control>
-							<Form.FieldErrors />
-						</Form.Field>
-						<Form.Field {form} name="units">
-							<Form.Control>
-								{#snippet children({ props })}
-									<Form.Label>Units</Form.Label>
-									<Input
-										disabled={isReviewedDisabled}
-										type="number"
-										step="0.1"
-										placeholder={'Enter Number of Units for this category...'}
-										{...props}
-										bind:value={$formData.units}
-									/>
-								{/snippet}
-							</Form.Control>
-							<Form.FieldErrors />
-						</Form.Field>
-					</div>
+					<Form.Field {form} name="immediate_supervisor_id">
+						<Form.Control>
+							{#snippet children({ props })}
+								<Form.Label>Immediate Supervisor</Form.Label>
+								<AutoCompleteOnlineInput
+									disabled={isReviewedDisabled}
+									bind:selectedId={$formData.immediate_supervisor_id}
+									name={props.name}
+									placeholder={'Type Immediate Supervisor here'}
+									onSearch={fetchProfileByname}
+									onFetchById={fetchProfileById}
+								/>
+							{/snippet}
+						</Form.Control>
+						<Form.FieldErrors />
+					</Form.Field>
 				{/if}
-			{:else}
-				<Form.Field {form} name="immediate_supervisor_id">
-					<Form.Control>
-						{#snippet children({ props })}
-							<Form.Label>Immediate Supervisor</Form.Label>
-							<AutoCompleteOnlineInput
-								disabled={isReviewedDisabled}
-								bind:selectedId={$formData.immediate_supervisor_id}
-								name={props.name}
-								placeholder={'Type Immediate Supervisor here'}
-								onSearch={fetchProfileByname}
-								onFetchById={fetchProfileById}
-							/>
-						{/snippet}
-					</Form.Control>
-					<Form.FieldErrors />
-				</Form.Field>
 				<Accomplshments indicator={ipcrFunctionIndicator} />
+			{:else if ipcrFunctionIndicator.ipcr_function_id}
+				<div class="grid grid-cols-2 gap-2">
+					<Form.Field {form} name="immediate_supervisor_id">
+						<Form.Control>
+							{#snippet children({ props })}
+								<Form.Label>Immediate Supervisor</Form.Label>
+								<AutoCompleteOnlineInput
+									disabled={isReviewedDisabled}
+									bind:selectedId={$formData.immediate_supervisor_id}
+									name={props.name}
+									placeholder={'Type Immediate Supervisor here'}
+									onSearch={fetchProfileByname}
+									onFetchById={fetchProfileById}
+								/>
+							{/snippet}
+						</Form.Control>
+						<Form.FieldErrors />
+					</Form.Field>
+					<Form.Field {form} name="units">
+						<Form.Control>
+							{#snippet children({ props })}
+								<Form.Label>Units</Form.Label>
+								<Input
+									disabled={isReviewedDisabled}
+									type="number"
+									step="0.1"
+									placeholder={'Enter Number of Units for this category...'}
+									{...props}
+									bind:value={$formData.units}
+								/>
+							{/snippet}
+						</Form.Control>
+						<Form.FieldErrors />
+					</Form.Field>
+				</div>
 			{/if}
-			{#if $isReviewedRaw}
+			{#if $isReviewedRaw || $isRevision}
 				<div class="grid gap-4 md:grid-cols-4">
 					<Form.Field {form} name="quality_rating">
 						<Form.Control>

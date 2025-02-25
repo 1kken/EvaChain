@@ -1,7 +1,7 @@
 import type { Session, SupabaseClient } from '@supabase/supabase-js';
 import { message, superValidate, type Infer } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import type { Database } from '$lib/types/database.types';
+import type { Database, Tables } from '$lib/types/database.types';
 import { submitIPCRschema, type SubmitIPCRSchema } from '../schema/ipcr_submit_schema';
 export async function submitIpcr(
 	request: Request,
@@ -40,29 +40,55 @@ export async function submitIpcr(
 		});
 	}
 
-	const { data: IpcrData, error: updateError } = await supabase
+	//fetch ipcr data
+	const { data: ipcrData, error: ipcrError } = await supabase
 		.from('ipcr')
-		.update({ status: 'submitted_raw' })
-		.eq('id', ipcrID)
 		.select()
+		.eq('id', ipcrID)
 		.single();
-	if (updateError) {
+
+	if (ipcrError) {
 		return message(form, {
 			status: 'error',
-			text: `error submitting ipcr ${updateError.message}`
+			text: `error fetching ipcr data ${ipcrError.message}`
 		});
 	}
 
-	const { data: ipcrSupervisor, error: ipcrSupervisorError } = await supabase
-		.from('ipcr_immediate_supervisor')
-		.select()
-		.eq('ipcr_id', ipcrID)
-		.limit(1);
+	let ipcrDataUpdated: Tables<'ipcr'> | null = null;
+	if (ipcrData.status === 'reviewed_raw' || ipcrData.status === 'revision') {
+		const { data: IpcrData, error: updateError } = await supabase
+			.from('ipcr')
+			.update({ status: 'submitted' })
+			.eq('id', ipcrID)
+			.select()
+			.single();
+		if (updateError) {
+			return message(form, {
+				status: 'error',
+				text: `error submitting ipcr ${updateError.message}`
+			});
+		}
+		ipcrDataUpdated = IpcrData;
+	} else {
+		const { data: IpcrData, error: updateError } = await supabase
+			.from('ipcr')
+			.update({ status: 'submitted_raw' })
+			.eq('id', ipcrID)
+			.select()
+			.single();
+		if (updateError) {
+			return message(form, {
+				status: 'error',
+				text: `error submitting ipcr ${updateError.message}`
+			});
+		}
+		ipcrDataUpdated = IpcrData;
+	}
 
-	if (ipcrSupervisorError) {
+	if (!ipcrDataUpdated) {
 		return message(form, {
 			status: 'error',
-			text: `error fetching ipcr immediate supervisor ${ipcrSupervisorError.message}`
+			text: `error updating ipcr data`
 		});
 	}
 
@@ -89,8 +115,8 @@ export async function submitIpcr(
 			receiver_id: supervisor.sup_id,
 			sender_id: session.user.id,
 			type: supervisor.sup_action === 'removed' ? ('warning' as const) : ('notification' as const),
-			title: `You have been "${supervisor.sup_action}" as the immediate supervisor for the IPCR titled ${IpcrData.title}`,
-			message: `You have been assigned as the immediate supervisor for the submitted IPCR ${IpcrData.title}.`
+			title: `You have been "${supervisor.sup_action}" as the immediate supervisor for the IPCR titled ${ipcrDataUpdated.title}`,
+			message: `You have been assigned as the immediate supervisor for the submitted IPCR ${ipcrDataUpdated.title}.`
 		}));
 
 	const { data: notificationData, error: notificationError } = await supabase
@@ -104,5 +130,5 @@ export async function submitIpcr(
 		});
 	}
 
-	return { form, IpcrData };
+	return { form, IpcrData: ipcrDataUpdated };
 }

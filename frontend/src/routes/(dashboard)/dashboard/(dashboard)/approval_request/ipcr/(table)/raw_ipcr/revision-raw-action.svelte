@@ -77,7 +77,7 @@
 				<br />
 				This will allow <span class=" font-bold italic">{ipcr_details.owner_full_name}.</span>
 				<br />
-				To revise <span class="font-bold"> Major Final Output and Success Indicator </span>
+				To revise <span class="font-bold"> his/her IPCR </span>
 			</AlertDialog.Description>
 		</AlertDialog.Header>
 		<form method="POST" action="?/revisionraw" use:enhance>

@@ -7,27 +7,28 @@
 	import { Input } from '$lib/components/ui/input';
 	import { CircleFadingArrowUp, LoaderCircle, Star } from 'lucide-svelte';
 	import { TriangleAlert } from 'lucide-svelte';
-	import type { OPFormResult } from '../../(data)/types';
 	import type { Tables } from '$lib/types/database.types';
 	import { uuidSchema, type UuidSchemaInput } from '../../(data)/zod_schema';
 	interface Props {
-		op: Tables<'operational_plan'>;
+		ipcr_details: Tables<'ipcr_supervisor_details_view'>;
+		uuidForm: SuperValidated<UuidSchemaInput>;
 		dropDownOpen: boolean;
-		formSchema: SuperValidated<UuidSchemaInput>;
 	}
 
-	let { dropDownOpen = $bindable(), op, formSchema }: Props = $props();
-	const form = superForm(formSchema, {
+	let { ipcr_details, dropDownOpen = $bindable(), uuidForm }: Props = $props();
+	const form = superForm(uuidForm, {
 		validators: zodClient(uuidSchema),
 		multipleSubmits: 'prevent',
 		dataType: 'json',
 		invalidateAll: true,
 		onUpdate({ form, result }) {
-			const action = result.data as FormResult<OPFormResult>;
-			if (form.valid && action.opData) {
-				const opData = action.opData;
-				showSuccessToast(`Successfully set "${opData.title}" to "Under Review."`);
-				closeAllTabs();
+			if (form.valid && result.type === 'success') {
+				if (form.valid) {
+					showSuccessToast(
+						`Successfully set the status of "${ipcr_details.ipcr_title}" to "Reviewed."`
+					);
+					closeAllTabs();
+				}
 			}
 		}
 	});
@@ -51,7 +52,7 @@
 		}
 	});
 
-	$formData.id = op.id;
+	$formData.id = ipcr_details.supervisor_relationship_id!;
 	let isOpen = $state(false);
 </script>
 
@@ -69,10 +70,13 @@
 				></AlertDialog.Title
 			>
 			<AlertDialog.Description>
-				This will set the status of the Operational Plan as <span class="font-bold">Approved.</span>
+				This will set the status of the IPCR as <span class="font-bold">Approved</span>
+				<br />
+				This will finalize the IPCR and will be submitted to the HR for final approval.
+				<br />
 			</AlertDialog.Description>
 		</AlertDialog.Header>
-		<form method="POST" action="?/setstatusapproved" use:enhance>
+		<form method="POST" action="?/approve" use:enhance>
 			<Input name="id" class="hidden" bind:value={$formData.id} />
 			{#if $delayed}
 				<div class="flex justify-between">
@@ -88,10 +92,7 @@
 					<AlertDialog.Cancel type="button" class="text-gray-600 hover:text-gray-800">
 						Cancel
 					</AlertDialog.Cancel>
-					<AlertDialog.Action
-						type="submit"
-						class="bg-green-700 text-white hover:bg-green-600 focus:ring-green-500"
-					>
+					<AlertDialog.Action type="submit">
 						<CircleFadingArrowUp /> Update
 					</AlertDialog.Action>
 				</div>

@@ -42,10 +42,35 @@ export const createColumns = (
 		}
 	},
 	{
-		accessorKey: 'supervisor_review_status',
+		accessorKey: 'ipcr_status',
 		header: ({ column }) =>
 			renderComponent(DataTableSortButton, {
 				text: 'IPCR status',
+				arrangement: column.getIsSorted(),
+				onclick: () => column.toggleSorting(column.getIsSorted() === 'asc')
+			}),
+		cell: ({ getValue }) => {
+			const status = getValue<string>();
+			const displayStatus =
+				{
+					draft: 'Draft',
+					submitted_raw: 'Submitted (Raw w/o Accomplishment and Self-Rating)',
+					under_review_raw: 'Under Review',
+					revision_raw: 'For Revision (Raw w/o Accomplishment and Self-Rating)',
+					reviewed_raw: 'Reviewed (Can upload accomplishments) w/ Self-Rating',
+					submitted: 'Submitted (w/ Self-Rating)',
+					under_review: 'Under Review (w/ Self-Rating)',
+					revision: 'For Revision (w/ Self-Rating)',
+					approved: 'Approved'
+				}[status] || 'Unknown State';
+			return displayStatus;
+		}
+	},
+	{
+		accessorKey: 'supervisor_review_status',
+		header: ({ column }) =>
+			renderComponent(DataTableSortButton, {
+				text: 'Supervisor Action',
 				arrangement: column.getIsSorted(),
 				onclick: () => column.toggleSorting(column.getIsSorted() === 'asc')
 			}),
@@ -81,6 +106,7 @@ export const createColumns = (
 		header: 'Actions',
 		cell: ({ row }) => {
 			const ipcr_details = row.original;
+			if (ipcr_details.supervisor_review_status === 'approved') return 'Approved';
 			return renderComponent(DataTableActions, { ipcr_details, uuidForm, revisionForm });
 		}
 	}

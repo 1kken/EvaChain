@@ -51,7 +51,7 @@ export const createColumns = (
 					under_review: 'Under Review (w/ Self-Rating)',
 					revision: 'For Revision (w/ Self-Rating)',
 					approved: 'Approved'
-				}[status] || 'Pending Action';
+				}[status] || 'Unknown State';
 			return displayStatus;
 		}
 	},

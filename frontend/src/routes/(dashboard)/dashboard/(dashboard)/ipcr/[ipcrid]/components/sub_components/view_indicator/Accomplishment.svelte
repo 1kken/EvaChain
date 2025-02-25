@@ -3,12 +3,8 @@
 	import { Calendar, MessageSquare } from 'lucide-svelte';
 
 	let {
-		accomplishments,
-		accomplishmentDate,
 		remarks
 	}: {
-		accomplishments: string | null;
-		accomplishmentDate: string | null;
 		remarks: string;
 	} = $props();
 
@@ -25,22 +21,10 @@
 
 <Card>
 	<CardHeader>
-		<CardTitle>Accomplishments</CardTitle>
+		<CardTitle>Other Details</CardTitle>
 	</CardHeader>
 	<CardContent class="space-y-6">
-		<div>
-			<span class="block text-sm font-medium">Actual Accomplishments</span>
-			<p class="text-muted-foreground mt-1">{accomplishments}</p>
-		</div>
-
 		<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-			<div class="flex items-center gap-3">
-				<Calendar class="text-primary h-5 w-5" />
-				<div>
-					<span class="block text-sm font-medium">Accomplishment Date</span>
-					<time class="text-muted-foreground text-sm">{formatDate(accomplishmentDate)}</time>
-				</div>
-			</div>
 			<div class="flex items-center gap-3">
 				<MessageSquare class="text-primary h-5 w-5" />
 				<div>

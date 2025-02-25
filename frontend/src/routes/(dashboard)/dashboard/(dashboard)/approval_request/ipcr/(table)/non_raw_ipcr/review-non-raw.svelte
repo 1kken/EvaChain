@@ -72,7 +72,7 @@
 				This will set the status of the IPCR as <span class="font-bold">Reviewing.</span>
 			</AlertDialog.Description>
 		</AlertDialog.Header>
-		<form method="POST" action="?/reviewraw" use:enhance>
+		<form method="POST" action="?/review" use:enhance>
 			<Input name="id" class="hidden" bind:value={$formData.id} />
 			{#if $delayed}
 				<div class="flex justify-between">
