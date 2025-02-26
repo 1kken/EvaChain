@@ -1,6 +1,9 @@
 import type { Database } from '$lib/types/database.types';
-import type { SupabaseClient } from '@supabase/supabase-js';
+import type { Session, SupabaseClient } from '@supabase/supabase-js';
 import { error } from '@sveltejs/kit';
+import { superValidate } from 'sveltekit-superforms';
+import { zod } from 'sveltekit-superforms/adapters';
+import { updateIpcrIndicatorSchema } from '../schema/indicator_schema';
 
 export async function getIpcr(ipcrId: string, supabase: SupabaseClient<Database>) {
 	const { data, error: fetchError } = await supabase
@@ -42,4 +45,28 @@ export async function getOwnerProfile(ownerId: string, supabase: SupabaseClient<
 		error(500, { message: fetchError.message });
 	}
 	return data;
+}
+
+//fetch ipcr_immediate_supervisor
+export async function getImmediateSupervisor(
+	ipcrId: string,
+	session: Session,
+	supabase: SupabaseClient<Database>
+) {
+	const { data, error: fetchError } = await supabase
+		.from('ipcr_immediate_supervisor')
+		.select()
+		.eq('ipcr_id', ipcrId)
+		.single();
+	if (fetchError) {
+		error(500, { message: fetchError.message });
+	}
+	return data;
+}
+
+//Forms
+export async function getIPCRIndicatorForms() {
+	return {
+		updateForm: await superValidate(zod(updateIpcrIndicatorSchema))
+	};
 }

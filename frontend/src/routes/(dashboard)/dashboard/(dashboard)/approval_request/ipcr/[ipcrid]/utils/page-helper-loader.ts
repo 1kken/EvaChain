@@ -82,3 +82,44 @@ export const fetchIpcrFunctionIndicators = async (
 		return [];
 	}
 };
+
+export const fetchAccomplishments = async (
+	indicatorId: string
+): Promise<Tables<'ipcr_indicator_accomplishment'>[]> => {
+	try {
+		const response = await fetch(`/api/ipcr/accomplishments?indicator_id=${indicatorId}`);
+
+		if (!response.ok) {
+			const errorData = await response.json();
+			throw new Error(errorData.error || 'Failed to fetch accomplishments');
+		}
+
+		const result = await response.json();
+		// Check if data exists in the response, otherwise return the result directly
+		return result.data || result || [];
+	} catch (error) {
+		console.error('Error fetching accomplishments:', error);
+		return [];
+	}
+};
+
+export const fetchIndicatorsByIpcrActivityIndicator = async (
+	indicatorId: string
+): Promise<Tables<'op_header_indicators'>[]> => {
+	try {
+		const response = await fetch(
+			`/api/operational_plan/ipcr_indicator_search_by_ipcr_activity_indicator_id?indicatorId=${indicatorId}`
+		);
+
+		if (!response.ok) {
+			const errorData = await response.json();
+			throw new Error(errorData.error || 'Failed to fetch indicators');
+		}
+
+		const { data } = await response.json();
+		return data;
+	} catch (error) {
+		console.error('Error fetching indicators:', error);
+		return [];
+	}
+};

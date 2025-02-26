@@ -73,7 +73,7 @@
 				<div class="space-y-2">
 					{#each contentItems as indicator (indicator.id)}
 						<div class="py-1">
-							<Indicator ipcrIndicator={indicator} />
+							<Indicator ipcrFunctionIndicator={indicator} />
 						</div>
 					{/each}
 				</div>

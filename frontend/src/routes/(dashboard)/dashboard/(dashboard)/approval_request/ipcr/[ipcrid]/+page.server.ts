@@ -1,6 +1,13 @@
-import { error, redirect } from '@sveltejs/kit';
+import { error, redirect, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { fetchFunctionsBySupervisor, getIpcr, getOwnerProfile } from './utils/page-server';
+import {
+	fetchFunctionsBySupervisor,
+	getImmediateSupervisor,
+	getIpcr,
+	getIPCRIndicatorForms,
+	getOwnerProfile
+} from './utils/page-server';
+import { updateIpcrIndicator } from './services/indicator_services';
 
 export const load = (async ({ params, locals: { supabase, session } }) => {
 	const ipcrId = params.ipcrid;
@@ -17,11 +24,23 @@ export const load = (async ({ params, locals: { supabase, session } }) => {
 	const ipcr = await getIpcr(ipcrId, supabase);
 	const ipcrFunctions = await fetchFunctionsBySupervisor(ipcrId, supervisorId, supabase);
 	const ownerProfile = await getOwnerProfile(ipcr.owner_id!, supabase);
+	const indicatorForm = await getIPCRIndicatorForms();
+	const immediateSupervisorStatus = await getImmediateSupervisor(ipcrId, session, supabase);
 
 	return {
 		supervisorId,
 		ipcr,
 		ipcrFunctions,
-		ownerProfile
+		ownerProfile,
+		immediateSupervisorStatus,
+		forms: {
+			indicatorForm
+		}
 	};
 }) satisfies PageServerLoad;
+
+export const actions: Actions = {
+	updateindicator: async ({ request, params, locals: { supabase } }) => {
+		return updateIpcrIndicator(request, supabase);
+	}
+};

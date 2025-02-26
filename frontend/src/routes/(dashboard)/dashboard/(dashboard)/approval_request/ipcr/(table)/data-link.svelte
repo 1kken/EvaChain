@@ -6,6 +6,6 @@
 	const prop: Props = $props();
 </script>
 
-<a href={`/dashboard/approval_request/ipcr/${prop.id}`}>
+<a href={`/dashboard/approval_request/ipcr/${prop.id}`} class="hover:underline">
 	{prop.name}
 </a>

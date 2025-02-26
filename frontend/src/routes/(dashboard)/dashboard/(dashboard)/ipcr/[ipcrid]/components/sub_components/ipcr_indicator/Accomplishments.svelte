@@ -61,10 +61,10 @@
 <Dialog.Root>
 	<Dialog.Trigger
 		type="button"
-		class="mb-1 w-full rounded-lg border border-dashed p-1 text-center hover:bg-green-200"
+		class="mb-1 w-full rounded-lg border border-dashed p-1 text-center transition  duration-300 hover:bg-green-200  dark:hover:bg-green-700 "
 	>
 		<span class="text-md flex w-full items-center justify-center text-center">
-			<Plus size="16" class="mr-2" /> Add Accomplishments
+			<Plus size="16" class="mr-2" /> Add Accomplishment
 		</span>
 	</Dialog.Trigger>
 

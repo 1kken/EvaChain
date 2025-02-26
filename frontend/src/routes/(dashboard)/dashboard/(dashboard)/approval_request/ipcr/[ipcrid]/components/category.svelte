@@ -101,7 +101,7 @@
 								{#if item.itemType === 'sub_category'}
 									<SubCategory ipcrSubCategory={item} />
 								{:else}
-									<Indicator ipcrIndicator={item} />
+									<Indicator ipcrFunctionIndicator={item} />
 								{/if}
 							</div>
 						{/each}

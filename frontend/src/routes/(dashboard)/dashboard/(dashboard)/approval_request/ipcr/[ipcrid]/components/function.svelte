@@ -100,7 +100,7 @@
 							{#if item.itemType === 'category'}
 								<Category ipcrFunctionCategory={item} />
 							{:else}
-								<Indicator ipcrIndicator={item} />
+								<Indicator ipcrFunctionIndicator={item} />
 							{/if}
 						</div>
 					{/each}
