@@ -21,7 +21,6 @@
 		getIpcrFunctionStore();
 	//states
 	let isOpen = $state(false);
-	let totalPercentage = $state(getTotalPercentage());
 	//form
 	const form = superForm(createForm, {
 		id: crypto.randomUUID(),
@@ -51,17 +50,18 @@
 	});
 
 	const { form: formData, enhance, delayed, message, reset } = form;
-	//set data that is needed
-	if ($currentIpcr) {
-		$formData.ipcr_id = $currentIpcr.id;
-		$formData.position = $size + 1;
-		$formData.remainingPercentage = 100 - totalPercentage;
-	}
 
 	//effect for message
 	$effect(() => {
 		if ($message?.status === 'error') {
 			showErrorToast(`Error adding ipcr function: ${$message.text}`);
+		}
+
+		//set data that is needed
+		if ($currentIpcr) {
+			$formData.ipcr_id = $currentIpcr.id;
+			$formData.position = $size + 1;
+			$formData.remainingPercentage = 100 - getTotalPercentage();
 		}
 	});
 
@@ -107,7 +107,7 @@
 							</Form.Control>
 							<Form.Description
 								>This will be used for calculating your IPCR report, Remaining percentage <span
-									class="font-bold">{totalPercentage}% / 100%</span
+									class="font-bold">{$formData.remainingPercentage}%</span
 								>.</Form.Description
 							>
 							<Form.FieldErrors />
