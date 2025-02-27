@@ -22,8 +22,6 @@
 		});
 	}
 
-	console.log(hasPermission('unit_view_ipcr'));
-
 	function isActive(itemUrl: string) {
 		return $page.url.pathname === itemUrl;
 	}

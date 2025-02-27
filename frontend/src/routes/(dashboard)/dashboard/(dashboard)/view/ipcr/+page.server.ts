@@ -1,6 +1,7 @@
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import type { Tables } from '$lib/types/database.types';
+import { fetchOffices } from './utils/server-loader';
 
 export const load = (async ({ locals }) => {
 	const { supabase, hasPermission, profile } = locals;
@@ -38,12 +39,13 @@ export const load = (async ({ locals }) => {
 		if (!profile?.unit_id) {
 			error(404, 'Unit not found');
 		}
+		const offices = await fetchOffices(profile.unit_id, supabase);
 		const { data } = await supabase
 			.from('ipcr_owner_details')
 			.select('*')
 			.eq('unit_id', profile.unit_id);
 		ipcrs = data || [];
-		return { ipcrs };
+		return { ipcrs, offices };
 	}
 
 	return { ipcrs };

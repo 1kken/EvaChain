@@ -27,6 +27,7 @@
 	import DataTableFooter from './data-table-footer.svelte';
 
 	interface Props<TData, TValue> {
+		visibleColumns?: VisibilityState;
 		data: TData[];
 		columns: ColumnDef<TData, TValue>[];
 		filterDataFacet?: PropDataFacet[];
@@ -49,13 +50,14 @@
 		enableFiltering = true,
 		pageSize = 10,
 		filterDataFacet,
-		children
+		children,
+		visibleColumns
 	}: Props<TData, TValue> = $props();
 
 	let pagination = $state<PaginationState>({ pageIndex: 0, pageSize });
 	let sorting = $state<SortingState>([]);
 	let columnFilters = $state<ColumnFiltersState>([]);
-	let columnVisibility = $state<VisibilityState>({});
+	let columnVisibility = $state<VisibilityState>(visibleColumns || {});
 	let rowSelection = $state<RowSelectionState>({});
 
 	const table = createSvelteTable({

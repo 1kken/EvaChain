@@ -5,14 +5,10 @@ import DataTableSortButton from '$lib/custom_components/data-table/data-table-so
 import type { Tables } from '$lib/types/database.types';
 import { titleCase } from 'title-case';
 import DataLink from './data-link.svelte';
-import { getUserAuthStore } from '$lib/utils/rbac';
-
-const { hasRole } = getUserAuthStore();
-const isHeadOfUnit = hasRole('head_of_operating_unit');
 
 export type IPCR = Tables<'ipcr_owner_details'>;
 
-export const createColumns = (): ColumnDef<IPCR>[] => [
+export const createColumns = (isHeadofUnuit: boolean): ColumnDef<IPCR>[] => [
 	{
 		accessorKey: 'full_name',
 		header: ({ column }) =>
@@ -39,6 +35,36 @@ export const createColumns = (): ColumnDef<IPCR>[] => [
 			//display a link to the IPCR  wiht id
 			const employeeId = getValue<string>();
 			return employeeId;
+		}
+	},
+	{
+		accessorKey: 'office_name',
+		header: ({ column }) => {
+			return renderComponent(DataTableSortButton, {
+				text: 'Office Name',
+				arrangement: column.getIsSorted(),
+				onclick: () => column.toggleSorting(column.getIsSorted() === 'asc')
+			});
+		},
+		cell: ({ getValue, row }) => {
+			//display a link to the IPCR  wiht id
+			const officeCode = getValue<string>();
+			return officeCode;
+		}
+	},
+	{
+		accessorKey: 'nature_of_work',
+		header: ({ column }) => {
+			return renderComponent(DataTableSortButton, {
+				text: 'Nature of Work',
+				arrangement: column.getIsSorted(),
+				onclick: () => column.toggleSorting(column.getIsSorted() === 'asc')
+			});
+		},
+		cell: ({ getValue, row }) => {
+			//display a link to the IPCR  wiht id
+			const officeCode = getValue<string>();
+			return officeCode;
 		}
 	},
 	{
