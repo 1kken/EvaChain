@@ -59,7 +59,7 @@ export async function getImmediateSupervisor(
 		.from('ipcr_immediate_supervisor')
 		.select()
 		.eq('ipcr_id', ipcrId)
-		.single();
+		.limit(1);
 	if (fetchError) {
 		console.error('Error fetching immediate supervisor:', fetchError);
 		error(500, { message: 'Error fetching immediate supervisor:' + fetchError.message });

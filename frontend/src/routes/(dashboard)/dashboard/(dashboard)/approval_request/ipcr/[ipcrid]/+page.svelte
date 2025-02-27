@@ -9,7 +9,7 @@
 	let { data }: { data: PageData } = $props();
 	setSupervisorStore(data.supervisorId);
 	setIpcrIndicatorFormContext(data.forms.indicatorForm);
-	setSupervisorDetailStore(data.immediateSupervisorStatus);
+	setSupervisorDetailStore(data.immediateSupervisorStatus[0]);
 </script>
 
 <div class="relative min-h-screen pb-24">
