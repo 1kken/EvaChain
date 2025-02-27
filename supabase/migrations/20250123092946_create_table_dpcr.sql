@@ -1,6 +1,9 @@
+CREATE TYPE dpcr_status AS ENUM ('draft', 'submitted', 'reviewing', 'revision', 'approved');
+
 -- Create dpcr table
 CREATE TABLE dpcr (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    status dpcr_status DEFAULT 'draft' NOT NULL,
     title VARCHAR(255) NOT NULL,
     review_by VARCHAR(255) NOT NULL,
     reviewer_position VARCHAR(255) NOT NULL,

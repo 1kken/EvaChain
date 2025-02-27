@@ -19,6 +19,4 @@
 	{columns}
 	filterColumn={'title'}
 	filterPlaceholder={'Search by title....'}
->
-	<Create data={DpcrForms.createForm} />
-</DataTable>
+/>

@@ -23,6 +23,4 @@
 	data={$currentUserAccomplishmentReport}
 	filterPlaceholder={'Search by title'}
 	filterColumn={'title'}
->
-	<Create bind:isAddDrawerOpen data={createForm} />
-</DataTable>
+/>

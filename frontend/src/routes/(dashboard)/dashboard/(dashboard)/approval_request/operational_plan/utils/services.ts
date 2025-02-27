@@ -9,6 +9,8 @@ import {
 } from '../(data)/zod_schema';
 import { zod } from 'sveltekit-superforms/adapters';
 import { createAccomplishmentFromOperationalPlan } from './mappingToAccomplishment';
+import { hasRole } from '$lib/utils/rbacHelper';
+import { generateDPCRFromOperationalPlan } from './mappingToDpcr';
 
 export async function setStatusReview(
 	request: Request,
@@ -146,6 +148,16 @@ export async function setStatusApproved(
 
 	// After successful status update, create the accomplishment report
 	const copyResult = await createAccomplishmentFromOperationalPlan(supabase, id);
+
+	//! insert logic here for creating DPCR
+
+	//* lets check first if shes has a role of head_of_opearting unit
+	if (await hasRole(supabase, opData.creator_id, 'head_of_operating_unit')) {
+		await generateDPCRFromOperationalPlan(supabase, {
+			operationalPlanId: opData.id,
+			userId: opData.creator_id
+		});
+	}
 
 	if (!copyResult.success) {
 		// If copying fails, we might want to revert the status update
