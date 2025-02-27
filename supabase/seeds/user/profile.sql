@@ -77,48 +77,9 @@ WHERE
 
 UPDATE public.profiles
 SET
-    updated_at = '2024-12-01 10:06:30.10174+00',
-    employee_id = '46758897',
-    email = 'officeguy@dmmmsu.edu.ph',
-    first_name = 'office',
-    middle_name = NULL,
-    last_name = 'guy',
-    avatar_url = NULL,
-    unit_id = 3,
-    nature_of_work_id = 2,
-    office_id = 5,
-    program_id = NULL,
-    position_id = 7,
-    employee_status_id = 1,
-    created_at = '2024-12-01 10:06:00.528557+00'
-WHERE
-    id = '36e153b6-4f13-4da3-ae7e-d43f84bce24d';
-
-UPDATE public.profiles
-SET
-    updated_at = '2024-12-01 10:07:47.313769+00',
-    employee_id = '12312312312312312',
-    email = 'officesupervisor@dmmmsu.edu.ph',
-    first_name = 'office',
-    middle_name = NULL,
-    last_name = 'supervisor',
-    avatar_url = NULL,
-    unit_id = 3,
-    nature_of_work_id = 2,
-    office_id = 5,
-    program_id = NULL,
-    position_id = 5,
-    employee_status_id = 1,
-    created_at = '2024-12-01 10:07:13.528927+00'
-WHERE
-    id = '9f972be5-bacf-4e95-896b-4a68bf588420';
-
-UPDATE public.profiles
-SET
-    updated_at = '2025-02-19 10:10:00.000000+00',
-    employee_id = '211-0879-3',
-    email = 'headunit@dmmmsu.edu.ph',
-    first_name = 'Head',
+    employee_id = '6969',
+    email = 'headopu@dmmmsu.edu.ph',
+    first_name = 'Head of Operating',
     middle_name = NULL,
     last_name = 'Unit',
     avatar_url = NULL,
@@ -128,28 +89,26 @@ SET
     program_id = NULL,
     position_id = 5,
     employee_status_id = 1,
-    created_at = '2025-02-19 10:05:22.893033+00'
+    updated_at = '2025-02-27 11:28:36.107185+00',
+    created_at = '2025-02-27 11:28:10.955129+00'
 WHERE
-    id = 'c29f33e3-ccf6-4862-8ab2-9608c2a4cdf8';
+    id = '837cfed3-766a-4d1b-9d44-1b91dc6ede01';
 
--- attach roles to users
-INSERT INTO
-    public.user_roles (user_id, role_id)
-SELECT
-    '9a4ba6de-9fc0-4110-8445-f9a1efbc1432',
-    r.id
-FROM
-    roles r
+UPDATE public.profiles
+SET
+    employee_id = '696969',
+    email = 'hof@dmmmsu.edu.ph',
+    first_name = 'Head of Office',
+    middle_name = NULL,
+    last_name = 'Hof',
+    avatar_url = NULL,
+    unit_id = 2,
+    nature_of_work_id = 2,
+    office_id = 9,
+    program_id = NULL,
+    position_id = 7,
+    employee_status_id = 1,
+    updated_at = '2025-02-27 11:29:23.569101+00',
+    created_at = '2025-02-27 11:29:09.506654+00'
 WHERE
-    r.name = 'chairman';
-
--- dean role
-INSERT INTO
-    public.user_roles (user_id, role_id)
-SELECT
-    'c92ae2f1-88c3-40b5-b336-84e69b4e18a6',
-    r.id
-FROM
-    roles r
-WHERE
-    r.name = 'dean';
+    id = '6cf9c332-43c9-439b-8d16-919e2b565748';

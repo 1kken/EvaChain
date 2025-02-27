@@ -4,6 +4,7 @@
  * send a server request, and thus trigger `hooks.server.ts`.
  **/
 
+import { fetchUserAuthData } from '../utils/userAuthHelper';
 import type { LayoutServerLoad } from './$types';
 
 export const load: LayoutServerLoad = async ({ locals: { supabase, session } }) => {
@@ -11,5 +12,6 @@ export const load: LayoutServerLoad = async ({ locals: { supabase, session } }) 
 	if (!userId) {
 		return { status: 401, redirect: '/login' };
 	}
-	return { userId };
+	const userAuthData = await fetchUserAuthData(supabase, userId);
+	return { userId, userAuthData };
 };

@@ -3,6 +3,7 @@ import { error, type Handle, redirect } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
 import type { Database } from '$lib/types/database.types';
 import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public';
+import { attachAuthHelpers } from '$lib/hooks/auth';
 
 const supabase: Handle = async ({ event, resolve }) => {
 	/**
@@ -80,6 +81,8 @@ const supabase: Handle = async ({ event, resolve }) => {
 			event.locals.profile = profile;
 		}
 	}
+
+	attachAuthHelpers(event);
 	return resolve(event, {
 		filterSerializedResponseHeaders(name) {
 			/**
@@ -95,14 +98,40 @@ const authGuard: Handle = async ({ event, resolve }) => {
 	const { session, user } = await event.locals.safeGetSession();
 	event.locals.session = session;
 	event.locals.user = user;
-	if (!event.locals.session && event.url.pathname.startsWith('/dashboard')) {
-		redirect(303, '/auth');
+
+	// Basic auth check for protected routes
+	if (!event.locals.session) {
+		if (event.url.pathname.startsWith('/dashboard')) {
+			redirect(303, '/auth');
+		}
+		if (event.url.pathname.startsWith('/api')) {
+			error(403, 'Unauthorized access');
+		}
+	} else {
+		// For authenticated users, check admin access
+		if (event.url.pathname.startsWith('/dashboard/admin')) {
+			// Get the user's role from the JWT
+			const role = session?.user?.app_metadata?.role || '';
+
+			try {
+				// Query the user's role for more details if needed
+				const { data: userRole } = await event.locals.supabase.rpc('get_user_role');
+
+				// Check if the user is a system admin
+				const isAdmin = await event.locals.supabase.rpc('is_system_admin');
+
+				if (!isAdmin.data) {
+					// If not admin, redirect to dashboard or show access denied
+					redirect(303, '/dashboard');
+				}
+			} catch (err) {
+				console.error('Error checking admin status:', err);
+				redirect(303, '/dashboard');
+			}
+		}
 	}
 
-	if (!event.locals.session && event.url.pathname.startsWith('/api')) {
-		error(403, 'Unauthorized access');
-	}
-
+	// Handle other redirections
 	if (!event.locals.session && event.url.pathname.startsWith('/auth/recovery')) {
 		redirect(303, '/dashboard');
 	}

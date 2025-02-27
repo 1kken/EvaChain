@@ -12,6 +12,7 @@ export async function getIpcr(ipcrId: string, supabase: SupabaseClient<Database>
 		.eq('id', ipcrId)
 		.single();
 	if (fetchError) {
+		console.error('Error fetching IPCR:', fetchError);
 		error(500, { message: fetchError.message });
 	}
 
@@ -42,6 +43,7 @@ export async function getOwnerProfile(ownerId: string, supabase: SupabaseClient<
 		.eq('id', ownerId)
 		.single();
 	if (fetchError) {
+		console.error('Error fetching owner profile:', fetchError);
 		error(500, { message: fetchError.message });
 	}
 	return data;
@@ -59,7 +61,8 @@ export async function getImmediateSupervisor(
 		.eq('ipcr_id', ipcrId)
 		.single();
 	if (fetchError) {
-		error(500, { message: fetchError.message });
+		console.error('Error fetching immediate supervisor:', fetchError);
+		error(500, { message: 'Error fetching immediate supervisor:' + fetchError.message });
 	}
 	return data;
 }

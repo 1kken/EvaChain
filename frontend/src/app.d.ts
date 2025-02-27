@@ -17,6 +17,14 @@ declare global {
 			safeGetSession: () => Promise<{ session: Session | null; user: User | null }>;
 			session: Session | null;
 			user: User | null;
+			getUserRolesAndPermissions: (userId?: string) => Promise<{
+				roles: Tables<'roles'>[];
+				permissions: Tables<'permissions'>[];
+			}>;
+			hasRole: (roleName: string, userId?: string) => Promise<boolean>;
+			hasPermission: (permissionName: string, userId?: string) => Promise<boolean>;
+			isSuperAdmin: (userId?: string) => Promise<boolean>;
+			clearUserCache: (userId: string) => void;
 		}
 		interface PageData {
 			session: Session | null;

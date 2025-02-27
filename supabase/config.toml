@@ -42,18 +42,16 @@ max_client_conn = 100
 [db.seed]
 # If enabled, seeds the database after migrations during a db reset.
 enabled = true
-# Specifies an ordered list of seed files to load during db reset.
-# Supports glob patterns relative to supabase directory. For example:
-# sql_paths = ['./seeds/*.sql', '../project-src/seeds/*-load-testing.sql']
 sql_paths = [
-    './seeds/user.sql',
     './seeds/unit.sql',
     './seeds/office.sql',
     './seeds/program.sql',
     './seeds/nature_of_work.sql',
     './seeds/employee_status.sql',
     './seeds/position.sql',
-    './seeds/profile.sql',
+    './seeds/user/user.sql',
+    './seeds/user/identities.sql',
+    './seeds/user/profile.sql',
     './seeds/operational_plan/operational_plan.sql',
     './seeds/operational_plan/op_plan_header.sql',
     './seeds/operational_plan/op_plan_annual_plan.sql',
@@ -83,7 +81,10 @@ sql_paths = [
     './seeds/opcr/opcr_function.sql',
     './seeds/opcr/opcr_category.sql',
     './seeds/opcr/opcr_indicator.sql',
-    './seeds/*.sql',
+    './seeds/rbac/permissions/*.sql',
+    './seeds/rbac/roles/*.sql',
+    './seeds/rbac/connections/ipcr/*.sql',
+    './seeds/rbac/assignment/*.sql',
 ]
 
 [realtime]
@@ -265,6 +266,9 @@ skip_nonce_check = false
 
 # Use Firebase Auth as a third-party provider alongside Supabase Auth.
 [auth.third_party.firebase]
+# Specifies an ordered list of seed files to load during db reset.
+# Supports glob patterns relative to supabase directory. For example:
+# sql_paths = ['./seeds/*.sql', '../project-src/seeds/*-load-testing.sql']
 enabled = false
 # project_id = "my-firebase-project"
 

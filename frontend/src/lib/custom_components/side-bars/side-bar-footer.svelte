@@ -1,6 +1,6 @@
 <script lang="ts">
 	let { isDrawerOpen = $bindable() } = $props();
-	import { ChevronUp } from 'lucide-svelte';
+	import { ChevronUp, User } from 'lucide-svelte';
 	import { LogOut } from 'lucide-svelte';
 	import { UserRoundPen } from 'lucide-svelte';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
@@ -10,6 +10,8 @@
 	import { getAuthStore } from '$lib/utils/authStore';
 	import * as Avatar from '$lib/components/ui/avatar';
 	import type { Tables } from '$lib/types/database.types';
+	import { getUserAuthStore } from '$lib/utils/rbac';
+	const { hasRole } = getUserAuthStore();
 
 	const profileId = $page.data.session?.user.id;
 	let profile: Tables<'profiles'> | null = $state(null);
@@ -74,9 +76,11 @@
 							<span>Log-out</span>
 						</div>
 					</DropdownMenu.Item>
-					<DropdownMenu.Item onclick={handleAdmin}>
-						<div class="flex w-fit gap-4">Admin</div>
-					</DropdownMenu.Item>
+					{#if hasRole('system_admin')}
+						<DropdownMenu.Item onclick={handleAdmin}>
+							<div class="flex w-fit gap-4"><User />Admin</div>
+						</DropdownMenu.Item>
+					{/if}
 				</DropdownMenu.Content>
 			</DropdownMenu.Root>
 		</Sidebar.MenuItem>
