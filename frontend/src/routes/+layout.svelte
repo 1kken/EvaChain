@@ -1,11 +1,13 @@
 <script lang="ts">
 	import '../app.css';
 	import { goto, invalidate } from '$app/navigation';
-	import Navbar from '$lib/custom_components/navbar.svelte';
 	import Footer from '$lib/custom_components/footer.svelte';
 	import { Toaster } from 'svelte-sonner';
 	import { setAuthStore } from '$lib/utils/authStore';
 	import { ModeWatcher } from 'mode-watcher';
+	import { injectSpeedInsights } from '@vercel/speed-insights/sveltekit';
+	injectSpeedInsights();
+
 	let { children, data } = $props();
 
 	let { session, supabase } = $derived(data);

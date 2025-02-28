@@ -65,6 +65,7 @@
 		"@types/comma-number": "^2.1.2",
 		"@types/pdfmake": "^0.2.11",
 		"@types/romans": "^2.0.2",
+		"@vercel/speed-insights": "^1.2.0",
 		"comma-number": "^2.1.0",
 		"date-fns": "^4.1.0",
 		"debounce": "^2.2.0",
