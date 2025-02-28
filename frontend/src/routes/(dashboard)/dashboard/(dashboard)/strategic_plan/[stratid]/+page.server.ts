@@ -4,12 +4,14 @@ import {
 	deleteIndicator,
 	updatePerformanceIndicator
 } from './services/performance_indicator_services';
+import { publishStratPlan } from './services/publish_strat_plan';
 import {
 	createStrategyPlan,
 	deleteStrategyPlan,
 	updateStrategyPlan
 } from './services/strategy_plan_services';
 import {
+	fetchPublishStratPlanForm,
 	fetchStrategicPlan,
 	fetchStrategyPerformanceIndicatorForms,
 	fetchStrategyPlan,
@@ -26,11 +28,13 @@ export const load = (async ({ params, locals: { supabase, session } }) => {
 	//form
 	const strategyPlanForm = await fetchStrategyPlanForms();
 	const strategyPlanPerfIndicatorForm = await fetchStrategyPerformanceIndicatorForms();
+	const publishStratPlanSchema = await fetchPublishStratPlanForm();
 
 	return {
 		strategicPlan,
 		strategyPlans,
 		forms: {
+			publishStratPlanSchema,
 			strategyPlanForm,
 			strategyPlanPerfIndicatorForm
 		}
@@ -56,5 +60,9 @@ export const actions = {
 	},
 	deleteindicator: async ({ request, locals: { supabase, session } }) => {
 		return deleteIndicator(request, supabase);
+	},
+	//publish indicator
+	publishstratplan: async ({ request, locals: { supabase, session } }) => {
+		return publishStratPlan(request, supabase);
 	}
 } satisfies Actions;

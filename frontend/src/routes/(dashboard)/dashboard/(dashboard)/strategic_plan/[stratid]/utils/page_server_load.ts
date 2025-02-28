@@ -9,6 +9,7 @@ import {
 	createStrategyPlanPerformanceIndicatorSchema,
 	updateStrategyPlanPerformanceIndicatorSchema
 } from '../schema/performance_indicator_schema';
+import { publishStratPlanSchema } from '../schema/publish_stat_plan_schema';
 
 //fetch strategy plan
 export async function fetchStrategyPlan(id: string, supabase: SupabaseClient<Database>) {
@@ -74,5 +75,11 @@ export async function fetchStrategyPerformanceIndicatorForms() {
 		createForm: await superValidate(zod(createStrategyPlanPerformanceIndicatorSchema)),
 		updateForm: await superValidate(zod(updateStrategyPlanPerformanceIndicatorSchema)),
 		deleteForm: await superValidate(zod(universalDeleteSchema))
+	};
+}
+
+export async function fetchPublishStratPlanForm() {
+	return {
+		publishForm: await superValidate(zod(publishStratPlanSchema))
 	};
 }

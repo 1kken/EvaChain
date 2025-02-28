@@ -7,6 +7,7 @@
 	import TruncatedDiv from '../../../components/TruncatedDiv.svelte';
 	import { getStrategyPerformanceIndicatorFormContext } from '../states/performance_indicator_form_state';
 	import { getStrategyPerformanceIndicatorStore } from '../states/performance_indicator_state';
+	import { getCurrentStrategicPlanStore } from '../states/strategic_plan_state';
 	import type { PerformanceIndicatorFormResult } from '../utils/types';
 	import Update from './sub_components/performance_indicator/update.svelte';
 
@@ -16,6 +17,7 @@
 
 	//store
 	const { removePerformanceIndicator } = getStrategyPerformanceIndicatorStore();
+	const { currentStrategicPlan } = getCurrentStrategicPlanStore();
 	const { deleteForm } = getStrategyPerformanceIndicatorFormContext();
 
 	//functions
@@ -26,6 +28,8 @@
 			showWarningToast(`Successfully deleted performance indicator`);
 		}
 	}
+
+	const isPublished = $derived($currentStrategicPlan?.strategic.status === 'published');
 </script>
 
 <div class="rounded-lg border">
@@ -35,21 +39,23 @@
 			<TruncatedDiv text={indicator.performance_indicator} maxLength={50} />
 			<!-- <ViewActivity {activity} /> -->
 		</div>
-		<div class="flex items-center gap-5">
-			{#snippet deleteAction()}
-				<UniversalDeleteAction
-					id={indicator.id}
-					action="?/deleteindicator"
-					data={deleteForm}
-					onDelete={handleDelete}
-				/>
-			{/snippet}
-			{#snippet updateAction()}
-				<Update {indicator} bind:isDrawerOpen />
-			{/snippet}
-			<div class="flex gap-4">
-				<DropDownWrapper bind:isDrawerOpen childrens={[updateAction, deleteAction]} />
+		{#if !isPublished}
+			<div class="flex items-center gap-5">
+				{#snippet deleteAction()}
+					<UniversalDeleteAction
+						id={indicator.id}
+						action="?/deleteindicator"
+						data={deleteForm}
+						onDelete={handleDelete}
+					/>
+				{/snippet}
+				{#snippet updateAction()}
+					<Update {indicator} bind:isDrawerOpen />
+				{/snippet}
+				<div class="flex gap-4">
+					<DropDownWrapper bind:isDrawerOpen childrens={[updateAction, deleteAction]} />
+				</div>
 			</div>
-		</div>
+		{/if}
 	</header>
 </div>

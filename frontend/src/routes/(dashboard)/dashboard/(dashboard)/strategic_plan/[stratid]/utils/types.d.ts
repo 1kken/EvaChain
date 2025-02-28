@@ -9,3 +9,8 @@ export type PerformanceIndicatorFormResult = {
 	form: any;
 	performanceIndicator: Tables<'strategy_plan_performance_indicator'>;
 };
+
+export type StrategicPlanFormResult = {
+	form: any;
+	strategicPlan: Tables<'strategic_plan'>;
+};

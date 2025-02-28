@@ -1,6 +1,6 @@
 <script lang="ts">
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
-	import logo from '$lib/assets/logo.svg';
+	import logo from '$lib/assets/icon.png';
 </script>
 
 <Sidebar.Header>

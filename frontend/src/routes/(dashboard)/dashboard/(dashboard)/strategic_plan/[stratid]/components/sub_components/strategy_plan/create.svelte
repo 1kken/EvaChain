@@ -3,22 +3,21 @@
 	import * as Form from '$lib/components/ui/form/index.js';
 	import { LoaderCircle, Save } from 'lucide-svelte';
 	import { Plus } from 'lucide-svelte';
-	import SuperDebug, { setError, superForm, type FormResult } from 'sveltekit-superforms';
+	import { setError, superForm, type FormResult } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';
-	import AutoCompleteOfflineInput from '$lib/custom_components/AutoCompleteOfflineInput.svelte';
 	import { getCurrentStrategicPlanStore } from '../../../states/strategic_plan_state';
 	import { getStrategyPlanFormContext } from '../../../states/strategy_plan_form_state';
 	import { getStrategyPlanStore } from '../../../states/strategy_plan_state';
 	import { createStrategyPlanSchema } from '../../../schema/strategy_plan_schema';
 	import type { StrategyPlanFormResult } from '../../../utils/types';
 	import IntelligentInput from '$lib/custom_components/IntelligentInput.svelte';
-	import { browser } from '$app/environment';
 
 	//stores
 	const { currentStrategicPlan } = getCurrentStrategicPlanStore();
 	const { createForm } = getStrategyPlanFormContext();
 	const { currentStrategyPlans, addStrategyPlan, size } = getStrategyPlanStore();
+
 	//states
 	let isOpen = $state(false);
 

@@ -7,11 +7,11 @@
 	import { Download, SquareArrowOutUpRight } from 'lucide-svelte';
 	import Delete from './delete.svelte';
 	import Update from './update.svelte';
-	import type { UpdateDpcrInput } from '../../dpcr/(data)/dpcr_schema';
+	import type { UpdateStratPlanInput } from '../(data)/strat_plan_schema';
 
 	interface Props {
 		deleteForm: SuperValidated<UniversalDeleteInput>;
-		updateForm: SuperValidated<UpdateDpcrInput>;
+		updateForm: SuperValidated<UpdateStratPlanInput>;
 		id: string;
 	}
 

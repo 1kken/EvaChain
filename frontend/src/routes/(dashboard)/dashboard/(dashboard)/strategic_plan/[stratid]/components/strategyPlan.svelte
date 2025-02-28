@@ -18,6 +18,8 @@
 	import { setStrategyPerformanceIndicatorStore } from '../states/performance_indicator_state';
 	import Create from './sub_components/performance_indicator/create.svelte';
 	import PerformanceIndicator from './performanceIndicator.svelte';
+	import Badge from '$lib/components/ui/badge/badge.svelte';
+	import { getCurrentStrategicPlanStore } from '../states/strategic_plan_state';
 
 	//props
 	interface Iprops {
@@ -29,6 +31,7 @@
 	const { removeStrategyPlan } = getStrategyPlanStore();
 	const { deleteForm } = getStrategyPlanFormContext();
 	const { currentPerformanceIndicators } = setStrategyPerformanceIndicatorStore();
+	const { currentStrategicPlan } = getCurrentStrategicPlanStore();
 
 	//states
 	let dndItems = $state<Tables<'strategy_plan_performance_indicator'>[]>([]);
@@ -98,11 +101,13 @@
 			await fetchData();
 		}
 	}
+
+	const isPublished = $derived($currentStrategicPlan?.strategic.status === 'published');
 </script>
 
-<div class="w-full">
-	<header class="sticky top-0 flex h-10 items-center justify-between border-b px-4 md:px-10">
-		<div class="flex items-center gap-2">
+<div class="rounded-lg border">
+	<header class=" top-0 flex h-10 items-center justify-between p-7 md:px-10">
+		<div class="flex items-start gap-5 pr-4">
 			<Button variant="ghost" size="icon" onclick={toggleExpand}>
 				<ChevronDown
 					class={cn(
@@ -111,27 +116,29 @@
 					)}
 				/>
 			</Button>
+			<Badge variant={'secondary'} class="h-5 bg-teal-500 text-xs">Strategy Plan</Badge>
 			<TruncatedDiv text={strategyPlan.description} maxLength={50} />
 		</div>
-		<div class="flex items-center gap-5">
-			{#snippet deleteAction()}
-				<UniversalDeleteAction
-					id={strategyPlan.id}
-					action="?/deletestrategyplan"
-					data={deleteForm}
-					onDelete={handleDelete}
-				/>
-			{/snippet}
-			{#snippet updateAction()}
-				<Update {strategyPlan} bind:isDrawerOpen />
-			{/snippet}
-			<div class="flex gap-4">
-				<Create strategyPlanId={strategyPlan.id} onToggle={fetchData} />
-				<DropDownWrapper bind:isDrawerOpen childrens={[updateAction, deleteAction]} />
+		{#if !isPublished}
+			<div class="flex items-center gap-5">
+				{#snippet deleteAction()}
+					<UniversalDeleteAction
+						id={strategyPlan.id}
+						action="?/deletestrategyplan"
+						data={deleteForm}
+						onDelete={handleDelete}
+					/>
+				{/snippet}
+				{#snippet updateAction()}
+					<Update {strategyPlan} bind:isDrawerOpen />
+				{/snippet}
+				<div class="flex gap-4">
+					<Create strategyPlanId={strategyPlan.id} onToggle={fetchData} />
+					<DropDownWrapper bind:isDrawerOpen childrens={[updateAction, deleteAction]} />
+				</div>
 			</div>
-		</div>
+		{/if}
 	</header>
-
 	{#if isExpanded}
 		<div class="p-4" transition:slide={{ duration: 300 }}>
 			{#if isLoading}
@@ -156,3 +163,14 @@
 		</div>
 	{/if}
 </div>
+
+<!-- <div class="w-full">
+	<header class="sticky top-0 flex h-10 items-center justify-between border-b px-4 md:px-10">
+		<div class="flex items-center gap-2">
+		</div>
+		<div class="flex items-center gap-5">
+			
+		</div>
+	</header>
+
+</div> -->

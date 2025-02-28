@@ -8,6 +8,7 @@ import type { SuperValidated } from 'sveltekit-superforms';
 import type { UniversalDeleteInput } from '$lib/schemas/universal_delete_schema';
 import type { UpdateStratPlanInput } from '../(data)/strat_plan_schema';
 import TableActions from './tableActions.svelte';
+import { titleCase } from 'title-case';
 // This type is used to define the shape of our data.
 export type DPCR = Tables<'strategic_plan'>;
 
@@ -28,6 +29,19 @@ export const createColumns = (
 			const title = getValue<string>();
 			const id = row.original.id;
 			return renderComponent(DataLink, { id, name: title });
+		}
+	},
+	{
+		accessorKey: 'status',
+		header: ({ column }) =>
+			renderComponent(DataTableSortButton, {
+				text: 'Status',
+				arrangement: column.getIsSorted(),
+				onclick: () => column.toggleSorting(column.getIsSorted() === 'asc')
+			}),
+		cell: ({ getValue, row }) => {
+			const status = getValue<string>();
+			return titleCase(status);
 		}
 	},
 	{

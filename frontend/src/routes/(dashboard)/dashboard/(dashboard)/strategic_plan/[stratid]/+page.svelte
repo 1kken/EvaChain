@@ -12,6 +12,8 @@
 
 	const strategyPlanForms = data.forms.strategyPlanForm;
 	const performanceIndicatorForms = data.forms.strategyPlanPerfIndicatorForm;
+	const publishForm = data.forms.publishStratPlanSchema;
+
 	//forms
 	setStrategyPlanFormContext(strategyPlanForms);
 	setStrategyPerformanceIndicatorFormContext(performanceIndicatorForms);
@@ -31,6 +33,6 @@
 
 	<!-- Navigation dock -->
 	<div class="fixed bottom-6 left-0 right-0 z-50 flex justify-center">
-		<NavButton />
+		<NavButton data={publishForm} />
 	</div>
 </div>

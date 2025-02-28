@@ -617,6 +617,7 @@ export type Database = {
           program_id: number | null
           review_by: string
           reviewer_position: string
+          status: Database["public"]["Enums"]["dpcr_status"]
           title: string
           unit_id: number | null
           updated_at: string
@@ -629,6 +630,7 @@ export type Database = {
           program_id?: number | null
           review_by: string
           reviewer_position: string
+          status?: Database["public"]["Enums"]["dpcr_status"]
           title: string
           unit_id?: number | null
           updated_at?: string
@@ -641,6 +643,7 @@ export type Database = {
           program_id?: number | null
           review_by?: string
           reviewer_position?: string
+          status?: Database["public"]["Enums"]["dpcr_status"]
           title?: string
           unit_id?: number | null
           updated_at?: string
@@ -4030,6 +4033,7 @@ export type Database = {
           owner_id: string
           program_id: number | null
           start_year: number
+          status: Database["public"]["Enums"]["strat_plan_status"]
           title: string
           unit_id: number | null
           updated_at: string
@@ -4044,6 +4048,7 @@ export type Database = {
           owner_id: string
           program_id?: number | null
           start_year: number
+          status?: Database["public"]["Enums"]["strat_plan_status"]
           title: string
           unit_id?: number | null
           updated_at?: string
@@ -4058,6 +4063,7 @@ export type Database = {
           owner_id?: string
           program_id?: number | null
           start_year?: number
+          status?: Database["public"]["Enums"]["strat_plan_status"]
           title?: string
           unit_id?: number | null
           updated_at?: string
@@ -5446,6 +5452,7 @@ export type Database = {
       }
     }
     Enums: {
+      dpcr_status: "draft" | "submitted" | "reviewing" | "revision" | "approved"
       input_type_accomplishment: "percentage" | "number" | "ratio" | "text"
       input_type_op: "percentage" | "number" | "ratio" | "text"
       input_type_strategic_plan: "percentage" | "number" | "ratio" | "text"
@@ -5469,6 +5476,7 @@ export type Database = {
       notification_type: "success" | "warning" | "fail" | "notification"
       op_status: "draft" | "submitted" | "reviewing" | "revision" | "approved"
       scope_type: "all" | "office" | "program" | "unit"
+      strat_plan_status: "draft" | "published"
       strategic_major_output:
         | "instruction"
         | "research"

@@ -1,4 +1,5 @@
 -- 20250128143622_add_years_to_strategic_plan.sql
+CREATE TYPE strat_plan_status AS ENUM ('draft','published');
 
 -- Create major output enum type
 CREATE TYPE strategic_major_output AS ENUM (
@@ -11,6 +12,7 @@ CREATE TYPE strategic_major_output AS ENUM (
 -- Create strategic_plan table
 CREATE TABLE strategic_plan (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    status strat_plan_status DEFAULT 'draft' NOT NULL,
     title VARCHAR(255) NOT NULL,
     major_output strategic_major_output NOT NULL,
     goal TEXT NOT NULL,
