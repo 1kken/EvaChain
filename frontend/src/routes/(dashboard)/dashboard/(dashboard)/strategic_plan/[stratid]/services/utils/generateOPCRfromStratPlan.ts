@@ -25,7 +25,7 @@ export async function createOPCR(supabase: SupabaseClientType, strategicPlan: an
 	return await supabase
 		.from('opcr')
 		.insert({
-			title: strategicPlan.title,
+			title: 'Generated OPCR' + ' ' + new Date().getFullYear(),
 			review_by: 'Juan De La Cruz',
 			reviewer_position: 'Juan De La Cruz',
 			administrative_officer: 'Juan De La Cruz',

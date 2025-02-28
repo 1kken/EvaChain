@@ -31,7 +31,7 @@ export async function createDPCR(
 	return await supabase
 		.from('dpcr')
 		.insert({
-			title: 'Generated Dpcr' + new Date().getFullYear(),
+			title: 'Generated Dpcr' + ' ' + new Date().getFullYear(),
 			review_by: '',
 			reviewer_position: '',
 			owner_id: userId,
