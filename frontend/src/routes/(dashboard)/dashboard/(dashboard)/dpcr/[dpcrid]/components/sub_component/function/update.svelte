@@ -44,7 +44,7 @@
 			if (form.valid && action.dpcrFunction) {
 				const dpcrFunction = action.dpcrFunction;
 				updateDpcrFunction(dpcrFunction.id, dpcrFunction);
-				showSuccessToast(`Succesfully added dpcr function ${dpcrFunction.title}`);
+				showSuccessToast(`Succesfully updated DPCR function ${dpcrFunction.title}`);
 				isOpen = false;
 				isDrawerOpen = false;
 				reset({

@@ -48,7 +48,7 @@
 			if (form.valid && action.dpcrCategory) {
 				const dpcrCategory = action.dpcrCategory;
 				updateDpcrCategory(dpcrCategory.id, dpcrCategory);
-				showSuccessToast(`Succesfully Added DPCR category ${dpcrCategory.category}`);
+				showSuccessToast(`Succesfully updated DPCR category ${dpcrCategory.category}`);
 				isOpen = false;
 				isDrawerOpen = false;
 				reset({

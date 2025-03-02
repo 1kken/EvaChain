@@ -45,7 +45,7 @@
 			if (form.valid && action.opcrCategory) {
 				const opcrCategory = action.opcrCategory;
 				updateOpcrCategory(opcrCategory.id, opcrCategory);
-				showSuccessToast(`Succesfully added OPCR category ${opcrCategory.category}`);
+				showSuccessToast(`Succesfully updated OPCR category ${opcrCategory.category}`);
 				isOpen = false;
 				isDrawerOpen = false;
 				reset({

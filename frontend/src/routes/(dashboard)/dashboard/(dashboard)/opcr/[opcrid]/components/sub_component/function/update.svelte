@@ -92,7 +92,7 @@
 				<span> *You can still add unspecified values beyond the given ones as you type.* </span>
 			</Dialog.Description>
 		</Dialog.Header>
-		<form action="?/updatedocrfunction" method="POST" use:enhance class="space-y-6">
+		<form action="?/updateopcrfunction" method="POST" use:enhance class="space-y-6">
 			<input hidden name="id" value={$formData.id} />
 			<Form.Field {form} name="title">
 				<Form.Control>
