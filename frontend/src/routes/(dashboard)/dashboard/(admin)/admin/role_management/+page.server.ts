@@ -1,28 +1,18 @@
-import { error, type Actions } from '@sveltejs/kit';
-import type { PageServerLoad } from './$types';
-import { superValidate } from 'sveltekit-superforms';
-import { zod } from 'sveltekit-superforms/adapters';
-import { universalDeleteSchema } from '$lib/schemas/universal_delete_schema';
-import { createRoleWithPermissionsSchema, updateRoleWithPermissionsSchema } from './(data)/schema';
+import type { Actions, PageServerLoad } from './$types';
+import { fetchProfiles, getUpdateUserRolesForms } from './utils/page-server-loader';
+import { updateUserRole } from './utils/services';
 
 export const load = (async ({ locals: { supabase } }) => {
-	const { data: roles, error: rolesError } = await supabase.from('roles').select('*');
-
-	const createForm = await superValidate(zod(createRoleWithPermissionsSchema));
-	const updateForm = await superValidate(zod(updateRoleWithPermissionsSchema));
-	const deleteForm = await superValidate(zod(universalDeleteSchema));
-
-	if (rolesError) {
-		error(401, { message: rolesError.message });
-	}
+	const profileDetails = await fetchProfiles(supabase);
+	const { updateForm } = await getUpdateUserRolesForms();
 	return {
-		forms: {
-			createForm,
-			updateForm,
-			deleteForm
-		},
-		roles
+		profileDetails,
+		updateForm
 	};
 }) satisfies PageServerLoad;
 
-export const actions: Actions = {};
+export const actions = {
+	updateuserrole: async ({ request, locals: { supabase } }) => {
+		return updateUserRole(request, supabase);
+	}
+} satisfies Actions;
