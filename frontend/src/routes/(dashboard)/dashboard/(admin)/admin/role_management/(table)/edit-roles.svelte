@@ -7,12 +7,13 @@
 	import { Pencil, Save, LoaderCircle } from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import { titleCase } from 'title-case';
-	import { superForm, type SuperValidated } from 'sveltekit-superforms';
+	import SuperDebug, { superForm, type SuperValidated } from 'sveltekit-superforms';
 	import { updateUserRoleSchema, type UpdateUserRoleSchemaInput } from '../utils/schema';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';
 	import * as RadioGroup from '$lib/components/ui/radio-group/index.js';
 	import { fetchRoles, fetchUserRoles } from '../utils/page-loader';
+	import { browser } from '$app/environment';
 
 	interface Props {
 		userDetails: Tables<'profile_details_view'>;
@@ -30,8 +31,18 @@
 	const form = superForm(updateForm, {
 		id: crypto.randomUUID(),
 		dataType: 'json',
+		applyAction: false,
 		validators: zodClient(updateUserRoleSchema),
-		multipleSubmits: 'prevent'
+		multipleSubmits: 'prevent',
+		resetForm: false,
+		onUpdate({ form, result }) {
+			if (form.valid && result.type === 'success') {
+				if (form.valid) {
+					showSuccessToast(`Successfully updated role for ${titleCase(userDetails.full_name!)}`);
+					isOpen = false;
+				}
+			}
+		}
 	});
 
 	const { form: formData, enhance, delayed, message } = form;
@@ -106,12 +117,6 @@
 			showErrorToast(`Error updating role for ${titleCase(userDetails.full_name!)}`);
 			$formData.userId = userDetails.id!;
 		}
-		if ($message?.status === 'success') {
-			isOpen = false;
-			showSuccessToast(`Role updated for ${titleCase(userDetails.full_name!)}`);
-			// Reset the user roles to force a refresh next time
-			userRoles = [];
-		}
 	});
 </script>
 
@@ -184,6 +189,9 @@
 					{/if}
 				</div>
 			</form>
+		{/if}
+		{#if browser}
+			<SuperDebug data={$formData} />
 		{/if}
 	</Dialog.Content>
 </Dialog.Root>
