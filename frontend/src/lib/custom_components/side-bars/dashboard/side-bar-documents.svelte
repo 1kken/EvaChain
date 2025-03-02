@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
+	import { getUserAuthStore } from '$lib/utils/rbac';
 	import {
 		NotebookPen,
 		ScrollText,
@@ -10,16 +11,12 @@
 		FileCheck2
 	} from 'lucide-svelte';
 
+	const { hasPermission } = getUserAuthStore();
 	const items = [
 		{
 			title: 'IPCR',
 			url: `/dashboard/ipcr`,
 			icon: ScrollText
-		},
-		{
-			title: 'Operational Plan',
-			url: `/dashboard/operational_plan`,
-			icon: NotebookPen
 		},
 		{
 			title: 'DPCR',
@@ -42,6 +39,19 @@
 			icon: ClipboardCheck
 		}
 	];
+
+	//for operational plan
+	if (
+		hasPermission('office_create_operational_plan') ||
+		hasPermission('program_create_operational_plan') ||
+		hasPermission('unit_create_operational_plan')
+	) {
+		items.push({
+			title: 'Operational Plan',
+			url: `/dashboard/operational_plan`,
+			icon: NotebookPen
+		});
+	}
 	function isActive(itemUrl: string) {
 		return $page.url.pathname === itemUrl;
 	}
