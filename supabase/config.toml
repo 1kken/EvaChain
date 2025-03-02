@@ -84,6 +84,7 @@ sql_paths = [
     './seeds/rbac/permissions/*.sql',
     './seeds/rbac/roles/*.sql',
     './seeds/rbac/connections/ipcr/*.sql',
+    './seeds/rbac/connections/operational_plan/*.sql',
     './seeds/rbac/assignment/*.sql',
 ]
 

@@ -50,6 +50,6 @@ export async function updateUserRole(request: Request, supabase: SupabaseClient<
 			return message(form, { status: 'error', text: error.message });
 		}
 	}
-
+	console.log(form);
 	return { form };
 }

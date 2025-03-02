@@ -2,11 +2,11 @@
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import type { Tables } from '$lib/types/database.types';
 	import TruncatedDiv from '../../../components/TruncatedDiv.svelte';
-	import DetailsSection from '../../../operational_plan/[opid]/components/sub_components/view_indicator/DetailsSection.svelte';
-	import StatusSection from '../../../operational_plan/[opid]/components/sub_components/view_indicator/StatusSection.svelte';
-	import TimestampSection from '../../../operational_plan/[opid]/components/sub_components/view_indicator/TimestampSection.svelte';
 	import { getAccomplishmentActivityIndicatorStore } from '../states/activity_indicator_state';
+	import DetailsSection from './sub_components/view_indicator/DetailsSection.svelte';
 	import IndicatorHeader from './sub_components/view_indicator/IndicatorHeader.svelte';
+	import StatusSection from './sub_components/view_indicator/StatusSection.svelte';
+	import TimestampSection from './sub_components/view_indicator/TimestampSection.svelte';
 
 	let { indicator }: { indicator: Tables<'accomplishment_activity_indicator'> } = $props();
 	const { currentAccomplishmentActivityIndicators } = getAccomplishmentActivityIndicatorStore();
@@ -28,6 +28,12 @@
 		remarks: indicator.remarks
 	});
 
+	let others = $state({
+		accomplishment_rate: indicator.accomplishment_rate,
+		annualTarget: indicator.annual_target,
+		total: indicator.total
+	});
+
 	// Update state reactively when indicator changes
 	$effect(() => {
 		const updatedindicator = $currentAccomplishmentActivityIndicators.find(
@@ -43,6 +49,12 @@
 				q2: indicator.q2_accomplishment,
 				q3: indicator.q3_accomplishment,
 				q4: indicator.q4_accomplishment
+			};
+
+			others = {
+				accomplishment_rate: indicator.accomplishment_rate,
+				annualTarget: indicator.annual_target,
+				total: indicator.total
 			};
 
 			itemDetail = {
@@ -64,7 +76,12 @@
 			<IndicatorHeader indicator={currentindicator.performance_indicator} />
 
 			<!-- Status Section -->
-			<StatusSection {progress} />
+			<StatusSection
+				{progress}
+				total={others.total}
+				annualTarget={others.annualTarget}
+				accomplishmentRate={others.accomplishment_rate ?? '0%'}
+			/>
 
 			<DetailsSection {itemDetail} />
 
