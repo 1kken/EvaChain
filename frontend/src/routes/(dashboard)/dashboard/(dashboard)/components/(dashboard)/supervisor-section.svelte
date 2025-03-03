@@ -1,6 +1,7 @@
 <script lang="ts">
+	import LineChartFacultyPerformance from '$lib/charts/supervisor/line-chart-faculty-performance.svelte';
+	import LineChartFacultyTeaching from '$lib/charts/supervisor/line-chart-faculty-teaching.svelte';
 	import PopulationPieChart from '$lib/charts/supervisor/population-pie-chart.svelte';
-	import * as Card from '$lib/components/ui/card/index.js';
 
 	// Updated type definition to match the new data structure
 	type PopulationPieChartProps = {
@@ -22,11 +23,25 @@
 		>;
 	};
 
+	// faculty performance data
+	type PerformanceSummary = {
+		average: number;
+		year: number;
+		period: number;
+	};
+
+	interface TeachingEffectivenessSummary {
+		average: number;
+		year: number;
+		period: number;
+	}
 	interface Props {
 		populationPieChartProps: PopulationPieChartProps;
+		performanceData: PerformanceSummary[];
+		teachingEffectivenessData: TeachingEffectivenessSummary[];
 	}
 
-	let { populationPieChartProps }: Props = $props();
+	let { populationPieChartProps, performanceData, teachingEffectivenessData }: Props = $props();
 
 	// Population pie chart
 	const academicRanks = $derived(populationPieChartProps.academicRanks);
@@ -35,16 +50,26 @@
 	const breakdownEmploymentStatus = $derived(populationPieChartProps.breakdownEmploymentStatus);
 </script>
 
-<Card.Root>
-	<Card.Header>
-		<Card.Title>Employment Status and Academic Ranking</Card.Title>
-	</Card.Header>
-	<Card.Content>
-		<PopulationPieChart
-			{academicRanks}
-			{employeeStatus}
-			{breakdownAcademicRanks}
-			{breakdownEmploymentStatus}
-		/>
-	</Card.Content>
-</Card.Root>
+<div class="flex">
+	<div class="grid w-full max-w-7xl grid-cols-3 gap-6">
+		<!-- Performance Chart -->
+		<div class="col-span-2 rounded-xl shadow-lg">
+			<LineChartFacultyPerformance {performanceData} />
+		</div>
+
+		<!-- Faculty Population Chart -->
+		<div class="row-span-2 flex items-center justify-center rounded-xl p-6 shadow-lg">
+			<PopulationPieChart
+				{academicRanks}
+				{employeeStatus}
+				{breakdownAcademicRanks}
+				{breakdownEmploymentStatus}
+			/>
+		</div>
+
+		<!-- Teaching Effectiveness Chart -->
+		<div class="col-span-2 rounded-xl shadow-lg">
+			<LineChartFacultyTeaching {teachingEffectivenessData} />
+		</div>
+	</div>
+</div>

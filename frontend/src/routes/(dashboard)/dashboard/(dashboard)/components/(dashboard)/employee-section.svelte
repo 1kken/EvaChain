@@ -1,19 +1,11 @@
-<!-- <script lang="ts">
-	import IndividualPerformanceGauge from '$lib/charts/employee/individual-performance-gauge.svelte';
-	import * as Card from '$lib/components/ui/card/index.js';
+<script lang="ts">
+	import LineChartIpcrPerformance from '$lib/charts/employee/line-chart-ipcr-performance.svelte';
+	import type { Tables } from '$lib/types/database.types';
 	interface Props {
-		value?: number;
-		maxValue?: number;
+		ipcrPerformanceData: Tables<'ipcr_performance_summary'>[];
 	}
 
-	let { value = 3, maxValue = 5 }: Props = $props();
+	let { ipcrPerformanceData }: Props = $props();
 </script>
 
-<Card.Root>
-	<Card.Header>
-		<Card.Title>Employee Status</Card.Title>
-	</Card.Header>
-	<Card.Content>
-		<IndividualPerformanceGauge {value} {maxValue} />
-	</Card.Content>
-</Card.Root> -->
+<LineChartIpcrPerformance {ipcrPerformanceData} />

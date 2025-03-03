@@ -265,7 +265,7 @@
 	});
 </script>
 
-<div class="relative h-fit w-full">
+<div class="relative h-auto w-52">
 	<canvas id="nestedPieChart" bind:this={ctx}></canvas>
 
 	<!-- Popup -->

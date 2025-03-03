@@ -1,5 +1,8 @@
 import type { PageServerLoad } from './$types';
-import { fetchPopulationPieData } from './components/services/supervisor-scetion-services';
+import { fetchIpcrPerformanceSummary } from './components/services/employee-performance-indicator';
+import { fetchFacultyPerformance } from './components/services/supervisor-office-performance';
+import { fetchTeachingEffectiveness } from './components/services/supervisor-office-teaching-effictiveness';
+import { fetchPopulationPieData } from './components/services/supervisor-piechart';
 
 export const load = (async ({ locals: { supabase, profile, hasRole } }) => {
 	if (!profile) {
@@ -10,9 +13,18 @@ export const load = (async ({ locals: { supabase, profile, hasRole } }) => {
 		// Fetch dashboard data using our service function
 		const pieData = await fetchPopulationPieData(supabase, profile, hasRole);
 
+		const ipcrPerformanceIndicator = await fetchIpcrPerformanceSummary(supabase, profile.id);
+		const facultyPerformance = await fetchFacultyPerformance(supabase, profile, hasRole);
+		const teachingEffectiveness = await fetchTeachingEffectiveness(supabase, profile, hasRole);
+
+		console.log(teachingEffectiveness);
+
 		// Ensure we handle empty or undefined values
 		return {
-			pieData: pieData || []
+			ipcrPerformanceIndicator: ipcrPerformanceIndicator || [],
+			pieData: pieData || [],
+			facultyPerformance: facultyPerformance || [],
+			teachingEffectiveness: teachingEffectiveness || []
 		};
 	} catch (error) {
 		console.error('Error fetching dashboard data:', error);
