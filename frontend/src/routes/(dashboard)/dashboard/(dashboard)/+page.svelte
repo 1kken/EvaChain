@@ -1,4 +1,9 @@
 <script lang="ts">
+	import type { PageProps } from './$types';
+	import SupervisorSection from './components/(dashboard)/supervisor-section.svelte';
+	let props: PageProps = $props();
 </script>
 
-<h1>Hi im dashboard 2</h1>
+<div>
+	<SupervisorSection populationPieChartProps={props.data.pieData!} />
+</div>

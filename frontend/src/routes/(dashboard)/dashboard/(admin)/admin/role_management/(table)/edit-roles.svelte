@@ -190,8 +190,5 @@
 				</div>
 			</form>
 		{/if}
-		{#if browser}
-			<SuperDebug data={$formData} />
-		{/if}
 	</Dialog.Content>
 </Dialog.Root>

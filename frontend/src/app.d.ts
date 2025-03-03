@@ -3,7 +3,7 @@ import type { Session, SupabaseClient, User } from '@supabase/supabase-js';
 import type { Database } from '$lib/types/database.types';
 import type { Tables } from '$lib/types/database.types';
 
-type ProfileWithJoins = Tables<'profiles'> & {
+export type ProfileWithJoins = Tables<'profiles'> & {
 	position: { name: string } | null;
 	nature_of_work: { type: string } | null;
 	employee_status: { type: string } | null;
