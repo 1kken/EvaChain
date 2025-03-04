@@ -17,6 +17,7 @@
 				populationPieChartProps={props.data.pieData!}
 				performanceData={props.data.facultyPerformance!}
 				teachingEffectivenessData={props.data.teachingEffectiveness!}
+				accReportCategoryAvg={props.data.accReportCategoryAvg}
 			/>
 		</div>
 	{/if}

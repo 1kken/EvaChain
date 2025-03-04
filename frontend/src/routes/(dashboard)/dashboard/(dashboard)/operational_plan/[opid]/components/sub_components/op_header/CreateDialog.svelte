@@ -68,6 +68,8 @@
 	let items = [
 		'Instruction',
 		'Research',
+		'Extension',
+		'Governance and Management',
 		'Extension And Community Management',
 		'Faculty Development',
 		'Infrastructure And Technology',

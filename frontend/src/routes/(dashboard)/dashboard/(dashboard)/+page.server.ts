@@ -1,5 +1,6 @@
 import type { PageServerLoad } from './$types';
 import { fetchIpcrPerformanceSummary } from './components/services/employee-performance-indicator';
+import { fetchIREGMPerYear } from './components/services/supervisor-office-IREGM';
 import { fetchFacultyPerformance } from './components/services/supervisor-office-performance';
 import { fetchTeachingEffectiveness } from './components/services/supervisor-office-teaching-effictiveness';
 import { fetchPopulationPieData } from './components/services/supervisor-piechart';
@@ -16,6 +17,7 @@ export const load = (async ({ locals: { supabase, profile, hasRole } }) => {
 		const ipcrPerformanceIndicator = await fetchIpcrPerformanceSummary(supabase, profile.id);
 		const facultyPerformance = await fetchFacultyPerformance(supabase, profile, hasRole);
 		const teachingEffectiveness = await fetchTeachingEffectiveness(supabase, profile, hasRole);
+		const accReportCategoryAvg = await fetchIREGMPerYear(supabase, profile, hasRole);
 
 		console.log(teachingEffectiveness);
 
@@ -24,7 +26,8 @@ export const load = (async ({ locals: { supabase, profile, hasRole } }) => {
 			ipcrPerformanceIndicator: ipcrPerformanceIndicator || [],
 			pieData: pieData || [],
 			facultyPerformance: facultyPerformance || [],
-			teachingEffectiveness: teachingEffectiveness || []
+			teachingEffectiveness: teachingEffectiveness || [],
+			accReportCategoryAvg: accReportCategoryAvg
 		};
 	} catch (error) {
 		console.error('Error fetching dashboard data:', error);
