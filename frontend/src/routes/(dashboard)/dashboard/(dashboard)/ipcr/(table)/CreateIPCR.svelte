@@ -101,7 +101,7 @@
 				</Form.Field>
 				<!--Teaching-->
 				{#if $currentProfile!.nature_of_work_id === 1}
-					<div class="grid grid-cols-1 space-x-2 md:grid-cols-2">
+					<div class="grid grid-cols-1 md:grid-cols-2">
 						<Form.Field {form} name="dean">
 							<Form.Control>
 								{#snippet children({ props })}
@@ -126,7 +126,7 @@
 						</Form.Field>
 					</div>
 				{:else}
-					<div class="grid grid-cols-1 space-x-2 md:grid-cols-2">
+					<div class="grid grid-cols-1 md:grid-cols-2">
 						<Form.Field {form} name="immediate_supervisor">
 							<Form.Control>
 								{#snippet children({ props })}
