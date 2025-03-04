@@ -46,6 +46,31 @@
 	let ctx: ChartItem;
 	let chart: Chart | null = null;
 
+	// Function to view PDF report
+	const viewPdf = async (year: number, period: number) => {
+		try {
+			const response = await fetch(
+				`/api/reports/ipcr_performance_summary?year=${year}&period=${period}&inline=true`,
+				{
+					method: 'POST'
+				}
+			);
+
+			if (!response.ok) throw new Error('Failed to generate PDF');
+
+			// Create blob URL and open in new tab
+			const blob = await response.blob();
+			const url = URL.createObjectURL(blob);
+			window.open(url, '_blank');
+
+			// Clean up blob URL after opening
+			setTimeout(() => URL.revokeObjectURL(url), 100);
+		} catch (error) {
+			console.error('Error viewing PDF:', error);
+			// Handle error appropriately
+		}
+	};
+
 	function createChart(theme: string | undefined) {
 		const isDark = theme === 'dark';
 		const textColor = isDark ? 'white' : 'black';
@@ -120,6 +145,14 @@
 			},
 			options: {
 				responsive: true,
+				onClick: (event, elements) => {
+					console.log('Clicked on:', elements);
+					if (elements.length > 0) {
+						const index = elements[0].index;
+						const item = sortedData[index];
+						viewPdf(item.year, item.period);
+					}
+				},
 				scales: {
 					x: {
 						type: 'category',
@@ -188,7 +221,8 @@
 
 								return [
 									`Average Rating: ${rating.toFixed(2)}`,
-									`Interpretation: ${interpretation}`
+									`Interpretation: ${interpretation}`,
+									`Click to view detailed report`
 								];
 							},
 							title: (tooltipItems) => {
@@ -202,7 +236,7 @@
 						display: true,
 						align: 'start',
 						color: textColor,
-						text: 'Faculty Performance Analysis'
+						text: 'Faculty Performance Analysis (Click on bar/point to view details)'
 					}
 				},
 				maintainAspectRatio: false
@@ -251,6 +285,6 @@
 	});
 </script>
 
-<div class="h-80 w-full rounded-lg p-4 shadow-lg dark:bg-slate-700">
+<div class="h-80 w-full cursor-pointer rounded-lg p-4 shadow-lg dark:bg-slate-700">
 	<canvas id="faculty-performance-chart" bind:this={ctx}></canvas>
 </div>
