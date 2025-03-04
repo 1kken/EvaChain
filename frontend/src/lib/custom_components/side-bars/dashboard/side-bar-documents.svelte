@@ -19,26 +19,38 @@
 			icon: ScrollText
 		},
 		{
-			title: 'DPCR',
-			url: `/dashboard/dpcr`,
-			icon: NotebookText
-		},
-		{
-			title: 'OPCR',
-			url: `/dashboard/opcr`,
-			icon: FileCheck2
-		},
-		{
-			title: 'Strategic Plan',
-			url: `/dashboard/strategic_plan`,
-			icon: BookOpenCheck
-		},
-		{
 			title: 'Accomplishment Report',
 			url: `/dashboard/accomplishment_report`,
 			icon: ClipboardCheck
 		}
 	];
+
+	//for dpcr
+	if (hasPermission('create_dpcr')) {
+		items.push({
+			title: 'DPCR',
+			url: `/dashboard/dpcr`,
+			icon: NotebookText
+		});
+	}
+
+	//for strategic plan
+	if (hasPermission('create_strategic_plan')) {
+		items.push({
+			title: 'Strategic Plan',
+			url: `/dashboard/strategic_plan`,
+			icon: BookOpenCheck
+		});
+	}
+
+	//for opcr
+	if (hasPermission('create_opcr')) {
+		items.push({
+			title: 'OPCR',
+			url: `/dashboard/opcr`,
+			icon: FileCheck2
+		});
+	}
 
 	//for operational plan
 	if (

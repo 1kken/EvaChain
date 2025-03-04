@@ -5,6 +5,8 @@ import type { Database } from '$lib/types/database.types';
 import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public';
 import { attachAuthHelpers } from '$lib/hooks/auth';
 import { handleOperationalPlanAccess } from '$lib/hooks/authOplan';
+import { handleOpcrAccess } from '$lib/hooks/authOPCR';
+import { handleStratPlanAccess } from '$lib/hooks/authStratPlan';
 
 const supabase: Handle = async ({ event, resolve }) => {
 	/**
@@ -144,4 +146,10 @@ const authGuard: Handle = async ({ event, resolve }) => {
 	return resolve(event);
 };
 
-export const handle: Handle = sequence(supabase, authGuard, handleOperationalPlanAccess);
+export const handle: Handle = sequence(
+	supabase,
+	authGuard,
+	handleOperationalPlanAccess,
+	handleOpcrAccess,
+	handleStratPlanAccess
+);

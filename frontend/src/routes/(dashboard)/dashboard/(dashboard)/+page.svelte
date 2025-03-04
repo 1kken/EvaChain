@@ -11,7 +11,7 @@
 	<div>
 		<EmployeeSection ipcrPerformanceData={props.data.ipcrPerformanceIndicator!} />
 	</div>
-	{#if hasRole('dean') || hasRole('program_chair') || hasRole('head_of_office') || hasRole('head_of_operating_unit')}
+	{#if hasRole('dean') || hasRole('program_chair') || hasRole('head_of_office')}
 		<div>
 			<SupervisorSection
 				populationPieChartProps={props.data.pieData!}
