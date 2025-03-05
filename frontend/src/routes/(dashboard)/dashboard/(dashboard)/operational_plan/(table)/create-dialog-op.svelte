@@ -30,7 +30,9 @@
 	const { currentProfile } = getAuthStore();
 	const { currentOperationalPlans } = getOperationalPlansStore();
 
-	let isOpen = $state(false);
+	let isOpenBlankTemplate = $state(false);
+	let isOpenPreviousTemplate = $state(false);
+
 	let isDrawerOpen = $state(false);
 	const form = superForm(data, {
 		validators: zodClient(createOperationalPlanSchema),
@@ -41,7 +43,8 @@
 				const operationalPlan = action.opData;
 				addOperationalPlan(operationalPlan);
 				showSuccessToast(`Succesfully added core function ${operationalPlan.title}`);
-				isOpen = false;
+				isOpenBlankTemplate = false;
+				isOpenPreviousTemplate = false;
 				isDrawerOpen = false;
 			}
 		}
@@ -63,7 +66,8 @@
 		}
 		if ($message?.status == 'success') {
 			showSuccessToast($message.text);
-			isOpen = false;
+			isOpenBlankTemplate = false;
+			isOpenPreviousTemplate = false;
 			isDrawerOpen = false;
 			reset({
 				data: { title: `Operational Plan ${year}`, implementing_unit: '' },
@@ -96,7 +100,7 @@
 
 {#snippet blankTemplate()}
 	<!---BLANK TEMPLATE-->
-	<Dialog.Root bind:open={isOpen}>
+	<Dialog.Root bind:open={isOpenBlankTemplate}>
 		<Dialog.Trigger class={buttonVariants({ variant: 'ghost' })}
 			><BookOpen /> Blank Template</Dialog.Trigger
 		>
@@ -109,7 +113,7 @@
 					typically aligned with its strategic plan.
 				</Dialog.Description>
 			</Dialog.Header>
-			<form action="?/createop" method="POST" use:enhance>
+			<form action="?/createopNew" method="POST" use:enhance>
 				<Form.Field {form} name="title">
 					<Form.Control>
 						{#snippet children({ props })}
@@ -201,7 +205,7 @@
 {/snippet}
 
 {#snippet withPast()}
-	<Dialog.Root bind:open={isOpen}>
+	<Dialog.Root bind:open={isOpenPreviousTemplate}>
 		<Dialog.Trigger class={buttonVariants({ variant: 'ghost' })}
 			><NotepadTextDashed /> Use Previous
 		</Dialog.Trigger>
@@ -214,7 +218,7 @@
 					typically aligned with its strategic plan.
 				</Dialog.Description>
 			</Dialog.Header>
-			<form action="?/createop&usePrevious=true" method="POST" use:enhance>
+			<form action="?/createopFromPrevious" method="POST" use:enhance>
 				<Form.Field {form} name="title">
 					<Form.Control>
 						{#snippet children({ props })}

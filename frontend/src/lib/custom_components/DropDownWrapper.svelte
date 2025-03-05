@@ -51,6 +51,7 @@
 				<DropdownMenu.Item
 					onSelect={(e) => {
 						e.preventDefault();
+						e.stopPropagation();
 					}}
 				>
 					{@render children()}

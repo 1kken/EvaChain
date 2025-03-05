@@ -18,7 +18,8 @@ export async function createOperationalPlan(
 	request: Request,
 	session: Session,
 	supabase: SupabaseClient<Database>,
-	shouldCopy = false
+	shouldCopy = false,
+	hasPermission: (role: string, userId: string) => Promise<boolean>
 ) {
 	const form = await superValidate<Infer<CreateOperationalPlanSchema>, App.Superforms.Message>(
 		request,
@@ -42,7 +43,21 @@ export async function createOperationalPlan(
 		return message(form, { status: 'error', text: 'Error fetching profile details' });
 	}
 
-	const { unit_id, office_id, program_id } = profileData;
+	let { unit_id, office_id, program_id, id } = profileData;
+
+	const [office, unit] = await Promise.all([
+		hasPermission('office_create_operational_plan', id),
+		hasPermission('unit_create_operational_plan', id)
+	]);
+
+	if (unit) {
+		office_id = null;
+		program_id = null;
+	}
+
+	if (office) {
+		program_id = null;
+	}
 
 	if (shouldCopy) {
 		const copyResult = await checkAndCopyOperationalPlan(supabase, profileData, {
@@ -83,6 +98,7 @@ export async function createOperationalPlan(
 
 	return { form, opData };
 }
+
 export async function deleteOperationalPlan(request: Request, supabase: SupabaseClient<Database>) {
 	const form = await superValidate<Infer<UniversalDeleteSchema>, App.Superforms.Message>(
 		request,

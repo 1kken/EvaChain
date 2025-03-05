@@ -51,15 +51,30 @@ export const load = (async ({ locals: { supabase, session } }) => {
 
 //actions
 export const actions = {
-	createop: async ({ url, request, locals: { supabase, session } }) => {
-		const usePrevious = url.searchParams.get('usePrevious') === 'true';
+	// createop: async ({ url, request, locals: { supabase, session, hasPermission } }) => {
+	// 	const usePrevious = url.searchParams.get('usePrevious') === 'true';
+
+	// 	console.log(url.searchParams.get('usePrevious'));
+
+	// 	if (!session) {
+	// 		return { status: 401, body: 'Unauthorized' };
+	// 	}
+	// 	if (usePrevious) {
+	// 		return createOperationalPlan(request, session, supabase, true, hasPermission);
+	// 	}
+	// 	return createOperationalPlan(request, session, supabase, false, hasPermission);
+	// },
+	createopNew: async ({ request, locals: { supabase, session, hasPermission } }) => {
 		if (!session) {
 			return { status: 401, body: 'Unauthorized' };
 		}
-		if (usePrevious) {
-			return createOperationalPlan(request, session, supabase, true);
+		return createOperationalPlan(request, session, supabase, false, hasPermission);
+	},
+	createopFromPrevious: async ({ request, locals: { supabase, session, hasPermission } }) => {
+		if (!session) {
+			return { status: 401, body: 'Unauthorized' };
 		}
-		return createOperationalPlan(request, session, supabase);
+		return createOperationalPlan(request, session, supabase, true, hasPermission);
 	},
 	deleteop: async ({ request, locals: { supabase } }) => {
 		return deleteOperationalPlan(request, supabase);
