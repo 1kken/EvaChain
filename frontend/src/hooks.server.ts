@@ -7,6 +7,7 @@ import { attachAuthHelpers } from '$lib/hooks/auth';
 import { handleOperationalPlanAccess } from '$lib/hooks/authOplan';
 import { handleOpcrAccess } from '$lib/hooks/authOPCR';
 import { handleStratPlanAccess } from '$lib/hooks/authStratPlan';
+import { handleAccReportAccess } from '$lib/hooks/authAccReport';
 
 const supabase: Handle = async ({ event, resolve }) => {
 	/**
@@ -151,5 +152,6 @@ export const handle: Handle = sequence(
 	authGuard,
 	handleOperationalPlanAccess,
 	handleOpcrAccess,
-	handleStratPlanAccess
+	handleStratPlanAccess,
+	handleAccReportAccess
 );

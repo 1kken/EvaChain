@@ -17,11 +17,6 @@
 			title: 'IPCR',
 			url: `/dashboard/ipcr`,
 			icon: ScrollText
-		},
-		{
-			title: 'Accomplishment Report',
-			url: `/dashboard/accomplishment_report`,
-			icon: ClipboardCheck
 		}
 	];
 
@@ -49,6 +44,15 @@
 			title: 'OPCR',
 			url: `/dashboard/opcr`,
 			icon: FileCheck2
+		});
+	}
+
+	//for accomplishment report
+	if (hasPermission('create_accomplishment_report')) {
+		items.push({
+			title: 'Accomplishment Report',
+			url: `/dashboard/accomplishment_report`,
+			icon: ClipboardCheck
 		});
 	}
 
