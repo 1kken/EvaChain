@@ -12,18 +12,92 @@
 		type ChartItem
 	} from 'chart.js';
 	import type { Tables } from '$lib/types/database.types';
+	import { getDashboardControlsStore } from '../../../routes/(dashboard)/dashboard/(dashboard)/components/state/sueprvisor_state';
 
 	// Register necessary Chart.js components
 	Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 	interface Props {
-		accReportCategoryAvg?: Tables<'accomplishment_report_category_avg'> | null;
+		accReportCategoryAvg?: Tables<'accomplishment_report_category_avg'>[] | null;
 	}
 
 	let { accReportCategoryAvg }: Props = $props();
 
+	//states
+	let { IREGMYear } = getDashboardControlsStore();
+
 	let canvas: ChartItem;
 	let chart: Chart | null = null;
+	let currentYearData: Tables<'accomplishment_report_category_avg'> | null = null;
+	let displayYear = '';
+	let year: string | number = 'N/A';
+
+	// Handle changes to IREGMYear or accReportCategoryAvg
+	$effect(() => {
+		// First, update the year display to match what was selected
+		year = $IREGMYear || 'N/A';
+		displayYear = `Accomplishment report analysis Year ${year}`;
+
+		// Then filter data based on IREGMYear
+		if (accReportCategoryAvg && accReportCategoryAvg.length > 0) {
+			if ($IREGMYear) {
+				// Filter by the selected year
+				const filteredData = accReportCategoryAvg.filter((report) => {
+					const reportYear = report.created_at
+						? new Date(report.created_at).getFullYear().toString()
+						: '';
+					return reportYear === $IREGMYear;
+				});
+
+				// Use the first match or null if none found
+				currentYearData = filteredData.length > 0 ? filteredData[0] : null;
+			} else {
+				// If no year is selected, use the most recent report
+				currentYearData = [...accReportCategoryAvg].sort((a, b) => {
+					const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
+					const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
+					return dateB - dateA; // Sort in descending order (newest first)
+				})[0];
+
+				// Update year display for latest report
+				if (currentYearData?.created_at) {
+					year = new Date(currentYearData.created_at).getFullYear();
+					displayYear = `Accomplishment report analysis Year ${year}`;
+				}
+			}
+
+			// Update chart with new data when it changes
+			if (chart && canvas) {
+				updateChartData();
+			}
+		} else {
+			currentYearData = null;
+		}
+	});
+
+	function updateChartData() {
+		if (!chart) return;
+
+		// Extract data from currentYearData or use default values if undefined
+		const data = [
+			currentYearData?.instruction_avg ?? 0,
+			currentYearData?.research_avg ?? 0,
+			currentYearData?.extension_avg ?? 0,
+			currentYearData?.governance_management_avg ?? 0
+		];
+
+		chart.data.datasets[0].data = [data[0], 0, 0, 0];
+		chart.data.datasets[1].data = [0, data[1], 0, 0];
+		chart.data.datasets[2].data = [0, 0, data[2], 0];
+		chart.data.datasets[3].data = [0, 0, 0, data[3]];
+
+		// Update title
+		if (chart.options.plugins?.title) {
+			chart.options.plugins.title.text = displayYear;
+		}
+
+		chart.update();
+	}
 
 	function createChart(theme: string | undefined) {
 		const isDark = theme === 'dark';
@@ -52,12 +126,12 @@
 			'rgba(75, 192, 192, 1)'
 		];
 
-		// Extract data from accReportCategoryAvg or use default values if undefined
+		// Extract data from currentYearData or use default values if undefined
 		const data = [
-			accReportCategoryAvg?.instruction_avg ?? 0,
-			accReportCategoryAvg?.research_avg ?? 0,
-			accReportCategoryAvg?.extension_avg ?? 0,
-			accReportCategoryAvg?.governance_management_avg ?? 0
+			currentYearData?.instruction_avg ?? 0,
+			currentYearData?.research_avg ?? 0,
+			currentYearData?.extension_avg ?? 0,
+			currentYearData?.governance_management_avg ?? 0
 		];
 
 		if (chart) {
@@ -79,6 +153,11 @@
 			chart.options.scales!.y!.grid!.color = gridColor;
 
 			chart.options.plugins!.legend!.labels!.color = textColor;
+
+			// Update title
+			if (chart.options.plugins?.title) {
+				chart.options.plugins.title.text = displayYear;
+			}
 
 			chart.update();
 			return;
@@ -153,7 +232,7 @@
 					},
 					title: {
 						display: true,
-						text: 'Accomplishment report analysis',
+						text: displayYear,
 						color: textColor,
 						font: {
 							size: 12

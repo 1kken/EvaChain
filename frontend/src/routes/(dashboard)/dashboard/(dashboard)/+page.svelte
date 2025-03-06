@@ -3,8 +3,12 @@
 	import type { PageProps } from './$types';
 	import EmployeeSection from './components/(dashboard)/employee-section.svelte';
 	import SupervisorSection from './components/(dashboard)/supervisor-section.svelte';
+	import { setDashboardControlsStore } from './components/state/sueprvisor_state';
 	let props: PageProps = $props();
 	const { hasRole } = getUserAuthStore();
+	let { IREGMYear } = setDashboardControlsStore();
+
+	$inspect($IREGMYear);
 </script>
 
 <div class="grid grid-cols-1 gap-4">
@@ -18,6 +22,7 @@
 				performanceData={props.data.facultyPerformance!}
 				teachingEffectivenessData={props.data.teachingEffectiveness!}
 				accReportCategoryAvg={props.data.accReportCategoryAvg}
+				accReportCategoryHistory={props.data.accReportCategoryHistory!}
 			/>
 		</div>
 	{/if}

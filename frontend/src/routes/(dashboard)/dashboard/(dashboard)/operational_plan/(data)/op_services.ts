@@ -11,8 +11,13 @@ import {
 	universalDeleteSchema,
 	type UniversalDeleteSchema
 } from '$lib/schemas/universal_delete_schema';
-import { checkAndCopyOperationalPlan, fetchProfileDetails } from './services_helper';
+import {
+	checkAndCopyOperationalPlan,
+	checkExistingOplanThisYear,
+	fetchProfileDetails
+} from './services_helper';
 import type { Database } from '$lib/types/database.types';
+import { checkIfOperationalPlanExists } from '../../accomplishment_report/(data)/services_helper';
 
 export async function createOperationalPlan(
 	request: Request,
@@ -60,7 +65,7 @@ export async function createOperationalPlan(
 	}
 
 	if (shouldCopy) {
-		const copyResult = await checkAndCopyOperationalPlan(supabase, profileData, {
+		const copyResult = await checkAndCopyOperationalPlan(supabase, {
 			creator_id,
 			unit_id,
 			office_id,
@@ -79,6 +84,13 @@ export async function createOperationalPlan(
 			.single();
 
 		return { form, opData };
+	}
+
+	try {
+		await checkExistingOplanThisYear(supabase, unit_id, office_id, program_id);
+	} catch (error) {
+		let errorDisp = error instanceof Error ? error.message : 'An unknown error occurred';
+		return message(form, { status: 'error', text: errorDisp });
 	}
 
 	const { data: opData, error } = await supabase

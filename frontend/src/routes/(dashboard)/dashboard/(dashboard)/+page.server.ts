@@ -1,6 +1,9 @@
 import type { PageServerLoad } from './$types';
 import { fetchIpcrPerformanceSummary } from './components/services/employee-performance-indicator';
-import { fetchIREGMPerYear } from './components/services/supervisor-office-IREGM';
+import {
+	fetchIREGMForPastFiveYears,
+	fetchIREGMPerYear
+} from './components/services/supervisor-office-IREGM';
 import { fetchFacultyPerformance } from './components/services/supervisor-office-performance';
 import { fetchTeachingEffectiveness } from './components/services/supervisor-office-teaching-effictiveness';
 import { fetchPopulationPieData } from './components/services/supervisor-piechart';
@@ -18,11 +21,13 @@ export const load = (async ({ locals: { supabase, profile, hasRole } }) => {
 		const facultyPerformance = await fetchFacultyPerformance(supabase, profile, hasRole);
 		const teachingEffectiveness = await fetchTeachingEffectiveness(supabase, profile, hasRole);
 		const accReportCategoryAvg = await fetchIREGMPerYear(supabase, profile, hasRole);
+		const accReportCategoryHistory = await fetchIREGMForPastFiveYears(supabase, profile, hasRole);
 
 		console.log(teachingEffectiveness);
 
 		// Ensure we handle empty or undefined values
 		return {
+			accReportCategoryHistory: accReportCategoryHistory || [],
 			ipcrPerformanceIndicator: ipcrPerformanceIndicator || [],
 			pieData: pieData || [],
 			facultyPerformance: facultyPerformance || [],
