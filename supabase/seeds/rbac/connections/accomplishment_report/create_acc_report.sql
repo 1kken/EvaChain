@@ -107,3 +107,25 @@ SELECT
             name = 'create_accomplishment_report'
     ),
     'office' ON CONFLICT (role_id, permission_id) DO NOTHING;
+
+-- OFFICE CREATE OPLAN  VICE-PRESIDENT
+INSERT INTO
+    role_permissions (role_id, permission_id, scope)
+SELECT
+    (
+        SELECT
+            id
+        FROM
+            roles
+        WHERE
+            name = 'director'
+    ),
+    (
+        SELECT
+            id
+        FROM
+            permissions
+        WHERE
+            name = 'create_accomplishment_report'
+    ),
+    'office' ON CONFLICT (role_id, permission_id) DO NOTHING;

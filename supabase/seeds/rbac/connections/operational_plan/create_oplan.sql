@@ -107,3 +107,25 @@ SELECT
             name = 'office_create_operational_plan'
     ),
     'office' ON CONFLICT (role_id, permission_id) DO NOTHING;
+
+-- OFFICE CREATE OPLAN DIRECTOr
+INSERT INTO
+    role_permissions (role_id, permission_id, scope)
+SELECT
+    (
+        SELECT
+            id
+        FROM
+            roles
+        WHERE
+            name = 'director'
+    ),
+    (
+        SELECT
+            id
+        FROM
+            permissions
+        WHERE
+            name = 'office_create_operational_plan'
+    ),
+    'office' ON CONFLICT (role_id, permission_id) DO NOTHING;

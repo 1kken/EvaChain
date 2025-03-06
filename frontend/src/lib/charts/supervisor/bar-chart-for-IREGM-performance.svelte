@@ -153,7 +153,7 @@
 					},
 					title: {
 						display: true,
-						text: 'Accomplishment Report Category Average',
+						text: 'Accomplishment report analysis',
 						color: textColor,
 						font: {
 							size: 12

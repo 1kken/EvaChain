@@ -1,7 +1,7 @@
 import { redirect } from '@sveltejs/kit';
 import type { Handle } from '@sveltejs/kit';
 
-export const handleOpcrAccess: Handle = async ({ event, resolve }) => {
+export const handleDpcrAccess: Handle = async ({ event, resolve }) => {
 	// Only apply checks to the operational plan routes
 	if (event.url.pathname.startsWith('/dashboard/dpcr')) {
 		// Only check permissions for GET requests (not for form actions/POST)
