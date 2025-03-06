@@ -12,13 +12,24 @@ import {
 	deleteOperationalPlan,
 	updateOperationalPlan
 } from './(data)/op_services';
+import { fetchOperationalPlanId, fetchStrategicPlanId } from './(data)/page_server_loader';
 
-export const load = (async ({ locals: { supabase, session } }) => {
+export const load = (async ({ locals: { supabase, session, hasRole, profile } }) => {
 	try {
 		const userId = session?.user.id;
 		if (!userId) {
 			error(401, 'Unauthorized');
 		}
+
+		if (!profile) {
+			error(500, 'Failed to load user profile');
+		}
+
+		const [operationalPlanId, strategicPlanId] = await Promise.all([
+			fetchOperationalPlanId(supabase, profile, hasRole),
+			fetchStrategicPlanId(supabase, profile, hasRole)
+		]);
+
 		const [
 			{ data: opData, error: fetchError },
 			createOperationalPlanForm,
@@ -36,7 +47,7 @@ export const load = (async ({ locals: { supabase, session } }) => {
 		}
 
 		return {
-			data: { opData },
+			data: { opData, operationalPlanId, strategicPlanId },
 			form: {
 				createOp: createOperationalPlanForm,
 				updateOp: updateOperationalPlanForm,
@@ -51,19 +62,6 @@ export const load = (async ({ locals: { supabase, session } }) => {
 
 //actions
 export const actions = {
-	// createop: async ({ url, request, locals: { supabase, session, hasPermission } }) => {
-	// 	const usePrevious = url.searchParams.get('usePrevious') === 'true';
-
-	// 	console.log(url.searchParams.get('usePrevious'));
-
-	// 	if (!session) {
-	// 		return { status: 401, body: 'Unauthorized' };
-	// 	}
-	// 	if (usePrevious) {
-	// 		return createOperationalPlan(request, session, supabase, true, hasPermission);
-	// 	}
-	// 	return createOperationalPlan(request, session, supabase, false, hasPermission);
-	// },
 	createopNew: async ({ request, locals: { supabase, session, hasPermission } }) => {
 		if (!session) {
 			return { status: 401, body: 'Unauthorized' };
