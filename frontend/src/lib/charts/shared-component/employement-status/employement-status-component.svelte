@@ -99,6 +99,10 @@
 						position: 'right',
 						labels: {
 							color: textColor,
+							font: {
+								size: 12,
+								family: 'Arial'
+							},
 							padding: 10
 						}
 					},

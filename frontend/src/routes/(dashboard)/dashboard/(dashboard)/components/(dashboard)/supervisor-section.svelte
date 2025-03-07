@@ -1,4 +1,4 @@
-<script lang="ts">
+<!-- <script lang="ts">
 	import BarChartForIregmPerformance from '$lib/charts/supervisor/bar-chart-for-IREGM-performance.svelte';
 	import BarChartIregmHistory from '$lib/charts/supervisor/bar-chart-IREGM-history.svelte';
 	import LineChartFacultyPerformance from '$lib/charts/supervisor/line-chart-faculty-performance.svelte';
@@ -70,7 +70,7 @@
 	const employeeStatus = $derived(populationPieChartProps.employeeStatus);
 	const breakdownAcademicRanks = $derived(populationPieChartProps.breakdownAcademicRanks);
 	const breakdownEmploymentStatus = $derived(populationPieChartProps.breakdownEmploymentStatus);
-</script>
+</script> -->
 
 <BarChartIregmHistory {accReportCategoryHistory} />
 <div class="flex">

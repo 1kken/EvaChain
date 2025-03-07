@@ -13,6 +13,17 @@ export type EmployeeStatusData = {
 	[statusType: string]: number;
 };
 
+export type AcademicRanksData = {
+	academicRanks: { label: string; count: number; color: string }[];
+	breakdownAcademicRanks: Record<
+		string,
+		{
+			color: string;
+			items: { label: string; count: number }[];
+		}
+	>;
+};
+
 // Create a symbol for the chart data context key
 const SHARED_CHART_STORE_KEY = Symbol('SHARED_CHART_STORE_KEY');
 
@@ -20,6 +31,7 @@ const SHARED_CHART_STORE_KEY = Symbol('SHARED_CHART_STORE_KEY');
 interface SharedChartStore {
 	populationData: Writable<PopulationData | null>;
 	employeeStatusData: Writable<EmployeeStatusData>;
+	academicRanksData: Writable<AcademicRanksData>;
 	// Add more chart data states as needed
 }
 
@@ -27,7 +39,8 @@ interface SharedChartStore {
 function createSharedChartStore(): SharedChartStore {
 	return {
 		populationData: writable<PopulationData>(),
-		employeeStatusData: writable<EmployeeStatusData>({})
+		employeeStatusData: writable<EmployeeStatusData>({}),
+		academicRanksData: writable<AcademicRanksData>()
 	};
 }
 

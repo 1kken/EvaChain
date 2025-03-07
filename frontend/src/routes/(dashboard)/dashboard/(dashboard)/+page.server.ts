@@ -1,3 +1,4 @@
+import { fetchAcademicRanksData } from '$lib/charts/shared-component/academic-rank/academic-utils';
 import { fetchEmployeeStatus } from '$lib/charts/shared-component/employement-status/employment-utils';
 import { fetchPopulationData } from '$lib/charts/shared-component/population/population-utils';
 import type { PageServerLoad } from './$types';
@@ -24,6 +25,9 @@ export const load = (async ({
 		//shared
 		const populationData = await fetchPopulationData(supabase, profile, hasRole);
 		const employeeStatus = await fetchEmployeeStatus(supabase, profile, hasRole);
+		const academicRanks = await fetchAcademicRanksData(supabase, profile, hasRole);
+
+		console.log(academicRanks);
 
 		// Fetch dashboard data using our service function
 		const pieData = await fetchPopulationPieData(supabase, profile, hasRole);
@@ -38,6 +42,7 @@ export const load = (async ({
 		return {
 			employeeStatus: employeeStatus || null,
 			populationData: populationData || null,
+			academicRanks: academicRanks || null,
 			accReportCategoryHistory: accReportCategoryHistory || [],
 			ipcrPerformanceIndicator: ipcrPerformanceIndicator || [],
 			pieData: pieData || [],
