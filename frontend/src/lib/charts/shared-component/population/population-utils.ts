@@ -1,6 +1,6 @@
 import type { Database } from '$lib/types/database.types';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { ProfileWithJoins } from '../../../app';
+import type { ProfileWithJoins } from '../../../../app';
 import { getUserAuthStore } from '$lib/utils/rbac';
 
 interface PopulationData {

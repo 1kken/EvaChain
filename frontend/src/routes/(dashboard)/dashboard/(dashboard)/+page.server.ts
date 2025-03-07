@@ -1,4 +1,4 @@
-import { fetchPopulationData } from '$lib/charts/shared-component/population-utils';
+import { fetchPopulationData } from '$lib/charts/shared-component/population/population-utils';
 import type { PageServerLoad } from './$types';
 import { fetchIpcrPerformanceSummary } from './components/services/employee-performance-indicator';
 import {
