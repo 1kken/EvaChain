@@ -14,6 +14,10 @@ export type EmployeeStatusData = {
 	[statusType: string]: number;
 };
 
+export type NatureOfWorkData = {
+	[natureOfWork: string]: number;
+};
+
 export type AcademicRanksData = {
 	academicRanks: { label: string; count: number; color: string }[];
 	breakdownAcademicRanks: Record<
@@ -34,6 +38,7 @@ interface SharedChartStore {
 	employeeStatusData: Writable<EmployeeStatusData>;
 	academicRanksData: Writable<AcademicRanksData>;
 	totalBudgetRequirementData: Writable<Tables<'operational_plan_budget_summary'> | null>;
+	natureOfWorkData: Writable<NatureOfWorkData>;
 	// Add more chart data states as needed
 }
 
@@ -43,7 +48,8 @@ function createSharedChartStore(): SharedChartStore {
 		populationData: writable<PopulationData>(),
 		employeeStatusData: writable<EmployeeStatusData>({}),
 		academicRanksData: writable<AcademicRanksData>(),
-		totalBudgetRequirementData: writable<Tables<'operational_plan_budget_summary'> | null>(null)
+		totalBudgetRequirementData: writable<Tables<'operational_plan_budget_summary'> | null>(null),
+		natureOfWorkData: writable<NatureOfWorkData>({})
 	};
 }
 

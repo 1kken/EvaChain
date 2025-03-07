@@ -1,5 +1,6 @@
 import { fetchAcademicRanksData } from '$lib/charts/shared-component/academic-rank/academic-utils';
 import { fetchEmployeeStatus } from '$lib/charts/shared-component/employement-status/employment-utils';
+import { fetchEmployeeNatureOfWork } from '$lib/charts/shared-component/nature-of-work/nature-of-work-util';
 import { fetchPopulationData } from '$lib/charts/shared-component/population/population-utils';
 import { fetchTotalBudgetRequirement } from '$lib/charts/shared-component/total-budget-requirements/total-budget-requirements-utils';
 import type { PageServerLoad } from './$types';
@@ -28,6 +29,7 @@ export const load = (async ({
 		const employeeStatus = await fetchEmployeeStatus(supabase, profile, hasRole);
 		const academicRanks = await fetchAcademicRanksData(supabase, profile, hasRole);
 		const totalBudgetRequirement = await fetchTotalBudgetRequirement(supabase, profile, hasRole);
+		const natureOfWorkData = await fetchEmployeeNatureOfWork(supabase, profile, hasRole);
 
 		const ipcrPerformanceIndicator = await fetchIpcrPerformanceSummary(supabase, profile.id);
 		const facultyPerformance = await fetchFacultyPerformance(supabase, profile, hasRole);
@@ -40,6 +42,7 @@ export const load = (async ({
 			employeeStatus: employeeStatus || null,
 			populationData: populationData || null,
 			academicRanks: academicRanks || null,
+			natureOfWorkData: natureOfWorkData || null,
 			totalBudgetRequirement: totalBudgetRequirement || null,
 			accReportCategoryHistory: accReportCategoryHistory || [],
 			ipcrPerformanceIndicator: ipcrPerformanceIndicator || [],

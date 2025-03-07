@@ -7138,6 +7138,12 @@ export type Database = {
         }
         Returns: boolean
       }
+      get_employee_nature_of_work: {
+        Args: {
+          p_unit_id: number
+        }
+        Returns: Json
+      }
       get_employee_status_count: {
         Args: {
           p_unit_id?: number
