@@ -27,7 +27,12 @@ export const createOpActivityIndicatorSchema = z
 		q4_target: z.string().nullable(),
 		total: z.string().nullable(),
 		responsible_officer_unit: z.string(),
-		total_budgetary_requirements: z.string(),
+		total_budgetary_requirements: z
+			.string()
+			.regex(
+				/^(\d{1,3})(,\d{3})*(\.\d{1,2})?$/,
+				'Must be a valid currency format (e.g., 1,000.00)'
+			),
 		remarks: z.string().nullable(),
 		position: z.number().int().positive('Position must be a positive integer')
 	})
@@ -85,7 +90,10 @@ export const updateOpActivityIndicatorSchema = z
 		q4_target: z.string().nullable(),
 		total: z.string().nullable(),
 		responsible_officer_unit: z.string().optional(),
-		total_budgetary_requirements: z.string().optional(),
+		total_budgetary_requirements: z
+			.string()
+			.regex(/^(\d{1,3})(,\d{3})*(\.\d{1,2})?$/, 'Must be a valid currency format (e.g., 1,000.00)')
+			.optional(),
 		remarks: z.string().nullable().optional()
 	})
 	.refine((data) => Object.keys(data).length > 1, {

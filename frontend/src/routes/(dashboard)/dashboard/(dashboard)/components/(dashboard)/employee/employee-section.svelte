@@ -3,10 +3,7 @@
 	import FacultyComponent from './faculty-component.svelte';
 </script>
 
-<div class="flex gap-2">
-	<!-- Population Component (not in a card) -->
-	<div>
-		<PopulationComponent />
-	</div>
+<div class="flex flex-col items-center justify-center gap-2 sm:flex-row">
+	<PopulationComponent />
 	<FacultyComponent />
 </div>

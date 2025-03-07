@@ -1,3 +1,4 @@
+import type { Tables } from '$lib/types/database.types';
 import { getContext, setContext } from 'svelte';
 import { writable, type Writable } from 'svelte/store';
 
@@ -32,6 +33,7 @@ interface SharedChartStore {
 	populationData: Writable<PopulationData | null>;
 	employeeStatusData: Writable<EmployeeStatusData>;
 	academicRanksData: Writable<AcademicRanksData>;
+	totalBudgetRequirementData: Writable<Tables<'operational_plan_budget_summary'> | null>;
 	// Add more chart data states as needed
 }
 
@@ -40,7 +42,8 @@ function createSharedChartStore(): SharedChartStore {
 	return {
 		populationData: writable<PopulationData>(),
 		employeeStatusData: writable<EmployeeStatusData>({}),
-		academicRanksData: writable<AcademicRanksData>()
+		academicRanksData: writable<AcademicRanksData>(),
+		totalBudgetRequirementData: writable<Tables<'operational_plan_budget_summary'> | null>(null)
 	};
 }
 

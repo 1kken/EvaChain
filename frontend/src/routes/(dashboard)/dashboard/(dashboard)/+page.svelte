@@ -8,7 +8,8 @@
 	const { hasRole } = getUserAuthStore();
 	let { IREGMYear } = setDashboardControlsStore();
 
-	let { populationData, employeeStatusData, academicRanksData } = setSharedChartStore();
+	let { populationData, employeeStatusData, academicRanksData, totalBudgetRequirementData } =
+		setSharedChartStore();
 
 	if (props.data.employeeStatus != null) {
 		employeeStatusData.set(props.data.employeeStatus);
@@ -20,6 +21,10 @@
 
 	if (props.data.academicRanks != null) {
 		academicRanksData.set(props.data.academicRanks);
+	}
+
+	if (props.data.totalBudgetRequirement != null) {
+		totalBudgetRequirementData.set(props.data.totalBudgetRequirement);
 	}
 </script>
 
