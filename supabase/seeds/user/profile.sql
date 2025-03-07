@@ -54,7 +54,7 @@ SET
     office_id = 9,
     program_id = 1,
     position_id = 4,
-    employee_status_id = 1,
+    employee_status_id = 2,
     created_at = '2024-12-01 10:03:07.221383+00'
 WHERE
     id = '9a4ba6de-9fc0-4110-8445-f9a1efbc1432';
@@ -74,7 +74,7 @@ SET
     office_id = 9,
     program_id = 1,
     position_id = 4,
-    employee_status_id = 1,
+    employee_status_id = 2,
     created_at = '2024-12-01 10:04:00.163466+00'
 WHERE
     id = 'c92ae2f1-88c3-40b5-b336-84e69b4e18a6';
@@ -93,7 +93,7 @@ SET
     office_id = 7,
     program_id = NULL,
     position_id = 5,
-    employee_status_id = 1,
+    employee_status_id = 3,
     updated_at = '2025-02-27 11:28:36.107185+00',
     created_at = '2025-02-27 11:28:10.955129+00'
 WHERE

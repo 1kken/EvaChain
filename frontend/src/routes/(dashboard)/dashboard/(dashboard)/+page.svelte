@@ -1,19 +1,27 @@
 <script lang="ts">
+	import { setSharedChartStore } from '$lib/charts/shared-component/state';
 	import { getUserAuthStore } from '$lib/utils/rbac';
 	import type { PageProps } from './$types';
-	import EmployeeSection from './components/(dashboard)/employee-section.svelte';
+	import EmployeeSection from './components/(dashboard)/employee/employee-section.svelte';
 	import { setDashboardControlsStore } from './components/state/sueprvisor_state';
 	let props: PageProps = $props();
 	const { hasRole } = getUserAuthStore();
 	let { IREGMYear } = setDashboardControlsStore();
+
+	let { populationData, employeeStatusData } = setSharedChartStore();
+
+	if (props.data.employeeStatus != null) {
+		employeeStatusData.set(props.data.employeeStatus);
+	}
+
+	if (props.data.populationData != null) {
+		populationData.set(props.data.populationData);
+	}
 </script>
 
 <div class="grid grid-cols-1 gap-4">
 	<div>
-		<EmployeeSection
-			ipcrPerformanceData={props.data.ipcrPerformanceIndicator!}
-			populationProps={props.data.populationData}
-		/>
+		<EmployeeSection />
 	</div>
 	<!-- {#if hasRole('dean') || hasRole('program_chair') || hasRole('head_of_office')}
 		<div>

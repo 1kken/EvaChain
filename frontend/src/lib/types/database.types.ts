@@ -6831,6 +6831,13 @@ export type Database = {
         }
         Returns: boolean
       }
+      get_employee_status_count: {
+        Args: {
+          p_unit_id?: number
+          p_office_id?: number
+        }
+        Returns: Json
+      }
       get_ipcr_functions_by_supervisor: {
         Args: {
           p_ipcr_id: string

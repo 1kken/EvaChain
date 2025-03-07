@@ -2,17 +2,15 @@
 	import woman from '$lib/assets/icons/women.png';
 	import man from '$lib/assets/icons/man.png';
 	import * as Card from '$lib/components/ui/card/index.js';
-	import { getAuthStore } from '$lib/utils/authStore';
+	import { getSharedChartStore } from '../state';
+	let { populationData } = getSharedChartStore();
 
-	export interface PopulationProps {
-		titleName: string;
-		population: number;
-		malePopulation: number;
-		femalePopulation: number;
-	}
-
-	let { populationProps }: { populationProps: PopulationProps } = $props();
-	let { population, malePopulation, femalePopulation } = populationProps;
+	let { population, malePopulation, femalePopulation, titleName } = $populationData || {
+		population: 0,
+		malePopulation: 0,
+		femalePopulation: 0,
+		titleName: ''
+	};
 </script>
 
 <div class="w-fit max-w-4xl">
@@ -40,7 +38,11 @@
 			</Card.Root>
 		</div>
 
-		<h1 class="p-2 text-center text-2xl">Population</h1>
+		{#if $populationData}
+			<h1 class="p-2 text-center text-2xl">{titleName} Population</h1>
+		{:else}
+			<h1 class="p-2 text-center text-2xl">Population data is not available.</h1>
+		{/if}
 	</div>
 
 	<!-- Desktop/tablet layout (horizontal) -->
@@ -66,7 +68,11 @@
 					</div>
 
 					<div class="text-center text-sm">
-						<h1 class="text-2xl">Population</h1>
+						{#if $populationData}
+							<h1 class="text-2xl">{titleName} Population</h1>
+						{:else}
+							<h1 class="text-2xl">Population data is not available.</h1>
+						{/if}
 					</div>
 				</div>
 			</Card.Content>

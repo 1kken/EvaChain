@@ -10,24 +10,11 @@ interface PopulationData {
 	femalePopulation: number;
 }
 
-interface PopulationData {
-	titleName: string;
-	population: number;
-	malePopulation: number;
-	femalePopulation: number;
-}
-interface PopulationData {
-	titleName: string;
-	population: number;
-	malePopulation: number;
-	femalePopulation: number;
-}
-
 export async function fetchPopulationData(
 	supabase: SupabaseClient<Database>,
 	profile: ProfileWithJoins,
 	hasRole: (role: string) => Promise<boolean>
-): Promise<PopulationData | null | undefined> {
+): Promise<PopulationData | null> {
 	const [
 		isPresident,
 		isHeadOfOperatingUnit,
