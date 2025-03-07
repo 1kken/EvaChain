@@ -1,11 +1,18 @@
 <script lang="ts">
-	import LineChartIpcrPerformance from '$lib/charts/employee/line-chart-ipcr-performance.svelte';
+	import type { PopulationProps } from '$lib/charts/shared-component/population-component.svelte';
+	import PopulationComponent from '$lib/charts/shared-component/population-component.svelte';
 	import type { Tables } from '$lib/types/database.types';
 	interface Props {
 		ipcrPerformanceData: Tables<'ipcr_performance_summary'>[];
+		populationProps: PopulationProps | null | undefined;
 	}
 
-	let { ipcrPerformanceData }: Props = $props();
+	let { ipcrPerformanceData, populationProps }: Props = $props();
 </script>
 
-<LineChartIpcrPerformance {ipcrPerformanceData} />
+<div class="flex">
+	{#if populationProps}
+		<PopulationComponent {populationProps} />
+	{/if}
+</div>
+<!-- <LineChartIpcrPerformance {ipcrPerformanceData} /> -->

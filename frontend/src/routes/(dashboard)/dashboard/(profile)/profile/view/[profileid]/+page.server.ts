@@ -84,7 +84,8 @@ export const actions: Actions = {
 			office_id,
 			program_id,
 			position_id,
-			employee_status_id
+			employee_status_id,
+			gender
 		} = form.data;
 
 		first_name = first_name.trim();
@@ -96,6 +97,7 @@ export const actions: Actions = {
 		const { data: profile, error } = await supabase
 			.from('profiles')
 			.update({
+				gender,
 				first_name,
 				last_name,
 				middle_name,

@@ -1,3 +1,4 @@
+import { fetchPopulationData } from '$lib/charts/shared-component/population-utils';
 import type { PageServerLoad } from './$types';
 import { fetchIpcrPerformanceSummary } from './components/services/employee-performance-indicator';
 import {
@@ -8,12 +9,20 @@ import { fetchFacultyPerformance } from './components/services/supervisor-office
 import { fetchTeachingEffectiveness } from './components/services/supervisor-office-teaching-effictiveness';
 import { fetchPopulationPieData } from './components/services/supervisor-piechart';
 
-export const load = (async ({ locals: { supabase, profile, hasRole } }) => {
+export const load = (async ({
+	locals: { supabase, profile, hasRole, getUserRolesAndPermissions }
+}) => {
 	if (!profile) {
 		return { status: 401, redirect: '/login' };
 	}
 
 	try {
+		//for checking
+		const permissionAndRoles = getUserRolesAndPermissions(profile.id);
+
+		//shared
+		const populationData = await fetchPopulationData(supabase, profile, hasRole);
+
 		// Fetch dashboard data using our service function
 		const pieData = await fetchPopulationPieData(supabase, profile, hasRole);
 
@@ -23,10 +32,9 @@ export const load = (async ({ locals: { supabase, profile, hasRole } }) => {
 		const accReportCategoryAvg = await fetchIREGMPerYear(supabase, profile, hasRole);
 		const accReportCategoryHistory = await fetchIREGMForPastFiveYears(supabase, profile, hasRole);
 
-		console.log(teachingEffectiveness);
-
 		// Ensure we handle empty or undefined values
 		return {
+			populationData: populationData || null,
 			accReportCategoryHistory: accReportCategoryHistory || [],
 			ipcrPerformanceIndicator: ipcrPerformanceIndicator || [],
 			pieData: pieData || [],

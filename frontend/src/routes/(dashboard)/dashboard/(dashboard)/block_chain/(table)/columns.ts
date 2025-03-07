@@ -36,15 +36,6 @@ export const createColumns = (): ColumnDef<BlockChainData>[] => [
 			})
 	},
 	{
-		accessorKey: 'file_cid',
-		header: ({ column }) =>
-			renderComponent(DataTableSortButton, {
-				text: 'File CID',
-				arrangement: column.getIsSorted(),
-				onclick: () => column.toggleSorting(column.getIsSorted() === 'asc')
-			})
-	},
-	{
 		accessorKey: 'type',
 		header: ({ column }) =>
 			renderComponent(DataTableSortButton, {

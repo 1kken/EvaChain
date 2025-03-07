@@ -1,4 +1,5 @@
 <script lang="ts">
+	import * as Card from '$lib/components/ui/card/index.js';
 	import { onMount, onDestroy } from 'svelte';
 	import { mode } from 'mode-watcher';
 
@@ -218,6 +219,8 @@
 	});
 </script>
 
-<div class=" h-80 w-full rounded-lg p-4 shadow-lg dark:bg-slate-700">
-	<canvas id="line-chart-ipcr" bind:this={ctx}></canvas>
-</div>
+<Card.Root class="w-full border-none">
+	<Card.Content class="h-80 p-4">
+		<canvas id="line-chart-ipcr" bind:this={ctx}></canvas>
+	</Card.Content>
+</Card.Root>

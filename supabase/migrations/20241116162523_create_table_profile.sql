@@ -1,9 +1,12 @@
+CREATE TYPE user_gender AS ENUM ('male', 'female');
+
 -- Create a table for public profiles
 create table profiles (
   id uuid references auth.users on delete cascade not null primary key,
   updated_at timestamp with time zone default timezone('utc'::text, now()),
   employee_id varchar(50) unique,
   email varchar(255) unique,
+  gender user_gender NOT NULL DEFAULT 'male',  
   first_name text,
   middle_name text,
   last_name text,

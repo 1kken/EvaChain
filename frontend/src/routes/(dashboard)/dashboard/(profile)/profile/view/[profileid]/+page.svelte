@@ -22,12 +22,14 @@
 		fetchPositionByNatureOfWork,
 		fetchProgramByOffice
 	} from '$lib/utils/profileHelper';
+
 	import { onMount } from 'svelte';
 	import AvatarUploadDialog from './(components)/avatar-upload-dialog.svelte';
 	import { goto, invalidateAll } from '$app/navigation';
 	import { showErrorToast, showSuccessToast } from '$lib/utils/toast';
 	import { getAuthStore } from '$lib/utils/authStore';
 	import type { ProfileResultForm } from '../(data)/types';
+	import { titleCase } from 'title-case';
 	let { data }: { data: PageData } = $props();
 	const { form: profileForm } = data;
 	const { supabase } = data;
@@ -181,6 +183,23 @@
 						</Form.Field>
 					</div>
 				</div>
+				<Form.Field {form} name="gender">
+					<Form.Control>
+						{#snippet children({ props })}
+							<Form.Label>Gender</Form.Label>
+							<Select.Root type="single" bind:value={$formData.gender} name={props.name}>
+								<Select.Trigger {...props}>
+									{$formData.gender ? titleCase($formData.gender) : 'Select your gender'}
+								</Select.Trigger>
+								<Select.Content>
+									<Select.Item value="male" label="Male" />
+									<Select.Item value="female" label="Female" />
+								</Select.Content>
+							</Select.Root>
+						{/snippet}
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
 				<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
 					<div class="space-y-2">
 						<Form.Field {form} name="unit_id">
@@ -453,7 +472,7 @@
 								</Select.Root>
 							{/snippet}
 						</Form.Control>
-						<Form.Description>Select your unit.</Form.Description>
+						<Form.Description>Select your employee status.</Form.Description>
 						<Form.FieldErrors />
 					</Form.Field>
 				</div>

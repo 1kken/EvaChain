@@ -3422,6 +3422,7 @@ export type Database = {
           employee_id: string | null
           employee_status_id: number | null
           first_name: string | null
+          gender: Database["public"]["Enums"]["user_gender"]
           id: string
           last_name: string | null
           middle_name: string | null
@@ -3439,6 +3440,7 @@ export type Database = {
           employee_id?: string | null
           employee_status_id?: number | null
           first_name?: string | null
+          gender?: Database["public"]["Enums"]["user_gender"]
           id: string
           last_name?: string | null
           middle_name?: string | null
@@ -3456,6 +3458,7 @@ export type Database = {
           employee_id?: string | null
           employee_status_id?: number | null
           first_name?: string | null
+          gender?: Database["public"]["Enums"]["user_gender"]
           id?: string
           last_name?: string | null
           middle_name?: string | null
@@ -6849,6 +6852,17 @@ export type Database = {
         }
         Returns: string
       }
+      get_population_stats: {
+        Args: {
+          filter_unit_id?: number
+          filter_office_id?: number
+        }
+        Returns: {
+          total_population: number
+          male_population: number
+          female_population: number
+        }[]
+      }
       get_supervisor_consensus_status: {
         Args: {
           p_ipcr_id: string
@@ -6978,6 +6992,7 @@ export type Database = {
         | "research"
         | "extension"
         | "governance_and_management"
+      user_gender: "male" | "female"
     }
     CompositeTypes: {
       validation_result: {

@@ -21,6 +21,7 @@ export const profileSchema = z.object({
 		.min(2, 'Last name must be at least 2 characters')
 		.regex(/^[A-Za-z\s]+$/, 'Last name can only contain letters and spaces')
 		.nullable(),
+	gender: z.enum(['male', 'female']),
 	middle_name: z
 		.string()
 		.regex(/^[A-Za-z\s]*$/, 'Middle name can only contain letters and spaces')

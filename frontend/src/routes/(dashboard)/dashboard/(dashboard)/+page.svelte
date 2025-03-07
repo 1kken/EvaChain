@@ -2,20 +2,20 @@
 	import { getUserAuthStore } from '$lib/utils/rbac';
 	import type { PageProps } from './$types';
 	import EmployeeSection from './components/(dashboard)/employee-section.svelte';
-	import SupervisorSection from './components/(dashboard)/supervisor-section.svelte';
 	import { setDashboardControlsStore } from './components/state/sueprvisor_state';
 	let props: PageProps = $props();
 	const { hasRole } = getUserAuthStore();
 	let { IREGMYear } = setDashboardControlsStore();
-
-	$inspect($IREGMYear);
 </script>
 
 <div class="grid grid-cols-1 gap-4">
 	<div>
-		<EmployeeSection ipcrPerformanceData={props.data.ipcrPerformanceIndicator!} />
+		<EmployeeSection
+			ipcrPerformanceData={props.data.ipcrPerformanceIndicator!}
+			populationProps={props.data.populationData}
+		/>
 	</div>
-	{#if hasRole('dean') || hasRole('program_chair') || hasRole('head_of_office')}
+	<!-- {#if hasRole('dean') || hasRole('program_chair') || hasRole('head_of_office')}
 		<div>
 			<SupervisorSection
 				populationPieChartProps={props.data.pieData!}
@@ -25,5 +25,5 @@
 				accReportCategoryHistory={props.data.accReportCategoryHistory!}
 			/>
 		</div>
-	{/if}
+	{/if} -->
 </div>
