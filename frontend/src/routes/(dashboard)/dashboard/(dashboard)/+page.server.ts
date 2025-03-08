@@ -1,6 +1,7 @@
 import { fetchAcademicRanksData } from '$lib/charts/shared-component/academic-rank/academic-utils';
 import { fetchIREGMForPastFiveYears } from '$lib/charts/shared-component/accomplishment-IREGM-history/utils';
 import { fetchIREGMPerYear } from '$lib/charts/shared-component/accomplishment-IREGM/utils';
+import { fetchDpcrPerformanceSummary } from '$lib/charts/shared-component/dpcr/utils';
 import { fetchEmployeeStatus } from '$lib/charts/shared-component/employement-status/employment-utils';
 import { fetchIpcrPerformanceSummary } from '$lib/charts/shared-component/ipcr-bar-chart/ipcr-bar-chart-utils';
 import { fetchEmployeeNatureOfWork } from '$lib/charts/shared-component/nature-of-work/nature-of-work-util';
@@ -35,6 +36,7 @@ export const load = (async ({
 		);
 		const accReportCategoryAvg = await fetchIREGMPerYear(supabase, profile, hasRole);
 		const accReportCategoryHistory = await fetchIREGMForPastFiveYears(supabase, profile, hasRole);
+		const dpcrPerformanceData = await fetchDpcrPerformanceSummary(supabase, profile.id);
 
 		//Dean Program Chair
 		const performanceData = await fetchFacultyPerformance(supabase, profile, hasRole);
@@ -50,6 +52,7 @@ export const load = (async ({
 			ipcrPerformanceIndicator: ipcrPerformanceIndicator || [],
 			ipcrTeachingEffectiveness: ipcrTeachingEffectiveness || [],
 			accReportCategoryHistory: accReportCategoryHistory || [],
+			dpcrPerformanceSummaryData: dpcrPerformanceData || [],
 			performanceData: performanceData || [],
 			teachingEffectivenessData: teachingEffectiveness || [],
 			accReportCategoryAvg: accReportCategoryAvg

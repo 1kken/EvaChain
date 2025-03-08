@@ -18,7 +18,8 @@
 		ipcrPerformanceSummaryData,
 		ipcrTeachingEffectivenessData,
 		accReportCategoryHistory,
-		accReportCategoryAvg
+		accReportCategoryAvg,
+		dpcrPerformanceSummaryData
 	} = setSharedChartStore();
 
 	let { performanceData, teachingEffectivenessData } = setSupervisorChartStore();
@@ -65,6 +66,9 @@
 	}
 	if (props.data.teachingEffectivenessData != null) {
 		teachingEffectivenessData.set(props.data.teachingEffectivenessData);
+	}
+	if (props.data.dpcrPerformanceSummaryData != null) {
+		dpcrPerformanceSummaryData.set(props.data.dpcrPerformanceSummaryData);
 	}
 </script>
 

@@ -49,8 +49,7 @@ interface SharedChartStore {
 	ipcrTeachingEffectivenessData: Writable<Tables<'ipcr_teaching_effectiveness_avg'>[] | null>;
 	accReportCategoryAvg: Writable<Tables<'accomplishment_report_category_avg'>[] | null>;
 	accReportCategoryHistory: Writable<YearlyIREGMAverage[] | null>;
-
-	// Add more chart data states as needed
+	dpcrPerformanceSummaryData: Writable<Tables<'dpcr_performance_summary'>[] | null>;
 }
 
 // Create a function to initialize the chart state
@@ -67,7 +66,8 @@ function createSharedChartStore(): SharedChartStore {
 			null
 		),
 		accReportCategoryAvg: writable<Tables<'accomplishment_report_category_avg'>[] | null>(null),
-		accReportCategoryHistory: writable<YearlyIREGMAverage[] | null>(null)
+		accReportCategoryHistory: writable<YearlyIREGMAverage[] | null>(null),
+		dpcrPerformanceSummaryData: writable<Tables<'dpcr_performance_summary'>[] | null>(null)
 	};
 }
 

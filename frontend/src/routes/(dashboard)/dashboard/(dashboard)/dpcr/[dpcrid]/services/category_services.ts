@@ -6,13 +6,13 @@ import {
 	type UpdateDpcrCategorySchema
 } from '../schema/category_schema';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from 'lucide-svelte';
 import { zod } from 'sveltekit-superforms/adapters';
 import { titleCase } from 'title-case';
 import {
 	universalDeleteSchema,
 	type UniversalDeleteSchema
 } from '$lib/schemas/universal_delete_schema';
+import type { Database } from '$lib/types/database.types';
 
 export async function createDpcrCategory(request: Request, supabase: SupabaseClient<Database>) {
 	const form = await superValidate<Infer<CreateDpcrCategorySchema>>(

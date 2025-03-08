@@ -152,7 +152,10 @@ export async function setStatusApproved(
 	//! insert logic here for creating DPCR
 
 	//* lets check first if shes has a role of head_of_opearting unit
-	if (await hasRole(supabase, opData.creator_id, 'head_of_operating_unit')) {
+	if (
+		(await hasRole(supabase, opData.creator_id, 'head_of_operating_unit')) ||
+		(await hasRole(supabase, opData.creator_id, 'vice-president'))
+	) {
 		await generateDPCRFromOperationalPlan(supabase, {
 			operationalPlanId: opData.id,
 			userId: opData.creator_id
