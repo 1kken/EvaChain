@@ -1,17 +1,18 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import { Chart, ArcElement, Tooltip, Title, PieController } from 'chart.js';
+	import { onMount, onDestroy } from 'svelte';
+	import { Chart, ArcElement, Tooltip, Title, PieController, Legend } from 'chart.js';
 	import type { ChartItem } from 'chart.js';
 	import { darkenColor } from '$lib/charts/helper/darkenColor';
 	import { getSharedChartStore } from '../state';
 	import { emptyDoughnutPlugin } from '$lib/charts/plugins/empty-pie';
+	import { mode } from 'mode-watcher';
 
 	let { academicRanksData } = getSharedChartStore();
 
 	let { academicRanks, breakdownAcademicRanks } = $academicRanksData;
 
 	// Register required components
-	Chart.register(ArcElement, Tooltip, Title, PieController);
+	Chart.register(ArcElement, Tooltip, Title, PieController, Legend);
 
 	// Register the emptyDoughnut plugin
 	Chart.register(emptyDoughnutPlugin);
@@ -29,8 +30,37 @@
 
 	let ctx: ChartItem;
 	let chart: Chart;
+	let unsubscribe: () => void;
 
 	onMount(() => {
+		// Initial chart creation with current mode
+		createChart($mode);
+
+		// Subscribe to theme changes
+		unsubscribe = mode.subscribe((theme) => {
+			if (chart) {
+				chart.destroy();
+			}
+			createChart(theme);
+		});
+	});
+
+	onDestroy(() => {
+		// Clean up subscription when component is destroyed
+		if (unsubscribe) {
+			unsubscribe();
+		}
+
+		// Destroy chart when component is destroyed
+		if (chart) {
+			chart.destroy();
+		}
+	});
+
+	function createChart(theme: string | undefined) {
+		const isDark = theme === 'dark';
+		const textColor = isDark ? 'white' : 'black';
+
 		chart = new Chart(ctx, {
 			type: 'pie',
 			data: {
@@ -52,6 +82,7 @@
 						labels: {
 							usePointStyle: true,
 							padding: 20,
+							color: textColor,
 							font: {
 								size: 12
 							}
@@ -75,13 +106,13 @@
 					title: {
 						display: false
 					},
-					// Configure the emptyDoughnut plugin
+					// Configure the emptyDoughnut plugin with theme-aware colors
 					emptyDoughnut: {
-						color: 'rgba(255, 128, 0, 0.5)',
+						color: isDark ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.2)',
 						width: 2,
 						radiusDecrease: 20,
 						text: 'No available data',
-						fontColor: '#666',
+						fontColor: textColor,
 						fontSize: 16,
 						fontFamily: 'Arial'
 					}
@@ -103,7 +134,7 @@
 				}
 			}
 		});
-	});
+	}
 
 	// Function to show all Academic Ranks popup
 	function showAcademicRanksPopup() {

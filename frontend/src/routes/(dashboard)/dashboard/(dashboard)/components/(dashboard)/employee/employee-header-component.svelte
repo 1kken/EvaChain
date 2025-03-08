@@ -10,7 +10,7 @@
 </script>
 
 <!-- Single Card containing both Academic Rank and Employment Status -->
-<Card.Root class="h-full w-full max-w-4xl border-none">
+<Card.Root class="h-full w-full max-w-5xl border-none">
 	<Card.Content class="border-none">
 		<div class="flex flex-col gap-4 md:flex-row">
 			<!-- Academic Rank -->
