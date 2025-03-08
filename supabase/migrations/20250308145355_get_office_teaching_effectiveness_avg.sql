@@ -1,5 +1,5 @@
--- Function to get teaching effectiveness average by office for the current year
-CREATE OR REPLACE FUNCTION get_office_teaching_effectiveness_avg()
+-- Function to get teaching effectiveness average by office within a specific unit for the current year
+CREATE OR REPLACE FUNCTION get_office_teaching_effectiveness_avg(p_unit_id INTEGER DEFAULT NULL)
 RETURNS JSONB
 LANGUAGE plpgsql
 SECURITY DEFINER
@@ -19,6 +19,8 @@ BEGIN
         LEFT JOIN ipcr_teaching_effectiveness_avg i ON o.id = i.office_id
         WHERE 
             EXTRACT(YEAR FROM i.created_at) = current_year
+            -- Filter by unit_id if provided, otherwise include all offices
+            AND (p_unit_id IS NULL OR o.unit_id = p_unit_id)
         GROUP BY 
             o.id, o.code
     )
@@ -42,7 +44,7 @@ END;
 $$;
 
 -- Grant execute permission to authenticated users
-GRANT EXECUTE ON FUNCTION get_office_teaching_effectiveness_avg() TO authenticated;
+GRANT EXECUTE ON FUNCTION get_office_teaching_effectiveness_avg(INTEGER) TO authenticated;
 
 -- Add comment explaining the function
-COMMENT ON FUNCTION get_office_teaching_effectiveness_avg() IS 'Aggregates teaching effectiveness averages by office for the current year. Returns a JSON array with office_code and office_teaching_effectiveness_avg for each office.';
+COMMENT ON FUNCTION get_office_teaching_effectiveness_avg(INTEGER) IS 'Aggregates teaching effectiveness averages by office for the current year, optionally filtered by unit_id. Returns a JSON array with office_code and office_teaching_effectiveness_avg for each office.';

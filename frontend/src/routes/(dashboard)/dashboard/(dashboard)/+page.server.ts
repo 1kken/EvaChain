@@ -1,3 +1,7 @@
+import {
+	fetchAcademicOfficesByUnit,
+	fetchOfficesTeachingEffectiveness
+} from '$lib/charts/head_of_op-vice_president/head_of_operating_unit/teaching-effectiveness/utils';
 import { fetchAcademicRanksData } from '$lib/charts/shared-component/academic-rank/academic-utils';
 import { fetchIREGMForPastFiveYears } from '$lib/charts/shared-component/accomplishment-IREGM-history/utils';
 import { fetchIREGMPerYear } from '$lib/charts/shared-component/accomplishment-IREGM/utils';
@@ -36,14 +40,23 @@ export const load = (async ({
 		);
 		const accReportCategoryAvg = await fetchIREGMPerYear(supabase, profile, hasRole);
 		const accReportCategoryHistory = await fetchIREGMForPastFiveYears(supabase, profile, hasRole);
-		const dpcrPerformanceData = await fetchDpcrPerformanceSummary(supabase, profile.id);
 
 		//Dean Program Chair
 		const performanceData = await fetchFacultyPerformance(supabase, profile, hasRole);
 		const teachingEffectiveness = await fetchTeachingEffectiveness(supabase, profile, hasRole);
 
+		//Head of operating unit || vice president
+		const dpcrPerformanceData = await fetchDpcrPerformanceSummary(supabase, profile.id);
+		const academicOffices = await fetchAcademicOfficesByUnit(supabase, profile.unit_id!);
+		const teachingEffectivenessByOffice = await fetchOfficesTeachingEffectiveness(
+			supabase,
+			profile,
+			hasRole
+		);
+
 		// Ensure we handle empty or undefined values
 		return {
+			academicOffices: academicOffices || [],
 			employeeStatus: employeeStatus || null,
 			populationData: populationData || null,
 			academicRanks: academicRanks || null,
@@ -55,7 +68,8 @@ export const load = (async ({
 			dpcrPerformanceSummaryData: dpcrPerformanceData || [],
 			performanceData: performanceData || [],
 			teachingEffectivenessData: teachingEffectiveness || [],
-			accReportCategoryAvg: accReportCategoryAvg
+			accReportCategoryAvg: accReportCategoryAvg,
+			teachingEffectivenessByOffice: teachingEffectivenessByOffice || []
 		};
 	} catch (error) {
 		console.error('Error fetching dashboard data:', error);

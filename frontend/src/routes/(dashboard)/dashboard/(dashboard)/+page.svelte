@@ -1,10 +1,11 @@
 <script lang="ts">
+	import { setHeadsChartStore } from '$lib/charts/head_of_op-vice_president/state';
 	import { setDashboardControlsStore } from '$lib/charts/shared-component/iregm_state';
 	import { setSharedChartStore } from '$lib/charts/shared-component/state';
 	import { setSupervisorChartStore } from '$lib/charts/supervisor/state';
-	import { getUserAuthStore } from '$lib/utils/rbac';
 	import type { PageProps } from './$types';
 	import EmployeeSection from './components/(dashboard)/employee/employee-section.svelte';
+	import HeadsSection from './components/(dashboard)/heads/heads-section.svelte';
 	import SupervisorSection from './components/(dashboard)/supervisor/supervisor-section.svelte';
 	let props: PageProps = $props();
 	setDashboardControlsStore();
@@ -23,6 +24,8 @@
 	} = setSharedChartStore();
 
 	let { performanceData, teachingEffectivenessData } = setSupervisorChartStore();
+
+	let { teachingEffectivenessByOffice, academicOffices } = setHeadsChartStore();
 
 	if (props.data.employeeStatus != null) {
 		employeeStatusData.set(props.data.employeeStatus);
@@ -70,6 +73,15 @@
 	if (props.data.dpcrPerformanceSummaryData != null) {
 		dpcrPerformanceSummaryData.set(props.data.dpcrPerformanceSummaryData);
 	}
+
+	//HEads
+	if (props.data.teachingEffectivenessByOffice != null) {
+		teachingEffectivenessByOffice.set(props.data.teachingEffectivenessByOffice);
+	}
+
+	if (props.data.academicOffices != null) {
+		academicOffices.set(props.data.academicOffices);
+	}
 </script>
 
 <div class="flex w-full justify-center">
@@ -79,6 +91,9 @@
 		</div>
 		<div class="w-full">
 			<SupervisorSection />
+		</div>
+		<div class="w-full">
+			<HeadsSection />
 		</div>
 	</div>
 </div>
