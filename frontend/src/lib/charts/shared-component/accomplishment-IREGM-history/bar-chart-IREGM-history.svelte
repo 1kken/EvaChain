@@ -16,7 +16,8 @@
 		BarElement
 	} from 'chart.js';
 	import type { ChartItem } from 'chart.js';
-	import { getDashboardControlsStore } from '../../../routes/(dashboard)/dashboard/(dashboard)/components/state/sueprvisor_state';
+	import { getDashboardControlsStore } from '../iregm_state';
+	import { getSharedChartStore } from '../state';
 
 	// Register required components
 	Chart.register(
@@ -32,31 +33,22 @@
 		BarElement
 	);
 
-	// Interface matching our YearlyIREGMAverage structure
-	interface YearlyIREGMAverage {
-		year: number;
-		over_all_grade: number;
-	}
+	let { accReportCategoryHistory } = getSharedChartStore();
 
-	interface Props {
-		accReportCategoryHistory: YearlyIREGMAverage[];
-	}
-
-	let { accReportCategoryHistory }: Props = $props();
-	let performanceData = accReportCategoryHistory;
+	let performanceData = $accReportCategoryHistory || [];
 
 	const { IREGMYear } = getDashboardControlsStore();
 
 	let ctx: ChartItem;
 	let chart: Chart | null = null;
 
-	// Define blue gradient colors
-	const blueGradient = [
-		'#A0C4FF', // Light Blue
-		'#80AFFF', // Sky Blue
-		'#5E85FF', // Royal Blue
-		'#3B60FF', // Deep Blue
-		'#1E3EFF' // Navy Blue
+	// Define new gradient colors
+	const gradientColors = [
+		'#FF9F43', // Orange
+		'#28C76F', // Green
+		'#EA5455', // Red
+		'#7367F0', // Purple
+		'#00CFE8' // Cyan
 	];
 
 	function createChart(theme: string | undefined) {
@@ -74,15 +66,15 @@
 		// Generate gradient colors based on data length
 		const barColors = sortedData.map((_, index) => {
 			const colorIndex = Math.min(
-				Math.floor((index / sortedData.length) * blueGradient.length),
-				blueGradient.length - 1
+				Math.floor((index / sortedData.length) * gradientColors.length),
+				gradientColors.length - 1
 			);
-			return blueGradient[colorIndex];
+			return gradientColors[colorIndex];
 		});
 
-		// For line charts, use the deepest blue with transparency
-		const lineColor = '#1E3EFF';
-		const lineBackgroundColor = 'rgba(30, 62, 255, 0.5)';
+		// For line charts, use a vibrant color with transparency
+		const lineColor = '#7367F0';
+		const lineBackgroundColor = 'rgba(115, 103, 240, 0.5)';
 
 		if (chart) {
 			// Update existing chart
@@ -128,7 +120,7 @@
 						label: 'Yearly Average',
 						data: grades,
 						backgroundColor: barColors,
-						borderColor: isDark ? 'rgba(30, 62, 255, 1)' : 'rgba(30, 62, 255, 1)',
+						borderColor: isDark ? 'rgba(115, 103, 240, 1)' : 'rgba(115, 103, 240, 1)',
 						borderWidth: 1,
 						yAxisID: 'y'
 					}
@@ -202,12 +194,6 @@
 								return `Year: ${item.year}`;
 							}
 						}
-					},
-					title: {
-						display: true,
-						align: 'start',
-						color: textColor,
-						text: 'Accomplishment report history analysis'
 					}
 				},
 				maintainAspectRatio: false
@@ -251,10 +237,10 @@
 			// Update bar colors with gradient
 			const barColors = sortedData.map((_, index) => {
 				const colorIndex = Math.min(
-					Math.floor((index / sortedData.length) * blueGradient.length),
-					blueGradient.length - 1
+					Math.floor((index / sortedData.length) * gradientColors.length),
+					gradientColors.length - 1
 				);
-				return blueGradient[colorIndex];
+				return gradientColors[colorIndex];
 			});
 			chart.data.datasets[1].backgroundColor = barColors;
 
@@ -263,6 +249,4 @@
 	});
 </script>
 
-<div class="h-80 w-full cursor-pointer rounded-lg p-4 shadow-lg dark:bg-slate-700">
-	<canvas id="iregm-performance-chart" bind:this={ctx}></canvas>
-</div>
+<canvas id="iregm-performance-chart" bind:this={ctx}></canvas>

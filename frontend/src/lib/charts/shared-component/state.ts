@@ -18,6 +18,11 @@ export type NatureOfWorkData = {
 	[natureOfWork: string]: number;
 };
 
+export interface YearlyIREGMAverage {
+	year: number;
+	over_all_grade: number;
+}
+
 export type AcademicRanksData = {
 	academicRanks: { label: string; count: number; color: string }[];
 	breakdownAcademicRanks: Record<
@@ -34,6 +39,7 @@ const SHARED_CHART_STORE_KEY = Symbol('SHARED_CHART_STORE_KEY');
 
 // Define the shape of our shared chart store
 interface SharedChartStore {
+	officeName: Writable<string | null>;
 	populationData: Writable<PopulationData | null>;
 	employeeStatusData: Writable<EmployeeStatusData>;
 	academicRanksData: Writable<AcademicRanksData>;
@@ -41,12 +47,16 @@ interface SharedChartStore {
 	natureOfWorkData: Writable<NatureOfWorkData>;
 	ipcrPerformanceSummaryData: Writable<Tables<'ipcr_performance_summary'>[] | null>;
 	ipcrTeachingEffectivenessData: Writable<Tables<'ipcr_teaching_effectiveness_avg'>[] | null>;
+	accReportCategoryAvg: Writable<Tables<'accomplishment_report_category_avg'>[] | null>;
+	accReportCategoryHistory: Writable<YearlyIREGMAverage[] | null>;
+
 	// Add more chart data states as needed
 }
 
 // Create a function to initialize the chart state
 function createSharedChartStore(): SharedChartStore {
 	return {
+		officeName: writable<string | null>(null),
 		populationData: writable<PopulationData>(),
 		employeeStatusData: writable<EmployeeStatusData>({}),
 		academicRanksData: writable<AcademicRanksData>(),
@@ -55,7 +65,9 @@ function createSharedChartStore(): SharedChartStore {
 		ipcrPerformanceSummaryData: writable<Tables<'ipcr_performance_summary'>[] | null>(null),
 		ipcrTeachingEffectivenessData: writable<Tables<'ipcr_teaching_effectiveness_avg'>[] | null>(
 			null
-		)
+		),
+		accReportCategoryAvg: writable<Tables<'accomplishment_report_category_avg'>[] | null>(null),
+		accReportCategoryHistory: writable<YearlyIREGMAverage[] | null>(null)
 	};
 }
 

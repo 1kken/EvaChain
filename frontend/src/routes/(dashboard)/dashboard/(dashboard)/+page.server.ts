@@ -1,4 +1,6 @@
 import { fetchAcademicRanksData } from '$lib/charts/shared-component/academic-rank/academic-utils';
+import { fetchIREGMForPastFiveYears } from '$lib/charts/shared-component/accomplishment-IREGM-history/utils';
+import { fetchIREGMPerYear } from '$lib/charts/shared-component/accomplishment-IREGM/utils';
 import { fetchEmployeeStatus } from '$lib/charts/shared-component/employement-status/employment-utils';
 import { fetchIpcrPerformanceSummary } from '$lib/charts/shared-component/ipcr-bar-chart/ipcr-bar-chart-utils';
 import { fetchEmployeeNatureOfWork } from '$lib/charts/shared-component/nature-of-work/nature-of-work-util';
@@ -6,13 +8,8 @@ import { fetchPopulationData } from '$lib/charts/shared-component/population/pop
 import { fetchTeachingEffectivenessIndividual } from '$lib/charts/shared-component/teaching-effectiveness/teaching-effectiveness-utils';
 import { fetchTotalBudgetRequirement } from '$lib/charts/shared-component/total-budget-requirements/total-budget-requirements-utils';
 import type { PageServerLoad } from './$types';
-import {
-	fetchIREGMForPastFiveYears,
-	fetchIREGMPerYear
-} from './components/services/supervisor-office-IREGM';
 import { fetchFacultyPerformance } from './components/services/supervisor-office-performance';
 import { fetchTeachingEffectiveness } from './components/services/supervisor-office-teaching-effictiveness';
-import { fetchPopulationPieData } from './components/services/supervisor-piechart';
 
 export const load = (async ({
 	locals: { supabase, profile, hasRole, getUserRolesAndPermissions }
