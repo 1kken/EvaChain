@@ -13,7 +13,9 @@
 		employeeStatusData,
 		academicRanksData,
 		totalBudgetRequirementData,
-		natureOfWorkData
+		natureOfWorkData,
+		ipcrPerformanceSummaryData,
+		ipcrTeachingEffectivenessData
 	} = setSharedChartStore();
 
 	if (props.data.employeeStatus != null) {
@@ -35,21 +37,18 @@
 	if (props.data.natureOfWorkData != null) {
 		natureOfWorkData.set(props.data.natureOfWorkData);
 	}
+
+	if (props.data.ipcrPerformanceIndicator != null) {
+		ipcrPerformanceSummaryData.set(props.data.ipcrPerformanceIndicator);
+	}
+
+	if (props.data.ipcrTeachingEffectiveness != null) {
+		ipcrTeachingEffectivenessData.set(props.data.ipcrTeachingEffectiveness);
+	}
 </script>
 
-<div class="grid grid-cols-1 gap-4">
+<div class="grid grid-cols-1 items-center justify-items-center gap-4">
 	<div>
 		<EmployeeSection />
 	</div>
-	<!-- {#if hasRole('dean') || hasRole('program_chair') || hasRole('head_of_office')}
-		<div>
-			<SupervisorSection
-				populationPieChartProps={props.data.pieData!}
-				performanceData={props.data.facultyPerformance!}
-				teachingEffectivenessData={props.data.teachingEffectiveness!}
-				accReportCategoryAvg={props.data.accReportCategoryAvg}
-				accReportCategoryHistory={props.data.accReportCategoryHistory!}
-			/>
-		</div>
-	{/if} -->
 </div>

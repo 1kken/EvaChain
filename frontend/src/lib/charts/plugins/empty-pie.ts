@@ -18,6 +18,13 @@ declare module 'chart.js' {
 export const emptyDoughnutPlugin: Plugin = {
 	id: 'emptyDoughnut',
 	afterDraw(chart, args, options) {
+		// Safely check chart type with type casting
+		const chartType = (chart.config as any).type;
+
+		// Only apply to doughnut and pie charts
+		if (chartType !== 'doughnut' && chartType !== 'pie') {
+			return;
+		}
 		const { datasets } = chart.data;
 		const { color, width, radiusDecrease, text, fontColor, fontSize, fontFamily } = options;
 		let hasData = false;

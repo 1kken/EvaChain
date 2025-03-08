@@ -39,6 +39,8 @@ interface SharedChartStore {
 	academicRanksData: Writable<AcademicRanksData>;
 	totalBudgetRequirementData: Writable<Tables<'operational_plan_budget_summary'> | null>;
 	natureOfWorkData: Writable<NatureOfWorkData>;
+	ipcrPerformanceSummaryData: Writable<Tables<'ipcr_performance_summary'>[] | null>;
+	ipcrTeachingEffectivenessData: Writable<Tables<'ipcr_teaching_effectiveness_avg'>[] | null>;
 	// Add more chart data states as needed
 }
 
@@ -49,7 +51,11 @@ function createSharedChartStore(): SharedChartStore {
 		employeeStatusData: writable<EmployeeStatusData>({}),
 		academicRanksData: writable<AcademicRanksData>(),
 		totalBudgetRequirementData: writable<Tables<'operational_plan_budget_summary'> | null>(null),
-		natureOfWorkData: writable<NatureOfWorkData>({})
+		natureOfWorkData: writable<NatureOfWorkData>({}),
+		ipcrPerformanceSummaryData: writable<Tables<'ipcr_performance_summary'>[] | null>(null),
+		ipcrTeachingEffectivenessData: writable<Tables<'ipcr_teaching_effectiveness_avg'>[] | null>(
+			null
+		)
 	};
 }
 

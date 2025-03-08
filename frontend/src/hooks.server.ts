@@ -104,45 +104,45 @@ const authGuard: Handle = async ({ event, resolve }) => {
 	event.locals.session = session;
 	event.locals.user = user;
 
-	// Basic auth check for protected routes
-	if (!event.locals.session) {
-		if (event.url.pathname.startsWith('/dashboard')) {
+	// Handle unauthenticated users
+	if (!session) {
+		if (event.url.pathname.startsWith('/dashboard') || event.url.pathname.startsWith('/api')) {
+			if (event.url.pathname.startsWith('/api')) {
+				error(403, 'Unauthorized access');
+			}
 			redirect(303, '/auth');
 		}
-		if (event.url.pathname.startsWith('/api')) {
-			error(403, 'Unauthorized access');
-		}
-	} else {
-		// For authenticated users, check admin access
-		if (event.url.pathname.startsWith('/dashboard/admin')) {
-			// Get the user's role from the JWT
-			const role = session?.user?.app_metadata?.role || '';
+		return resolve(event); // Allow access to auth routes
+	}
 
-			try {
-				// Query the user's role for more details if needed
-				const { data: userRole } = await event.locals.supabase.rpc('get_user_role');
+	// Handle authenticated users
+	try {
+		// Check admin status once per request
+		const adminCheck = await event.locals.supabase.rpc('is_system_admin');
+		const isAdmin = adminCheck.data === true;
 
-				// Check if the user is a system admin
-				const isAdmin = await event.locals.supabase.rpc('is_system_admin');
-
-				if (!isAdmin.data) {
-					// If not admin, redirect to dashboard or show access denied
-					redirect(303, '/dashboard');
-				}
-			} catch (err) {
-				console.error('Error checking admin status:', err);
+		// Admin routing rules
+		if (isAdmin) {
+			if (!event.url.pathname.startsWith('/dashboard/admin')) {
+				redirect(303, '/dashboard/admin');
+			}
+		} else {
+			if (event.url.pathname.startsWith('/dashboard/admin')) {
 				redirect(303, '/dashboard');
 			}
 		}
+	} catch (err) {
+		console.error('Admin check failed:', err);
+		if (event.url.pathname.startsWith('/dashboard/admin')) {
+			redirect(303, '/dashboard');
+		}
 	}
 
-	// Handle other redirections
-	if (!event.locals.session && event.url.pathname.startsWith('/auth/recovery')) {
-		redirect(303, '/dashboard');
-	}
-
-	if (event.locals.session && event.url.pathname === '/auth') {
-		redirect(303, '/dashboard');
+	// Redirect from auth pages when logged in
+	if (event.url.pathname.startsWith('/auth')) {
+		const adminCheck = await event.locals.supabase.rpc('is_system_admin');
+		const isAdmin = adminCheck.data === true;
+		redirect(303, isAdmin ? '/dashboard/admin' : '/dashboard');
 	}
 
 	return resolve(event);

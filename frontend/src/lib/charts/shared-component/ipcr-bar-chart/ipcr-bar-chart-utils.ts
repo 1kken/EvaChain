@@ -1,5 +1,3 @@
-//fetch ipcr_performance_summarry
-
 import type { Database } from '$lib/types/database.types';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
