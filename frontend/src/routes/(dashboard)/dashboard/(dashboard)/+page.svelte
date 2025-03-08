@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { setDashboardControlsStore } from '$lib/charts/shared-component/iregm_state';
 	import { setSharedChartStore } from '$lib/charts/shared-component/state';
+	import { setSupervisorChartStore } from '$lib/charts/supervisor/state';
 	import { getUserAuthStore } from '$lib/utils/rbac';
 	import type { PageProps } from './$types';
 	import EmployeeSection from './components/(dashboard)/employee/employee-section.svelte';
+	import SupervisorSection from './components/(dashboard)/supervisor/supervisor-section.svelte';
 	let props: PageProps = $props();
-	const { hasRole } = getUserAuthStore();
-	let { IREGMYear } = setDashboardControlsStore();
-
+	setDashboardControlsStore();
 	let {
 		officeName,
 		populationData,
@@ -20,6 +20,8 @@
 		accReportCategoryHistory,
 		accReportCategoryAvg
 	} = setSharedChartStore();
+
+	let { performanceData, teachingEffectivenessData } = setSupervisorChartStore();
 
 	if (props.data.employeeStatus != null) {
 		employeeStatusData.set(props.data.employeeStatus);
@@ -57,10 +59,22 @@
 	if (props.data.accReportCategoryAvg != null) {
 		accReportCategoryAvg.set(props.data.accReportCategoryAvg);
 	}
+
+	if (props.data.performanceData != null) {
+		performanceData.set(props.data.performanceData);
+	}
+	if (props.data.teachingEffectivenessData != null) {
+		teachingEffectivenessData.set(props.data.teachingEffectivenessData);
+	}
 </script>
 
-<div class="grid grid-cols-1 items-center justify-items-center gap-4">
-	<div>
-		<EmployeeSection />
+<div class="flex w-full justify-center">
+	<div class="grid max-w-fit grid-cols-1 items-center justify-items-center gap-4">
+		<div>
+			<EmployeeSection />
+		</div>
+		<div class="w-full">
+			<SupervisorSection />
+		</div>
 	</div>
 </div>

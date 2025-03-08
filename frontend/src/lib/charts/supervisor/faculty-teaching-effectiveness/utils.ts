@@ -1,17 +1,13 @@
 import type { Database } from '$lib/types/database.types';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { ProfileWithJoins } from '../../../../../../app';
+import type { ProfileWithJoins } from '../../../../app';
+import type { TeachingEffectivenessSummary } from '../state';
 
-interface PerformanceSummary {
-	average: number;
-	year: number;
-	period: number;
-}
-export async function fetchFacultyPerformance(
+export async function fetchTeachingEffectiveness(
 	supabase: SupabaseClient<Database>,
 	profile: ProfileWithJoins,
 	hasRole: (role: string, userId: string) => Promise<boolean>
-): Promise<PerformanceSummary[]> {
+): Promise<TeachingEffectivenessSummary[]> {
 	try {
 		// Check roles
 		const [isHeadOfOperatingUnit, isDean, isOfficeHead, isChair] = await Promise.all([
@@ -45,11 +41,11 @@ export async function fetchFacultyPerformance(
 
 		// Build query with appropriate filters
 		let query = supabase
-			.from('ipcr_performance_summary')
+			.from('ipcr_teaching_effectiveness_avg')
 			.select(
 				`
         id,
-        weighted_average,
+        teaching_effectiveness_avg,
         created_at,
         unit_id,
         office_id,
@@ -57,7 +53,8 @@ export async function fetchFacultyPerformance(
         owner_id
       `
 			)
-			.not('weighted_average', 'is', null);
+			.not('teaching_effectiveness_avg', 'is', null)
+			.gt('teaching_effectiveness_avg', 0); // Ensure we only get records with actual ratings
 
 		// Apply filters based on role
 		if (filters.unit_id) {
@@ -75,7 +72,7 @@ export async function fetchFacultyPerformance(
 		const { data, error } = await query;
 
 		if (error) {
-			throw new Error(`Error fetching IPCR data: ${error.message}`);
+			throw new Error(`Error fetching teaching effectiveness data: ${error.message}`);
 		}
 
 		// Process the data to group by year and period
@@ -90,7 +87,7 @@ export async function fetchFacultyPerformance(
 		>();
 
 		data.forEach((item) => {
-			if (!item.weighted_average || !item.created_at) return;
+			if (!item.teaching_effectiveness_avg || !item.created_at) return;
 
 			const date = new Date(item.created_at);
 			const year = date.getFullYear();
@@ -111,12 +108,12 @@ export async function fetchFacultyPerformance(
 			}
 
 			const entry = resultMap.get(key)!;
-			entry.totalAverage += item.weighted_average;
+			entry.totalAverage += item.teaching_effectiveness_avg;
 			entry.count += 1;
 		});
 
 		// Convert map to array and calculate averages
-		const results: PerformanceSummary[] = Array.from(resultMap.values())
+		const results: TeachingEffectivenessSummary[] = Array.from(resultMap.values())
 			.map(({ totalAverage, count, year, period }) => ({
 				average: count > 0 ? Number((totalAverage / count).toFixed(2)) : 0,
 				year,
@@ -130,7 +127,7 @@ export async function fetchFacultyPerformance(
 
 		return results;
 	} catch (error) {
-		console.error('Error in fetchFacultyPerformance:', error);
+		console.error('Error in fetchTeachingEffectiveness:', error);
 		throw error;
 	}
 }

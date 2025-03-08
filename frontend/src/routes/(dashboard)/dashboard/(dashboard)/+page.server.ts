@@ -7,9 +7,9 @@ import { fetchEmployeeNatureOfWork } from '$lib/charts/shared-component/nature-o
 import { fetchPopulationData } from '$lib/charts/shared-component/population/population-utils';
 import { fetchTeachingEffectivenessIndividual } from '$lib/charts/shared-component/teaching-effectiveness/teaching-effectiveness-utils';
 import { fetchTotalBudgetRequirement } from '$lib/charts/shared-component/total-budget-requirements/total-budget-requirements-utils';
+import { fetchFacultyPerformance } from '$lib/charts/supervisor/faculty-performance/utils';
+import { fetchTeachingEffectiveness } from '$lib/charts/supervisor/faculty-teaching-effectiveness/utils';
 import type { PageServerLoad } from './$types';
-import { fetchFacultyPerformance } from './components/services/supervisor-office-performance';
-import { fetchTeachingEffectiveness } from './components/services/supervisor-office-teaching-effictiveness';
 
 export const load = (async ({
 	locals: { supabase, profile, hasRole, getUserRolesAndPermissions }
@@ -33,11 +33,12 @@ export const load = (async ({
 			supabase,
 			profile.id
 		);
-
-		const facultyPerformance = await fetchFacultyPerformance(supabase, profile, hasRole);
-		const teachingEffectiveness = await fetchTeachingEffectiveness(supabase, profile, hasRole);
 		const accReportCategoryAvg = await fetchIREGMPerYear(supabase, profile, hasRole);
 		const accReportCategoryHistory = await fetchIREGMForPastFiveYears(supabase, profile, hasRole);
+
+		//Dean Program Chair
+		const performanceData = await fetchFacultyPerformance(supabase, profile, hasRole);
+		const teachingEffectiveness = await fetchTeachingEffectiveness(supabase, profile, hasRole);
 
 		// Ensure we handle empty or undefined values
 		return {
@@ -49,8 +50,8 @@ export const load = (async ({
 			ipcrPerformanceIndicator: ipcrPerformanceIndicator || [],
 			ipcrTeachingEffectiveness: ipcrTeachingEffectiveness || [],
 			accReportCategoryHistory: accReportCategoryHistory || [],
-			facultyPerformance: facultyPerformance || [],
-			teachingEffectiveness: teachingEffectiveness || [],
+			performanceData: performanceData || [],
+			teachingEffectivenessData: teachingEffectiveness || [],
 			accReportCategoryAvg: accReportCategoryAvg
 		};
 	} catch (error) {
