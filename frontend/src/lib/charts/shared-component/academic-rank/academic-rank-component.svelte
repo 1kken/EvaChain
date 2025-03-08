@@ -42,12 +42,20 @@
 						label: 'Academic Ranks'
 					}
 				],
-				labels: []
+				labels: academicRanks.map((rank) => rank.label)
 			},
 			options: {
 				plugins: {
 					legend: {
-						display: false
+						display: true,
+						position: 'right',
+						labels: {
+							usePointStyle: true,
+							padding: 20,
+							font: {
+								size: 12
+							}
+						}
 					},
 					tooltip: {
 						callbacks: {
@@ -156,7 +164,7 @@
 	});
 </script>
 
-<div class="relative h-48 w-48">
+<div class="relative h-52 w-full">
 	<canvas id="pieChart" bind:this={ctx}></canvas>
 
 	<!-- Popup -->
