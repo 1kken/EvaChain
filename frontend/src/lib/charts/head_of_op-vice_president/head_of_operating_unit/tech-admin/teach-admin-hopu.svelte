@@ -12,19 +12,18 @@
 		BarElement
 	} from 'chart.js';
 	import type { ChartItem } from 'chart.js';
-	import { getHeadsChartStore, type OfficeTeachingEffectiveness } from '../../state';
+	import { getHeadsChartStore, type OfficePerformanceData } from '../../state';
+	import { darkColorPalette, generateBorderColors, lightColorPalette } from '../helpers/colors';
 
-	// Register required components for bar charts (removed Legend)
+	// Register required components for bar charts
 	Chart.register(Tooltip, Title, BarController, CategoryScale, LinearScale, BarElement);
 
-	const { teachingEffectivenessByOffice } = getHeadsChartStore();
+	const { techAdminPerformance } = getHeadsChartStore();
 
-	let effectivenessData = $teachingEffectivenessByOffice || [];
+	let performanceData = $techAdminPerformance || [];
 
 	let ctx: ChartItem;
 	let chart: Chart | null = null;
-
-	import { lightColorPalette, darkColorPalette, generateBorderColors } from '../helpers/colors';
 
 	// Function to select colors from the palette based on number of offices
 	function generateColorPalette(count: number, isDark: boolean) {
@@ -45,10 +44,8 @@
 		const textColor = isDark ? 'white' : 'black';
 		const gridColor = isDark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.1)';
 
-		const labels = effectivenessData.map((item: OfficeTeachingEffectiveness) => item.office_code);
-		const values = effectivenessData.map(
-			(item: OfficeTeachingEffectiveness) => item.office_teaching_effectiveness_avg
-		);
+		const labels = performanceData.map((item: OfficePerformanceData) => item.office_code);
+		const values = performanceData.map((item: OfficePerformanceData) => item.average_performance);
 
 		// Generate different colors for each office
 		const backgroundColor = generateColorPalette(labels.length, isDark);
@@ -80,7 +77,7 @@
 				labels: labels,
 				datasets: [
 					{
-						label: 'Teaching Effectiveness', // Simplified label since legend is removed
+						label: 'Performance Rating',
 						data: values,
 						backgroundColor: backgroundColor,
 						borderColor: borderColor,
@@ -190,4 +187,4 @@
 	});
 </script>
 
-<canvas id="office-teaching-effectiveness-chart" bind:this={ctx}></canvas>
+<canvas id="tech-admin-performance-chart" bind:this={ctx}></canvas>

@@ -13,7 +13,9 @@ INSERT INTO public.office (unit_id, code, name) VALUES
     -- SLUC offices
     ((SELECT id FROM public.unit WHERE code = 'SLUC'), 'CM', 'College of Medicine'),
     ((SELECT id FROM public.unit WHERE code = 'SLUC'), 'CCHAMS', 'College of Community Health & Allied Medical Sciences'),
-    ((SELECT id FROM public.unit WHERE code = 'SLUC'), 'CCS', 'College of Computer Science')
+    ((SELECT id FROM public.unit WHERE code = 'SLUC'), 'CCS', 'College of Computer Science'),
+    ((SELECT id FROM public.unit WHERE code = 'SLUC'), 'Admin', 'Rektor Office')
+
 ON CONFLICT (code) DO UPDATE 
     SET name = EXCLUDED.name,
         unit_id = EXCLUDED.unit_id,

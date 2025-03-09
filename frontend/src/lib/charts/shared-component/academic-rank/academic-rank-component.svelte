@@ -195,7 +195,7 @@
 	});
 </script>
 
-<div class="relative h-52 w-full">
+<div class="relative h-48 w-full">
 	<canvas id="pieChart" bind:this={ctx}></canvas>
 
 	<!-- Popup -->

@@ -25,7 +25,8 @@
 
 	let { performanceData, teachingEffectivenessData } = setSupervisorChartStore();
 
-	let { teachingEffectivenessByOffice, academicOffices } = setHeadsChartStore();
+	let { teachingEffectivenessByOffice, academicOffices, nonAcademicOffices, techAdminPerformance } =
+		setHeadsChartStore();
 
 	if (props.data.employeeStatus != null) {
 		employeeStatusData.set(props.data.employeeStatus);
@@ -81,6 +82,14 @@
 
 	if (props.data.academicOffices != null) {
 		academicOffices.set(props.data.academicOffices);
+	}
+
+	if (props.data.nonAcademicOffices != null) {
+		nonAcademicOffices.set(props.data.nonAcademicOffices);
+	}
+
+	if (props.data.techAdminPerformance != null) {
+		techAdminPerformance.set(props.data.techAdminPerformance);
 	}
 </script>
 

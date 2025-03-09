@@ -81,3 +81,27 @@ export async function fetchAcademicOfficesByUnit(
 
 	return data || [];
 }
+
+export async function fetchNonAcademicOfficesByUnit(
+	supabase: SupabaseClient<Database>,
+	unit_id: number | null
+): Promise<Tables<'office'>[]> {
+	if (!unit_id) {
+		return [];
+	}
+
+	const { data, error } = await supabase
+		.from('office')
+		.select('*')
+		.eq('unit_id', unit_id)
+		.not('name', 'ilike', 'College%')
+		.not('name', 'ilike', 'Institute%')
+		.order('name');
+
+	if (error) {
+		console.error('Error fetching non-academic offices by unit:', error);
+		throw error;
+	}
+
+	return data || [];
+}
