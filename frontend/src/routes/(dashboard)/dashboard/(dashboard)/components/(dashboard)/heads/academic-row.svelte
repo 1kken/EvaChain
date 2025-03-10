@@ -12,7 +12,7 @@
 	<Card.Content class="border-none">
 		<div class="flex flex-col gap-4 md:flex-row">
 			<!--Faculty Teaching effectiveness-->
-			<div class="h-48 w-full md:w-1/2">
+			<div class="h-48 w-full">
 				<div class="flex items-center gap-2">
 					<h1 class="font-semibold">Faculty Teaching Effectiveness</h1>
 					<TeAcademicSelect />

@@ -3,11 +3,15 @@
 	import { setDashboardControlsStore } from '$lib/charts/shared-component/iregm_state';
 	import { setSharedChartStore } from '$lib/charts/shared-component/state';
 	import { setSupervisorChartStore } from '$lib/charts/supervisor/state';
+	import { getUserAuthStore } from '$lib/utils/rbac';
 	import type { PageProps } from './$types';
 	import EmployeeSection from './components/(dashboard)/employee/employee-section.svelte';
 	import HeadsSection from './components/(dashboard)/heads/heads-section.svelte';
 	import SupervisorSection from './components/(dashboard)/supervisor/supervisor-section.svelte';
 	let props: PageProps = $props();
+
+	const { hasRole } = getUserAuthStore();
+
 	setDashboardControlsStore();
 	let {
 		officeName,
@@ -30,7 +34,9 @@
 		academicOffices,
 		nonAcademicOffices,
 		techAdminPerformance,
-		academicPerformance
+		academicPerformance,
+		academicAccomplishmentPerformance,
+		techAndAdminAccomplishmentPerformance
 	} = setHeadsChartStore();
 
 	if (props.data.employeeStatus != null) {
@@ -100,6 +106,14 @@
 	if (props.data.academicPerformance != null) {
 		academicPerformance.set(props.data.academicPerformance);
 	}
+
+	if (props.data.academicAccomplishmentPerformance != null) {
+		academicAccomplishmentPerformance.set(props.data.academicAccomplishmentPerformance);
+	}
+
+	if (props.data.techAndAdminAccomplishmentPerformance != null) {
+		techAndAdminAccomplishmentPerformance.set(props.data.techAndAdminAccomplishmentPerformance);
+	}
 </script>
 
 <div class="flex w-full justify-center">
@@ -110,8 +124,10 @@
 		<div class="w-full">
 			<SupervisorSection />
 		</div>
-		<div class="w-full">
-			<HeadsSection />
-		</div>
+		{#if hasRole('head_of_operating_unit') || hasRole('vice_president')}
+			<div class="w-full">
+				<HeadsSection />
+			</div>
+		{/if}
 	</div>
 </div>
