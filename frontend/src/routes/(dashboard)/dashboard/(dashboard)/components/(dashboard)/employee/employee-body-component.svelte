@@ -36,14 +36,14 @@
 					? 'h-48 w-full'
 					: 'h-48 w-fit md:w-1/2'}
 			>
-				<h1 class="font-semibold">IPCR Performance Analysis</h1>
+				<h1 class="font-semibold">IPCR Analysis</h1>
 				<IpcrBarChartComponent />
 			</div>
 
 			{#if showDpcr()}
 				<!-- DPCR Performance Analysis -->
 				<div class="h-48 w-fit md:w-1/2">
-					<h1 class="font-semibold">DPCR Performance Analysis</h1>
+					<h1 class="font-semibold">DPCR Analysis</h1>
 					<DpcrPerformanceAnalysisComponents />
 				</div>
 			{/if}

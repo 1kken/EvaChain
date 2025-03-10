@@ -19,23 +19,29 @@ const HEADS_CHART_STORE_KEY = Symbol('HEADS_CHART_STORE_KEY');
 
 // Define the shape of our heads chart store
 interface HeadsChartStore {
-	currentAcademicOffice: Writable<string | null>;
+	teCurrentAcademicOffice: Writable<string | null>;
 	currentNonAcademicOffice: Writable<string | null>;
+	currentAcademicIpcrAnalysis: Writable<string | null>;
+	currentNonAcademicIpcrAnalysis: Writable<string | null>;
 	academicOffices: Writable<Tables<'office'>[] | null>;
 	nonAcademicOffices: Writable<Tables<'office'>[] | null>;
 	teachingEffectivenessByOffice: Writable<OfficeTeachingEffectiveness[] | null>;
 	techAdminPerformance: Writable<OfficePerformanceData[] | null>;
+	academicPerformance: Writable<OfficePerformanceData[] | null>;
 }
 
 // Create a function to initialize the heads chart state
 function createHeadsChartStore(): HeadsChartStore {
 	return {
 		currentNonAcademicOffice: writable<string | null>(null),
-		currentAcademicOffice: writable<string | null>(null),
+		teCurrentAcademicOffice: writable<string | null>(null),
+		currentAcademicIpcrAnalysis: writable<string | null>(null),
+		currentNonAcademicIpcrAnalysis: writable<string | null>(null),
 		academicOffices: writable<Tables<'office'>[] | null>(null),
 		nonAcademicOffices: writable<Tables<'office'>[] | null>(null),
 		teachingEffectivenessByOffice: writable<OfficeTeachingEffectiveness[] | null>(null),
-		techAdminPerformance: writable<OfficePerformanceData[] | null>(null)
+		techAdminPerformance: writable<OfficePerformanceData[] | null>(null),
+		academicPerformance: writable<OfficePerformanceData[] | null>(null)
 	};
 }
 

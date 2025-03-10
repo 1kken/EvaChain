@@ -33,9 +33,9 @@
 		BarElement
 	);
 
-	let { teCurrentAcademicOffice } = getHeadsChartStore();
+	let { currentAcademicIpcrAnalysis } = getHeadsChartStore();
 
-	type OfficeEffectivenessData = {
+	type OfficePerformanceHistoryData = {
 		office_id: number;
 		office_code: string;
 		office_name: string;
@@ -44,25 +44,25 @@
 		period_2_avg: number;
 	}[];
 
-	let effectivenessData: OfficeEffectivenessData = $state([]);
+	let performanceHistoryData: OfficePerformanceHistoryData = $state([]);
 	let loading = $state(false);
 	let error: string | null = $state(null);
 	let ctx: ChartItem | null = $state(null);
 	let chart: Chart | null = null;
 
-	async function fetchOfficeEffectivenessData(officeId: string) {
+	async function fetchAcademicPerformanceHistory(officeId: string) {
 		loading = true;
 		error = null;
 		try {
-			const response = await fetch(`/api/charts/headopu/office_effectiveness?officeId=${officeId}`);
+			const response = await fetch(`/api/charts/headopu/ipcr_analysis?officeId=${officeId}`);
 			if (!response.ok) {
 				throw new Error(`HTTP error! Status: ${response.status}`);
 			}
 			const data = await response.json();
-			effectivenessData = data;
+			performanceHistoryData = data;
 			return data;
 		} catch (err) {
-			console.error('Error fetching office effectiveness data:', err);
+			console.error('Error fetching academic performance history data:', err);
 			error = err instanceof Error ? err.message : 'An error occurred';
 			return [];
 		} finally {
@@ -71,19 +71,19 @@
 	}
 
 	function createChart(theme: string | undefined) {
-		if (!ctx || effectivenessData.length === 0) return;
+		if (!ctx || performanceHistoryData.length === 0) return;
 
 		const isDark = theme === 'dark';
 		const textColor = isDark ? 'white' : 'black';
-		const period1Color = isDark ? 'rgb(106, 168, 79)' : 'rgb(39, 121, 61)'; // Green tones
-		const period1BackgroundColor = isDark ? 'rgba(106, 168, 79, 0.5)' : 'rgba(39, 121, 61, 0.5)';
-		const period2Color = isDark ? 'rgba(142, 124, 195, 0.7)' : 'rgba(103, 78, 167, 0.7)'; // Purple tones
-		const period2BackgroundColor = isDark ? 'rgba(142, 124, 195, 0.5)' : 'rgba(103, 78, 167, 0.5)';
+		const period1Color = isDark ? 'rgb(231, 140, 69)' : 'rgb(201, 79, 27)'; // Orange tones for academic
+		const period1BackgroundColor = isDark ? 'rgba(231, 140, 69, 0.5)' : 'rgba(201, 79, 27, 0.5)';
+		const period2Color = isDark ? 'rgba(65, 149, 186, 0.7)' : 'rgba(39, 117, 182, 0.7)'; // Blue tones for academic
+		const period2BackgroundColor = isDark ? 'rgba(65, 149, 186, 0.5)' : 'rgba(39, 117, 182, 0.5)';
 		const gridColor = isDark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.1)';
 
-		const years = effectivenessData.map((item) => item.year.toString());
-		const period1Values = effectivenessData.map((item) => item.period_1_avg);
-		const period2Values = effectivenessData.map((item) => item.period_2_avg);
+		const years = performanceHistoryData.map((item) => item.year.toString());
+		const period1Values = performanceHistoryData.map((item) => item.period_1_avg);
+		const period2Values = performanceHistoryData.map((item) => item.period_2_avg);
 
 		if (chart) {
 			// Update existing chart
@@ -118,7 +118,7 @@
 				datasets: [
 					{
 						type: 'bar',
-						label: 'Jan-Jun Average',
+						label: '1st Semester Average',
 						data: period1Values,
 						borderColor: period1Color,
 						backgroundColor: period1BackgroundColor,
@@ -126,7 +126,7 @@
 					},
 					{
 						type: 'bar',
-						label: 'Jul-Dec Average',
+						label: '2nd Semester Average',
 						data: period2Values,
 						borderColor: period2Color,
 						backgroundColor: period2BackgroundColor,
@@ -143,7 +143,7 @@
 						grid: { color: gridColor },
 						title: {
 							display: true,
-							text: 'Year',
+							text: 'Academic Year',
 							color: textColor
 						}
 					},
@@ -158,7 +158,7 @@
 						grid: { color: gridColor },
 						title: {
 							display: true,
-							text: 'Teaching Effectiveness Rating',
+							text: 'Academic Performance Rating',
 							color: textColor
 						}
 					}
@@ -167,6 +167,11 @@
 					legend: {
 						position: 'top',
 						labels: { color: textColor }
+					},
+					title: {
+						display: true,
+						text: 'Academic Performance by Semester',
+						color: textColor
 					},
 					tooltip: {
 						callbacks: {
@@ -217,8 +222,8 @@
 	}
 
 	$effect(() => {
-		if ($teCurrentAcademicOffice) {
-			fetchOfficeEffectivenessData($teCurrentAcademicOffice).then(() => {
+		if ($currentAcademicIpcrAnalysis) {
+			fetchAcademicPerformanceHistory($currentAcademicIpcrAnalysis).then(() => {
 				createChart($mode);
 			});
 		}
@@ -226,13 +231,13 @@
 
 	onMount(() => {
 		// Initial chart creation if we already have data and DOM element
-		if (ctx && effectivenessData.length > 0) {
+		if (ctx && performanceHistoryData.length > 0) {
 			createChart($mode);
 		}
 
 		const unsubscribe = mode.subscribe((theme) => {
 			// Update chart when theme changes
-			if (ctx && effectivenessData.length > 0) {
+			if (ctx && performanceHistoryData.length > 0) {
 				createChart(theme);
 			}
 		});
@@ -251,10 +256,10 @@
 	<Skeleton class="h-full w-full" />
 {:else if error}
 	<p>Error loading data: {error}</p>
-{:else if !$teCurrentAcademicOffice}
-	<p>Please select an office to view teaching effectiveness history</p>
-{:else if effectivenessData.length === 0}
-	<p>No teaching effectiveness data available for this office</p>
+{:else if !$currentAcademicIpcrAnalysis}
+	<p>Please select an academic office to view performance history</p>
+{:else if performanceHistoryData.length === 0}
+	<p>No academic performance history data available for this office</p>
 {:else}
-	<canvas id="office-effectiveness-chart" bind:this={ctx}></canvas>
+	<canvas id="academic-performance-history-chart" bind:this={ctx}></canvas>
 {/if}

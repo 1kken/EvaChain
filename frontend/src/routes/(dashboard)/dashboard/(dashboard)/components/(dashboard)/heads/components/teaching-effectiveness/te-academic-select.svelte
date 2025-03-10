@@ -2,15 +2,15 @@
 	import { getHeadsChartStore } from '$lib/charts/head_of_op-vice_president/state';
 	import * as Select from '$lib/components/ui/select/index.js';
 
-	let { academicOffices, currentAcademicOffice } = getHeadsChartStore();
+	let { academicOffices, teCurrentAcademicOffice } = getHeadsChartStore();
 
 	let selection = $academicOffices || [];
-	let value = $state($currentAcademicOffice);
+	let value = $state($teCurrentAcademicOffice);
 
 	const triggerContent = $derived(
 		value === ''
 			? 'All'
-			: (selection.find((f) => f.id.toString() === value)?.code ?? 'Select Academic Office')
+			: (selection.find((f) => f.id.toString() === value)?.code ?? 'Select Office')
 	);
 </script>
 
@@ -19,7 +19,7 @@
 	name="academic-office"
 	onValueChange={($event) => {
 		value = $event;
-		currentAcademicOffice.set(value);
+		teCurrentAcademicOffice.set(value);
 	}}
 >
 	<Select.Trigger class="w-[180px]">

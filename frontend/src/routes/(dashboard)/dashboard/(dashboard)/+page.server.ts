@@ -1,9 +1,10 @@
+import { fetchAcademicPerformance } from '$lib/charts/head_of_op-vice_president/head_of_operating_unit/academic-ipcr-analysis/utils';
 import {
 	fetchAcademicOfficesByUnit,
 	fetchNonAcademicOfficesByUnit,
 	fetchOfficesTeachingEffectiveness
 } from '$lib/charts/head_of_op-vice_president/head_of_operating_unit/teaching-effectiveness/utils';
-import { fetchTechAdminPerformance } from '$lib/charts/head_of_op-vice_president/head_of_operating_unit/tech-admin/utils';
+import { fetchTechAdminPerformance } from '$lib/charts/head_of_op-vice_president/head_of_operating_unit/tech-admin-ipcr-analysis/utils';
 import { fetchAcademicRanksData } from '$lib/charts/shared-component/academic-rank/academic-utils';
 import { fetchIREGMForPastFiveYears } from '$lib/charts/shared-component/accomplishment-IREGM-history/utils';
 import { fetchIREGMPerYear } from '$lib/charts/shared-component/accomplishment-IREGM/utils';
@@ -57,6 +58,7 @@ export const load = (async ({
 		);
 		const nonAcademicOffices = await fetchNonAcademicOfficesByUnit(supabase, profile.unit_id!);
 		const techAdminPerformance = await fetchTechAdminPerformance(supabase, profile, hasRole);
+		const academicPerformance = await fetchAcademicPerformance(supabase, profile, hasRole);
 		// Ensure we handle empty or undefined values
 		return {
 			academicOffices: academicOffices || [],
@@ -74,7 +76,8 @@ export const load = (async ({
 			teachingEffectivenessData: teachingEffectiveness || [],
 			accReportCategoryAvg: accReportCategoryAvg,
 			teachingEffectivenessByOffice: teachingEffectivenessByOffice || [],
-			techAdminPerformance: techAdminPerformance || []
+			techAdminPerformance: techAdminPerformance || [],
+			academicPerformance: academicPerformance || []
 		};
 	} catch (error) {
 		console.error('Error fetching dashboard data:', error);
