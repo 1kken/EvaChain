@@ -20,7 +20,6 @@ import { fetchTotalBudgetRequirement } from '$lib/charts/shared-component/total-
 import { fetchFacultyPerformance } from '$lib/charts/supervisor/faculty-performance/utils';
 import { fetchTeachingEffectiveness } from '$lib/charts/supervisor/faculty-teaching-effectiveness/utils';
 import type { PageServerLoad } from './$types';
-
 export const load = (async ({
 	locals: { supabase, profile, hasRole, getUserRolesAndPermissions }
 }) => {
@@ -29,48 +28,58 @@ export const load = (async ({
 	}
 
 	try {
-		//for checking
-		const permissionAndRoles = await getUserRolesAndPermissions(profile.id);
+		// Execute all fetch operations concurrently using Promise.all with explicit promise variables
+		const [
+			permissionAndRoles,
+			populationData,
+			employeeStatus,
+			academicRanks,
+			totalBudgetRequirement,
+			natureOfWorkData,
+			ipcrPerformanceIndicator,
+			ipcrTeachingEffectiveness,
+			accReportCategoryAvg,
+			accReportCategoryHistory,
+			performanceData,
+			teachingEffectiveness,
+			dpcrPerformanceData,
+			academicOffices,
+			teachingEffectivenessByOffice,
+			nonAcademicOffices,
+			techAdminPerformance,
+			academicPerformance,
+			academicAccomplishmentPerformance,
+			techAndAdminAccomplishmentPerformance
+		] = await Promise.all([
+			// For checking
+			getUserRolesAndPermissions(profile.id),
 
-		//shared
-		const populationData = await fetchPopulationData(supabase, profile, hasRole);
-		const employeeStatus = await fetchEmployeeStatus(supabase, profile, hasRole);
-		const academicRanks = await fetchAcademicRanksData(supabase, profile, hasRole);
-		const totalBudgetRequirement = await fetchTotalBudgetRequirement(supabase, profile, hasRole);
-		const natureOfWorkData = await fetchEmployeeNatureOfWork(supabase, profile, hasRole);
-		const ipcrPerformanceIndicator = await fetchIpcrPerformanceSummary(supabase, profile.id);
-		const ipcrTeachingEffectiveness = await fetchTeachingEffectivenessIndividual(
-			supabase,
-			profile.id
-		);
-		const accReportCategoryAvg = await fetchIREGMPerYear(supabase, profile, hasRole);
-		const accReportCategoryHistory = await fetchIREGMForPastFiveYears(supabase, profile, hasRole);
+			// Shared components
+			fetchPopulationData(supabase, profile, hasRole),
+			fetchEmployeeStatus(supabase, profile, hasRole),
+			fetchAcademicRanksData(supabase, profile, hasRole),
+			fetchTotalBudgetRequirement(supabase, profile, hasRole),
+			fetchEmployeeNatureOfWork(supabase, profile, hasRole),
+			fetchIpcrPerformanceSummary(supabase, profile.id),
+			fetchTeachingEffectivenessIndividual(supabase, profile.id),
+			fetchIREGMPerYear(supabase, profile, hasRole),
+			fetchIREGMForPastFiveYears(supabase, profile, hasRole),
 
-		//Dean Program Chair
-		const performanceData = await fetchFacultyPerformance(supabase, profile, hasRole);
-		const teachingEffectiveness = await fetchTeachingEffectiveness(supabase, profile, hasRole);
+			// Dean Program Chair
+			fetchFacultyPerformance(supabase, profile, hasRole),
+			fetchTeachingEffectiveness(supabase, profile, hasRole),
 
-		//Head of operating unit || vice president
-		const dpcrPerformanceData = await fetchDpcrPerformanceSummary(supabase, profile.id);
-		const academicOffices = await fetchAcademicOfficesByUnit(supabase, profile.unit_id!);
-		const teachingEffectivenessByOffice = await fetchOfficesTeachingEffectiveness(
-			supabase,
-			profile,
-			hasRole
-		);
-		const nonAcademicOffices = await fetchNonAcademicOfficesByUnit(supabase, profile.unit_id!);
-		const techAdminPerformance = await fetchTechAdminPerformance(supabase, profile, hasRole);
-		const academicPerformance = await fetchAcademicPerformance(supabase, profile, hasRole);
-		const academicAccomplishmentPerformance = await fetchAcademicAccomplishmentPerformance(
-			supabase,
-			profile,
-			hasRole
-		);
-		const techAndAdminAccomplishmentPerformance = await fetchTechAdminAccomplishmentPerformance(
-			supabase,
-			profile,
-			hasRole
-		);
+			// Head of operating unit || vice president
+			fetchDpcrPerformanceSummary(supabase, profile.id),
+			fetchAcademicOfficesByUnit(supabase, profile.unit_id!),
+			fetchOfficesTeachingEffectiveness(supabase, profile, hasRole),
+			fetchNonAcademicOfficesByUnit(supabase, profile.unit_id!),
+			fetchTechAdminPerformance(supabase, profile, hasRole),
+			fetchAcademicPerformance(supabase, profile, hasRole),
+			fetchAcademicAccomplishmentPerformance(supabase, profile, hasRole),
+			fetchTechAdminAccomplishmentPerformance(supabase, profile, hasRole)
+		]);
+
 		// Ensure we handle empty or undefined values
 		return {
 			academicOffices: academicOffices || [],
