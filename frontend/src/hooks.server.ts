@@ -9,6 +9,7 @@ import { handleOpcrAccess } from '$lib/hooks/authOPCR';
 import { handleStratPlanAccess } from '$lib/hooks/authStratPlan';
 import { handleAccReportAccess } from '$lib/hooks/authAccReport';
 import { handleDpcrAccess } from '$lib/hooks/authDPCR';
+import { handleOpApproval } from '$lib/hooks/authOpApproval';
 
 const supabase: Handle = async ({ event, resolve }) => {
 	/**
@@ -155,5 +156,6 @@ export const handle: Handle = sequence(
 	handleOpcrAccess,
 	handleStratPlanAccess,
 	handleAccReportAccess,
-	handleDpcrAccess
+	handleDpcrAccess,
+	handleOpApproval
 );

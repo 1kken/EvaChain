@@ -4,16 +4,27 @@
 	import { BookCheck, ChevronRight, DatabaseBackup, FilePlus2 } from 'lucide-svelte';
 	import { fade } from 'svelte/transition';
 	import { page } from '$app/stores';
+	import { getUserAuthStore } from '$lib/utils/rbac';
+
+	const { hasRole } = getUserAuthStore();
 	const items = [
-		{
-			title: 'Operational Plan',
-			url: `/dashboard/approval_request/operational_plan`
-		},
 		{
 			title: 'IPCR',
 			url: `/dashboard/approval_request/ipcr`
 		}
 	];
+
+	const canApproveOperationalPlan =
+		hasRole('president') ||
+		hasRole('vice-president') ||
+		hasRole('head_of_operating_unit') ||
+		hasRole('dean');
+	if (canApproveOperationalPlan) {
+		items.push({
+			title: 'Operational Plan',
+			url: `/dashboard/approval_request/operational_plan`
+		});
+	}
 	function isActive(itemUrl: string) {
 		return $page.url.pathname === itemUrl;
 	}

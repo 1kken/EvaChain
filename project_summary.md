@@ -610,3 +610,27 @@ CREATE OR REPLACE FUNCTION academic_performance(p_unit_id INTEGER) RETURNS TABLE
 CREATE OR REPLACE FUNCTION academic_accomplishment_performance(p_unit_id INTEGER) RETURNS TABLE ( office_id INTEGER, office_code VARCHAR, office_name VARCHAR, average_accomplishment NUMERIC ) LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$ BEGIN RETURN QUERY SELECT o.id AS office_id, o.code AS office_code, o.name AS office_name, ROUND(AVG(ar.total_accomplishment_rate), 2) AS average_accomplishment FROM accomplishment_report_avg_rate ar JOIN office o ON ar.office_id = o.id WHERE -- Only consider current year EXTRACT(YEAR FROM ar.created_at) = EXTRACT(YEAR FROM CURRENT_DATE) -- Only include offices with names starting with "Institute" or "College" (case-insensitive) AND (o.name ILIKE 'Institute%' OR o.name ILIKE 'College%') -- Filter by the provided unit_id AND o.unit_id = p_unit_id GROUP BY o.id, o.code, o.name ORDER BY average_accomplishment DESC; END; $$; -- Grant execute permission to authenticated users GRANT EXECUTE ON FUNCTION academic_accomplishment_performance(INTEGER) TO authenticated; -- Add comment explaining the function COMMENT ON FUNCTION academic_accomplishment_performance(INTEGER) IS 'Calculates the average accomplishment rate by academic office for the current year, only including offices with names starting with "Institute" or "College". Filtered by the specified unit_id parameter.';
 ```
 
+# 20250310194107_tech_admin_accomplishment_performance.sql
+
+```sql
+CREATE OR REPLACE FUNCTION tech_admin_accomplishment_performance(p_unit_id INTEGER) RETURNS TABLE ( office_id INTEGER, office_code VARCHAR, office_name VARCHAR, average_accomplishment NUMERIC ) LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$ BEGIN RETURN QUERY SELECT o.id AS office_id, o.code AS office_code, o.name AS office_name, ROUND(AVG(ar.total_accomplishment_rate), 2) AS average_accomplishment FROM accomplishment_report_avg_rate ar JOIN office o ON ar.office_id = o.id WHERE -- Only consider current year EXTRACT(YEAR FROM ar.created_at) = EXTRACT(YEAR FROM CURRENT_DATE) -- Exclude offices with names starting with "Institute" or "College" (case-insensitive) AND o.name NOT ILIKE 'Institute%' AND o.name NOT ILIKE 'College%' -- Filter by the provided unit_id AND o.unit_id = p_unit_id GROUP BY o.id, o.code, o.name ORDER BY average_accomplishment DESC; END; $$; -- Grant execute permission to authenticated users GRANT EXECUTE ON FUNCTION tech_admin_accomplishment_performance(INTEGER) TO authenticated; -- Add comment explaining the function COMMENT ON FUNCTION tech_admin_accomplishment_performance(INTEGER) IS 'Calculates the average accomplishment rate by technical/administrative office for the current year, excluding offices with names starting with "Institute" or "College". Filtered by the specified unit_id parameter.';
+```
+
+# 20250311172740_get_operational_plans_by_head_or_vp.sql
+
+```sql
+CREATE OR REPLACE FUNCTION get_operational_plans_by_head_or_vp() RETURNS SETOF operational_plan LANGUAGE sql SECURITY DEFINER SET search_path = public AS $$ SELECT op.* FROM operational_plan op INNER JOIN user_roles ur ON op.creator_id = ur.user_id INNER JOIN roles r ON ur.role_id = r.id WHERE r.name IN ('head_of_operating_unit', 'vice-president') ORDER BY op.created_at DESC; $$; -- Grant execution permissions GRANT EXECUTE ON FUNCTION get_operational_plans_by_head_or_vp() TO authenticated;
+```
+
+# 20250311172759_get_operational_plans_by_unit_for_dean_or_head.sql
+
+```sql
+-- Function 2: Get operational plans based on unit_id where creator has dean or head_of_office role CREATE OR REPLACE FUNCTION get_operational_plans_by_unit_for_dean_or_head(p_unit_id INTEGER) RETURNS SETOF operational_plan LANGUAGE sql SECURITY DEFINER SET search_path = public AS $$ SELECT op.* FROM operational_plan op INNER JOIN user_roles ur ON op.creator_id = ur.user_id INNER JOIN roles r ON ur.role_id = r.id WHERE op.unit_id = p_unit_id AND r.name IN ('dean', 'head_of_office') ORDER BY op.created_at DESC; $$; -- Grant execution permissions GRANT EXECUTE ON FUNCTION get_operational_plans_by_unit_for_dean_or_head(INTEGER) TO authenticated;
+```
+
+# 20250311172850_get_operational_plans_by_office_for_program_chair.sql
+
+```sql
+CREATE OR REPLACE FUNCTION get_operational_plans_by_office_for_program_chair(p_office_id INTEGER) RETURNS SETOF operational_plan LANGUAGE sql SECURITY DEFINER SET search_path = public AS $$ SELECT op.* FROM operational_plan op INNER JOIN user_roles ur ON op.creator_id = ur.user_id INNER JOIN roles r ON ur.role_id = r.id WHERE op.office_id = p_office_id AND r.name = 'program_chair' ORDER BY op.created_at DESC; $$; -- Grant execution permissions GRANT EXECUTE ON FUNCTION get_operational_plans_by_office_for_program_chair(INTEGER) TO authenticated;
+```
+
