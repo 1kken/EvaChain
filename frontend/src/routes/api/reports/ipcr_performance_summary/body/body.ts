@@ -55,7 +55,7 @@ function main(performanceSummary: PerformanceSummaryWithDerivedData[]): TableCel
 
 		rows.push([
 			{ text: summary.owner?.employee_id || '', alignment: 'center', fontSize: 12, marginTop: 10 },
-			{ text: fullName, alignment: 'center', fontSize: 12, marginTop: 10 },
+			{ text: titleCase(fullName), alignment: 'left', fontSize: 12, marginTop: 10 },
 			{ text: weightedAverage, alignment: 'center', fontSize: 12, marginTop: 10 },
 			{ text: interpretation, alignment: 'center', fontSize: 12, marginTop: 10 }
 		]);
