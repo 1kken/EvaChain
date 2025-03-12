@@ -87,7 +87,7 @@ export async function createOperationalPlan(
 	}
 
 	try {
-		await checkExistingOplanThisYear(supabase, unit_id, office_id, program_id);
+		await checkExistingOplanThisYear(supabase, unit_id, office_id, program_id, creator_id);
 	} catch (error) {
 		let errorDisp = error instanceof Error ? error.message : 'An unknown error occurred';
 		return message(form, { status: 'error', text: errorDisp });

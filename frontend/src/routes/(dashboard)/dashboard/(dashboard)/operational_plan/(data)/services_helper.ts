@@ -186,10 +186,19 @@ export async function checkExistingOplanThisYear(
 	supabase: SupabaseClient<Database>,
 	unit_id: number | null,
 	office_id: number | null,
-	program_id: number | null
+	program_id: number | null,
+	creator_id: string
 ) {
 	const currentYear = new Date().getFullYear();
-	let query = supabase.from('operational_plan').select('*');
+	const startOfYear = `${currentYear}-01-01`;
+	const endOfYear = `${currentYear}-12-31`;
+
+	let query = supabase
+		.from('operational_plan')
+		.select('*')
+		.eq('creator_id', creator_id)
+		.gte('created_at', startOfYear)
+		.lte('created_at', endOfYear);
 
 	if (program_id) {
 		query = query.eq('program_id', program_id);
@@ -200,17 +209,15 @@ export async function checkExistingOplanThisYear(
 	}
 
 	const { data: existingPlans } = await query;
-	const currentYearPlans = existingPlans?.filter(
-		(plan) => new Date(plan.created_at).getFullYear() === currentYear
-	);
 
-	if (currentYearPlans?.length) {
+	if (existingPlans?.length) {
 		const scope = program_id ? 'program' : office_id ? 'office' : 'unit';
 		throw new Error(
 			`An operational plan for ${currentYear} already exists at your ${scope} level.`
 		);
 	}
 }
+
 export async function checkAndCopyOperationalPlan(
 	supabase: SupabaseClient<Database>,
 	newOpData: NewOpData
@@ -220,7 +227,8 @@ export async function checkAndCopyOperationalPlan(
 			supabase,
 			newOpData.unit_id,
 			newOpData.office_id!,
-			newOpData.program_id!
+			newOpData.program_id!,
+			newOpData.creator_id
 		);
 
 		const latestPlan = await getLatestOperationalPlan(
