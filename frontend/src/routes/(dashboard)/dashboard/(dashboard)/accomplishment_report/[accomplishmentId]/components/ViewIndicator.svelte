@@ -1,6 +1,7 @@
 <script lang="ts">
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import type { Tables } from '$lib/types/database.types';
+	import { onMount } from 'svelte';
 	import TruncatedDiv from '../../../components/TruncatedDiv.svelte';
 	import { getAccomplishmentActivityIndicatorStore } from '../states/activity_indicator_state';
 	import DetailsSection from './sub_components/view_indicator/DetailsSection.svelte';
@@ -10,7 +11,39 @@
 
 	let { indicator }: { indicator: Tables<'accomplishment_activity_indicator'> } = $props();
 	const { currentAccomplishmentActivityIndicators } = getAccomplishmentActivityIndicatorStore();
-	// const { currentAccomplishmentActivities } = getAccomplishmentindicatorStore();
+
+	interface UserEvidenceFiles {
+		user_name: string;
+		user_email: string;
+		signed_urls: string[];
+	}
+	let evidenceFiles: UserEvidenceFiles | [] = [];
+	let errorMessage = '';
+	let loading = true;
+
+	onMount(() => {
+		const accomplishmentIndicatorId = indicator.id;
+
+		fetch(
+			`/api/accomplishment_report/evidence?accomplishment_indicator_id=${accomplishmentIndicatorId}`
+		)
+			.then((response) => {
+				if (!response.ok) {
+					throw new Error(`HTTP error! Status: ${response.status}`);
+				}
+				return response.json();
+			})
+			.then((result) => {
+				console.log('Evidence files:', result);
+				evidenceFiles = result.data || [];
+				loading = false;
+			})
+			.catch((error) => {
+				console.error('Error fetching evidence files:', error);
+				errorMessage = error.message || 'Failed to fetch evidence files';
+				loading = false;
+			});
+	});
 
 	// Create reactive state using runes
 	let currentindicator = $state(indicator);

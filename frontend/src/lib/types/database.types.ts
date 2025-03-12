@@ -2001,27 +2001,47 @@ export type Database = {
       }
       ipcr_indicator_evidence: {
         Row: {
+          accomplishment_indicator_id: string
           created_at: string
           file_path: string
           id: string
           ipcr_indicator_accomplishment_id: string
           updated_at: string
+          uploader_id: string
         }
         Insert: {
+          accomplishment_indicator_id: string
           created_at?: string
           file_path: string
           id?: string
           ipcr_indicator_accomplishment_id: string
           updated_at?: string
+          uploader_id: string
         }
         Update: {
+          accomplishment_indicator_id?: string
           created_at?: string
           file_path?: string
           id?: string
           ipcr_indicator_accomplishment_id?: string
           updated_at?: string
+          uploader_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "ipcr_indicator_evidence_accomplishment_indicator_id_fkey"
+            columns: ["accomplishment_indicator_id"]
+            isOneToOne: false
+            referencedRelation: "accomplishment_activity_indicator"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ipcr_indicator_evidence_accomplishment_indicator_id_fkey"
+            columns: ["accomplishment_indicator_id"]
+            isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["indicator_id"]
+          },
           {
             foreignKeyName: "ipcr_indicator_evidence_ipcr_indicator_accomplishment_id_fkey"
             columns: ["ipcr_indicator_accomplishment_id"]
@@ -2035,6 +2055,69 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "ipcr_indicator_accomplishment"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ipcr_indicator_evidence_uploader_id_fkey"
+            columns: ["uploader_id"]
+            isOneToOne: false
+            referencedRelation: "accomplishment_report_backup_view"
+            referencedColumns: ["owner_id"]
+          },
+          {
+            foreignKeyName: "ipcr_indicator_evidence_uploader_id_fkey"
+            columns: ["uploader_id"]
+            isOneToOne: false
+            referencedRelation: "dpcr_backup_view"
+            referencedColumns: ["owner_id"]
+          },
+          {
+            foreignKeyName: "ipcr_indicator_evidence_uploader_id_fkey"
+            columns: ["uploader_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_backup_view"
+            referencedColumns: ["owner_id"]
+          },
+          {
+            foreignKeyName: "ipcr_indicator_evidence_uploader_id_fkey"
+            columns: ["uploader_id"]
+            isOneToOne: false
+            referencedRelation: "ipcr_owner_details"
+            referencedColumns: ["owner_id"]
+          },
+          {
+            foreignKeyName: "ipcr_indicator_evidence_uploader_id_fkey"
+            columns: ["uploader_id"]
+            isOneToOne: false
+            referencedRelation: "opcr_backup_view"
+            referencedColumns: ["owner_id"]
+          },
+          {
+            foreignKeyName: "ipcr_indicator_evidence_uploader_id_fkey"
+            columns: ["uploader_id"]
+            isOneToOne: false
+            referencedRelation: "operational_backup_view"
+            referencedColumns: ["creator_id"]
+          },
+          {
+            foreignKeyName: "ipcr_indicator_evidence_uploader_id_fkey"
+            columns: ["uploader_id"]
+            isOneToOne: false
+            referencedRelation: "profile_details_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ipcr_indicator_evidence_uploader_id_fkey"
+            columns: ["uploader_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ipcr_indicator_evidence_uploader_id_fkey"
+            columns: ["uploader_id"]
+            isOneToOne: false
+            referencedRelation: "strategic_plan_backup_view"
+            referencedColumns: ["owner_id"]
           },
         ]
       }
@@ -8030,6 +8113,17 @@ export type Database = {
           p_office_id?: number
         }
         Returns: Json
+      }
+      get_evidence_files_by_user: {
+        Args: {
+          p_accomplishment_indicator_id: string
+        }
+        Returns: {
+          uploader_id: string
+          user_full_name: string
+          user_email: string
+          files: string[]
+        }[]
       }
       get_ipcr_functions_by_supervisor: {
         Args: {

@@ -7,7 +7,7 @@ export const createAccomplishmentWithHistory = async (
 	ipcrAccomplishmentId: string,
 	quantity: string,
 	ipcrIndicatorId: string
-): Promise<void> => {
+): Promise<string> => {
 	try {
 		const { quarter } = getCurrentQuarter();
 
@@ -72,6 +72,8 @@ export const createAccomplishmentWithHistory = async (
 		if (updateError) {
 			throw new Error(`Failed to update indicator: ${updateError.message}`);
 		}
+
+		return matchingIndicator.accomplishment_activity_indicator_id;
 	} catch (error) {
 		console.error('Error in createAccomplishmentWithHistory:', error);
 		throw error;

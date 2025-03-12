@@ -18,9 +18,14 @@ import { processIpcrEvidence } from '../utils/blockchain/pinata_helper';
 import { deleteAccomplishmentWithHistory } from './accomplishments/delete';
 import { createAccomplishmentWithHistory } from './accomplishments/create';
 import { updateAccomplishmentWithHistory } from './accomplishments/update';
+import type { ProfileWithJoins } from '../../../../../../../app';
 
 //===== CREATE ACCOMPLISHMENT =====/
-export async function createAccomplishment(request: Request, supabase: SupabaseClient<Database>) {
+export async function createAccomplishment(
+	request: Request,
+	supabase: SupabaseClient<Database>,
+	profile: ProfileWithJoins
+) {
 	const {
 		data: { user }
 	} = await supabase.auth.getUser();
@@ -70,9 +75,10 @@ export async function createAccomplishment(request: Request, supabase: SupabaseC
 		});
 	}
 
+	let accomplishmentActivityIndicatorId: string | null = null;
 	// Now update the history with the newly created accomplishment ID //! Errors Here
 	try {
-		await createAccomplishmentWithHistory(
+		accomplishmentActivityIndicatorId = await createAccomplishmentWithHistory(
 			supabase,
 			ipcrAccomplishment.id, // Use the new accomplishment's ID
 			quantity,
@@ -125,6 +131,8 @@ export async function createAccomplishment(request: Request, supabase: SupabaseC
 	const { error: saveIndicatorEvidenceError } = await supabase
 		.from('ipcr_indicator_evidence')
 		.insert({
+			uploader_id: profile.id,
+			accomplishment_indicator_id: accomplishmentActivityIndicatorId,
 			ipcr_indicator_accomplishment_id: ipcrAccomplishment.id,
 			file_path: uploadEvidenceData.fullPath
 		})

@@ -107,8 +107,10 @@ export const actions = {
 		return await deleteIpcrIndicator(request, supabase);
 	},
 	//adding accomplishments
-	createaccomplishment: async ({ request, locals: { supabase } }) => {
-		return await createAccomplishment(request, supabase);
+	createaccomplishment: async ({ request, locals: { supabase, profile } }) => {
+		if (!profile) throw error(401, { message: 'Unauthorized' });
+
+		return await createAccomplishment(request, supabase, profile);
 	},
 	updateaccomplishment: async ({ request, locals: { supabase } }) => {
 		return await updateAccomplishment(request, supabase);

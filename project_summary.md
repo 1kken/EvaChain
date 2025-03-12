@@ -634,3 +634,9 @@ CREATE OR REPLACE FUNCTION get_operational_plans_by_head_or_vp() RETURNS SETOF o
 CREATE OR REPLACE FUNCTION get_operational_plans_by_office_for_program_chair(p_office_id INTEGER) RETURNS SETOF operational_plan LANGUAGE sql SECURITY DEFINER SET search_path = public AS $$ SELECT op.* FROM operational_plan op INNER JOIN user_roles ur ON op.creator_id = ur.user_id INNER JOIN roles r ON ur.role_id = r.id WHERE op.office_id = p_office_id AND r.name = 'program_chair' ORDER BY op.created_at DESC; $$; -- Grant execution permissions GRANT EXECUTE ON FUNCTION get_operational_plans_by_office_for_program_chair(INTEGER) TO authenticated;
 ```
 
+# 20250312153657_add_accomplishment_id_to_ipcr_indicator_evidence_table.sql
+
+```sql
+-- Add accomplishment_indicator_id and uploader_id columns to ipcr_indicator_evidence table ALTER TABLE ipcr_indicator_evidence ADD COLUMN accomplishment_indicator_id UUID REFERENCES accomplishment_activity_indicator (id) ON DELETE CASCADE NOT NULL, ADD COLUMN uploader_id UUID REFERENCES profiles (id) ON DELETE CASCADE NOT NULL; -- Create index for accomplishment_indicator_id CREATE INDEX idx_ipcr_indicator_evidence_accomplishment_indicator_id ON ipcr_indicator_evidence (accomplishment_indicator_id); -- Create index for uploader_id CREATE INDEX idx_ipcr_indicator_evidence_uploader_id ON ipcr_indicator_evidence (uploader_id);
+```
+

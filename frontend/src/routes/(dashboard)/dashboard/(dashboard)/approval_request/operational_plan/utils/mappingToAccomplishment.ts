@@ -209,7 +209,7 @@ async function createAccomplishmentReport(
 	return await supabase
 		.from('accomplishment_report')
 		.insert({
-			title: opData.title,
+			title: `Accomplishment Report for ${opData.title}`,
 			implementing_unit: opData.implementing_unit,
 			review_by: opData.review_by,
 			reviewer_position: opData.reviewer_position,
