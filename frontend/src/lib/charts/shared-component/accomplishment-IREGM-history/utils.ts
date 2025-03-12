@@ -27,8 +27,8 @@ export async function fetchIREGMForPastFiveYears(
 		program_id: undefined as number | undefined
 	};
 
-	if (isDean && profile.unit_id) {
-		filters.unit_id = profile.unit_id;
+	if (isDean && profile.office_id) {
+		filters.office_id = profile.office_id;
 	} else if (isOfficeHead && profile.office_id) {
 		filters.office_id = profile.office_id;
 	} else if (isChair && profile.program_id) {
