@@ -8,16 +8,18 @@
 	import IndicatorHeader from './sub_components/view_indicator/IndicatorHeader.svelte';
 	import StatusSection from './sub_components/view_indicator/StatusSection.svelte';
 	import TimestampSection from './sub_components/view_indicator/TimestampSection.svelte';
+	import OpenEvidence from './sub_components/view_indicator/openEvidence.svelte';
 
 	let { indicator }: { indicator: Tables<'accomplishment_activity_indicator'> } = $props();
 	const { currentAccomplishmentActivityIndicators } = getAccomplishmentActivityIndicatorStore();
 
-	interface UserEvidenceFiles {
+	export interface UserEvidenceFiles {
 		user_name: string;
 		user_email: string;
 		signed_urls: string[];
 	}
-	let evidenceFiles: UserEvidenceFiles | [] = [];
+
+	let evidenceFiles: UserEvidenceFiles[] | [] = $state([]);
 	let errorMessage = '';
 	let loading = true;
 
@@ -115,6 +117,8 @@
 				annualTarget={others.annualTarget}
 				accomplishmentRate={others.accomplishment_rate ?? '0%'}
 			/>
+			<!--View evidences-->
+			<OpenEvidence userEvidenceFile={evidenceFiles} />
 
 			<DetailsSection {itemDetail} />
 
