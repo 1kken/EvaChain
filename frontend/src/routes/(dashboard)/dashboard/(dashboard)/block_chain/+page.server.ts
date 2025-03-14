@@ -1,4 +1,7 @@
 import type { PageServerLoad } from './$types';
+import { PRIVATE_KEY, RPC_URL, CONTRACT_ADDRESS } from '$env/static/private';
+import { ethers, JsonRpcProvider } from 'ethers';
+import { IPFSFileTrackerLogRetriever } from './block_chain_helper';
 
 interface BlockChainData {
 	file_cid: string;
@@ -9,16 +12,12 @@ interface BlockChainData {
 	created_at: string;
 }
 export const load = (async ({ locals: { supabase } }) => {
-	const { data: blockChainData, error: fetchError } = await supabase
-		.from('blockchain_data')
-		.select('file_cid,file_name,type,blockchain_hash,action,created_at')
-		.returns<BlockChainData[]>();
+	const provider: JsonRpcProvider = new JsonRpcProvider(RPC_URL);
+	const wallet = new ethers.Wallet(PRIVATE_KEY, provider);
 
-	if (fetchError) {
-		return {
-			blockChainData: [] as BlockChainData[]
-		};
-	}
+	const logRetriever = new IPFSFileTrackerLogRetriever(CONTRACT_ADDRESS, provider, wallet);
+
+	const blockChainData = await logRetriever.getAllFileActionLogs();
 
 	return {
 		blockChainData: blockChainData ?? []
