@@ -2,14 +2,12 @@ import { renderComponent, renderSnippet } from '$lib/components/ui/data-table';
 import type { ColumnDef } from '@tanstack/table-core';
 import DataTableSortButton from '$lib/custom_components/data-table/data-table-sort-button.svelte';
 import DataLink from './dataLink.svelte';
-import DateCell from './dateCell.svelte';
-import type { Tables } from '$lib/types/database.types';
-// This type is used to define the shape of our data.
-export type BlockChainData = Tables<'blockchain_data'>;
+import type { FileActionEvent } from '../block_chain_helper';
+import EtherscanLink from './etherscanLink.svelte';
 
-export const createColumns = (): ColumnDef<BlockChainData>[] => [
+export const createColumns = (): ColumnDef<FileActionEvent>[] => [
 	{
-		accessorKey: 'file_name',
+		accessorKey: 'fileName',
 		header: ({ column }) =>
 			renderComponent(DataTableSortButton, {
 				text: 'File Name',
@@ -17,9 +15,8 @@ export const createColumns = (): ColumnDef<BlockChainData>[] => [
 				onclick: () => column.toggleSorting(column.getIsSorted() === 'asc')
 			}),
 		cell: ({ getValue, row }) => {
-			//display a link to the IPCR  wiht id
 			const title = getValue<string>();
-			const cid = row.original.file_cid;
+			const cid = row.original.cid;
 			return renderComponent(DataLink, { cid, name: title });
 		}
 	},
@@ -30,46 +27,36 @@ export const createColumns = (): ColumnDef<BlockChainData>[] => [
 				text: 'Action',
 				arrangement: column.getIsSorted(),
 				onclick: () => column.toggleSorting(column.getIsSorted() === 'asc')
-			})
+			}),
+		cell: ({ getValue, row }) => {
+			const action = getValue<string>();
+			return action.split('_').join(' ');
+		}
 	},
 	{
-		accessorKey: 'file_cid',
-		header: ({ column }) =>
-			renderComponent(DataTableSortButton, {
-				text: 'File CID',
-				arrangement: column.getIsSorted(),
-				onclick: () => column.toggleSorting(column.getIsSorted() === 'asc')
-			})
-	},
-	{
-		accessorKey: 'type',
+		accessorKey: 'fileType',
 		header: ({ column }) =>
 			renderComponent(DataTableSortButton, {
 				text: 'Data Type',
 				arrangement: column.getIsSorted(),
 				onclick: () => column.toggleSorting(column.getIsSorted() === 'asc')
-			})
+			}),
+		cell: ({ getValue, row }) => {
+			const type = getValue<string>();
+			return type;
+		}
 	},
 	{
-		accessorKey: 'blockchain_hash',
+		accessorKey: 'transactionHash',
 		header: ({ column }) =>
 			renderComponent(DataTableSortButton, {
-				text: 'BlockChain Tx Hash',
-				arrangement: column.getIsSorted(),
-				onclick: () => column.toggleSorting(column.getIsSorted() === 'asc')
-			})
-	},
-	{
-		accessorKey: 'created_at',
-		header: ({ column }) =>
-			renderComponent(DataTableSortButton, {
-				text: 'Created at',
+				text: 'Transaction Hash',
 				arrangement: column.getIsSorted(),
 				onclick: () => column.toggleSorting(column.getIsSorted() === 'asc')
 			}),
-		cell: ({ getValue }) => {
-			const dateValue = getValue<string>();
-			return renderComponent(DateCell, { date: dateValue });
+		cell: ({ getValue, row }) => {
+			const transactionHash = getValue<string>();
+			return renderComponent(EtherscanLink, { transactionHash: transactionHash });
 		}
 	}
 ];

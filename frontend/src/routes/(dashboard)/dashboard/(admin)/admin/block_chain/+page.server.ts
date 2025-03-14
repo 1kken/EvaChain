@@ -11,8 +11,18 @@ import {
 	backUpOperationalPlan,
 	backUpStrategicPlan
 } from './pinata_helper';
+import { PRIVATE_KEY, RPC_URL, CONTRACT_ADDRESS } from '$env/static/private';
+import { ethers, JsonRpcProvider } from 'ethers';
+import { IPFSFileTrackerLogRetriever } from './block_chain_helper';
+
+// 1. Initialize Provider
 export const load = (async ({ locals: { supabase, session } }) => {
-	const blockChainData = await fetchBlockChainData(supabase);
+	const provider: JsonRpcProvider = new JsonRpcProvider(RPC_URL);
+	const wallet = new ethers.Wallet(PRIVATE_KEY, provider);
+
+	const logRetriever = new IPFSFileTrackerLogRetriever(CONTRACT_ADDRESS, provider, wallet);
+
+	const blockChainData = await logRetriever.getAllFileActionLogs();
 	const latestBlockChainData = await fetchLatestBlockchainData(supabase);
 	return { blockChainData, latestBlockChainData };
 }) satisfies PageServerLoad;

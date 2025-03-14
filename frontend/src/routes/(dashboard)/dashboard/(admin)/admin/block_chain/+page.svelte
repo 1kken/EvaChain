@@ -48,20 +48,20 @@
 	const columns = createColumns();
 	let fileTypeOptions: PropOptionFacet[] = mapToOptions(
 		[
-			{ name: 'Data/CSV Type', value: 'file' },
-			{ name: 'PDF/Evidence Type', value: 'evidence' }
+			{ name: 'Data/CSV Type', value: 'DATA' },
+			{ name: 'PDF/Evidence Type', value: 'FILE' }
 		],
 		'value', //value to search
 		'name' //display
 	);
-	const propDataFacet: PropDataFacet[] = [{ column: 'type', options: fileTypeOptions }];
+	const propDataFacet: PropDataFacet[] = [{ column: 'fileType', options: fileTypeOptions }];
 </script>
 
 <DataTable
 	filterDataFacet={propDataFacet}
 	data={blockChainData}
 	{columns}
-	filterColumn={'file_name'}
+	filterColumn={'fileName'}
 	filterPlaceholder={'Search by File Name....'}
 >
 	<AlertDialog.Root bind:open={isOpen}>
