@@ -2002,6 +2002,7 @@ export type Database = {
       ipcr_indicator_evidence: {
         Row: {
           accomplishment_indicator_id: string
+          confidence_level: number
           created_at: string
           file_path: string
           id: string
@@ -2011,6 +2012,7 @@ export type Database = {
         }
         Insert: {
           accomplishment_indicator_id: string
+          confidence_level: number
           created_at?: string
           file_path: string
           id?: string
@@ -2020,6 +2022,7 @@ export type Database = {
         }
         Update: {
           accomplishment_indicator_id?: string
+          confidence_level?: number
           created_at?: string
           file_path?: string
           id?: string

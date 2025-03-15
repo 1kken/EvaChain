@@ -9,10 +9,10 @@
 		getLocalTimeZone,
 		parseDate
 	} from '@internationalized/date';
-	import { cn } from '$lib/utils';
 	import { onMount, onDestroy } from 'svelte';
 	import { getIpcrIndicatorEvidence } from './helper';
 	import PdfViewer from './pdf-viewer.svelte';
+	import { Badge } from '$lib/components/ui/badge/index.js';
 
 	interface Props {
 		accomplishment: Tables<'ipcr_indicator_accomplishment'>;
@@ -21,6 +21,8 @@
 
 	let { accomplishment, opIndicator }: Props = $props();
 	let isOpen = $state(false);
+	let badgeColor = $state<string>('');
+	let confidenceLevel = $state<number | null>(null);
 	let evidenceUrl = $state<string | null>(null);
 
 	onMount(() => {
@@ -28,6 +30,11 @@
 			.then((evidence) => {
 				if (evidence.signedUrl) {
 					evidenceUrl = evidence.signedUrl;
+				}
+
+				if (evidence.confidenceLevel) {
+					console.log(evidence.confidenceLevel);
+					confidenceLevel = evidence.confidenceLevel;
 				}
 			})
 			.catch((e) => {
@@ -43,6 +50,27 @@
 		const dateValue = parseDate(accomplishment.accomplishment_date);
 		formattedDate = df.format(dateValue.toDate(getLocalTimeZone()));
 	}
+
+	// Add this function to calculate the badge color
+	function calculateBadgeColor() {
+		if (confidenceLevel === null) {
+			badgeColor = '';
+			return;
+		}
+
+		if (confidenceLevel <= 50) {
+			badgeColor = 'bg-red-500';
+		} else if (confidenceLevel <= 70) {
+			badgeColor = 'bg-blue-500';
+		} else {
+			badgeColor = 'bg-green-500';
+		}
+	}
+
+	// Call this whenever confidenceLevel changes
+	$effect(() => {
+		calculateBadgeColor();
+	});
 </script>
 
 <Dialog.Root bind:open={isOpen}>
@@ -89,7 +117,11 @@
 			</div>
 
 			<div>
-				<h4 class="mb-2 font-medium">Evidence</h4>
+				<div class="flex h-fit items-center justify-center space-x-2">
+					<h4 class="mb-2 font-medium">Evidence</h4>
+					<h4 class="mb-2 font-medium">Confidence Level</h4>
+					<Badge class={badgeColor}>{confidenceLevel}%</Badge>
+				</div>
 				{#if evidenceUrl}
 					<div class="mt-2">
 						<PdfViewer fileUrl={evidenceUrl} />

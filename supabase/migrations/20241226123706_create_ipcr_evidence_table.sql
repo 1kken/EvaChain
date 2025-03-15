@@ -3,6 +3,7 @@ CREATE TABLE ipcr_indicator_evidence (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     ipcr_indicator_accomplishment_id UUID REFERENCES ipcr_indicator_accomplishment(id) ON DELETE CASCADE NOT NULL,
     file_path TEXT NOT NULL,
+    confidence_level integer NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
 );

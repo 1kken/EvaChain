@@ -10,7 +10,7 @@ export const GET: RequestHandler = async ({ url, locals: { supabase } }) => {
 
 		const { data: evidence, error: evidenceError } = await supabase
 			.from('ipcr_indicator_evidence')
-			.select('id, file_path')
+			.select('id, file_path, confidence_level')
 			.eq('ipcr_indicator_accomplishment_id', accomplishmentId)
 			.single();
 
@@ -32,7 +32,9 @@ export const GET: RequestHandler = async ({ url, locals: { supabase } }) => {
 			return json({ error: 'Failed to create signed URL' }, { status: 500 });
 		}
 
-		return json({ data: { signedUrl: signedUrlData.signedUrl } });
+		return json({
+			data: { signedUrl: signedUrlData.signedUrl, confidenceLevel: evidence.confidence_level }
+		});
 	} catch (err) {
 		console.error('Server error:', err);
 		return json({ error: 'Internal server error' }, { status: 500 });

@@ -1,4 +1,4 @@
-type SignedUrlResponse = { signedUrl: string };
+type SignedUrlResponse = { signedUrl: string; confidenceLevel: number };
 
 export const getIpcrIndicatorEvidence = async (
 	accomplishmentId: string
@@ -8,7 +8,7 @@ export const getIpcrIndicatorEvidence = async (
 
 		if (!response.ok) {
 			if (response.status === 404) {
-				return { signedUrl: '' };
+				return { signedUrl: '', confidenceLevel: 0 };
 			}
 			const errorData = await response.json();
 			throw new Error(errorData.error || 'Failed to fetch evidence records');
@@ -18,6 +18,6 @@ export const getIpcrIndicatorEvidence = async (
 		return data;
 	} catch (error) {
 		console.error('Error fetching IPCR indicator evidence:', error);
-		return { signedUrl: '' };
+		return { signedUrl: '', confidenceLevel: 0 };
 	}
 };

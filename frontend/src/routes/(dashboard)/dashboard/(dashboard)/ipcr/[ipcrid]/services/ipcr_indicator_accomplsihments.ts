@@ -19,6 +19,8 @@ import { deleteAccomplishmentWithHistory } from './accomplishments/delete';
 import { createAccomplishmentWithHistory } from './accomplishments/create';
 import { updateAccomplishmentWithHistory } from './accomplishments/update';
 import type { ProfileWithJoins } from '../../../../../../../app';
+import { sendPdfToServer, type Base64Evidence } from './fraud_helper';
+import { analyzeDocumentImages } from './fraud_helper/gpt_wrapper';
 
 //===== CREATE ACCOMPLISHMENT =====/
 export async function createAccomplishment(
@@ -53,6 +55,34 @@ export async function createAccomplishment(
 		return message(form, {
 			status: 'error',
 			text: 'Please upload a file'
+		});
+	}
+
+	//! this converts pdf to image in base 64
+	let base64Images: Base64Evidence[] = [];
+	let confidenceScore = 0;
+
+	try {
+		const uploadResult = await sendPdfToServer(pdf_evidence);
+		if (uploadResult.success && uploadResult.images.length > 0) {
+			base64Images = uploadResult.images;
+
+			// Analyze the document images and get average confidence score
+
+			const confidenceScoreResult = await analyzeDocumentImages(
+				base64Images,
+				actual_accomplishments
+			);
+
+			console.log('Confidence Score:', confidenceScoreResult);
+			confidenceScore = confidenceScoreResult;
+		} else {
+			throw new Error('No images returned from server');
+		}
+	} catch (error) {
+		return message(form, {
+			status: 'error',
+			text: `Error processing document: ${error}`
 		});
 	}
 
@@ -126,6 +156,8 @@ export async function createAccomplishment(
 		});
 	}
 
+	//upload the pdf
+
 	//* Save to ipcr_indicator_evidence
 	//* this table serves as a reference to the evidence uploaded
 	const { error: saveIndicatorEvidenceError } = await supabase
@@ -134,7 +166,8 @@ export async function createAccomplishment(
 			uploader_id: profile.id,
 			accomplishment_indicator_id: accomplishmentActivityIndicatorId,
 			ipcr_indicator_accomplishment_id: ipcrAccomplishment.id,
-			file_path: uploadEvidenceData.fullPath
+			file_path: uploadEvidenceData.fullPath,
+			confidence_level: confidenceScore
 		})
 		.select()
 		.single();
