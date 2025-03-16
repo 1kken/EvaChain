@@ -12,7 +12,7 @@ export const POST: RequestHandler = async ({ url, locals: { supabase } }) => {
 			headers: {
 				'Content-Type': 'application/pdf',
 				'Content-Length': pdfBlob.size.toString(),
-				'Content-Disposition': `attachment; filename="dpcr-${id}.pdf"`,
+				'Content-Disposition': `attachment; filename="strategic-${id}.pdf"`,
 				'Last-Modified': new Date().toUTCString(),
 				'Cache-Control': 'public, max-age=600'
 			}
