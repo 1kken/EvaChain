@@ -114,7 +114,7 @@
 	</Dialog.Trigger>
 	<Dialog.Content class="max-h-[85vh] overflow-y-auto sm:max-w-[800px]">
 		<Dialog.Header>
-			<Dialog.Title>Update DPCR Indicator</Dialog.Title>
+			<Dialog.Title>Update OPCR Indicator</Dialog.Title>
 			<Dialog.Description>
 				An indicator is a measurable criterion used to assess the performance and success of a
 				specific task or objective, aligning efforts with organizational goals.

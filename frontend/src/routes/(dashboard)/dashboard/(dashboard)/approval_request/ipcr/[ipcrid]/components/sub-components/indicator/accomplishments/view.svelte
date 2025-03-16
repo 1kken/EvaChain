@@ -13,6 +13,7 @@
 	import { getIpcrIndicatorEvidence } from './helper';
 	import PdfViewer from './pdf-viewer.svelte';
 	import { Badge } from '$lib/components/ui/badge/index.js';
+	import Tooltip from './tooltip.svelte';
 
 	interface Props {
 		accomplishment: Tables<'ipcr_indicator_accomplishment'>;
@@ -59,11 +60,11 @@
 		}
 
 		if (confidenceLevel <= 50) {
-			badgeColor = 'bg-red-500';
+			badgeColor = 'bg-red-500 hover:bg-red-600';
 		} else if (confidenceLevel <= 70) {
-			badgeColor = 'bg-blue-500';
+			badgeColor = 'bg-blue-500 hover:bg-blue-600';
 		} else {
-			badgeColor = 'bg-green-500';
+			badgeColor = 'bg-green-500 hover:bg-green-600';
 		}
 	}
 
@@ -117,11 +118,12 @@
 			</div>
 
 			<div>
-				<div class="flex h-fit items-center justify-center space-x-2">
-					<h4 class="mb-2 font-medium">Evidence</h4>
-					<h4 class="mb-2 font-medium">Confidence Level</h4>
-					<Badge class={badgeColor}>{confidenceLevel}%</Badge>
+				<div class="flex items-center space-x-2">
+					<Tooltip />
+					<h4 class="mb-0 font-medium">Fraud Detection Confidence Level</h4>
+					<Badge class={`${badgeColor} h-fit`}>{confidenceLevel}%</Badge>
 				</div>
+				<h4 class="mb-2 font-medium">Evidence</h4>
 				{#if evidenceUrl}
 					<div class="mt-2">
 						<PdfViewer fileUrl={evidenceUrl} />
