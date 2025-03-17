@@ -72,7 +72,7 @@
 					<Form.FieldErrors />
 				</Form.Field>
 			</div>
-			<div class="flex justify-between">
+			<div class=" w-full">
 				<Form.Field {form} name="unit_id">
 					<Form.Control>
 						{#snippet children({ props })}
