@@ -23,7 +23,7 @@ export const generateHeader = (
 							alignment: 'center'
 						},
 						{
-							text: `DEPARTMENT PERFORMANCE COMMITMENT AND REVIEW (DPCR)`,
+							text: `OFFICE PERFORMANCE COMMITMENT AND REVIEW (OPCR)`,
 							bold: true,
 							marginTop: 30,
 							alignment: 'center',

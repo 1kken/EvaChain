@@ -54,9 +54,9 @@
 
 	// Add this function to calculate the badge color
 	function calculateBadgeColor() {
+		console.log('Confidence level:', confidenceLevel);
 		if (confidenceLevel === null) {
-			badgeColor = '';
-			return;
+			confidenceLevel = 0;
 		}
 
 		if (confidenceLevel <= 50) {
