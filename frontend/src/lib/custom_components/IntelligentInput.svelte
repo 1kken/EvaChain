@@ -4,7 +4,6 @@
 	import { fade } from 'svelte/transition';
 	import { cn } from '$lib/utils';
 	import debounce from 'debounce';
-	import { flattenBy } from '@tanstack/table-core';
 
 	interface GrammarError {
 		message: string;
@@ -34,7 +33,7 @@
 
 	// Function to get corrected text
 	function getCorrectedText() {
-		if (!errors.length) return content;
+		if (!errors.length || !content) return content;
 
 		let correctedText = content;
 		const sortedErrors = [...errors].sort((a, b) => b.offset - a.offset);
@@ -52,6 +51,7 @@
 
 	// Apply individual correction
 	function applyCorrection(error: GrammarError) {
+		if (!content) return;
 		if (error.replacements.length > 0) {
 			content =
 				content.substring(0, error.offset) +
@@ -66,23 +66,10 @@
 		content = getCorrectedText();
 		errors = [];
 	}
-	// First define the API response type
-	interface LangToolError {
-		message: string;
-		shortMessage: string;
-		replacements: { value: string }[];
-		offset: number;
-		length: number;
-	}
-
-	// Then define the extended error type with the 'type' field
-	interface GrammarError extends LangToolError {
-		type: 'grammar' | 'spelling';
-	}
 
 	// Update the function with proper typing
 	const checkGrammar = debounce(async (text: string) => {
-		if (!text.trim()) {
+		if (!text || !text.trim()) {
 			isFetching = false;
 			errors = [];
 			return;
@@ -95,15 +82,40 @@
 				body: JSON.stringify({ content: text })
 			});
 
-			if (!response.ok) throw new Error('Grammar check failed');
+			if (!response.ok) {
+				console.error('Grammar check failed with status:', response.status);
+				throw new Error('Grammar check failed');
+			}
 
-			const newErrors: LangToolError[] = await response.json();
-			errors = newErrors.map(
-				(error): GrammarError => ({
-					...error,
-					type: error.message.toLowerCase().includes('spelling') ? 'spelling' : 'grammar'
+			// Log the raw response for debugging
+			const rawText = await response.text();
+			console.log('Raw API response:', rawText);
+
+			// Try to parse the response
+			let data;
+			try {
+				data = JSON.parse(rawText);
+				console.log('Parsed API response:', data);
+			} catch (parseErr) {
+				console.error('Failed to parse JSON response:', parseErr);
+				throw new Error('Invalid response format');
+			}
+
+			// Handle both possible response formats
+			let matches = Array.isArray(data) ? data : data.matches || [];
+
+			errors = matches.map(
+				(error: any): GrammarError => ({
+					message: error.message || '',
+					shortMessage: error.shortMessage || error.message || '',
+					replacements: error.replacements || [],
+					offset: error.offset || 0,
+					length: error.length || 0,
+					type: (error.message || '').toLowerCase().includes('spelling') ? 'spelling' : 'grammar'
 				})
 			);
+
+			console.log('Processed grammar errors:', errors);
 		} catch (err) {
 			console.error('Grammar check error:', err);
 		} finally {
@@ -111,9 +123,9 @@
 		}
 	}, 2000);
 
-	function handleInput() {
+	function handleInput(event: Event) {
 		isFetching = true;
-		checkGrammar(content);
+		checkGrammar(content || '');
 	}
 </script>
 
@@ -142,8 +154,48 @@
 	{/if}
 
 	{#if errors.length > 0}
-		<div class="w-full space-y-1.5" transition:fade>
-			<!-- Rest of your error display code -->
+		<div class="mt-2 w-full space-y-1.5" transition:fade>
+			<div class="flex items-center justify-between">
+				<div class="flex items-center gap-1.5 text-sm text-yellow-600 dark:text-yellow-400">
+					<AlertCircle class="h-4 w-4" />
+					<span>Found {errors.length} {errors.length === 1 ? 'issue' : 'issues'}</span>
+				</div>
+				<button
+					class="text-primary focus:ring-primary/50 rounded px-2 text-xs hover:underline focus:outline-none focus:ring-2"
+					onclick={applyAllCorrections}
+				>
+					Fix All
+				</button>
+			</div>
+
+			<div class="max-h-40 space-y-1 overflow-y-auto">
+				{#each errors as error, i}
+					<div
+						class="flex items-start justify-between rounded-md bg-yellow-50 p-2 text-xs dark:bg-yellow-950"
+					>
+						<div>
+							<div class="font-medium text-yellow-800 dark:text-yellow-300">
+								{error.type === 'spelling' ? 'Spelling error' : 'Grammar issue'}
+							</div>
+							<div class="mt-0.5 text-yellow-700 dark:text-yellow-400">{error.message}</div>
+							{#if error.replacements.length > 0}
+								<div class="mt-1 text-yellow-600 dark:text-yellow-500">
+									Suggestion: <span class="font-medium">{error.replacements[0].value}</span>
+								</div>
+							{/if}
+						</div>
+						{#if error.replacements.length > 0}
+							<button
+								class="text-primary focus:ring-primary/50 flex items-center gap-1 rounded px-1.5 hover:underline focus:outline-none focus:ring-2"
+								onclick={() => applyCorrection(error)}
+							>
+								<CheckCircle class="h-3.5 w-3.5" />
+								<span>Fix</span>
+							</button>
+						{/if}
+					</div>
+				{/each}
+			</div>
 		</div>
 	{/if}
 </div>

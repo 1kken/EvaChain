@@ -35,6 +35,8 @@ export const POST: RequestHandler = async ({ request }) => {
 		} catch (e) {
 			throw error(503, 'Failed to reach grammar checking service');
 		}
+
+		console.log('result', result);
 		// Handle API response errors
 		if (!result.ok) {
 			const status = result.status;
