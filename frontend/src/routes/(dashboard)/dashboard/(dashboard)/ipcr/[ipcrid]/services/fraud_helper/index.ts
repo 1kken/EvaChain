@@ -14,7 +14,7 @@ export interface ConversionResponse {
 
 const url =
 	STATUS === 'DEV'
-		? 'http://localhost:3000/convert'
+		? 'https://evachainfrauddetector-production.up.railway.app/convert'
 		: 'https://evachainfrauddetector-production.up.railway.app/convert';
 
 // Function to send PDF evidence to your Express server

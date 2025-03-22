@@ -1,14 +1,8 @@
-import { PUBLIC_DOCKER_API } from '$env/static/public';
 import { error, json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 
 export const POST: RequestHandler = async ({ request }) => {
 	try {
-		// Validate API key
-		if (!PUBLIC_DOCKER_API) {
-			throw error(500, 'API key not configured');
-		}
-
 		// Parse request body
 		let requestBody;
 		try {
@@ -24,21 +18,23 @@ export const POST: RequestHandler = async ({ request }) => {
 		}
 
 		// Set up request parameters
-		const header = { 'X-Api-Key': PUBLIC_DOCKER_API };
 		const language = 'en-US';
-		const url = `http://157.230.47.205/v2/check?text=${encodeURIComponent(text)}&language=${language}`;
+		// Use the correct port
+		const url = `http://157.230.47.205:8010/v2/check`;
 
-		// Make API request
+		// Make API request with proper POST body
 		let result;
 		try {
 			result = await fetch(url, {
 				method: 'POST',
-				headers: header
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded'
+				},
+				body: `text=${encodeURIComponent(text)}&language=${language}`
 			});
 		} catch (e) {
 			throw error(503, 'Failed to reach grammar checking service');
 		}
-
 		// Handle API response errors
 		if (!result.ok) {
 			const status = result.status;
