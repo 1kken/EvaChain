@@ -57,12 +57,14 @@
 						</div>
 
 						<div class="flex items-center space-x-2">
-							<img src={man} alt="Man icon" class="h-24 w-24 md:h-36 md:w-36" />
+							<enhanced:img src="/static/man.png?w=144" loading="eager" alt="Men pic" />
+							<!-- <img src={man} alt="Man icon" class="h-24 w-24 md:h-36 md:w-36" /> -->
 							<h2 class="text-3xl font-semibold md:text-4xl">{malePopulation}</h2>
 						</div>
 
 						<div class="flex items-center space-x-2">
-							<img src={woman} alt="Woman icon" class="h-24 w-24 md:h-36 md:w-36" />
+							<enhanced:img src="/static/women.png?w=144" loading="eager" alt="Women pic" />
+							<!-- <img src={woman} alt="Woman icon" class="h-24 w-24 md:h-36 md:w-36" /> -->
 							<h2 class="text-3xl font-semibold md:text-4xl">{femalePopulation}</h2>
 						</div>
 					</div>
