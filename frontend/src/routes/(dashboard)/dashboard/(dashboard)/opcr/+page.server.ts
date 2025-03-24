@@ -9,7 +9,7 @@ export const load = (async ({ locals: { supabase, session } }) => {
 		error(401, 'Unauthorized');
 	}
 	//data
-	const opcrs = await getOPCRByOwnerId(userId, supabase);
+	const opcrs = getOPCRByOwnerId(userId, supabase);
 	//forms
 	const OPCRForms = await getOPCRForms();
 

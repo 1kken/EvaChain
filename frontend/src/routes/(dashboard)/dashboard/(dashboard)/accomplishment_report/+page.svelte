@@ -4,6 +4,8 @@
 	import { createColumns } from './(table)/columns';
 	import DataTable from '$lib/custom_components/data-table/data-table.svelte';
 	import Create from './(table)/Create.svelte';
+	import { onMount } from 'svelte';
+	import TableSkeleton from '$lib/custom_components/TableSkeleton.svelte';
 
 	//props
 	let { data }: { data: PageData } = $props();
@@ -11,16 +13,27 @@
 
 	//state
 	let isAddDrawerOpen = $state(false);
+	let isLoading = $state(true);
 	//store
-	const { currentUserAccomplishmentReport } = setAccomplishmentReportStore(data.accReport);
+	const { currentUserAccomplishmentReport } = setAccomplishmentReportStore();
+	onMount(() => {
+		isLoading = true;
+		data.accReport
+			.then((accReport) => setAccomplishmentReportStore(accReport))
+			.finally(() => (isLoading = false));
+	});
 
 	//columns
 	const columns = createColumns(deleteForm, updateForm);
 </script>
 
-<DataTable
-	{columns}
-	data={$currentUserAccomplishmentReport}
-	filterPlaceholder={'Search by title'}
-	filterColumn={'title'}
-/>
+{#if isLoading}
+	<TableSkeleton />
+{:else}
+	<DataTable
+		{columns}
+		data={$currentUserAccomplishmentReport}
+		filterPlaceholder={'Search by title'}
+		filterColumn={'title'}
+	/>
+{/if}

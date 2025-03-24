@@ -17,9 +17,9 @@ export const load = (async ({ locals: { supabase } }) => {
 
 	const logRetriever = new IPFSFileTrackerLogRetriever(CONTRACT_ADDRESS, provider, wallet);
 
-	const blockChainData = await logRetriever.getAllFileActionLogs();
-
 	return {
-		blockChainData: blockChainData ?? []
+		streamed: {
+			blockChainData: logRetriever.getAllFileActionLogs()
+		}
 	};
 }) satisfies PageServerLoad;

@@ -173,3 +173,11 @@ export async function deleteIPCR(request: Request, supabase: SupabaseClient<Data
 	}
 	return { form, ipcrData };
 }
+
+export async function fetchIPCRs(owner_id: string, supabase: SupabaseClient<Database>) {
+	const { data: ipcrs, error } = await supabase.from('ipcr').select().eq('owner_id', owner_id);
+
+	if (error) throw error;
+
+	return ipcrs;
+}

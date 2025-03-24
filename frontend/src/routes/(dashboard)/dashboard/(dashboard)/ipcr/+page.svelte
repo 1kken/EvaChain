@@ -1,7 +1,5 @@
 <script lang="ts">
-	import { Button } from '$lib/components/ui/button';
 	import DataTable from '$lib/custom_components/data-table/data-table.svelte';
-	import { SquareArrowOutUpRight } from 'lucide-svelte';
 	import type { PageData } from './$types';
 	import { getIPCRStore } from './(data)/state.svelte';
 	import { createColumns } from './(table)/columns';

@@ -10,6 +10,7 @@ import { universalDeleteSchema } from '$lib/schemas/universal_delete_schema';
 import {
 	createOperationalPlan,
 	deleteOperationalPlan,
+	fetchOperationalPlan,
 	updateOperationalPlan
 } from './(data)/op_services';
 import { fetchOperationalPlanId, fetchStrategicPlanId } from './(data)/page_server_loader';
@@ -30,22 +31,14 @@ export const load = (async ({ locals: { supabase, session, hasRole, profile } })
 			fetchStrategicPlanId(supabase, profile, hasRole)
 		]);
 
-		const [
-			{ data: opData, error: fetchError },
-			createOperationalPlanForm,
-			updateOperationalPlanForm,
-			deleteOperationalPlanForm
-		] = await Promise.all([
-			supabase.from('operational_plan').select('*').eq('creator_id', userId),
-			superValidate(zod(createOperationalPlanSchema)),
-			superValidate(zod(updateOperationalPlanSchema)),
-			superValidate(zod(universalDeleteSchema))
-		]);
+		const [createOperationalPlanForm, updateOperationalPlanForm, deleteOperationalPlanForm] =
+			await Promise.all([
+				superValidate(zod(createOperationalPlanSchema)),
+				superValidate(zod(updateOperationalPlanSchema)),
+				superValidate(zod(universalDeleteSchema))
+			]);
 
-		if (fetchError) {
-			error(500, 'Failed to load operational plan data');
-		}
-
+		const opData = fetchOperationalPlan(userId, supabase);
 		return {
 			data: { opData, operationalPlanId, strategicPlanId },
 			form: {

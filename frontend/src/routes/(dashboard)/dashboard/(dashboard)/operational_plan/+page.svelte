@@ -7,28 +7,42 @@
 	import { getUserAuthStore } from '$lib/utils/rbac';
 	import ShowLatestOperationalPlan from './components/show-latest-operational-plan.svelte';
 	import ShowLatestStrategicPlan from './components/show-latest-strategic-plan.svelte';
+	import { onMount } from 'svelte';
+	import TableSkeleton from '$lib/custom_components/TableSkeleton.svelte';
 
 	let { data }: { data: PageData } = $props();
-	const { operationalPlanId, strategicPlanId } = data.data;
+	const { operationalPlanId, strategicPlanId, opData } = data.data;
 	const { createOp, updateOp, deleteOp } = data.form;
 	const columns = createColumns(deleteOp, updateOp);
-	const { currentOperationalPlans } = setOperationalPlanStore(data.data.opData);
 	const { hasRole } = getUserAuthStore();
+
+	let isLoading = $state(true);
+	const { currentOperationalPlans } = setOperationalPlanStore();
+	onMount(() => {
+		isLoading = true;
+		opData
+			.then((operationalPlans) => setOperationalPlanStore(operationalPlans))
+			.finally(() => (isLoading = false));
+	});
 </script>
 
-<DataTable
-	data={$currentOperationalPlans}
-	{columns}
-	filterColumn={'title'}
-	filterPlaceholder={'Search by title....'}
->
-	<CreateDialogOp data={createOp} />
+{#if isLoading}
+	<TableSkeleton />
+{:else}
+	<DataTable
+		data={$currentOperationalPlans}
+		{columns}
+		filterColumn={'title'}
+		filterPlaceholder={'Search by title....'}
+	>
+		<CreateDialogOp data={createOp} />
 
-	{#if hasRole('director') || hasRole('dean') || hasRole('head_of_office')}
-		<ShowLatestOperationalPlan id={operationalPlanId?.id!} />
-	{/if}
+		{#if hasRole('director') || hasRole('dean') || hasRole('head_of_office')}
+			<ShowLatestOperationalPlan id={operationalPlanId?.id!} />
+		{/if}
 
-	{#if hasRole('vice-president') || hasRole('head_of_operating_unit')}
-		<ShowLatestStrategicPlan id={strategicPlanId?.id!} />
-	{/if}
-</DataTable>
+		{#if hasRole('vice-president') || hasRole('head_of_operating_unit')}
+			<ShowLatestStrategicPlan id={strategicPlanId?.id!} />
+		{/if}
+	</DataTable>
+{/if}

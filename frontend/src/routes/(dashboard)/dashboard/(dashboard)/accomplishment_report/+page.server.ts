@@ -15,10 +15,8 @@ export const load = (async ({ locals: { supabase, session } }) => {
 			throw error(401, 'Unauthorized');
 		}
 
-		const [accReport, accReportForm] = await Promise.all([
-			getAccomplishmentReport(supabase, user_id),
-			getAccReportForms()
-		]);
+		const accReport = getAccomplishmentReport(supabase, user_id);
+		const [accReportForm] = await Promise.all([getAccReportForms()]);
 
 		return {
 			accReport,

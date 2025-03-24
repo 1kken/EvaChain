@@ -9,7 +9,7 @@ export const load = (async ({ locals: { supabase, session } }) => {
 		error(401, 'Unauthorized');
 	}
 	//data
-	const dpcrs = await getDPCRByOwnerId(userId, supabase);
+	const dpcrs = getDPCRByOwnerId(userId, supabase);
 	//forms
 	const DPCRForms = await getDPCRForms();
 

@@ -172,3 +172,13 @@ export async function updateOperationalPlan(request: Request, supabase: Supabase
 
 	return { form, opData };
 }
+
+export async function fetchOperationalPlan(userId: string, supabase: SupabaseClient<Database>) {
+	const { data: opData, error } = await supabase
+		.from('operational_plan')
+		.select()
+		.eq('creator_id', userId);
+	if (error) throw error;
+
+	return opData;
+}

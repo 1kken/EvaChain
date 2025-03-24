@@ -13,7 +13,7 @@ export const load = (async ({ locals: { session, supabase } }) => {
 		error(401, 'Unauthorized');
 	}
 	//data
-	const strategicPlans = await getStrategicPlanByOwnerId(userId, supabase);
+	const strategicPlans = getStrategicPlanByOwnerId(userId, supabase);
 
 	//forms
 	const strategicPlanForms = await getStrategicPlanForms();

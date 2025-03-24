@@ -7,17 +7,16 @@
 	} from '$lib/custom_components/data-table/helper';
 	import type { PageData } from './$types';
 	import { createColumns } from './(table)/columns';
-
+	import TableSkeleton from '$lib/custom_components/TableSkeleton.svelte';
 	let { data }: { data: PageData } = $props();
-	let blockChainData = $derived(data.blockChainData);
 	const columns = createColumns();
 	let fileTypeOptions: PropOptionFacet[] = mapToOptions(
 		[
 			{ name: 'Data/CSV Type', value: 'data' },
 			{ name: 'PDF/Evidence Type', value: 'evidence' }
 		],
-		'value', //value to search
-		'name' //display
+		'value',
+		'name'
 	);
 
 	let actionTypeOptions: PropOptionFacet[] = mapToOptions(
@@ -27,8 +26,8 @@
 			{ name: 'Delete', value: 'delete' },
 			{ name: 'Backup', value: 'backup' }
 		],
-		'value', //value to search
-		'name' //display
+		'value',
+		'name'
 	);
 	const propDataFacet: PropDataFacet[] = [
 		{ column: 'type', options: fileTypeOptions },
@@ -36,10 +35,20 @@
 	];
 </script>
 
-<DataTable
-	filterPlaceholder={'Search by File Name...'}
-	filterColumn={'file_name'}
-	{columns}
-	data={blockChainData}
-	filterDataFacet={propDataFacet}
-/>
+{#await data.streamed.blockChainData}
+	<TableSkeleton />
+{:then blockChainData}
+	{#if blockChainData.length === 0}
+		<p>No data available</p>
+	{:else}
+		<DataTable
+			filterPlaceholder={'Search by File Name...'}
+			filterColumn={'file_name'}
+			{columns}
+			data={blockChainData}
+			filterDataFacet={propDataFacet}
+		/>
+	{/if}
+{:catch error}
+	<p>{error.message}</p>
+{/await}
