@@ -31,5 +31,7 @@
 		{columns}
 		filterColumn={'title'}
 		filterPlaceholder={'Search by title....'}
-	/>
+	>
+		<Create data={strategicForm.createForm} />
+	</DataTable>
 {/if}
